@@ -218,15 +218,15 @@ class DialogLumensCreateDatabase(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['projectSpatialRes']
             )
             
+            self.buttonLumensCreateDatabase.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('end: LUMENS Create Database')
+            
             lumensDatabase = os.path.join(
                 self.main.appSettings[type(self).__name__]['outputFolder'],
                 self.main.appSettings[type(self).__name__]['projectName'],
                 "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectProjectFileExt'])
             )
-            
-            self.buttonLumensCreateDatabase.setEnabled(True)
-            
-            logging.getLogger(type(self).__name__).info('end: LUMENS Create Database')
             
             # if LUMENS database file exists, open it and close dialog
             if os.path.exists(lumensDatabase):
@@ -234,3 +234,4 @@ class DialogLumensCreateDatabase(DialogLumensBase):
                 self.close()
             else:
                 logging.getLogger(type(self).__name__).error('modeler:lumens_create_database failed...')
+            

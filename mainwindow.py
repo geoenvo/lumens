@@ -40,8 +40,10 @@ splashLabel.close()
 from utils import QPlainTextEditLogger
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
+from dialog_lumens_importdatabase import DialogLumensImportDatabase
 from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeat import DialogLumensAddPeat
+from dialog_lumens_addfactordata import DialogLumensAddFactorData
 
 __version__ = "0.1.00"
 
@@ -76,12 +78,20 @@ class MainWindow(QtGui.QMainWindow):
                 'projectFile': '',
                 'projectFolder': '',
             },
+            'DialogLumensImportDatabase': {
+                'workingDir': '',
+                'projectFile': '',
+            },
             'DialogLumensAddLandcoverRaster': {
                 'rasterfile': '',
                 'period': '',
                 'description': '',
             },
             'DialogLumensAddPeat': {
+                'rasterfile': '',
+                'description': '',
+            },
+            'DialogLumensAddFactorData': {
                 'rasterfile': '',
                 'description': '',
             },
@@ -101,10 +111,12 @@ class MainWindow(QtGui.QMainWindow):
         
         self.buttonDialogLumensCreateDatabase.clicked.connect(self.handlerDialogLumensCreateDatabase)
         self.buttonDialogLumensOpenDatabase.clicked.connect(self.handlerDialogLumensOpenDatabase)
+        self.buttonDialogLumensImportDatabase.clicked.connect(self.handlerDialogLumensImportDatabase)
         self.buttonLumensOpenDatabase.clicked.connect(self.handlerLumensOpenDatabase)
         self.buttonLumensCloseDatabase.clicked.connect(self.handlerLumensCloseDatabase)
         self.buttonDialogLumensAddLandcoverRaster.clicked.connect(self.handlerDialogLumensAddLandcoverRaster)
         self.buttonDialogLumensAddPeat.clicked.connect(self.handlerDialogLumensAddPeat)
+        self.buttonDialogLumensAddFactorData.clicked.connect(self.handlerDialogLumensAddFactorData)
     
     
     def eventFilter(self, object, event):
@@ -116,10 +128,12 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonLumensCloseDatabase.setDisabled(True)
                 self.buttonDialogLumensAddLandcoverRaster.setDisabled(True)
                 self.buttonDialogLumensAddPeat.setDisabled(True)
+                self.buttonDialogLumensAddFactorData.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
                 self.buttonDialogLumensAddPeat.setEnabled(True)
+                self.buttonDialogLumensAddFactorData.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -160,6 +174,10 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensOpenDatabase.setText('Dialog: LUMENS Open Database')
         layout.addWidget(self.buttonDialogLumensOpenDatabase)
         
+        self.buttonDialogLumensImportDatabase = QtGui.QPushButton(self)
+        self.buttonDialogLumensImportDatabase.setText('Dialog: LUMENS Import Database')
+        layout.addWidget(self.buttonDialogLumensImportDatabase)
+        
         self.buttonDialogLumensAddLandcoverRaster = QtGui.QPushButton(self)
         self.buttonDialogLumensAddLandcoverRaster.setText('Dialog: LUMENS Add Land Cover Raster')
         layout.addWidget(self.buttonDialogLumensAddLandcoverRaster)
@@ -167,6 +185,10 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddPeat = QtGui.QPushButton(self)
         self.buttonDialogLumensAddPeat.setText('Dialog: LUMENS Add Peat')
         layout.addWidget(self.buttonDialogLumensAddPeat)
+        
+        self.buttonDialogLumensAddFactorData = QtGui.QPushButton(self)
+        self.buttonDialogLumensAddFactorData.setText('Dialog: LUMENS Add Factor Data')
+        layout.addWidget(self.buttonDialogLumensAddFactorData)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -218,6 +240,12 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensOpenDatabase)
     
     
+    def handlerDialogLumensImportDatabase(self):
+        """
+        """
+        self.openDialog(DialogLumensImportDatabase)
+    
+    
     def handlerLumensOpenDatabase(self):
         """Select a .lpj database file and open it
         """
@@ -234,6 +262,23 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.lumensCloseDatabase()
+    
+    def handlerDialogLumensAddLandcoverRaster(self):
+        """
+        """
+        self.openDialog(DialogLumensAddLandcoverRaster)
+    
+    
+    def handlerDialogLumensAddPeat(self):
+        """
+        """
+        self.openDialog(DialogLumensAddPeat)
+    
+    
+    def handlerDialogLumensAddFactorData(self):
+        """
+        """
+        self.openDialog(DialogLumensAddFactorData)
     
     
     def lumensOpenDatabase(self, lumensDatabase):
@@ -260,6 +305,7 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonLumensCloseDatabase.setEnabled(True)
             self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
             self.buttonDialogLumensAddPeat.setEnabled(True)
+            self.buttonDialogLumensAddFactorData.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -279,20 +325,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonLumensCloseDatabase.setDisabled(True)
         self.buttonDialogLumensAddLandcoverRaster.setDisabled(True)
         self.buttonDialogLumensAddPeat.setDisabled(True)
+        self.buttonDialogLumensAddFactorData.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
-    
-    
-    def handlerDialogLumensAddLandcoverRaster(self):
-        """
-        """
-        self.openDialog(DialogLumensAddLandcoverRaster)
-    
-    
-    def handlerDialogLumensAddPeat(self):
-        """
-        """
-        self.openDialog(DialogLumensAddPeat)
 
 
 
@@ -311,3 +346,4 @@ if __name__ == "__main__":
     main()
     
     sys.exit(-1)
+    
