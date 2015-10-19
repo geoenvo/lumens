@@ -10,29 +10,30 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensAddPeat(DialogLumensBase):
+class DialogLumensAddPlanningUnit(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensAddPeat, self).__init__(parent)
+        super(DialogLumensAddPlanningUnit, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS Add Peat'
+        self.dialogTitle = 'LUMENS Add Planning Unit'
         
         self.setupUi(self)
         
         self.buttonSelectRasterfile.clicked.connect(self.handlerSelectRasterfile)
+        self.buttonSelectCsvfile.clicked.connect(self.handlerSelectCsvfile)
         self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
     def setupUi(self, parent):
-        super(DialogLumensAddPeat, self).setupUi(self)
+        super(DialogLumensAddPlanningUnit, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
         self.labelRasterfile = QtGui.QLabel(parent)
-        self.labelRasterfile.setText('Raster file:')
+        self.labelRasterfile.setText('Planning unit:')
         layoutLumensDialog.addWidget(self.labelRasterfile, 0, 0)
         
         self.lineEditRasterfile = QtGui.QLineEdit(parent)
@@ -40,22 +41,34 @@ class DialogLumensAddPeat(DialogLumensBase):
         layoutLumensDialog.addWidget(self.lineEditRasterfile, 0, 1)
         
         self.buttonSelectRasterfile = QtGui.QPushButton(parent)
-        self.buttonSelectRasterfile.setText('Select &Raster File')
+        self.buttonSelectRasterfile.setText('Select &Planning Unit')
         layoutLumensDialog.addWidget(self.buttonSelectRasterfile, 1, 0, 1, 2)
+        
+        self.labelCsvfile = QtGui.QLabel(parent)
+        self.labelCsvfile.setText('Planning unit lookup table:')
+        layoutLumensDialog.addWidget(self.labelCsvfile, 2, 0)
+        
+        self.lineEditCsvfile = QtGui.QLineEdit(parent)
+        self.lineEditCsvfile.setReadOnly(True)
+        layoutLumensDialog.addWidget(self.lineEditCsvfile, 2, 1)
+        
+        self.buttonSelectCsvfile = QtGui.QPushButton(parent)
+        self.buttonSelectCsvfile.setText('Select &Lookup Table')
+        layoutLumensDialog.addWidget(self.buttonSelectCsvfile, 3, 0, 1, 2)
         
         self.labelDescription = QtGui.QLabel(parent)
         self.labelDescription.setText('&Description:')
-        layoutLumensDialog.addWidget(self.labelDescription, 2, 0)
+        layoutLumensDialog.addWidget(self.labelDescription, 4, 0)
         
         self.lineEditDescription = QtGui.QLineEdit(parent)
-        self.lineEditDescription.setText('description')
-        layoutLumensDialog.addWidget(self.lineEditDescription, 2, 1)
+        self.lineEditDescription.setText('planning_unit')
+        layoutLumensDialog.addWidget(self.lineEditDescription, 4, 1)
         
         self.labelDescription.setBuddy(self.lineEditDescription)
         
         self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
         self.buttonLumensDialogSubmit.setText(self.dialogTitle)
-        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 4, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 5, 0, 1, 2)
         
         self.dialogLayout.addLayout(layoutLumensDialog)
         
@@ -70,7 +83,7 @@ class DialogLumensAddPeat(DialogLumensBase):
         """Select a tif file
         """
         rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Raster File', QtCore.QDir.homePath(), 'Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+            self, 'Select Planning Unit Raster File', QtCore.QDir.homePath(), 'Planning Unit Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
         
         if rasterfile:
             self.lineEditRasterfile.setText(rasterfile)
@@ -78,15 +91,28 @@ class DialogLumensAddPeat(DialogLumensBase):
             logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
     
     
+    def handlerSelectCsvfile(self):
+        """Select a csv file
+        """
+        csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Planning Unit Lookup Table', QtCore.QDir.homePath(), 'Planning Unit Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if csvfile:
+            self.lineEditCsvfile.setText(csvfile)
+            
+            logging.getLogger(type(self).__name__).info('select csvfile: %s', csvfile)
+    
+    
     def setAppSettings(self):
         """Set the required values from the form widgets
         """
         self.main.appSettings[type(self).__name__]['rasterfile'] = unicode(self.lineEditRasterfile.text())
+        self.main.appSettings[type(self).__name__]['csvfile'] = unicode(self.lineEditCsvfile.text())
         self.main.appSettings[type(self).__name__]['description'] = unicode(self.lineEditDescription.text())
     
     
     def handlerLumensDialogSubmit(self):
-        """LUMENS Add Peat
+        """LUMENS Add Factor Data
         """
         self.setAppSettings()
         
@@ -96,8 +122,9 @@ class DialogLumensAddPeat(DialogLumensBase):
             self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
-                'modeler:lumens_add_peat',
+                'modeler:lumens_add_planning_unit',
                 self.main.appSettings[type(self).__name__]['rasterfile'],
+                self.main.appSettings[type(self).__name__]['csvfile'],
                 self.main.appSettings[type(self).__name__]['description'],
             )
             

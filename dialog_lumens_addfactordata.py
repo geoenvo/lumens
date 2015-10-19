@@ -18,48 +18,50 @@ class DialogLumensAddFactorData(DialogLumensBase):
     def __init__(self, parent):
         super(DialogLumensAddFactorData, self).__init__(parent)
         
+        self.dialogTitle = 'LUMENS Add Factor Data'
+        
         self.setupUi(self)
         
         self.buttonSelectRasterfile.clicked.connect(self.handlerSelectRasterfile)
-        self.buttonLumensAddFactorData.clicked.connect(self.handlerLumensAddFactorData)
+        self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
     def setupUi(self, parent):
         super(DialogLumensAddFactorData, self).setupUi(self)
         
-        layoutLumensAddFactorData = QtGui.QGridLayout()
+        layoutLumensDialog = QtGui.QGridLayout()
         
         self.labelRasterfile = QtGui.QLabel(parent)
         self.labelRasterfile.setText('Raster file:')
-        layoutLumensAddFactorData.addWidget(self.labelRasterfile, 0, 0)
+        layoutLumensDialog.addWidget(self.labelRasterfile, 0, 0)
         
         self.lineEditRasterfile = QtGui.QLineEdit(parent)
         self.lineEditRasterfile.setReadOnly(True)
-        layoutLumensAddFactorData.addWidget(self.lineEditRasterfile, 0, 1)
+        layoutLumensDialog.addWidget(self.lineEditRasterfile, 0, 1)
         
         self.buttonSelectRasterfile = QtGui.QPushButton(parent)
         self.buttonSelectRasterfile.setText('Select &Raster File')
-        layoutLumensAddFactorData.addWidget(self.buttonSelectRasterfile, 1, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonSelectRasterfile, 1, 0, 1, 2)
         
         self.labelDescription = QtGui.QLabel(parent)
         self.labelDescription.setText('&Description:')
-        layoutLumensAddFactorData.addWidget(self.labelDescription, 2, 0)
+        layoutLumensDialog.addWidget(self.labelDescription, 2, 0)
         
         self.lineEditDescription = QtGui.QLineEdit(parent)
         self.lineEditDescription.setText('description')
-        layoutLumensAddFactorData.addWidget(self.lineEditDescription, 2, 1)
+        layoutLumensDialog.addWidget(self.lineEditDescription, 2, 1)
         
         self.labelDescription.setBuddy(self.lineEditDescription)
         
-        self.buttonLumensAddFactorData = QtGui.QPushButton(parent)
-        self.buttonLumensAddFactorData.setText('LUMENS Add Factor Data')
-        layoutLumensAddFactorData.addWidget(self.buttonLumensAddFactorData, 4, 0, 1, 2)
+        self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
+        self.buttonLumensDialogSubmit.setText(self.dialogTitle)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 3, 0, 1, 2)
         
-        self.dialogLayout.addLayout(layoutLumensAddFactorData)
+        self.dialogLayout.addLayout(layoutLumensDialog)
         
         self.setLayout(self.dialogLayout)
         
-        self.setWindowTitle('Dialog: LUMENS Add Factor Data')
+        self.setWindowTitle(self.dialogTitle)
         self.setMinimumSize(400, 200)
         self.resize(parent.sizeHint())
     
@@ -83,15 +85,15 @@ class DialogLumensAddFactorData(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['description'] = unicode(self.lineEditDescription.text())
     
     
-    def handlerLumensAddFactorData(self):
+    def handlerLumensDialogSubmit(self):
         """LUMENS Add Factor Data
         """
         self.setAppSettings()
         
         if self.validDialogForm():
-            logging.getLogger(type(self).__name__).info('start: LUMENS Add Factor Data')
+            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             
-            self.buttonLumensAddFactorData.setDisabled(True)
+            self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
                 'modeler:lumens_add_factor_data',
@@ -99,9 +101,9 @@ class DialogLumensAddFactorData(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['description'],
             )
             
-            self.buttonLumensAddFactorData.setEnabled(True)
+            self.buttonLumensDialogSubmit.setEnabled(True)
             
-            logging.getLogger(type(self).__name__).info('end: LUMENS Add Factor Data')
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             self.close()
             

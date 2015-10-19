@@ -18,125 +18,127 @@ class DialogLumensCreateDatabase(DialogLumensBase):
     def __init__(self, parent):
         super(DialogLumensCreateDatabase, self).__init__(parent)
         
+        self.dialogTitle = 'LUMENS Create Database'
+        
         self.main.appSettings['DialogLumensCreateDatabase']['outputFolder'] = os.path.join(self.main.appSettings['appDir'], 'output')
         
         self.setupUi(self)
         
         self.buttonSelectOutputFolder.clicked.connect(self.handlerSelectOutputFolder)
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
-        self.buttonLumensCreateDatabase.clicked.connect(self.handlerLumensCreateDatabase)
+        self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
     def setupUi(self, parent):
         super(DialogLumensCreateDatabase, self).setupUi(self)
         
-        layoutLumensCreateDatabase = QtGui.QGridLayout()
+        layoutLumensDialog = QtGui.QGridLayout()
         
         self.labelProjectName = QtGui.QLabel(parent)
         self.labelProjectName.setText('Project &name:')
-        layoutLumensCreateDatabase.addWidget(self.labelProjectName, 0, 0)
+        layoutLumensDialog.addWidget(self.labelProjectName, 0, 0)
         
         self.lineEditProjectName = QtGui.QLineEdit(parent)
         self.lineEditProjectName.setText('project_name')
-        layoutLumensCreateDatabase.addWidget(self.lineEditProjectName, 0, 1)
+        layoutLumensDialog.addWidget(self.lineEditProjectName, 0, 1)
         
         self.labelProjectName.setBuddy(self.lineEditProjectName)
         
         self.labelOutputFolder = QtGui.QLabel(parent)
         self.labelOutputFolder.setText('Output folder:')
-        layoutLumensCreateDatabase.addWidget(self.labelOutputFolder, 1, 0)
+        layoutLumensDialog.addWidget(self.labelOutputFolder, 1, 0)
         
         self.lineEditOutputFolder = QtGui.QLineEdit(parent)
         self.lineEditOutputFolder.setReadOnly(True)
         self.lineEditOutputFolder.setText(self.main.appSettings['DialogLumensCreateDatabase']['outputFolder'])
-        layoutLumensCreateDatabase.addWidget(self.lineEditOutputFolder, 1, 1)
+        layoutLumensDialog.addWidget(self.lineEditOutputFolder, 1, 1)
         
         self.buttonSelectOutputFolder = QtGui.QPushButton(parent)
         self.buttonSelectOutputFolder.setText('Select &Output Folder')
-        layoutLumensCreateDatabase.addWidget(self.buttonSelectOutputFolder, 2, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonSelectOutputFolder, 2, 0, 1, 2)
         
         self.labelShapefile = QtGui.QLabel(parent)
         self.labelShapefile.setText('Shapefile:')
-        layoutLumensCreateDatabase.addWidget(self.labelShapefile, 3, 0)
+        layoutLumensDialog.addWidget(self.labelShapefile, 3, 0)
         
         self.lineEditShapefile = QtGui.QLineEdit(parent)
         self.lineEditShapefile.setReadOnly(True)
-        layoutLumensCreateDatabase.addWidget(self.lineEditShapefile, 3, 1)
+        layoutLumensDialog.addWidget(self.lineEditShapefile, 3, 1)
         
         self.buttonSelectShapefile = QtGui.QPushButton(parent)
         self.buttonSelectShapefile.setText('Select &Shapefile')
-        layoutLumensCreateDatabase.addWidget(self.buttonSelectShapefile, 4, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonSelectShapefile, 4, 0, 1, 2)
         
         self.labelShapefileAttr = QtGui.QLabel(parent)
         self.labelShapefileAttr.setText('Shapefile &attribute:')
-        layoutLumensCreateDatabase.addWidget(self.labelShapefileAttr, 5, 0)
+        layoutLumensDialog.addWidget(self.labelShapefileAttr, 5, 0)
         
         self.comboBoxShapefileAttr = QtGui.QComboBox(parent)
         self.comboBoxShapefileAttr.setDisabled(True)
-        layoutLumensCreateDatabase.addWidget(self.comboBoxShapefileAttr, 5, 1)
+        layoutLumensDialog.addWidget(self.comboBoxShapefileAttr, 5, 1)
         
         self.labelShapefileAttr.setBuddy(self.comboBoxShapefileAttr)
         
         self.labelProjectDescription = QtGui.QLabel(parent)
         self.labelProjectDescription.setText('Project &description:')
-        layoutLumensCreateDatabase.addWidget(self.labelProjectDescription, 6, 0)
+        layoutLumensDialog.addWidget(self.labelProjectDescription, 6, 0)
         
         self.lineEditProjectDescription = QtGui.QLineEdit(parent)
         self.lineEditProjectDescription.setText('description')
-        layoutLumensCreateDatabase.addWidget(self.lineEditProjectDescription, 6, 1)
+        layoutLumensDialog.addWidget(self.lineEditProjectDescription, 6, 1)
         
         self.labelProjectDescription.setBuddy(self.lineEditProjectDescription)
         
         self.labelProjectLocation = QtGui.QLabel(parent)
         self.labelProjectLocation.setText('Project &location:')
-        layoutLumensCreateDatabase.addWidget(self.labelProjectLocation, 7, 0)
+        layoutLumensDialog.addWidget(self.labelProjectLocation, 7, 0)
         
         self.lineEditProjectLocation = QtGui.QLineEdit(parent)
         self.lineEditProjectLocation.setText('location')
-        layoutLumensCreateDatabase.addWidget(self.lineEditProjectLocation, 7, 1)
+        layoutLumensDialog.addWidget(self.lineEditProjectLocation, 7, 1)
         
         self.labelProjectLocation.setBuddy(self.lineEditProjectLocation)
         
         self.labelProjectProvince = QtGui.QLabel(parent)
         self.labelProjectProvince.setText('Project &province:')
-        layoutLumensCreateDatabase.addWidget(self.labelProjectProvince, 8, 0)
+        layoutLumensDialog.addWidget(self.labelProjectProvince, 8, 0)
         
         self.lineEditProjectProvince = QtGui.QLineEdit(parent)
         self.lineEditProjectProvince.setText('province')
-        layoutLumensCreateDatabase.addWidget(self.lineEditProjectProvince, 8, 1)
+        layoutLumensDialog.addWidget(self.lineEditProjectProvince, 8, 1)
         
         self.labelProjectProvince.setBuddy(self.lineEditProjectProvince)
         
         self.labelProjectCountry = QtGui.QLabel(parent)
         self.labelProjectCountry.setText('Project &country:')
-        layoutLumensCreateDatabase.addWidget(self.labelProjectCountry, 9, 0)
+        layoutLumensDialog.addWidget(self.labelProjectCountry, 9, 0)
         
         self.lineEditProjectCountry = QtGui.QLineEdit(parent)
         self.lineEditProjectCountry.setText('country')
-        layoutLumensCreateDatabase.addWidget(self.lineEditProjectCountry, 9, 1)
+        layoutLumensDialog.addWidget(self.lineEditProjectCountry, 9, 1)
         
         self.labelProjectCountry.setBuddy(self.lineEditProjectCountry)
         
         self.labelProjectSpatialRes = QtGui.QLabel(parent)
         self.labelProjectSpatialRes.setText('Project spatial &res:')
-        layoutLumensCreateDatabase.addWidget(self.labelProjectSpatialRes, 10, 0)
+        layoutLumensDialog.addWidget(self.labelProjectSpatialRes, 10, 0)
         
         self.spinBoxProjectSpatialRes = QtGui.QSpinBox(parent)
         self.spinBoxProjectSpatialRes.setRange(1, 9999)
         self.spinBoxProjectSpatialRes.setValue(100)
-        layoutLumensCreateDatabase.addWidget(self.spinBoxProjectSpatialRes, 10, 1)
+        layoutLumensDialog.addWidget(self.spinBoxProjectSpatialRes, 10, 1)
         
         self.labelProjectSpatialRes.setBuddy(self.spinBoxProjectSpatialRes)
         
-        self.buttonLumensCreateDatabase = QtGui.QPushButton(parent)
-        self.buttonLumensCreateDatabase.setText('LUMENS Create Database')
-        layoutLumensCreateDatabase.addWidget(self.buttonLumensCreateDatabase, 11, 0, 1, 2)
+        self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
+        self.buttonLumensDialogSubmit.setText(self.dialogTitle)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 11, 0, 1, 2)
         
-        self.dialogLayout.addLayout(layoutLumensCreateDatabase)
+        self.dialogLayout.addLayout(layoutLumensDialog)
         
         self.setLayout(self.dialogLayout)
         
-        self.setWindowTitle('Dialog: LUMENS Create Database')
+        self.setWindowTitle(self.dialogTitle)
         self.setMinimumSize(400, 400)
         self.resize(parent.sizeHint())
     
@@ -195,15 +197,15 @@ class DialogLumensCreateDatabase(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['projectSpatialRes'] = self.spinBoxProjectSpatialRes.value()
     
     
-    def handlerLumensCreateDatabase(self):
+    def handlerLumensDialogSubmit(self):
         """LUMENS Create Database R algorithm
         """
         self.setAppSettings()
         
         if self.validDialogForm():
-            logging.getLogger(type(self).__name__).info('start: LUMENS Create Database')
+            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             
-            self.buttonLumensCreateDatabase.setDisabled(True)
+            self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
                 'modeler:lumens_create_database',
@@ -218,14 +220,14 @@ class DialogLumensCreateDatabase(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['projectSpatialRes']
             )
             
-            self.buttonLumensCreateDatabase.setEnabled(True)
+            self.buttonLumensDialogSubmit.setEnabled(True)
             
-            logging.getLogger(type(self).__name__).info('end: LUMENS Create Database')
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             lumensDatabase = os.path.join(
                 self.main.appSettings[type(self).__name__]['outputFolder'],
                 self.main.appSettings[type(self).__name__]['projectName'],
-                "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectProjectFileExt'])
+                "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectProjectfileExt'])
             )
             
             # if LUMENS database file exists, open it and close dialog

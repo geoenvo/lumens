@@ -53,7 +53,7 @@ class DialogLumensOpenDatabase(DialogLumensBase):
         """Select a .lpj database file and open it
         """
         lumensDatabase = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.main.appSettings['selectProjectFileExt'])))
+            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.main.appSettings['selectProjectfileExt'])))
         
         if lumensDatabase:
             self.lineEditLumensDatabase.setText(lumensDatabase)

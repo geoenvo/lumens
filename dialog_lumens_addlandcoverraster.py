@@ -18,60 +18,62 @@ class DialogLumensAddLandcoverRaster(DialogLumensBase):
     def __init__(self, parent):
         super(DialogLumensAddLandcoverRaster, self).__init__(parent)
         
+        self.dialogTitle = 'LUMENS Add Land Cover Raster'
+        
         self.setupUi(self)
         
         self.buttonSelectRasterfile.clicked.connect(self.handlerSelectRasterfile)
-        self.buttonLumensAddLandcoverRaster.clicked.connect(self.handlerLumensAddLandcoverRaster)
+        self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
     def setupUi(self, parent):
         super(DialogLumensAddLandcoverRaster, self).setupUi(self)
         
-        layoutLumensAddLandcoverRaster = QtGui.QGridLayout()
+        layoutLumensDialog = QtGui.QGridLayout()
         
         self.labelRasterfile = QtGui.QLabel(parent)
         self.labelRasterfile.setText('Raster file:')
-        layoutLumensAddLandcoverRaster.addWidget(self.labelRasterfile, 0, 0)
+        layoutLumensDialog.addWidget(self.labelRasterfile, 0, 0)
         
         self.lineEditRasterfile = QtGui.QLineEdit(parent)
         self.lineEditRasterfile.setReadOnly(True)
-        layoutLumensAddLandcoverRaster.addWidget(self.lineEditRasterfile, 0, 1)
+        layoutLumensDialog.addWidget(self.lineEditRasterfile, 0, 1)
         
         self.buttonSelectRasterfile = QtGui.QPushButton(parent)
         self.buttonSelectRasterfile.setText('Select &Raster File')
-        layoutLumensAddLandcoverRaster.addWidget(self.buttonSelectRasterfile, 1, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonSelectRasterfile, 1, 0, 1, 2)
         
         self.labelPeriod = QtGui.QLabel(parent)
         self.labelPeriod.setText('&Period:')
-        layoutLumensAddLandcoverRaster.addWidget(self.labelPeriod, 2, 0)
+        layoutLumensDialog.addWidget(self.labelPeriod, 2, 0)
         
         self.spinBoxPeriod = QtGui.QSpinBox(parent)
         self.spinBoxPeriod.setRange(1, 9999)
         td = datetime.date.today()
         self.spinBoxPeriod.setValue(td.year)
-        layoutLumensAddLandcoverRaster.addWidget(self.spinBoxPeriod, 2, 1)
+        layoutLumensDialog.addWidget(self.spinBoxPeriod, 2, 1)
         
         self.labelPeriod.setBuddy(self.spinBoxPeriod)
         
         self.labelDescription = QtGui.QLabel(parent)
         self.labelDescription.setText('&Description:')
-        layoutLumensAddLandcoverRaster.addWidget(self.labelDescription, 3, 0)
+        layoutLumensDialog.addWidget(self.labelDescription, 3, 0)
         
         self.lineEditDescription = QtGui.QLineEdit(parent)
         self.lineEditDescription.setText('description')
-        layoutLumensAddLandcoverRaster.addWidget(self.lineEditDescription, 3, 1)
+        layoutLumensDialog.addWidget(self.lineEditDescription, 3, 1)
         
         self.labelDescription.setBuddy(self.lineEditDescription)
         
-        self.buttonLumensAddLandcoverRaster = QtGui.QPushButton(parent)
-        self.buttonLumensAddLandcoverRaster.setText('LUMENS Add Land Cover Raster')
-        layoutLumensAddLandcoverRaster.addWidget(self.buttonLumensAddLandcoverRaster, 4, 0, 1, 2)
+        self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
+        self.buttonLumensDialogSubmit.setText(self.dialogTitle)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 4, 0, 1, 2)
         
-        self.dialogLayout.addLayout(layoutLumensAddLandcoverRaster)
+        self.dialogLayout.addLayout(layoutLumensDialog)
         
         self.setLayout(self.dialogLayout)
         
-        self.setWindowTitle('Dialog: LUMENS Add Land Cover Raster')
+        self.setWindowTitle(self.dialogTitle)
         self.setMinimumSize(400, 200)
         self.resize(parent.sizeHint())
     
@@ -96,15 +98,15 @@ class DialogLumensAddLandcoverRaster(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['description'] = unicode(self.lineEditDescription.text())
     
     
-    def handlerLumensAddLandcoverRaster(self):
+    def handlerLumensDialogSubmit(self):
         """LUMENS Add Landcover Raster
         """
         self.setAppSettings()
         
         if self.validDialogForm():
-            logging.getLogger(type(self).__name__).info('start: LUMENS Add Land Cover Raster')
+            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             
-            self.buttonLumensAddLandcoverRaster.setDisabled(True)
+            self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
                 'modeler:lumens_add_landcover_raster',
@@ -113,9 +115,9 @@ class DialogLumensAddLandcoverRaster(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['description'],
             )
             
-            self.buttonLumensAddLandcoverRaster.setEnabled(True)
+            self.buttonLumensDialogSubmit.setEnabled(True)
             
-            logging.getLogger(type(self).__name__).info('end: LUMENS Add Land Cover Raster')
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             self.close()
             

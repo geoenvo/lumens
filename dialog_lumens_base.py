@@ -21,6 +21,7 @@ class DialogLumensBase(QtGui.QDialog):
         super(DialogLumensBase, self).__init__(parent)
         
         self.main = parent
+        self.dialogTitle = 'LUMENS Dialog'
     
     
     def setupUi(self, parent):
@@ -37,7 +38,7 @@ class DialogLumensBase(QtGui.QDialog):
         
         self.dialogLayout.addWidget(self.logBox.widget)
         
-        self.setWindowTitle('Dialog: LUMENS Base')
+        self.setWindowTitle('LUMENS Base Dialog')
     
     
     def validDialogForm(self):

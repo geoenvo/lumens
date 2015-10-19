@@ -44,6 +44,8 @@ from dialog_lumens_importdatabase import DialogLumensImportDatabase
 from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeat import DialogLumensAddPeat
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
+from dialog_lumens_addplanningunit import DialogLumensAddPlanningUnit
+from dialog_lumens_combinedpreques import DialogLumensCombinedPreQUES
 
 __version__ = "0.1.00"
 
@@ -62,7 +64,8 @@ class MainWindow(QtGui.QMainWindow):
             'appDir': os.path.dirname(os.path.realpath(__file__)),
             'selectShapefileExt': '.shp',
             'selectRasterfileExt': '.tif',
-            'selectProjectFileExt': '.lpj',
+            'selectCsvfileExt': '.csv',
+            'selectProjectfileExt': '.lpj',
             'DialogLumensCreateDatabase': {
                 'projectName': '',
                 'outputFolder': '',
@@ -95,6 +98,16 @@ class MainWindow(QtGui.QMainWindow):
                 'rasterfile': '',
                 'description': '',
             },
+            'DialogLumensAddPlanningUnit': {
+                'rasterfile': '',
+                'csvfile': '',
+                'description': '',
+            },
+            'DialogLumensCombinedPreQUES': {
+                'csvfile': '',
+                'option': '',
+                'nodata': '',
+            },
         }
         
         self.openDialogs = []
@@ -117,6 +130,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddLandcoverRaster.clicked.connect(self.handlerDialogLumensAddLandcoverRaster)
         self.buttonDialogLumensAddPeat.clicked.connect(self.handlerDialogLumensAddPeat)
         self.buttonDialogLumensAddFactorData.clicked.connect(self.handlerDialogLumensAddFactorData)
+        self.buttonDialogLumensAddPlanningUnit.clicked.connect(self.handlerDialogLumensAddPlanningUnit)
+        self.buttonDialogLumensCombinedPreQUES.clicked.connect(self.handlerDialogLumensCombinedPreQUES)
     
     
     def eventFilter(self, object, event):
@@ -129,11 +144,15 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddLandcoverRaster.setDisabled(True)
                 self.buttonDialogLumensAddPeat.setDisabled(True)
                 self.buttonDialogLumensAddFactorData.setDisabled(True)
+                self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
+                self.buttonDialogLumensCombinedPreQUES.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
                 self.buttonDialogLumensAddPeat.setEnabled(True)
                 self.buttonDialogLumensAddFactorData.setEnabled(True)
+                self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
+                self.buttonDialogLumensCombinedPreQUES.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -189,6 +208,14 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddFactorData = QtGui.QPushButton(self)
         self.buttonDialogLumensAddFactorData.setText('Dialog: LUMENS Add Factor Data')
         layout.addWidget(self.buttonDialogLumensAddFactorData)
+        
+        self.buttonDialogLumensAddPlanningUnit = QtGui.QPushButton(self)
+        self.buttonDialogLumensAddPlanningUnit.setText('Dialog: LUMENS Add Planning Unit')
+        layout.addWidget(self.buttonDialogLumensAddPlanningUnit)
+        
+        self.buttonDialogLumensCombinedPreQUES = QtGui.QPushButton(self)
+        self.buttonDialogLumensCombinedPreQUES.setText('Dialog: LUMENS Combined PreQUES')
+        layout.addWidget(self.buttonDialogLumensCombinedPreQUES)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -250,7 +277,7 @@ class MainWindow(QtGui.QMainWindow):
         """Select a .lpj database file and open it
         """
         lumensDatabase = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectFileExt'])))
+            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
         
         if lumensDatabase:
             logging.getLogger(type(self).__name__).info('select LUMENS database: %s', lumensDatabase)
@@ -281,6 +308,18 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensAddFactorData)
     
     
+    def handlerDialogLumensAddPlanningUnit(self):
+        """
+        """
+        self.openDialog(DialogLumensAddPlanningUnit)
+    
+    
+    def handlerDialogLumensCombinedPreQUES(self):
+        """
+        """
+        self.openDialog(DialogLumensCombinedPreQUES)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -306,6 +345,8 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
             self.buttonDialogLumensAddPeat.setEnabled(True)
             self.buttonDialogLumensAddFactorData.setEnabled(True)
+            self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
+            self.buttonDialogLumensCombinedPreQUES.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -326,6 +367,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddLandcoverRaster.setDisabled(True)
         self.buttonDialogLumensAddPeat.setDisabled(True)
         self.buttonDialogLumensAddFactorData.setDisabled(True)
+        self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
+        self.buttonDialogLumensCombinedPreQUES.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 
