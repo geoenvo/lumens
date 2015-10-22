@@ -46,6 +46,9 @@ from dialog_lumens_addpeat import DialogLumensAddPeat
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunit import DialogLumensAddPlanningUnit
 from dialog_lumens_combinedpreques import DialogLumensCombinedPreQUES
+from dialog_lumens_quesc import DialogLumensQUESC
+from dialog_lumens_quescpeat import DialogLumensQUESCPeat
+from dialog_lumens_quescsummarize import DialogLumensQUESCSummarize
 
 __version__ = "0.1.00"
 
@@ -108,6 +111,16 @@ class MainWindow(QtGui.QMainWindow):
                 'option': '',
                 'nodata': '',
             },
+            'DialogLumensQUESC': {
+                'csvfile': '',
+                'nodata': '',
+            },
+            'DialogLumensQUESCPeat': {
+                'csvfile': '',
+            },
+            'DialogLumensQUESCSummarize': {
+                'checkbox': '',
+            },
         }
         
         self.openDialogs = []
@@ -132,6 +145,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddFactorData.clicked.connect(self.handlerDialogLumensAddFactorData)
         self.buttonDialogLumensAddPlanningUnit.clicked.connect(self.handlerDialogLumensAddPlanningUnit)
         self.buttonDialogLumensCombinedPreQUES.clicked.connect(self.handlerDialogLumensCombinedPreQUES)
+        self.buttonDialogLumensQUESC.clicked.connect(self.handlerDialogLumensQUESC)
+        self.buttonDialogLumensQUESCPeat.clicked.connect(self.handlerDialogLumensQUESCPeat)
+        self.buttonDialogLumensQUESCSummarize.clicked.connect(self.handlerDialogLumensQUESCSummarize)
     
     
     def eventFilter(self, object, event):
@@ -146,6 +162,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddFactorData.setDisabled(True)
                 self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
                 self.buttonDialogLumensCombinedPreQUES.setDisabled(True)
+                self.buttonDialogLumensQUESC.setDisabled(True)
+                self.buttonDialogLumensQUESCPeat.setDisabled(True)
+                self.buttonDialogLumensQUESCSummarize.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
@@ -153,6 +172,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddFactorData.setEnabled(True)
                 self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
                 self.buttonDialogLumensCombinedPreQUES.setEnabled(True)
+                self.buttonDialogLumensQUESC.setEnabled(True)
+                self.buttonDialogLumensQUESCPeat.setEnabled(True)
+                self.buttonDialogLumensQUESCSummarize.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -216,6 +238,18 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensCombinedPreQUES = QtGui.QPushButton(self)
         self.buttonDialogLumensCombinedPreQUES.setText('Dialog: LUMENS Combined PreQUES')
         layout.addWidget(self.buttonDialogLumensCombinedPreQUES)
+        
+        self.buttonDialogLumensQUESC = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESC.setText('Dialog: LUMENS QUES-C')
+        layout.addWidget(self.buttonDialogLumensQUESC)
+        
+        self.buttonDialogLumensQUESCPeat = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESCPeat.setText('Dialog: LUMENS QUES-C Peat')
+        layout.addWidget(self.buttonDialogLumensQUESCPeat)
+        
+        self.buttonDialogLumensQUESCSummarize = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESCSummarize.setText('Dialog: LUMENS QUES-C Summarize Multiple Period')
+        layout.addWidget(self.buttonDialogLumensQUESCSummarize)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -320,6 +354,24 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensCombinedPreQUES)
     
     
+    def handlerDialogLumensQUESC(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESC)
+    
+    
+    def handlerDialogLumensQUESCPeat(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESCPeat)
+    
+    
+    def handlerDialogLumensQUESCSummarize(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESCSummarize)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -347,6 +399,9 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensAddFactorData.setEnabled(True)
             self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
             self.buttonDialogLumensCombinedPreQUES.setEnabled(True)
+            self.buttonDialogLumensQUESC.setEnabled(True)
+            self.buttonDialogLumensQUESCPeat.setEnabled(True)
+            self.buttonDialogLumensQUESCSummarize.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -369,6 +424,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddFactorData.setDisabled(True)
         self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
         self.buttonDialogLumensCombinedPreQUES.setDisabled(True)
+        self.buttonDialogLumensQUESC.setDisabled(True)
+        self.buttonDialogLumensQUESCPeat.setDisabled(True)
+        self.buttonDialogLumensQUESCSummarize.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 
