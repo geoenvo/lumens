@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensCombinedPreQUES(DialogLumensBase):
+class DialogLumensPreQUES(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensCombinedPreQUES, self).__init__(parent)
+        super(DialogLumensPreQUES, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS Combined PreQUES'
+        self.dialogTitle = 'LUMENS PreQUES'
         
         self.setupUi(self)
         
@@ -27,7 +27,7 @@ class DialogLumensCombinedPreQUES(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensCombinedPreQUES, self).setupUi(self)
+        super(DialogLumensPreQUES, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
