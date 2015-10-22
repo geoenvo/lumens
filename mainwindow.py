@@ -46,6 +46,7 @@ from dialog_lumens_addpeat import DialogLumensAddPeat
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunit import DialogLumensAddPlanningUnit
 from dialog_lumens_preques import DialogLumensPreQUES
+from dialog_lumens_prequestrajectory import DialogLumensPreQUESTrajectory
 from dialog_lumens_quesc import DialogLumensQUESC
 from dialog_lumens_quescpeat import DialogLumensQUESCPeat
 from dialog_lumens_quescsummarize import DialogLumensQUESCSummarize
@@ -111,6 +112,17 @@ class MainWindow(QtGui.QMainWindow):
                 'option': '',
                 'nodata': '',
             },
+            'DialogLumensPreQUESTrajectory': {
+                'workingDir': '',
+                'location': '',
+                't1': '',
+                't2': '',
+                'landCoverT1': '',
+                'landCoverT2': '',
+                'planningUnit': '',
+                'csvLandUse': '',
+                'csvPlanningUnit': '',
+            },
             'DialogLumensQUESC': {
                 'csvfile': '',
                 'nodata': '',
@@ -145,6 +157,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddFactorData.clicked.connect(self.handlerDialogLumensAddFactorData)
         self.buttonDialogLumensAddPlanningUnit.clicked.connect(self.handlerDialogLumensAddPlanningUnit)
         self.buttonDialogLumensPreQUES.clicked.connect(self.handlerDialogLumensPreQUES)
+        self.buttonDialogLumensPreQUESTrajectory.clicked.connect(self.handlerDialogLumensPreQUESTrajectory)
         self.buttonDialogLumensQUESC.clicked.connect(self.handlerDialogLumensQUESC)
         self.buttonDialogLumensQUESCPeat.clicked.connect(self.handlerDialogLumensQUESCPeat)
         self.buttonDialogLumensQUESCSummarize.clicked.connect(self.handlerDialogLumensQUESCSummarize)
@@ -162,6 +175,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddFactorData.setDisabled(True)
                 self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
                 self.buttonDialogLumensPreQUES.setDisabled(True)
+                self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
                 self.buttonDialogLumensQUESC.setDisabled(True)
                 self.buttonDialogLumensQUESCPeat.setDisabled(True)
                 self.buttonDialogLumensQUESCSummarize.setDisabled(True)
@@ -172,6 +186,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddFactorData.setEnabled(True)
                 self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
                 self.buttonDialogLumensPreQUES.setEnabled(True)
+                self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
                 self.buttonDialogLumensQUESC.setEnabled(True)
                 self.buttonDialogLumensQUESCPeat.setEnabled(True)
                 self.buttonDialogLumensQUESCSummarize.setEnabled(True)
@@ -238,6 +253,10 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensPreQUES = QtGui.QPushButton(self)
         self.buttonDialogLumensPreQUES.setText('Dialog: LUMENS PreQUES')
         layout.addWidget(self.buttonDialogLumensPreQUES)
+        
+        self.buttonDialogLumensPreQUESTrajectory = QtGui.QPushButton(self)
+        self.buttonDialogLumensPreQUESTrajectory.setText('Dialog: LUMENS PreQUES Trajectory')
+        layout.addWidget(self.buttonDialogLumensPreQUESTrajectory)
         
         self.buttonDialogLumensQUESC = QtGui.QPushButton(self)
         self.buttonDialogLumensQUESC.setText('Dialog: LUMENS QUES-C')
@@ -354,6 +373,12 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensPreQUES)
     
     
+    def handlerDialogLumensPreQUESTrajectory(self):
+        """
+        """
+        self.openDialog(DialogLumensPreQUESTrajectory)
+    
+    
     def handlerDialogLumensQUESC(self):
         """
         """
@@ -399,6 +424,7 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensAddFactorData.setEnabled(True)
             self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
             self.buttonDialogLumensPreQUES.setEnabled(True)
+            self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
             self.buttonDialogLumensQUESC.setEnabled(True)
             self.buttonDialogLumensQUESCPeat.setEnabled(True)
             self.buttonDialogLumensQUESCSummarize.setEnabled(True)
@@ -424,6 +450,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddFactorData.setDisabled(True)
         self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
         self.buttonDialogLumensPreQUES.setDisabled(True)
+        self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
         self.buttonDialogLumensQUESC.setDisabled(True)
         self.buttonDialogLumensQUESCPeat.setDisabled(True)
         self.buttonDialogLumensQUESCSummarize.setDisabled(True)
