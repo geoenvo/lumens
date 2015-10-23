@@ -46,10 +46,10 @@ from dialog_lumens_addpeat import DialogLumensAddPeat
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunit import DialogLumensAddPlanningUnit
 from dialog_lumens_preques import DialogLumensPreQUES
-from dialog_lumens_prequestrajectory import DialogLumensPreQUESTrajectory
+from dialog_lumens_preques_trajectory import DialogLumensPreQUESTrajectory
 from dialog_lumens_quesc import DialogLumensQUESC
-from dialog_lumens_quescpeat import DialogLumensQUESCPeat
-from dialog_lumens_quescsummarize import DialogLumensQUESCSummarize
+from dialog_lumens_quesc_peat import DialogLumensQUESCPeat
+from dialog_lumens_quesc_summarize import DialogLumensQUESCSummarize
 
 __version__ = "0.1.00"
 
