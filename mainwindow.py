@@ -45,6 +45,8 @@ from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeat import DialogLumensAddPeat
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunit import DialogLumensAddPlanningUnit
+from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReferenceData
+from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
 from dialog_lumens_preques import DialogLumensPreQUES
 from dialog_lumens_preques_trajectory import DialogLumensPreQUESTrajectory
 from dialog_lumens_quesc import DialogLumensQUESC
@@ -107,6 +109,17 @@ class MainWindow(QtGui.QMainWindow):
                 'csvfile': '',
                 'description': '',
             },
+            'DialogLumensPURCreateReferenceData': {
+                'shapefile': '',
+                'shapefileAttr': '',
+                'dataTitle': '',
+            },
+            'DialogLumensPURPreparePlanningUnit': {
+                'shapefile': '',
+                'shapefileAttr': '',
+                'planningUnitTitle': '',
+                'planningUnitType': '',
+            },
             'DialogLumensPreQUES': {
                 'csvfile': '',
                 'option': '',
@@ -156,6 +169,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddPeat.clicked.connect(self.handlerDialogLumensAddPeat)
         self.buttonDialogLumensAddFactorData.clicked.connect(self.handlerDialogLumensAddFactorData)
         self.buttonDialogLumensAddPlanningUnit.clicked.connect(self.handlerDialogLumensAddPlanningUnit)
+        self.buttonDialogLumensPURCreateReferenceData.clicked.connect(self.handlerDialogLumensPURCreateReferenceData)
+        self.buttonDialogLumensPURPreparePlanningUnit.clicked.connect(self.handlerDialogLumensPURPreparePlanningUnit)
         self.buttonDialogLumensPreQUES.clicked.connect(self.handlerDialogLumensPreQUES)
         self.buttonDialogLumensPreQUESTrajectory.clicked.connect(self.handlerDialogLumensPreQUESTrajectory)
         self.buttonDialogLumensQUESC.clicked.connect(self.handlerDialogLumensQUESC)
@@ -174,6 +189,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddPeat.setDisabled(True)
                 self.buttonDialogLumensAddFactorData.setDisabled(True)
                 self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
+                self.buttonDialogLumensPURCreateReferenceData.setDisabled(True)
+                self.buttonDialogLumensPURPreparePlanningUnit.setDisabled(True)
                 self.buttonDialogLumensPreQUES.setDisabled(True)
                 self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
                 self.buttonDialogLumensQUESC.setDisabled(True)
@@ -185,6 +202,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddPeat.setEnabled(True)
                 self.buttonDialogLumensAddFactorData.setEnabled(True)
                 self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
+                self.buttonDialogLumensPURCreateReferenceData.setEnabled(True)
+                self.buttonDialogLumensPURPreparePlanningUnit.setEnabled(True)
                 self.buttonDialogLumensPreQUES.setEnabled(True)
                 self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
                 self.buttonDialogLumensQUESC.setEnabled(True)
@@ -249,6 +268,14 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddPlanningUnit = QtGui.QPushButton(self)
         self.buttonDialogLumensAddPlanningUnit.setText('Dialog: LUMENS Add Planning Unit')
         layout.addWidget(self.buttonDialogLumensAddPlanningUnit)
+        
+        self.buttonDialogLumensPURCreateReferenceData = QtGui.QPushButton(self)
+        self.buttonDialogLumensPURCreateReferenceData.setText('Dialog: LUMENS PUR Create Reference Data')
+        layout.addWidget(self.buttonDialogLumensPURCreateReferenceData)
+        
+        self.buttonDialogLumensPURPreparePlanningUnit = QtGui.QPushButton(self)
+        self.buttonDialogLumensPURPreparePlanningUnit.setText('Dialog: LUMENS PUR Prepare Planning Unit')
+        layout.addWidget(self.buttonDialogLumensPURPreparePlanningUnit)
         
         self.buttonDialogLumensPreQUES = QtGui.QPushButton(self)
         self.buttonDialogLumensPreQUES.setText('Dialog: LUMENS PreQUES')
@@ -367,6 +394,18 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensAddPlanningUnit)
     
     
+    def handlerDialogLumensPURCreateReferenceData(self):
+        """
+        """
+        self.openDialog(DialogLumensPURCreateReferenceData)
+    
+    
+    def handlerDialogLumensPURPreparePlanningUnit(self):
+        """
+        """
+        self.openDialog(DialogLumensPURPreparePlanningUnit)
+    
+    
     def handlerDialogLumensPreQUES(self):
         """
         """
@@ -423,6 +462,8 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensAddPeat.setEnabled(True)
             self.buttonDialogLumensAddFactorData.setEnabled(True)
             self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
+            self.buttonDialogLumensPURCreateReferenceData.setEnabled(True)
+            self.buttonDialogLumensPURPreparePlanningUnit.setEnabled(True)
             self.buttonDialogLumensPreQUES.setEnabled(True)
             self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
             self.buttonDialogLumensQUESC.setEnabled(True)
@@ -449,6 +490,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddPeat.setDisabled(True)
         self.buttonDialogLumensAddFactorData.setDisabled(True)
         self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
+        self.buttonDialogLumensPURCreateReferenceData.setDisabled(True)
+        self.buttonDialogLumensPURPreparePlanningUnit.setDisabled(True)
         self.buttonDialogLumensPreQUES.setDisabled(True)
         self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
         self.buttonDialogLumensQUESC.setDisabled(True)

@@ -56,4 +56,27 @@ class DialogLumensBase(QtGui.QDialog):
             QtGui.QMessageBox.critical(self, 'Error', 'Please complete the fields.')
         
         return valid
-        
+    
+    
+    def clearLayout(self, layout):
+        """Clear a layout and all its child widgets
+        """
+        for i in reversed(range(layout.count())):
+            item = layout.itemAt(i)
+
+            if isinstance(item, QtGui.QWidgetItem):
+                ## print "widget" + str(item)
+                ## item.widget().close()
+                item.widget().deleteLater() # use this to properly delete the widget
+                # or
+                # item.widget().setParent(None)
+            elif isinstance(item, QtGui.QSpacerItem):
+                ## print "spacer " + str(item)
+                pass
+                # no need to do extra stuff
+            else:
+                ## print "layout " + str(item)
+                self.clearLayout(item.layout())
+
+            # remove the item from layout
+            layout.removeItem(item)
