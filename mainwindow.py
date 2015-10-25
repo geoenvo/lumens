@@ -47,6 +47,8 @@ from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunit import DialogLumensAddPlanningUnit
 from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReferenceData
 from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
+from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlanningUnit
+from dialog_lumens_pur_finalization import DialogLumensPURFinalization
 from dialog_lumens_preques import DialogLumensPreQUES
 from dialog_lumens_preques_trajectory import DialogLumensPreQUESTrajectory
 from dialog_lumens_quesc import DialogLumensQUESC
@@ -120,6 +122,12 @@ class MainWindow(QtGui.QMainWindow):
                 'planningUnitTitle': '',
                 'planningUnitType': '',
             },
+            'DialogLumensPURReconcilePlanningUnit': {
+                'outputFile': '',
+            },
+            'DialogLumensPURFinalization': {
+                'shapefile': '',
+            },
             'DialogLumensPreQUES': {
                 'csvfile': '',
                 'option': '',
@@ -171,6 +179,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddPlanningUnit.clicked.connect(self.handlerDialogLumensAddPlanningUnit)
         self.buttonDialogLumensPURCreateReferenceData.clicked.connect(self.handlerDialogLumensPURCreateReferenceData)
         self.buttonDialogLumensPURPreparePlanningUnit.clicked.connect(self.handlerDialogLumensPURPreparePlanningUnit)
+        self.buttonDialogLumensPURReconcilePlanningUnit.clicked.connect(self.handlerDialogLumensPURReconcilePlanningUnit)
+        self.buttonDialogLumensPURFinalization.clicked.connect(self.handlerDialogLumensPURFinalization)
         self.buttonDialogLumensPreQUES.clicked.connect(self.handlerDialogLumensPreQUES)
         self.buttonDialogLumensPreQUESTrajectory.clicked.connect(self.handlerDialogLumensPreQUESTrajectory)
         self.buttonDialogLumensQUESC.clicked.connect(self.handlerDialogLumensQUESC)
@@ -191,6 +201,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
                 self.buttonDialogLumensPURCreateReferenceData.setDisabled(True)
                 self.buttonDialogLumensPURPreparePlanningUnit.setDisabled(True)
+                self.buttonDialogLumensPURReconcilePlanningUnit.setDisabled(True)
+                self.buttonDialogLumensPURFinalization.setDisabled(True)
                 self.buttonDialogLumensPreQUES.setDisabled(True)
                 self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
                 self.buttonDialogLumensQUESC.setDisabled(True)
@@ -204,6 +216,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
                 self.buttonDialogLumensPURCreateReferenceData.setEnabled(True)
                 self.buttonDialogLumensPURPreparePlanningUnit.setEnabled(True)
+                self.buttonDialogLumensPURReconcilePlanningUnit.setEnabled(True)
+                self.buttonDialogLumensPURFinalization.setEnabled(True)
                 self.buttonDialogLumensPreQUES.setEnabled(True)
                 self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
                 self.buttonDialogLumensQUESC.setEnabled(True)
@@ -276,6 +290,14 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensPURPreparePlanningUnit = QtGui.QPushButton(self)
         self.buttonDialogLumensPURPreparePlanningUnit.setText('Dialog: LUMENS PUR Prepare Planning Unit')
         layout.addWidget(self.buttonDialogLumensPURPreparePlanningUnit)
+        
+        self.buttonDialogLumensPURReconcilePlanningUnit = QtGui.QPushButton(self)
+        self.buttonDialogLumensPURReconcilePlanningUnit.setText('Dialog: LUMENS PUR Reconcile Planning Unit')
+        layout.addWidget(self.buttonDialogLumensPURReconcilePlanningUnit)
+        
+        self.buttonDialogLumensPURFinalization = QtGui.QPushButton(self)
+        self.buttonDialogLumensPURFinalization.setText('Dialog: LUMENS PUR Finalization')
+        layout.addWidget(self.buttonDialogLumensPURFinalization)
         
         self.buttonDialogLumensPreQUES = QtGui.QPushButton(self)
         self.buttonDialogLumensPreQUES.setText('Dialog: LUMENS PreQUES')
@@ -406,6 +428,18 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensPURPreparePlanningUnit)
     
     
+    def handlerDialogLumensPURReconcilePlanningUnit(self):
+        """
+        """
+        self.openDialog(DialogLumensPURReconcilePlanningUnit)
+    
+    
+    def handlerDialogLumensPURFinalization(self):
+        """
+        """
+        self.openDialog(DialogLumensPURFinalization)
+    
+    
     def handlerDialogLumensPreQUES(self):
         """
         """
@@ -464,6 +498,8 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensAddPlanningUnit.setEnabled(True)
             self.buttonDialogLumensPURCreateReferenceData.setEnabled(True)
             self.buttonDialogLumensPURPreparePlanningUnit.setEnabled(True)
+            self.buttonDialogLumensPURReconcilePlanningUnit.setEnabled(True)
+            self.buttonDialogLumensPURFinalization.setEnabled(True)
             self.buttonDialogLumensPreQUES.setEnabled(True)
             self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
             self.buttonDialogLumensQUESC.setEnabled(True)
@@ -492,6 +528,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensAddPlanningUnit.setDisabled(True)
         self.buttonDialogLumensPURCreateReferenceData.setDisabled(True)
         self.buttonDialogLumensPURPreparePlanningUnit.setDisabled(True)
+        self.buttonDialogLumensPURReconcilePlanningUnit.setDisabled(True)
+        self.buttonDialogLumensPURFinalization.setDisabled(True)
         self.buttonDialogLumensPreQUES.setDisabled(True)
         self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
         self.buttonDialogLumensQUESC.setDisabled(True)
