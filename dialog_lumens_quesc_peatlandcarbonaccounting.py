@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensPreQUES(DialogLumensBase):
+class DialogLumensQUESCPeatlandCarbonAccounting(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensPreQUES, self).__init__(parent)
+        super(DialogLumensQUESCPeatlandCarbonAccounting, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS PreQUES'
+        self.dialogTitle = 'LUMENS QUES-C Peatland Carbon Accounting'
         
         self.setupUi(self)
         
@@ -27,12 +27,12 @@ class DialogLumensPreQUES(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensPreQUES, self).setupUi(self)
+        super(DialogLumensQUESCPeatlandCarbonAccounting, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
         self.labelCsvfile = QtGui.QLabel(parent)
-        self.labelCsvfile.setText('Land cover lookup table:')
+        self.labelCsvfile.setText('Carbon stock lookup table:')
         layoutLumensDialog.addWidget(self.labelCsvfile, 0, 0)
         
         self.lineEditCsvfile = QtGui.QLineEdit(parent)
@@ -43,36 +43,9 @@ class DialogLumensPreQUES(DialogLumensBase):
         self.buttonSelectCsvfile.setText('Select &Lookup Table')
         layoutLumensDialog.addWidget(self.buttonSelectCsvfile, 1, 0, 1, 2)
         
-        self.labelOption = QtGui.QLabel(parent)
-        self.labelOption.setText('Analysis &option:')
-        layoutLumensDialog.addWidget(self.labelOption, 2, 0)
-        
-        self.comboBoxOption = QtGui.QComboBox(parent)
-        comboBoxItems = [
-            'All analysis',
-            'Perubahan dominan di tiap zona',
-            'Dinamika perubahan di tiap zona (Alpha-Beta)',
-            'Analisis Alur Perubahan (Pre-QUES)',
-        ]
-        self.comboBoxOption.addItems(comboBoxItems)
-        layoutLumensDialog.addWidget(self.comboBoxOption, 2, 1)
-        
-        self.labelOption.setBuddy(self.comboBoxOption)
-        
-        self.labelSpinBox = QtGui.QLabel(parent)
-        self.labelSpinBox.setText('Land cover &no data value:')
-        layoutLumensDialog.addWidget(self.labelSpinBox, 3, 0)
-        
-        self.spinBox = QtGui.QSpinBox(parent)
-        self.spinBox.setRange(-9999, 9999)
-        self.spinBox.setValue(0)
-        layoutLumensDialog.addWidget(self.spinBox, 3, 1)
-        
-        self.labelSpinBox.setBuddy(self.spinBox)
-        
         self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
         self.buttonLumensDialogSubmit.setText(self.dialogTitle)
-        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 4, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 2, 0, 1, 2)
         
         self.dialogLayout.addLayout(layoutLumensDialog)
         
@@ -87,7 +60,7 @@ class DialogLumensPreQUES(DialogLumensBase):
         """Select a csv file
         """
         csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Land Cover Lookup Table', QtCore.QDir.homePath(), 'Land Cover Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+            self, 'Carbon Stock Lookup Table', QtCore.QDir.homePath(), 'Carbon Stock Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
         if csvfile:
             self.lineEditCsvfile.setText(csvfile)
@@ -99,23 +72,6 @@ class DialogLumensPreQUES(DialogLumensBase):
         """Set the required values from the form widgets
         """
         self.main.appSettings[type(self).__name__]['csvfile'] = unicode(self.lineEditCsvfile.text())
-        
-        comboboxVal = None
-        comboboxText = unicode(self.comboBoxOption.currentText())
-        
-        if comboBoxText == 'All analysis':
-            comboboxVal = 0
-        elif comboboxText == 'Perubahan dominan di tiap zona':
-            comboboxVal = 1
-        elif comboboxText == 'Dinamika perubahan di tiap zona (Alpha-Beta)':
-            comboboxVal = 2
-        elif comboboxText == 'Analisis Alur Perubahan (Pre-QUES)':
-            comboboxVal = 3
-        else:
-            comboboxVal = 0
-        
-        self.main.appSettings[type(self).__name__]['option'] = comboboxVal
-        self.main.appSettings[type(self).__name__]['nodata'] = self.spinBox.value()
     
     
     def handlerLumensDialogSubmit(self):
@@ -129,10 +85,8 @@ class DialogLumensPreQUES(DialogLumensBase):
             self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
-                'r:lumenscombinedpreques',
+                'modeler:ques-c_peat',
                 self.main.appSettings[type(self).__name__]['csvfile'],
-                self.main.appSettings[type(self).__name__]['option'],
-                self.main.appSettings[type(self).__name__]['nodata'],
             )
             
             self.buttonLumensDialogSubmit.setEnabled(True)

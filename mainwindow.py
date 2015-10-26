@@ -49,11 +49,12 @@ from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReference
 from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
 from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlanningUnit
 from dialog_lumens_pur_finalization import DialogLumensPURFinalization
-from dialog_lumens_preques import DialogLumensPreQUES
-from dialog_lumens_preques_trajectory import DialogLumensPreQUESTrajectory
-from dialog_lumens_quesc import DialogLumensQUESC
-from dialog_lumens_quesc_peat import DialogLumensQUESCPeat
-from dialog_lumens_quesc_summarize import DialogLumensQUESCSummarize
+from dialog_lumens_preques_landcoverchangeanalysis import DialogLumensPreQUESLandcoverChangeAnalysis
+from dialog_lumens_preques_landcovertrajectoriesanalysis import DialogLumensPreQUESLandcoverTrajectoriesAnalysis
+from dialog_lumens_quesc_carbonaccounting import DialogLumensQUESCCarbonAccounting
+from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatlandCarbonAccounting
+from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummarizeMultiplePeriod
+from dialog_lumens_quesb_analysis import DialogLumensQUESBAnalysis
 
 __version__ = "0.1.00"
 
@@ -128,12 +129,12 @@ class MainWindow(QtGui.QMainWindow):
             'DialogLumensPURFinalization': {
                 'shapefile': '',
             },
-            'DialogLumensPreQUES': {
+            'DialogLumensPreQUESLandcoverChangeAnalysis': {
                 'csvfile': '',
                 'option': '',
                 'nodata': '',
             },
-            'DialogLumensPreQUESTrajectory': {
+            'DialogLumensPreQUESLandcoverTrajectoriesAnalysis': {
                 'workingDir': '',
                 'location': '',
                 't1': '',
@@ -144,15 +145,32 @@ class MainWindow(QtGui.QMainWindow):
                 'csvLandUse': '',
                 'csvPlanningUnit': '',
             },
-            'DialogLumensQUESC': {
+            'DialogLumensQUESCCarbonAccounting': {
                 'csvfile': '',
                 'nodata': '',
             },
-            'DialogLumensQUESCPeat': {
+            'DialogLumensQUESCPeatlandCarbonAccounting': {
                 'csvfile': '',
             },
-            'DialogLumensQUESCSummarize': {
+            'DialogLumensQUESCSummarizeMultiplePeriod': {
                 'checkbox': '',
+            },
+            'DialogLumensQUESBAnalysis': {
+                'csvLandCover': '',
+                'samplingGridRes': '',
+                'samplingWindowSize': '',
+                'windowShape': '',
+                'nodata': '',
+                'csvClassDescriptors': '',
+                'csvEdgeContrast': '',
+                'csvZoneLookup': '',
+                'refMapID': '',
+                'outputTECIInitial': '',
+                'outputTECIFinal': '',
+                'outputHabitatLoss': '',
+                'outputDegradedHabitat': '',
+                'outputHabitatGain': '',
+                'outputRecoveredHabitat': '',
             },
         }
         
@@ -173,6 +191,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensImportDatabase.clicked.connect(self.handlerDialogLumensImportDatabase)
         self.buttonLumensOpenDatabase.clicked.connect(self.handlerLumensOpenDatabase)
         self.buttonLumensCloseDatabase.clicked.connect(self.handlerLumensCloseDatabase)
+        self.buttonLumensDeleteData.clicked.connect(self.handlerLumensDeleteData)
         self.buttonDialogLumensAddLandcoverRaster.clicked.connect(self.handlerDialogLumensAddLandcoverRaster)
         self.buttonDialogLumensAddPeat.clicked.connect(self.handlerDialogLumensAddPeat)
         self.buttonDialogLumensAddFactorData.clicked.connect(self.handlerDialogLumensAddFactorData)
@@ -181,11 +200,12 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensPURPreparePlanningUnit.clicked.connect(self.handlerDialogLumensPURPreparePlanningUnit)
         self.buttonDialogLumensPURReconcilePlanningUnit.clicked.connect(self.handlerDialogLumensPURReconcilePlanningUnit)
         self.buttonDialogLumensPURFinalization.clicked.connect(self.handlerDialogLumensPURFinalization)
-        self.buttonDialogLumensPreQUES.clicked.connect(self.handlerDialogLumensPreQUES)
-        self.buttonDialogLumensPreQUESTrajectory.clicked.connect(self.handlerDialogLumensPreQUESTrajectory)
-        self.buttonDialogLumensQUESC.clicked.connect(self.handlerDialogLumensQUESC)
-        self.buttonDialogLumensQUESCPeat.clicked.connect(self.handlerDialogLumensQUESCPeat)
-        self.buttonDialogLumensQUESCSummarize.clicked.connect(self.handlerDialogLumensQUESCSummarize)
+        self.buttonDialogLumensPreQUESLandcoverChangeAnalysis.clicked.connect(self.handlerDialogLumensPreQUESLandcoverChangeAnalysis)
+        self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis.clicked.connect(self.handlerDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
+        self.buttonDialogLumensQUESCCarbonAccounting.clicked.connect(self.handlerDialogLumensQUESCCarbonAccounting)
+        self.buttonDialogLumensQUESCPeatlandCarbonAccounting.clicked.connect(self.handlerDialogLumensQUESCPeatlandCarbonAccounting)
+        self.buttonDialogLumensQUESCSummarizeMultiplePeriod.clicked.connect(self.handlerDialogLumensQUESCSummarizeMultiplePeriod)
+        self.buttonDialogLumensQUESBAnalysis.clicked.connect(self.handlerDialogLumensQUESBAnalysis)
     
     
     def eventFilter(self, object, event):
@@ -195,6 +215,7 @@ class MainWindow(QtGui.QMainWindow):
             print "widget window has gained focus"
             if not self.appSettings['DialogLumensOpenDatabase']['projectFile']:
                 self.buttonLumensCloseDatabase.setDisabled(True)
+                self.buttonLumensDeleteData.setDisabled(True)
                 self.buttonDialogLumensAddLandcoverRaster.setDisabled(True)
                 self.buttonDialogLumensAddPeat.setDisabled(True)
                 self.buttonDialogLumensAddFactorData.setDisabled(True)
@@ -203,13 +224,15 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensPURPreparePlanningUnit.setDisabled(True)
                 self.buttonDialogLumensPURReconcilePlanningUnit.setDisabled(True)
                 self.buttonDialogLumensPURFinalization.setDisabled(True)
-                self.buttonDialogLumensPreQUES.setDisabled(True)
-                self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
-                self.buttonDialogLumensQUESC.setDisabled(True)
-                self.buttonDialogLumensQUESCPeat.setDisabled(True)
-                self.buttonDialogLumensQUESCSummarize.setDisabled(True)
+                self.buttonDialogLumensPreQUESLandcoverChangeAnalysis.setDisabled(True)
+                self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setDisabled(True)
+                self.buttonDialogLumensQUESCCarbonAccounting.setDisabled(True)
+                self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
+                self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
+                self.buttonDialogLumensQUESBAnalysis.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
+                self.buttonLumensDeleteData.setEnabled(True)
                 self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
                 self.buttonDialogLumensAddPeat.setEnabled(True)
                 self.buttonDialogLumensAddFactorData.setEnabled(True)
@@ -218,11 +241,12 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensPURPreparePlanningUnit.setEnabled(True)
                 self.buttonDialogLumensPURReconcilePlanningUnit.setEnabled(True)
                 self.buttonDialogLumensPURFinalization.setEnabled(True)
-                self.buttonDialogLumensPreQUES.setEnabled(True)
-                self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
-                self.buttonDialogLumensQUESC.setEnabled(True)
-                self.buttonDialogLumensQUESCPeat.setEnabled(True)
-                self.buttonDialogLumensQUESCSummarize.setEnabled(True)
+                self.buttonDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
+                self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
+                self.buttonDialogLumensQUESCCarbonAccounting.setEnabled(True)
+                self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
+                self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
+                self.buttonDialogLumensQUESBAnalysis.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -254,6 +278,10 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonLumensCloseDatabase = QtGui.QPushButton(self)
         self.buttonLumensCloseDatabase.setText('LUMENS Close Database')
         layout.addWidget(self.buttonLumensCloseDatabase)
+        
+        self.buttonLumensDeleteData = QtGui.QPushButton(self)
+        self.buttonLumensDeleteData.setText('LUMENS Delete Data')
+        layout.addWidget(self.buttonLumensDeleteData)
         
         self.buttonDialogLumensCreateDatabase = QtGui.QPushButton(self)
         self.buttonDialogLumensCreateDatabase.setText('Dialog: LUMENS Create Database')
@@ -299,25 +327,29 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensPURFinalization.setText('Dialog: LUMENS PUR Finalization')
         layout.addWidget(self.buttonDialogLumensPURFinalization)
         
-        self.buttonDialogLumensPreQUES = QtGui.QPushButton(self)
-        self.buttonDialogLumensPreQUES.setText('Dialog: LUMENS PreQUES')
-        layout.addWidget(self.buttonDialogLumensPreQUES)
+        self.buttonDialogLumensPreQUESLandcoverChangeAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensPreQUESLandcoverChangeAnalysis.setText('Dialog: LUMENS PreQUES Land Cover Change Analysis')
+        layout.addWidget(self.buttonDialogLumensPreQUESLandcoverChangeAnalysis)
         
-        self.buttonDialogLumensPreQUESTrajectory = QtGui.QPushButton(self)
-        self.buttonDialogLumensPreQUESTrajectory.setText('Dialog: LUMENS PreQUES Trajectory')
-        layout.addWidget(self.buttonDialogLumensPreQUESTrajectory)
+        self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setText('Dialog: LUMENS PreQUES Land Cover Trajectories Analysis')
+        layout.addWidget(self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
         
-        self.buttonDialogLumensQUESC = QtGui.QPushButton(self)
-        self.buttonDialogLumensQUESC.setText('Dialog: LUMENS QUES-C')
-        layout.addWidget(self.buttonDialogLumensQUESC)
+        self.buttonDialogLumensQUESCCarbonAccounting = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESCCarbonAccounting.setText('Dialog: LUMENS QUES-C Carbon Accounting')
+        layout.addWidget(self.buttonDialogLumensQUESCCarbonAccounting)
         
-        self.buttonDialogLumensQUESCPeat = QtGui.QPushButton(self)
-        self.buttonDialogLumensQUESCPeat.setText('Dialog: LUMENS QUES-C Peat')
-        layout.addWidget(self.buttonDialogLumensQUESCPeat)
+        self.buttonDialogLumensQUESCPeatlandCarbonAccounting = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setText('Dialog: LUMENS QUES-C Peatland Carbon Accounting')
+        layout.addWidget(self.buttonDialogLumensQUESCPeatlandCarbonAccounting)
         
-        self.buttonDialogLumensQUESCSummarize = QtGui.QPushButton(self)
-        self.buttonDialogLumensQUESCSummarize.setText('Dialog: LUMENS QUES-C Summarize Multiple Period')
-        layout.addWidget(self.buttonDialogLumensQUESCSummarize)
+        self.buttonDialogLumensQUESCSummarizeMultiplePeriod = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setText('Dialog: LUMENS QUES-C Summarize Multiple Period')
+        layout.addWidget(self.buttonDialogLumensQUESCSummarizeMultiplePeriod)
+        
+        self.buttonDialogLumensQUESBAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensQUESBAnalysis.setText('Dialog: LUMENS QUES-B Analysis')
+        layout.addWidget(self.buttonDialogLumensQUESBAnalysis)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -392,6 +424,21 @@ class MainWindow(QtGui.QMainWindow):
         """
         self.lumensCloseDatabase()
     
+    
+    def handlerLumensDeleteData(self):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('start: lumensdeletedata')
+            
+        self.buttonLumensDeleteData.setDisabled(True)
+        
+        outputs = general.runalg('r:lumensdeletedata')
+        
+        self.buttonLumensDeleteData.setEnabled(True)
+        
+        logging.getLogger(type(self).__name__).info('end: lumensdeletedata')
+    
+    
     def handlerDialogLumensAddLandcoverRaster(self):
         """
         """
@@ -440,34 +487,40 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensPURFinalization)
     
     
-    def handlerDialogLumensPreQUES(self):
+    def handlerDialogLumensPreQUESLandcoverChangeAnalysis(self):
         """
         """
-        self.openDialog(DialogLumensPreQUES)
+        self.openDialog(DialogLumensPreQUESLandcoverChangeAnalysis)
     
     
-    def handlerDialogLumensPreQUESTrajectory(self):
+    def handlerDialogLumensPreQUESLandcoverTrajectoriesAnalysis(self):
         """
         """
-        self.openDialog(DialogLumensPreQUESTrajectory)
+        self.openDialog(DialogLumensPreQUESLandcoverTrajectoriesAnalysis)
     
     
-    def handlerDialogLumensQUESC(self):
+    def handlerDialogLumensQUESCCarbonAccounting(self):
         """
         """
-        self.openDialog(DialogLumensQUESC)
+        self.openDialog(DialogLumensQUESCCarbonAccounting)
     
     
-    def handlerDialogLumensQUESCPeat(self):
+    def handlerDialogLumensQUESCPeatlandCarbonAccounting(self):
         """
         """
-        self.openDialog(DialogLumensQUESCPeat)
+        self.openDialog(DialogLumensQUESCPeatlandCarbonAccounting)
     
     
-    def handlerDialogLumensQUESCSummarize(self):
+    def handlerDialogLumensQUESCSummarizeMultiplePeriod(self):
         """
         """
-        self.openDialog(DialogLumensQUESCSummarize)
+        self.openDialog(DialogLumensQUESCSummarizeMultiplePeriod)
+    
+    
+    def handlerDialogLumensQUESBAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESBAnalysis)
     
     
     def lumensOpenDatabase(self, lumensDatabase):
@@ -492,6 +545,7 @@ class MainWindow(QtGui.QMainWindow):
             
             self.lineEditActiveProject.setText(lumensDatabase)
             self.buttonLumensCloseDatabase.setEnabled(True)
+            self.buttonLumensDeleteData.setEnabled(True)
             self.buttonDialogLumensAddLandcoverRaster.setEnabled(True)
             self.buttonDialogLumensAddPeat.setEnabled(True)
             self.buttonDialogLumensAddFactorData.setEnabled(True)
@@ -500,11 +554,12 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensPURPreparePlanningUnit.setEnabled(True)
             self.buttonDialogLumensPURReconcilePlanningUnit.setEnabled(True)
             self.buttonDialogLumensPURFinalization.setEnabled(True)
-            self.buttonDialogLumensPreQUES.setEnabled(True)
-            self.buttonDialogLumensPreQUESTrajectory.setEnabled(True)
-            self.buttonDialogLumensQUESC.setEnabled(True)
-            self.buttonDialogLumensQUESCPeat.setEnabled(True)
-            self.buttonDialogLumensQUESCSummarize.setEnabled(True)
+            self.buttonDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
+            self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
+            self.buttonDialogLumensQUESCCarbonAccounting.setEnabled(True)
+            self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
+            self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
+            self.buttonDialogLumensQUESBAnalysis.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -516,12 +571,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         logging.getLogger(__name__).info('start: LUMENS Close Database')
         
+        self.buttonLumensCloseDatabase.setDisabled(True)
+        
         outputs = general.runalg('modeler:lumens_close_database')
+        
         self.appSettings['DialogLumensOpenDatabase']['projectFile'] = ''
         self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = ''
         
         self.lineEditActiveProject.clear()
-        self.buttonLumensCloseDatabase.setDisabled(True)
+        self.buttonLumensDeleteData.setDisabled(True)
         self.buttonDialogLumensAddLandcoverRaster.setDisabled(True)
         self.buttonDialogLumensAddPeat.setDisabled(True)
         self.buttonDialogLumensAddFactorData.setDisabled(True)
@@ -530,11 +588,12 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensPURPreparePlanningUnit.setDisabled(True)
         self.buttonDialogLumensPURReconcilePlanningUnit.setDisabled(True)
         self.buttonDialogLumensPURFinalization.setDisabled(True)
-        self.buttonDialogLumensPreQUES.setDisabled(True)
-        self.buttonDialogLumensPreQUESTrajectory.setDisabled(True)
-        self.buttonDialogLumensQUESC.setDisabled(True)
-        self.buttonDialogLumensQUESCPeat.setDisabled(True)
-        self.buttonDialogLumensQUESCSummarize.setDisabled(True)
+        self.buttonDialogLumensPreQUESLandcoverChangeAnalysis.setDisabled(True)
+        self.buttonDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setDisabled(True)
+        self.buttonDialogLumensQUESCCarbonAccounting.setDisabled(True)
+        self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
+        self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
+        self.buttonDialogLumensQUESBAnalysis.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 

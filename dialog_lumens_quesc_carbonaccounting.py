@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensQUESCPeat(DialogLumensBase):
+class DialogLumensQUESCCarbonAccounting(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensQUESCPeat, self).__init__(parent)
+        super(DialogLumensQUESCCarbonAccounting, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS QUES-C Peat'
+        self.dialogTitle = 'LUMENS QUES-C Carbon Accounting'
         
         self.setupUi(self)
         
@@ -27,12 +27,12 @@ class DialogLumensQUESCPeat(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensQUESCPeat, self).setupUi(self)
+        super(DialogLumensQUESCCarbonAccounting, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
         self.labelCsvfile = QtGui.QLabel(parent)
-        self.labelCsvfile.setText('Carbon stock lookup table:')
+        self.labelCsvfile.setText('Carbon density lookup table:')
         layoutLumensDialog.addWidget(self.labelCsvfile, 0, 0)
         
         self.lineEditCsvfile = QtGui.QLineEdit(parent)
@@ -43,9 +43,20 @@ class DialogLumensQUESCPeat(DialogLumensBase):
         self.buttonSelectCsvfile.setText('Select &Lookup Table')
         layoutLumensDialog.addWidget(self.buttonSelectCsvfile, 1, 0, 1, 2)
         
+        self.labelSpinBox = QtGui.QLabel(parent)
+        self.labelSpinBox.setText('&No data value:')
+        layoutLumensDialog.addWidget(self.labelSpinBox, 2, 0)
+        
+        self.spinBox = QtGui.QSpinBox(parent)
+        self.spinBox.setRange(-9999, 9999)
+        self.spinBox.setValue(0)
+        layoutLumensDialog.addWidget(self.spinBox, 2, 1)
+        
+        self.labelSpinBox.setBuddy(self.spinBox)
+        
         self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
         self.buttonLumensDialogSubmit.setText(self.dialogTitle)
-        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 2, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 3, 0, 1, 2)
         
         self.dialogLayout.addLayout(layoutLumensDialog)
         
@@ -60,7 +71,7 @@ class DialogLumensQUESCPeat(DialogLumensBase):
         """Select a csv file
         """
         csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Carbon Stock Lookup Table', QtCore.QDir.homePath(), 'Carbon Stock Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+            self, 'Select Carbon Density Lookup Table', QtCore.QDir.homePath(), 'Carbon Density Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
         if csvfile:
             self.lineEditCsvfile.setText(csvfile)
@@ -72,6 +83,7 @@ class DialogLumensQUESCPeat(DialogLumensBase):
         """Set the required values from the form widgets
         """
         self.main.appSettings[type(self).__name__]['csvfile'] = unicode(self.lineEditCsvfile.text())
+        self.main.appSettings[type(self).__name__]['nodata'] = self.spinBox.value()
     
     
     def handlerLumensDialogSubmit(self):
@@ -85,8 +97,9 @@ class DialogLumensQUESCPeat(DialogLumensBase):
             self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
-                'modeler:ques-c_peat',
+                'modeler:ques-c',
                 self.main.appSettings[type(self).__name__]['csvfile'],
+                self.main.appSettings[type(self).__name__]['nodata'],
             )
             
             self.buttonLumensDialogSubmit.setEnabled(True)

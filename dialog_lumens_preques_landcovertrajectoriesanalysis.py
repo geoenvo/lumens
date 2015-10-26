@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensPreQUESTrajectory(DialogLumensBase):
+class DialogLumensPreQUESLandcoverTrajectoriesAnalysis(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensPreQUESTrajectory, self).__init__(parent)
+        super(DialogLumensPreQUESLandcoverTrajectoriesAnalysis, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS PreQUES Trajectory'
+        self.dialogTitle = 'LUMENS PreQUES Land Cover Trajectories Analysis'
         
         self.setupUi(self)
         
@@ -32,7 +32,7 @@ class DialogLumensPreQUESTrajectory(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensPreQUESTrajectory, self).setupUi(self)
+        super(DialogLumensPreQUESLandcoverTrajectoriesAnalysis, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         

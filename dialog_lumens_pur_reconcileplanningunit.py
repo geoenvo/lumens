@@ -71,7 +71,12 @@ class DialogLumensPURReconcilePlanningUnit(DialogLumensBase):
     def setAppSettings(self):
         """Set the required values from the form widgets
         """
-        self.main.appSettings[type(self).__name__]['outputFile'] = unicode(self.lineEditOutputFile.text())
+        outputFile = unicode(self.lineEditOutputFile.text())
+        
+        if not outputFile:
+            outputFile = '__UNSET__'
+        
+        self.main.appSettings[type(self).__name__]['outputFile'] = outputFile
     
     
     def handlerLumensDialogSubmit(self):
@@ -79,27 +84,28 @@ class DialogLumensPURReconcilePlanningUnit(DialogLumensBase):
         """
         self.setAppSettings()
         
-        logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
-        
-        self.buttonLumensDialogSubmit.setDisabled(True)
-        
-        outputFile = self.main.appSettings[type(self).__name__]['outputFile']
-        
-        if not outputFile:
-            outputFile = None
-        
-        outputs = general.runalg(
-            'modeler:pur_step3_reconcile_planning_unit',
-            outputFile,
-        )
-        
-        # temporary output file
-        if not outputFile:
-            self.main.appSettings[type(self).__name__]['outputFile'] = outputs['OUTPUT_ALG1']
-        
-        self.buttonLumensDialogSubmit.setEnabled(True)
-        
-        logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
-        
-        self.close()
+        if self.validDialogForm():
+            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
+            
+            self.buttonLumensDialogSubmit.setDisabled(True)
+            
+            outputFile = self.main.appSettings[type(self).__name__]['outputFile']
+            
+            if outputFile == '__UNSET__':
+                outputFile = None
+            
+            outputs = general.runalg(
+                'modeler:pur_step3_reconcile_planning_unit',
+                outputFile,
+            )
+            
+            # temporary output file
+            if not outputFile:
+                self.main.appSettings[type(self).__name__]['outputFile'] = outputs['OUTPUT_ALG1']
+            
+            self.buttonLumensDialogSubmit.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
+            
+            self.close()
             

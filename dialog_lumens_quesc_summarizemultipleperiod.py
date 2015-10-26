@@ -10,13 +10,13 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensQUESCSummarize(DialogLumensBase):
+class DialogLumensQUESCSummarizeMultiplePeriod(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensQUESCSummarize, self).__init__(parent)
+        super(DialogLumensQUESCSummarizeMultiplePeriod, self).__init__(parent)
         
         self.dialogTitle = 'LUMENS QUES-C Summarize Multiple Period'
         
@@ -26,7 +26,7 @@ class DialogLumensQUESCSummarize(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensQUESCSummarize, self).setupUi(self)
+        super(DialogLumensQUESCSummarizeMultiplePeriod, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
