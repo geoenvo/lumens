@@ -60,6 +60,7 @@ from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
 from dialog_lumens_ta_resioda import DialogLumensTARegionalEconomySingleIODescriptiveAnalysis
 from dialog_lumens_ta_retsioda import DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis
+from dialog_lumens_ta_reldra import DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis
 
 __version__ = "0.1.00"
 
@@ -233,6 +234,22 @@ class MainWindow(QtGui.QMainWindow):
                 'period1': '',
                 'period2': '',
             },
+            'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis': {
+                'workingDir': '',
+                'landCoverMap': '',
+                'intermediateConsumptionMatrix': '',
+                'valueAddedMatrix': '',
+                'finalConsumptionMatrix': '',
+                'valueAddedComponent': '',
+                'finalConsumptionComponent': '',
+                'listOfEconomicSector': '',
+                'landDistributionMatrix': '',
+                'landCoverComponent': '',
+                'labourRequirement': '',
+                'financialUnit': '',
+                'areaName': '',
+                'period': '',
+            },
         }
         
         self.openDialogs = []
@@ -272,6 +289,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAOpportunityCostMap.clicked.connect(self.handlerDialogLumensTAOpportunityCostMap)
         self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
         self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
+        self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
     
     
     def eventFilter(self, object, event):
@@ -301,6 +319,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTAOpportunityCostMap.setDisabled(True)
                 self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
                 self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
+                self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonLumensDeleteData.setEnabled(True)
@@ -323,6 +342,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTAOpportunityCostMap.setEnabled(True)
                 self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
                 self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
+                self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -447,16 +467,25 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setText('Dialog: LUMENS TA Regional Economy Time Series I-O Descriptive Analysis')
         layout.addWidget(self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
         
+        self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setText('Dialog: LUMENS TA Regional Economy Land Distribution & Requirement Analysis')
+        layout.addWidget(self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
+        
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
         
         contents = QtGui.QWidget()
         contents.setLayout(layout)
         
-        self.setCentralWidget(contents)
-        self.setWindowTitle('MainWindow')
-        self.setMinimumSize(800, 400)
-        self.resize(self.sizeHint())
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setFixedHeight(640)
+        scrollArea.setWidget(contents)
+        
+        self.setCentralWidget(scrollArea)
+        self.setWindowTitle('LUMENS: Alpha')
+        self.setFixedWidth(420)
+        ##self.setMinimumSize(800, 400)
+        ##self.resize(self.sizeHint())
     
     
     def openDialog(self, DialogClass):
@@ -649,6 +678,12 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
     
     
+    def handlerDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -691,6 +726,7 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensTAOpportunityCostMap.setEnabled(True)
             self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
             self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
+            self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -730,6 +766,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAOpportunityCostMap.setDisabled(True)
         self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
         self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
+        self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 
