@@ -58,6 +58,8 @@ from dialog_lumens_quesb_analysis import DialogLumensQUESBAnalysis
 from dialog_lumens_ta_abacusopportunitycost import DialogLumensTAAbacusOpportunityCost
 from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
+from dialog_lumens_ta_resioda import DialogLumensTARegionalEconomySingleIODescriptiveAnalysis
+from dialog_lumens_ta_retsioda import DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis
 
 __version__ = "0.1.00"
 
@@ -200,6 +202,37 @@ class MainWindow(QtGui.QMainWindow):
                 't1': '',
                 't2': '',
             },
+            'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis': {
+                'workingDir': '',
+                'intermediateConsumptionMatrix': '',
+                'valueAddedMatrix': '',
+                'finalConsumptionMatrix': '',
+                'valueAddedComponent': '',
+                'finalConsumptionComponent': '',
+                'listOfEconomicSector': '',
+                'labourRequirement': '',
+                'financialUnit': '',
+                'areaName': '',
+                'period': '',
+            },
+            'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis': {
+                'workingDir': '',
+                'intermediateConsumptionMatrixP1': '',
+                'intermediateConsumptionMatrixP2': '',
+                'valueAddedMatrixP1': '',
+                'valueAddedMatrixP2': '',
+                'finalConsumptionMatrixP1': '',
+                'finalConsumptionMatrixP2': '',
+                'valueAddedComponent': '',
+                'finalConsumptionComponent': '',
+                'listOfEconomicSector': '',
+                'labourRequirementP1': '',
+                'labourRequirementP2': '',
+                'financialUnit': '',
+                'areaName': '',
+                'period1': '',
+                'period2': '',
+            },
         }
         
         self.openDialogs = []
@@ -237,6 +270,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAAbacusOpportunityCost.clicked.connect(self.handlerDialogLumensTAAbacusOpportunityCost)
         self.buttonDialogLumensTAOpportunityCost.clicked.connect(self.handlerDialogLumensTAOpportunityCost)
         self.buttonDialogLumensTAOpportunityCostMap.clicked.connect(self.handlerDialogLumensTAOpportunityCostMap)
+        self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
+        self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
     
     
     def eventFilter(self, object, event):
@@ -264,6 +299,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTAAbacusOpportunityCost.setDisabled(True)
                 self.buttonDialogLumensTAOpportunityCost.setDisabled(True)
                 self.buttonDialogLumensTAOpportunityCostMap.setDisabled(True)
+                self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
+                self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonLumensDeleteData.setEnabled(True)
@@ -284,6 +321,8 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTAAbacusOpportunityCost.setEnabled(True)
                 self.buttonDialogLumensTAOpportunityCost.setEnabled(True)
                 self.buttonDialogLumensTAOpportunityCostMap.setEnabled(True)
+                self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
+                self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -399,6 +438,14 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAOpportunityCostMap = QtGui.QPushButton(self)
         self.buttonDialogLumensTAOpportunityCostMap.setText('Dialog: LUMENS TA Opportunity Cost Map')
         layout.addWidget(self.buttonDialogLumensTAOpportunityCostMap)
+        
+        self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setText('Dialog: LUMENS TA Regional Economy Single I-O Descriptive Analysis')
+        layout.addWidget(self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
+        
+        self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setText('Dialog: LUMENS TA Regional Economy Time Series I-O Descriptive Analysis')
+        layout.addWidget(self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -590,6 +637,18 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensTAOpportunityCostMap)
     
     
+    def handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
+    
+    
+    def handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -630,6 +689,8 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensTAAbacusOpportunityCost.setEnabled(True)
             self.buttonDialogLumensTAOpportunityCost.setEnabled(True)
             self.buttonDialogLumensTAOpportunityCostMap.setEnabled(True)
+            self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
+            self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -667,6 +728,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAAbacusOpportunityCost.setDisabled(True)
         self.buttonDialogLumensTAOpportunityCost.setDisabled(True)
         self.buttonDialogLumensTAOpportunityCostMap.setDisabled(True)
+        self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
+        self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 
