@@ -55,6 +55,9 @@ from dialog_lumens_quesc_carbonaccounting import DialogLumensQUESCCarbonAccounti
 from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatlandCarbonAccounting
 from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummarizeMultiplePeriod
 from dialog_lumens_quesb_analysis import DialogLumensQUESBAnalysis
+from dialog_lumens_ta_abacusopportunitycost import DialogLumensTAAbacusOpportunityCost
+from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
+from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
 
 __version__ = "0.1.00"
 
@@ -172,6 +175,31 @@ class MainWindow(QtGui.QMainWindow):
                 'outputHabitatGain': '',
                 'outputRecoveredHabitat': '',
             },
+            'DialogLumensTAAbacusOpportunityCost': {
+                'projectFile': '',
+            },
+            'DialogLumensTAOpportunityCost': {
+                'workingDir': '',
+                'QUESCDatabase': '',
+                'csvNPVTable': '',
+                'period1': '',
+                'period2': '',
+                'costThreshold': '',
+                'outputOpportunityCostDatabase': '',
+                'outputOpportunityCostReport': '',
+            },
+            'DialogLumensTAOpportunityCostMap': {
+                'workingDir': '',
+                'landUseT1': '',
+                'landUseT2': '',
+                'planningUnit': '',
+                'csvCarbon': '',
+                'csvProfitability': '',
+                'csvPlanningUnit': '',
+                'location': '',
+                't1': '',
+                't2': '',
+            },
         }
         
         self.openDialogs = []
@@ -206,6 +234,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensQUESCPeatlandCarbonAccounting.clicked.connect(self.handlerDialogLumensQUESCPeatlandCarbonAccounting)
         self.buttonDialogLumensQUESCSummarizeMultiplePeriod.clicked.connect(self.handlerDialogLumensQUESCSummarizeMultiplePeriod)
         self.buttonDialogLumensQUESBAnalysis.clicked.connect(self.handlerDialogLumensQUESBAnalysis)
+        self.buttonDialogLumensTAAbacusOpportunityCost.clicked.connect(self.handlerDialogLumensTAAbacusOpportunityCost)
+        self.buttonDialogLumensTAOpportunityCost.clicked.connect(self.handlerDialogLumensTAOpportunityCost)
+        self.buttonDialogLumensTAOpportunityCostMap.clicked.connect(self.handlerDialogLumensTAOpportunityCostMap)
     
     
     def eventFilter(self, object, event):
@@ -230,6 +261,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
                 self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
                 self.buttonDialogLumensQUESBAnalysis.setDisabled(True)
+                self.buttonDialogLumensTAAbacusOpportunityCost.setDisabled(True)
+                self.buttonDialogLumensTAOpportunityCost.setDisabled(True)
+                self.buttonDialogLumensTAOpportunityCostMap.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonLumensDeleteData.setEnabled(True)
@@ -247,6 +281,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
                 self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
                 self.buttonDialogLumensQUESBAnalysis.setEnabled(True)
+                self.buttonDialogLumensTAAbacusOpportunityCost.setEnabled(True)
+                self.buttonDialogLumensTAOpportunityCost.setEnabled(True)
+                self.buttonDialogLumensTAOpportunityCostMap.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -350,6 +387,18 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensQUESBAnalysis = QtGui.QPushButton(self)
         self.buttonDialogLumensQUESBAnalysis.setText('Dialog: LUMENS QUES-B Analysis')
         layout.addWidget(self.buttonDialogLumensQUESBAnalysis)
+        
+        self.buttonDialogLumensTAAbacusOpportunityCost = QtGui.QPushButton(self)
+        self.buttonDialogLumensTAAbacusOpportunityCost.setText('Dialog: LUMENS TA Abacus Opportunity Cost')
+        layout.addWidget(self.buttonDialogLumensTAAbacusOpportunityCost)
+        
+        self.buttonDialogLumensTAOpportunityCost = QtGui.QPushButton(self)
+        self.buttonDialogLumensTAOpportunityCost.setText('Dialog: LUMENS TA Opportunity Cost')
+        layout.addWidget(self.buttonDialogLumensTAOpportunityCost)
+        
+        self.buttonDialogLumensTAOpportunityCostMap = QtGui.QPushButton(self)
+        self.buttonDialogLumensTAOpportunityCostMap.setText('Dialog: LUMENS TA Opportunity Cost Map')
+        layout.addWidget(self.buttonDialogLumensTAOpportunityCostMap)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -523,6 +572,24 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensQUESBAnalysis)
     
     
+    def handlerDialogLumensTAAbacusOpportunityCost(self):
+        """
+        """
+        self.openDialog(DialogLumensTAAbacusOpportunityCost)
+    
+    
+    def handlerDialogLumensTAOpportunityCost(self):
+        """
+        """
+        self.openDialog(DialogLumensTAOpportunityCost)
+    
+    
+    def handlerDialogLumensTAOpportunityCostMap(self):
+        """
+        """
+        self.openDialog(DialogLumensTAOpportunityCostMap)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -560,6 +627,9 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
             self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
             self.buttonDialogLumensQUESBAnalysis.setEnabled(True)
+            self.buttonDialogLumensTAAbacusOpportunityCost.setEnabled(True)
+            self.buttonDialogLumensTAOpportunityCost.setEnabled(True)
+            self.buttonDialogLumensTAOpportunityCostMap.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -594,6 +664,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
         self.buttonDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
         self.buttonDialogLumensQUESBAnalysis.setDisabled(True)
+        self.buttonDialogLumensTAAbacusOpportunityCost.setDisabled(True)
+        self.buttonDialogLumensTAOpportunityCost.setDisabled(True)
+        self.buttonDialogLumensTAOpportunityCostMap.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 

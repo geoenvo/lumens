@@ -454,12 +454,25 @@ class DialogLumensQUESBAnalysis(DialogLumensBase):
             )
             
             """
-            
             print outputs
             
             if not outputTECIInitial:
                 self.main.appSettings[type(self).__name__]['outputTECIInitial'] = outputs['????']
             
+            if not outputTECIFinal:
+                self.main.appSettings[type(self).__name__]['outputTECIFinal'] = outputs['????']
+            
+            if not outputHabitatLoss:
+                self.main.appSettings[type(self).__name__]['outputHabitatLoss'] = outputs['????']
+            
+            if not outputDegradedHabitat:
+                self.main.appSettings[type(self).__name__]['outputDegradedHabitat'] = outputs['????']
+            
+            if not outputHabitatGain:
+                self.main.appSettings[type(self).__name__]['outputHabitatGain'] = outputs['????']
+            
+            if not outputRecoveredHabitat:
+                self.main.appSettings[type(self).__name__]['outputRecoveredHabitat'] = outputs['????']
             """
             
             self.buttonLumensDialogSubmit.setEnabled(True)
