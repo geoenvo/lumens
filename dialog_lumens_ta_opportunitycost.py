@@ -181,7 +181,7 @@ class DialogLumensTAOpportunityCost(DialogLumensBase):
         """Select QUES-C database
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+            self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
         
         if file:
             self.lineEditQUESCDatabase.setText(file)
@@ -205,7 +205,7 @@ class DialogLumensTAOpportunityCost(DialogLumensBase):
         """Select a output file
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
-            self, 'Create/Select Opportunity Cost Database Output', QtCore.QDir.homePath(), 'Opportunity Cost Database (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+            self, 'Create/Select Opportunity Cost Database Output', QtCore.QDir.homePath(), 'Opportunity Cost Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
         
         if outputfile:
             self.lineEditOutputOpportunityCostDatabase.setText(outputfile)
@@ -217,7 +217,7 @@ class DialogLumensTAOpportunityCost(DialogLumensBase):
         """Select a output file
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
-            self, 'Create/Select Opportunity Cost Report Output', QtCore.QDir.homePath(), 'Opportunity Cost Report (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+            self, 'Create/Select Opportunity Cost Report Output', QtCore.QDir.homePath(), 'Opportunity Cost Report (*{0})'.format(self.main.appSettings['selectHTMLfileExt'])))
         
         if outputfile:
             self.lineEditOutputOpportunityCostReport.setText(outputfile)

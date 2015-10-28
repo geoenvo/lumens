@@ -60,7 +60,10 @@ from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
 from dialog_lumens_ta_resioda import DialogLumensTARegionalEconomySingleIODescriptiveAnalysis
 from dialog_lumens_ta_retsioda import DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis
-from dialog_lumens_ta_reldra import DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis
+from dialog_lumens_ta_landdistribreq import DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis
+from dialog_lumens_ta_impactlanduse import DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis
+from dialog_lumens_ta_finaldemandscenario import DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis
+from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis
 
 __version__ = "0.1.00"
 
@@ -81,6 +84,8 @@ class MainWindow(QtGui.QMainWindow):
             'selectRasterfileExt': '.tif',
             'selectCsvfileExt': '.csv',
             'selectProjectfileExt': '.lpj',
+            'selectDatabasefileExt': '.dbf',
+            'selectHTMLfileExt': '.html',
             'DialogLumensCreateDatabase': {
                 'projectName': '',
                 'outputFolder': '',
@@ -250,6 +255,58 @@ class MainWindow(QtGui.QMainWindow):
                 'areaName': '',
                 'period': '',
             },
+            'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis': {
+                'workingDir': '',
+                'landCoverMapP1': '',
+                'landCoverMapP2': '',
+                'intermediateConsumptionMatrix': '',
+                'valueAddedMatrix': '',
+                'finalConsumptionMatrix': '',
+                'valueAddedComponent': '',
+                'finalConsumptionComponent': '',
+                'listOfEconomicSector': '',
+                'landDistributionMatrix': '',
+                'landRequirementCoefficientMatrix': '',
+                'landCoverComponent': '',
+                'labourRequirement': '',
+                'financialUnit': '',
+                'areaName': '',
+                'period': '',
+            },
+            'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis': {
+                'workingDir': '',
+                'intermediateConsumptionMatrix': '',
+                'valueAddedMatrix': '',
+                'finalConsumptionMatrix': '',
+                'valueAddedComponent': '',
+                'finalConsumptionComponent': '',
+                'listOfEconomicSector': '',
+                'landDistributionMatrix': '',
+                'landRequirementCoefficientMatrix': '',
+                'landCoverComponent': '',
+                'labourRequirement': '',
+                'financialUnit': '',
+                'areaName': '',
+                'period': '',
+                'finalDemandChangeScenario': '',
+            },
+            'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis': {
+                'workingDir': '',
+                'intermediateConsumptionMatrix': '',
+                'valueAddedMatrix': '',
+                'finalConsumptionMatrix': '',
+                'valueAddedComponent': '',
+                'finalConsumptionComponent': '',
+                'listOfEconomicSector': '',
+                'landDistributionMatrix': '',
+                'landRequirementCoefficientMatrix': '',
+                'landCoverComponent': '',
+                'labourRequirement': '',
+                'gdpChangeScenario': '',
+                'financialUnit': '',
+                'areaName': '',
+                'period': '',
+            },
         }
         
         self.openDialogs = []
@@ -290,6 +347,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
         self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
         self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
+        self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.clicked.connect(self.handlerDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
+        self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
+        self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
     
     
     def eventFilter(self, object, event):
@@ -320,6 +380,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
                 self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
                 self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setDisabled(True)
+                self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setDisabled(True)
+                self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
+                self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonLumensDeleteData.setEnabled(True)
@@ -343,6 +406,9 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
                 self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
                 self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
+                self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
+                self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
+                self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -471,6 +537,18 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setText('Dialog: LUMENS TA Regional Economy Land Distribution & Requirement Analysis')
         layout.addWidget(self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
         
+        self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setText('Dialog: LUMENS TA Impact of Land Use to Regional Economy Indicator Analysis')
+        layout.addWidget(self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
+        
+        self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setText('Dialog: LUMENS TA Regional Economy Final Demand Change Multiplier Analysis')
+        layout.addWidget(self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
+        
+        self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setText('Dialog: LUMENS TA Regional Economy GDP Change Multiplier Analysis')
+        layout.addWidget(self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
+        
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
         
@@ -483,7 +561,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.setCentralWidget(scrollArea)
         self.setWindowTitle('LUMENS: Alpha')
-        self.setFixedWidth(420)
+        self.setFixedWidth(425)
         ##self.setMinimumSize(800, 400)
         ##self.resize(self.sizeHint())
     
@@ -684,6 +762,24 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
     
     
+    def handlerDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
+    
+    
+    def handlerDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
+    
+    
+    def handlerDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -727,6 +823,9 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
             self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
             self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
+            self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
+            self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
+            self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -767,6 +866,9 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
         self.buttonDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
         self.buttonDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setDisabled(True)
+        self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setDisabled(True)
+        self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
+        self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 

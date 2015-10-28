@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase):
+class DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensTARegionalEconomySingleIODescriptiveAnalysis, self).__init__(parent)
+        super(DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS TA Regional Economy Single I-O Descriptive Analysis'
+        self.dialogTitle = 'LUMENS TA Regional Economy Final Demand Change Multiplier Analysis'
         
         self.setupUi(self)
         
@@ -29,12 +29,16 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         self.buttonSelectValueAddedComponent.clicked.connect(self.handlerSelectValueAddedComponent)
         self.buttonSelectFinalConsumptionComponent.clicked.connect(self.handlerSelectFinalConsumptionComponent)
         self.buttonSelectListOfEconomicSector.clicked.connect(self.handlerSelectListOfEconomicSector)
+        self.buttonSelectLandDistributionMatrix.clicked.connect(self.handlerSelectLandDistributionMatrix)
+        self.buttonSelectLandRequirementCoefficientMatrix.clicked.connect(self.handlerSelectLandRequirementCoefficientMatrix)
+        self.buttonSelectLandCoverComponent.clicked.connect(self.handlerSelectLandCoverComponent)
         self.buttonSelectLabourRequirement.clicked.connect(self.handlerSelectLabourRequirement)
+        self.buttonSelectFinalDemandChangeScenario.clicked.connect(self.handlerSelectFinalDemandChangeScenario)
         self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
     def setupUi(self, parent):
-        super(DialogLumensTARegionalEconomySingleIODescriptiveAnalysis, self).setupUi(self)
+        super(DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
@@ -122,53 +126,103 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         self.buttonSelectListOfEconomicSector.setText('Select List of &Economic Sector')
         layoutLumensDialog.addWidget(self.buttonSelectListOfEconomicSector, 13, 0, 1, 2)
         
+        self.labelLandDistributionMatrix = QtGui.QLabel(parent)
+        self.labelLandDistributionMatrix.setText('Land distribution matrix:')
+        layoutLumensDialog.addWidget(self.labelLandDistributionMatrix, 14, 0)
+        
+        self.lineEditLandDistributionMatrix = QtGui.QLineEdit(parent)
+        self.lineEditLandDistributionMatrix.setReadOnly(True)
+        layoutLumensDialog.addWidget(self.lineEditLandDistributionMatrix, 14, 1)
+        
+        self.buttonSelectLandDistributionMatrix = QtGui.QPushButton(parent)
+        self.buttonSelectLandDistributionMatrix.setText('Select &Land Distribution Matrix')
+        layoutLumensDialog.addWidget(self.buttonSelectLandDistributionMatrix, 15, 0, 1, 2)
+        
+        
+        self.labelLandRequirementCoefficientMatrix = QtGui.QLabel(parent)
+        self.labelLandRequirementCoefficientMatrix.setText('Land requirement coefficient matrix:')
+        layoutLumensDialog.addWidget(self.labelLandRequirementCoefficientMatrix, 16, 0)
+        
+        self.lineEditLandRequirementCoefficientMatrix = QtGui.QLineEdit(parent)
+        self.lineEditLandRequirementCoefficientMatrix.setReadOnly(True)
+        layoutLumensDialog.addWidget(self.lineEditLandRequirementCoefficientMatrix, 16, 1)
+        
+        self.buttonSelectLandRequirementCoefficientMatrix = QtGui.QPushButton(parent)
+        self.buttonSelectLandRequirementCoefficientMatrix.setText('Select Land &Requirement Coefficient Matrix')
+        layoutLumensDialog.addWidget(self.buttonSelectLandRequirementCoefficientMatrix, 17, 0, 1, 2)
+        
+        
+        self.labelLandCoverComponent = QtGui.QLabel(parent)
+        self.labelLandCoverComponent.setText('Land cover component:')
+        layoutLumensDialog.addWidget(self.labelLandCoverComponent, 18, 0)
+        
+        self.lineEditLandCoverComponent = QtGui.QLineEdit(parent)
+        self.lineEditLandCoverComponent.setReadOnly(True)
+        layoutLumensDialog.addWidget(self.lineEditLandCoverComponent, 18, 1)
+        
+        self.buttonSelectLandCoverComponent = QtGui.QPushButton(parent)
+        self.buttonSelectLandCoverComponent.setText('Select Land &Cover Component')
+        layoutLumensDialog.addWidget(self.buttonSelectLandCoverComponent, 19, 0, 1, 2)
+        
         self.labelLabourRequirement = QtGui.QLabel(parent)
         self.labelLabourRequirement.setText('Labour requirement:')
-        layoutLumensDialog.addWidget(self.labelLabourRequirement, 14, 0)
+        layoutLumensDialog.addWidget(self.labelLabourRequirement, 20, 0)
         
         self.lineEditLabourRequirement = QtGui.QLineEdit(parent)
         self.lineEditLabourRequirement.setReadOnly(True)
-        layoutLumensDialog.addWidget(self.lineEditLabourRequirement, 14, 1)
+        layoutLumensDialog.addWidget(self.lineEditLabourRequirement, 20, 1)
         
         self.buttonSelectLabourRequirement = QtGui.QPushButton(parent)
         self.buttonSelectLabourRequirement.setText('Select &Labour Requirement')
-        layoutLumensDialog.addWidget(self.buttonSelectLabourRequirement, 15, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonSelectLabourRequirement, 21, 0, 1, 2)
         
         self.labelFinancialUnit = QtGui.QLabel(parent)
         self.labelFinancialUnit.setText('Financial &unit:')
-        layoutLumensDialog.addWidget(self.labelFinancialUnit, 16, 0)
+        layoutLumensDialog.addWidget(self.labelFinancialUnit, 22, 0)
         
         self.lineEditFinancialUnit = QtGui.QLineEdit(parent)
         self.lineEditFinancialUnit.setText('Million Rupiah')
-        layoutLumensDialog.addWidget(self.lineEditFinancialUnit, 16, 1)
+        layoutLumensDialog.addWidget(self.lineEditFinancialUnit, 22, 1)
         
         self.labelFinancialUnit.setBuddy(self.lineEditFinancialUnit)
         
         self.labelAreaName = QtGui.QLabel(parent)
         self.labelAreaName.setText('&Area name:')
-        layoutLumensDialog.addWidget(self.labelAreaName, 17, 0)
+        layoutLumensDialog.addWidget(self.labelAreaName, 23, 0)
         
         self.lineEditAreaName = QtGui.QLineEdit(parent)
         self.lineEditAreaName.setText('area')
-        layoutLumensDialog.addWidget(self.lineEditAreaName, 17, 1)
+        layoutLumensDialog.addWidget(self.lineEditAreaName, 23, 1)
         
         self.labelAreaName.setBuddy(self.lineEditAreaName)
         
         self.labelSpinBoxPeriod = QtGui.QLabel(parent)
         self.labelSpinBoxPeriod.setText('&Period:')
-        layoutLumensDialog.addWidget(self.labelSpinBoxPeriod, 18, 0)
+        layoutLumensDialog.addWidget(self.labelSpinBoxPeriod, 24, 0)
         
         self.spinBoxPeriod = QtGui.QSpinBox(parent)
         self.spinBoxPeriod.setRange(1, 9999)
         td = datetime.date.today()
         self.spinBoxPeriod.setValue(td.year)
-        layoutLumensDialog.addWidget(self.spinBoxPeriod, 18, 1)
+        layoutLumensDialog.addWidget(self.spinBoxPeriod, 24, 1)
         
         self.labelSpinBoxPeriod.setBuddy(self.spinBoxPeriod)
         
+        self.labelFinalDemandChangeScenario = QtGui.QLabel(parent)
+        self.labelFinalDemandChangeScenario.setText('Final demand change scenario:')
+        layoutLumensDialog.addWidget(self.labelFinalDemandChangeScenario, 25, 0)
+        
+        self.lineEditFinalDemandChangeScenario = QtGui.QLineEdit(parent)
+        self.lineEditFinalDemandChangeScenario.setReadOnly(True)
+        layoutLumensDialog.addWidget(self.lineEditFinalDemandChangeScenario, 25, 1)
+        
+        self.buttonSelectFinalDemandChangeScenario = QtGui.QPushButton(parent)
+        self.buttonSelectFinalDemandChangeScenario.setText('Select &Final Demand Change Scenario')
+        layoutLumensDialog.addWidget(self.buttonSelectFinalDemandChangeScenario, 26, 0, 1, 2)
+        
         self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
         self.buttonLumensDialogSubmit.setText(self.dialogTitle)
-        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 19, 0, 1, 2)
+        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 27, 0, 1, 2)
         
         contents = QtGui.QWidget()
         contents.setLayout(layoutLumensDialog)
@@ -183,7 +237,7 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         self.setLayout(self.dialogLayout)
         
         self.setWindowTitle(self.dialogTitle)
-        self.setFixedWidth(370)
+        self.setFixedWidth(410)
         ##self.setMinimumSize(400, 200)
         ##self.resize(parent.sizeHint())
     
@@ -198,10 +252,14 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         self.main.appSettings[type(self).__name__]['valueAddedComponent'] = unicode(self.lineEditValueAddedComponent.text())
         self.main.appSettings[type(self).__name__]['finalConsumptionComponent'] = unicode(self.lineEditFinalConsumptionComponent.text())
         self.main.appSettings[type(self).__name__]['listOfEconomicSector'] = unicode(self.lineEditListOfEconomicSector.text())
+        self.main.appSettings[type(self).__name__]['landDistributionMatrix'] = unicode(self.lineEditLandDistributionMatrix.text())
+        self.main.appSettings[type(self).__name__]['landRequirementCoefficientMatrix'] = unicode(self.lineEditLandRequirementCoefficientMatrix.text())
+        self.main.appSettings[type(self).__name__]['landCoverComponent'] = unicode(self.lineEditLandCoverComponent.text())
         self.main.appSettings[type(self).__name__]['labourRequirement'] = unicode(self.lineEditLabourRequirement.text())
         self.main.appSettings[type(self).__name__]['financialUnit'] = unicode(self.lineEditFinancialUnit.text())
         self.main.appSettings[type(self).__name__]['areaName'] = unicode(self.lineEditAreaName.text())
         self.main.appSettings[type(self).__name__]['period'] = self.spinBoxPeriod.value()
+        self.main.appSettings[type(self).__name__]['finalDemandChangeScenario'] = unicode(self.lineEditFinalDemandChangeScenario.text())
     
     
     def handlerSelectWorkingDir(self):
@@ -219,7 +277,7 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         """Select Intermediate Consumption Matrix
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
         if file:
             self.lineEditIntermediateConsumptionMatrix.setText(file)
@@ -231,7 +289,7 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         """Select Value Added Matrix
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
         if file:
             self.lineEditValueAddedMatrix.setText(file)
@@ -243,7 +301,7 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         """Select Final Consumption Matrix
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
         if file:
             self.lineEditFinalConsumptionMatrix.setText(file)
@@ -287,6 +345,42 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
+    def handlerSelectLandDistributionMatrix(self):
+        """Select Land Distribution Matrix
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandDistributionMatrix.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementCoefficientMatrix(self):
+        """Select Land Requirement Coefficient Matrix
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Requirement Coefficient Matrix', QtCore.QDir.homePath(), 'Land Requirement Coefficient Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementCoefficientMatrix.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandCoverComponent(self):
+        """Select Land Cover Component
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandCoverComponent.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
     def handlerSelectLabourRequirement(self):
         """Select Labour Requirement
         """
@@ -295,6 +389,18 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
         
         if file:
             self.lineEditLabourRequirement.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectFinalDemandChangeScenario(self):
+        """Select Final Demand Change Scenario
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Demand Change Scenario', QtCore.QDir.homePath(), 'Final Demand Change Scenario (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditFinalDemandChangeScenario.setText(file)
             
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
@@ -310,7 +416,7 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
             self.buttonLumensDialogSubmit.setDisabled(True)
             
             outputs = general.runalg(
-                'modeler:ta_reg_io_da',
+                'modeler:ta_reg_luc_5a_lcc_fd',
                 self.main.appSettings[type(self).__name__]['workingDir'],
                 self.main.appSettings[type(self).__name__]['intermediateConsumptionMatrix'],
                 self.main.appSettings[type(self).__name__]['valueAddedMatrix'],
@@ -318,10 +424,14 @@ class DialogLumensTARegionalEconomySingleIODescriptiveAnalysis(DialogLumensBase)
                 self.main.appSettings[type(self).__name__]['valueAddedComponent'],
                 self.main.appSettings[type(self).__name__]['finalConsumptionComponent'],
                 self.main.appSettings[type(self).__name__]['listOfEconomicSector'],
+                self.main.appSettings[type(self).__name__]['landDistributionMatrix'],
+                self.main.appSettings[type(self).__name__]['landRequirementCoefficientMatrix'],
+                self.main.appSettings[type(self).__name__]['landCoverComponent'],
                 self.main.appSettings[type(self).__name__]['labourRequirement'],
                 self.main.appSettings[type(self).__name__]['financialUnit'],
                 self.main.appSettings[type(self).__name__]['areaName'],
                 self.main.appSettings[type(self).__name__]['period'],
+                self.main.appSettings[type(self).__name__]['finalDemandChangeScenario'],
             )
             
             """

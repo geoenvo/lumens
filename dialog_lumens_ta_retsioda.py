@@ -234,13 +234,22 @@ class DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis(DialogLumensB
         self.buttonLumensDialogSubmit.setText(self.dialogTitle)
         layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 30, 0, 1, 2)
         
-        self.dialogLayout.addLayout(layoutLumensDialog)
+        contents = QtGui.QWidget()
+        contents.setLayout(layoutLumensDialog)
+        
+        scrollArea = QtGui.QScrollArea()
+        scrollArea.setFixedHeight(500)
+        scrollArea.setWidget(contents)
+        
+        self.dialogLayout.addWidget(scrollArea)
+        ##self.dialogLayout.addLayout(layoutLumensDialog)
         
         self.setLayout(self.dialogLayout)
         
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(400, 200)
-        self.resize(parent.sizeHint())
+        self.setFixedWidth(410)
+        ##self.setMinimumSize(400, 200)
+        ##self.resize(parent.sizeHint())
     
     
     def setAppSettings(self):
