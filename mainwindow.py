@@ -64,6 +64,14 @@ from dialog_lumens_ta_landdistribreq import DialogLumensTARegionalEconomyLandDis
 from dialog_lumens_ta_impactlanduse import DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis
 from dialog_lumens_ta_finaldemandscenario import DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis
 from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis
+from dialog_lumens_sciendo_driversanalysis import DialogLumensSCIENDODriversAnalysis
+from dialog_lumens_sciendo_buildscenario import DialogLumensSCIENDOBuildScenario
+from dialog_lumens_sciendo_historicalbaselineproj import DialogLumensSCIENDOHistoricalBaselineProjection
+from dialog_lumens_sciendo_calctransitionmatrix import DialogLumensSCIENDOCalculateTransitionMatrix
+from dialog_lumens_sciendo_createrastercube import DialogLumensSCIENDOCreateRasterCube
+from dialog_lumens_sciendo_calcweightevidence import DialogLumensSCIENDOCalculateWeightofEvidence
+from dialog_lumens_sciendo_simulatelandusechange import DialogLumensSCIENDOSimulateLandUseChange
+from dialog_lumens_sciendo_simulatewithscenario import DialogLumensSCIENDOSimulateWithScenario
 
 __version__ = "0.1.00"
 
@@ -86,6 +94,8 @@ class MainWindow(QtGui.QMainWindow):
             'selectProjectfileExt': '.lpj',
             'selectDatabasefileExt': '.dbf',
             'selectHTMLfileExt': '.html',
+            'selectTextfileExt': '.txt',
+            'selectCarfileExt': '.car',
             'DialogLumensCreateDatabase': {
                 'projectName': '',
                 'outputFolder': '',
@@ -307,6 +317,50 @@ class MainWindow(QtGui.QMainWindow):
                 'areaName': '',
                 'period': '',
             },
+            'DialogLumensSCIENDOHistoricalBaselineProjection': {
+                'workingDir': '',
+                'QUESCDatabase': '',
+                't1': '',
+                't2': '',
+                'iteration': '',
+            },
+            'DialogLumensSCIENDODriversAnalysis': {
+                'landUseCoverChangeDrivers': '',
+                'landUseCoverChangeType': '',
+            },
+            'DialogLumensSCIENDOBuildScenario': {
+                'historicalBaselineCar': '',
+            },
+            'DialogLumensSCIENDOCalculateTransitionMatrix': {
+                'factorsDir': '',
+                'landUseLookup': '',
+                'baseYear': '',
+                'location': '',
+            },
+            'DialogLumensSCIENDOCreateRasterCube': {
+                'factorsDir': '',
+                'landUseLookup': '',
+                'baseYear': '',
+                'location': '',
+            },
+            'DialogLumensSCIENDOCalculateWeightofEvidence': {
+                'factorsDir': '',
+                'landUseLookup': '',
+                'baseYear': '',
+                'location': '',
+            },
+            'DialogLumensSCIENDOSimulateLandUseChange': {
+                'factorsDir': '',
+                'landUseLookup': '',
+                'baseYear': '',
+                'location': '',
+            },
+            'DialogLumensSCIENDOSimulateWithScenario': {
+                'factorsDir': '',
+                'landUseLookup': '',
+                'baseYear': '',
+                'location': '',
+            },
         }
         
         self.openDialogs = []
@@ -350,6 +404,14 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.clicked.connect(self.handlerDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
         self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
         self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.clicked.connect(self.handlerDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
+        self.buttonDialogLumensSCIENDODriversAnalysis.clicked.connect(self.handlerDialogLumensSCIENDODriversAnalysis)
+        self.buttonDialogLumensSCIENDOBuildScenario.clicked.connect(self.handlerDialogLumensSCIENDOBuildScenario)
+        self.buttonDialogLumensSCIENDOHistoricalBaselineProjection.clicked.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineProjection)
+        self.buttonDialogLumensSCIENDOCalculateTransitionMatrix.clicked.connect(self.handlerDialogLumensSCIENDOCalculateTransitionMatrix)
+        self.buttonDialogLumensSCIENDOCreateRasterCube.clicked.connect(self.handlerDialogLumensSCIENDOCreateRasterCube)
+        self.buttonDialogLumensSCIENDOCalculateWeightofEvidence.clicked.connect(self.handlerDialogLumensSCIENDOCalculateWeightofEvidence)
+        self.buttonDialogLumensSCIENDOSimulateLandUseChange.clicked.connect(self.handlerDialogLumensSCIENDOSimulateLandUseChange)
+        self.buttonDialogLumensSCIENDOSimulateWithScenario.clicked.connect(self.handlerDialogLumensSCIENDOSimulateWithScenario)
     
     
     def eventFilter(self, object, event):
@@ -383,6 +445,14 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setDisabled(True)
                 self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
                 self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
+                self.buttonDialogLumensSCIENDODriversAnalysis.setDisabled(True)
+                self.buttonDialogLumensSCIENDOBuildScenario.setDisabled(True)
+                self.buttonDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
+                self.buttonDialogLumensSCIENDOCalculateTransitionMatrix.setDisabled(True)
+                self.buttonDialogLumensSCIENDOCreateRasterCube.setDisabled(True)
+                self.buttonDialogLumensSCIENDOCalculateWeightofEvidence.setDisabled(True)
+                self.buttonDialogLumensSCIENDOSimulateLandUseChange.setDisabled(True)
+                self.buttonDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
             else:
                 self.buttonLumensCloseDatabase.setEnabled(True)
                 self.buttonLumensDeleteData.setEnabled(True)
@@ -409,6 +479,14 @@ class MainWindow(QtGui.QMainWindow):
                 self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
                 self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
                 self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
+                self.buttonDialogLumensSCIENDODriversAnalysis.setEnabled(True)
+                self.buttonDialogLumensSCIENDOBuildScenario.setEnabled(True)
+                self.buttonDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
+                self.buttonDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
+                self.buttonDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
+                self.buttonDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
+                self.buttonDialogLumensSCIENDOSimulateLandUseChange.setEnabled(True)
+                self.buttonDialogLumensSCIENDOSimulateWithScenario.setEnabled(True)
         elif event.type()== QtCore.QEvent.WindowDeactivate:
             print "widget window has lost focus"
         elif event.type()== QtCore.QEvent.FocusIn:
@@ -548,6 +626,38 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis = QtGui.QPushButton(self)
         self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setText('Dialog: LUMENS TA Regional Economy GDP Change Multiplier Analysis')
         layout.addWidget(self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
+        
+        self.buttonDialogLumensSCIENDODriversAnalysis = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDODriversAnalysis.setText('Dialog: LUMENS SCIENDO Drivers Analysis')
+        layout.addWidget(self.buttonDialogLumensSCIENDODriversAnalysis)
+        
+        self.buttonDialogLumensSCIENDOBuildScenario = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOBuildScenario.setText('Dialog: LUMENS SCIENDO Build Scenario')
+        layout.addWidget(self.buttonDialogLumensSCIENDOBuildScenario)
+        
+        self.buttonDialogLumensSCIENDOHistoricalBaselineProjection = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOHistoricalBaselineProjection.setText('Dialog: LUMENS SCIENDO Historical Baseline Projection')
+        layout.addWidget(self.buttonDialogLumensSCIENDOHistoricalBaselineProjection)
+        
+        self.buttonDialogLumensSCIENDOCalculateTransitionMatrix = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOCalculateTransitionMatrix.setText('Dialog: LUMENS SCIENDO Calculate Transition Matrix')
+        layout.addWidget(self.buttonDialogLumensSCIENDOCalculateTransitionMatrix)
+        
+        self.buttonDialogLumensSCIENDOCreateRasterCube = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOCreateRasterCube.setText('Dialog: LUMENS SCIENDO Create Raster Cube')
+        layout.addWidget(self.buttonDialogLumensSCIENDOCreateRasterCube)
+        
+        self.buttonDialogLumensSCIENDOCalculateWeightofEvidence = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOCalculateWeightofEvidence.setText('Dialog: LUMENS SCIENDO Calculate Weight of Evidence')
+        layout.addWidget(self.buttonDialogLumensSCIENDOCalculateWeightofEvidence)
+        
+        self.buttonDialogLumensSCIENDOSimulateLandUseChange = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOSimulateLandUseChange.setText('Dialog: LUMENS SCIENDO Simulate Land Use Change')
+        layout.addWidget(self.buttonDialogLumensSCIENDOSimulateLandUseChange)
+        
+        self.buttonDialogLumensSCIENDOSimulateWithScenario = QtGui.QPushButton(self)
+        self.buttonDialogLumensSCIENDOSimulateWithScenario.setText('Dialog: LUMENS SCIENDO Simulate With Scenario')
+        layout.addWidget(self.buttonDialogLumensSCIENDOSimulateWithScenario)
         
         self.log_box = QPlainTextEditLogger(self)
         layout.addWidget(self.log_box.widget)
@@ -780,6 +890,54 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
     
     
+    def handlerDialogLumensSCIENDODriversAnalysis(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDODriversAnalysis)
+    
+    
+    def handlerDialogLumensSCIENDOBuildScenario(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOBuildScenario)
+    
+    
+    def handlerDialogLumensSCIENDOHistoricalBaselineProjection(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOHistoricalBaselineProjection)
+    
+    
+    def handlerDialogLumensSCIENDOCalculateTransitionMatrix(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOCalculateTransitionMatrix)
+    
+    
+    def handlerDialogLumensSCIENDOCreateRasterCube(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOCreateRasterCube)
+    
+    
+    def handlerDialogLumensSCIENDOCalculateWeightofEvidence(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOCalculateWeightofEvidence)
+    
+    
+    def handlerDialogLumensSCIENDOSimulateLandUseChange(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOSimulateLandUseChange)
+    
+    
+    def handlerDialogLumensSCIENDOSimulateWithScenario(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOSimulateWithScenario)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase):
         """
         """
@@ -826,6 +984,14 @@ class MainWindow(QtGui.QMainWindow):
             self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
             self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
             self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
+            self.buttonDialogLumensSCIENDODriversAnalysis.setEnabled(True)
+            self.buttonDialogLumensSCIENDOBuildScenario.setEnabled(True)
+            self.buttonDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
+            self.buttonDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
+            self.buttonDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
+            self.buttonDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
+            self.buttonDialogLumensSCIENDOSimulateLandUseChange.setEnabled(True)
+            self.buttonDialogLumensSCIENDOSimulateWithScenario.setEnabled(True)
         
         self.buttonLumensOpenDatabase.setEnabled(True)
         
@@ -869,6 +1035,14 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setDisabled(True)
         self.buttonDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
         self.buttonDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
+        self.buttonDialogLumensSCIENDODriversAnalysis.setDisabled(True)
+        self.buttonDialogLumensSCIENDOBuildScenario.setDisabled(True)
+        self.buttonDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
+        self.buttonDialogLumensSCIENDOCalculateTransitionMatrix.setDisabled(True)
+        self.buttonDialogLumensSCIENDOCreateRasterCube.setDisabled(True)
+        self.buttonDialogLumensSCIENDOCalculateWeightofEvidence.setDisabled(True)
+        self.buttonDialogLumensSCIENDOSimulateLandUseChange.setDisabled(True)
+        self.buttonDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
 
