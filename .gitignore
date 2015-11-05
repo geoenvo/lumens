@@ -8,3 +8,11 @@ processing/*
 qgis.db
 output/*
 !output/.gitkeep
+data/*
+!data/.gitkeep
+data/basemap/*
+!data/basemap/.gitkeep
+data/raster/*
+!data/raster/.gitkeep
+data/vector/*
+!data/vector/.gitkeep

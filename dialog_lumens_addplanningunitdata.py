@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensAddPlanningUnit(DialogLumensBase):
+class DialogLumensAddPlanningUnitData(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensAddPlanningUnit, self).__init__(parent)
+        super(DialogLumensAddPlanningUnitData, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS Add Planning Unit'
+        self.dialogTitle = 'LUMENS Add Planning Unit Data'
         
         self.setupUi(self)
         
@@ -28,7 +28,7 @@ class DialogLumensAddPlanningUnit(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensAddPlanningUnit, self).setupUi(self)
+        super(DialogLumensAddPlanningUnitData, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         

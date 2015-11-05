@@ -10,15 +10,15 @@ from dialog_lumens_base import DialogLumensBase
 
 
 
-class DialogLumensAddPeat(DialogLumensBase):
+class DialogLumensAddPeatData(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensAddPeat, self).__init__(parent)
+        super(DialogLumensAddPeatData, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS Add Peat'
+        self.dialogTitle = 'LUMENS Add Peat Data'
         
         self.setupUi(self)
         
@@ -27,7 +27,7 @@ class DialogLumensAddPeat(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensAddPeat, self).setupUi(self)
+        super(DialogLumensAddPeatData, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         
