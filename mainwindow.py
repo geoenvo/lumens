@@ -717,6 +717,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutBody = QtGui.QHBoxLayout()
         self.layoutBody.setContentsMargins(0, 0, 0, 0)
+        self.layoutBody.setAlignment(QtCore.Qt.AlignLeft)
         self.layoutBody.addWidget(self.scrollSidebar)
         
         self.layoutMain = QtGui.QVBoxLayout()
@@ -1122,6 +1123,7 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.isfile(self.appSettings['defaultBasemapFilePath']):
             return True
         else:
+            self.actionShowBasemapLayer.setChecked(False)
             self.actionShowBasemapLayer.setDisabled(True)
             return False
     
@@ -1132,6 +1134,7 @@ class MainWindow(QtGui.QMainWindow):
         if os.path.isfile(self.appSettings['defaultVectorFilePath']):
             return True
         else:
+            self.actionShowVectorLayer.setChecked(False)
             self.actionShowVectorLayer.setDisabled(True)
             return False
     
