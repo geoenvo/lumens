@@ -1,8 +1,10 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file alias="iconActionZoomIn.png">ui/iconActionZoomIn.png</file>
-        <file alias="iconActionZoomOut.png">ui/iconActionZoomOut.png</file>
-        <file alias="iconActionPan.png">ui/iconActionPan.png</file>
-        <file alias="iconActionExplore.png">ui/iconActionExplore.png</file>
+    <qresource>
+        <file>ui/icons/iconActionAdd.png</file>
+        <file>ui/icons/iconActionDelete.png</file>
+        <file>ui/icons/iconActionZoomIn.png</file>
+        <file>ui/icons/iconActionZoomOut.png</file>
+        <file>ui/icons/iconActionPan.png</file>
+        <file>ui/icons/iconActionExplore.png</file>
     </qresource>
 </RCC>

@@ -371,27 +371,38 @@ class MainWindow(QtGui.QMainWindow):
         
         self.appSettings['defaultBasemapFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['basemapDir'], self.appSettings['defaultBasemapFile'])
         self.appSettings['defaultVectorFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['vectorDir'], self.appSettings['defaultVectorFile'])
-        
-        self.openDialogs = []
 
         self.setupUi()
         
         self.installEventFilter(self)
         
+        self.openDialogs = []
+        
+        self.layerListModel = QtGui.QStandardItemModel(self.layerListView)
+        self.layerListView.setModel(self.layerListModel)
+        
+        self.layerListView.clicked.connect(self.handlerSelectLayer)
+        self.layerListModel.itemChanged.connect(self.handlerCheckLayer)
+        
+        # Init the logger
         self.logger = logging.getLogger(__name__)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         self.log_box.setFormatter(formatter)
         self.logger.addHandler(self.log_box)
         self.logger.setLevel(logging.DEBUG)
-
-        self.actionQuit.triggered.connect(QtGui.qApp.quit)
-        self.actionShowBasemapLayer.triggered.connect(self.showBasemapLayer)
-        self.actionShowVectorLayer.triggered.connect(self.showVectorLayer)
-        self.actionZoomIn.triggered.connect(self.zoomIn)
-        self.actionZoomOut.triggered.connect(self.zoomOut)
-        self.actionPan.triggered.connect(self.setPanMode)
-        self.actionExplore.triggered.connect(self.setExploreMode)
         
+        # App action handlers
+        self.actionQuit.triggered.connect(QtGui.qApp.quit)
+        self.actionShowBasemapLayer.triggered.connect(self.handlerShowBasemapLayer)
+        self.actionShowVectorLayer.triggered.connect(self.handlerShowVectorLayer)
+        self.actionZoomIn.triggered.connect(self.handlerZoomIn)
+        self.actionZoomOut.triggered.connect(self.handlerZoomOut)
+        self.actionPan.triggered.connect(self.handlerSetPanMode)
+        self.actionExplore.triggered.connect(self.handlerSetExploreMode)
+        self.actionAddLayer.triggered.connect(self.handlerAddLayer)
+        self.actionDeleteLayer.triggered.connect(self.handlerDeleteLayer)
+        
+        # LUMENS action handlers
         # Database menu
         self.actionDialogLumensCreateDatabase.triggered.connect(self.handlerDialogLumensCreateDatabase)
         self.actionLumensOpenDatabase.triggered.connect(self.handlerLumensOpenDatabase)
@@ -538,7 +549,8 @@ class MainWindow(QtGui.QMainWindow):
         self.centralWidget = QtGui.QWidget(self)
         self.centralWidget.setMinimumSize(800, 400)
         self.setCentralWidget(self.centralWidget)
-
+        
+        # Create the default menus
         self.menubar = self.menuBar()
         self.fileMenu = self.menubar.addMenu('File')
         self.viewMenu = self.menubar.addMenu('View')
@@ -551,14 +563,15 @@ class MainWindow(QtGui.QMainWindow):
 
         self.toolBar = QtGui.QToolBar(self)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-
+        
+        # Create the actions and assigned them to the menus
         self.actionQuit = QtGui.QAction('Quit', self)
         self.actionQuit.setShortcut(QtGui.QKeySequence.Quit)
-
+        
         self.actionShowBasemapLayer = QtGui.QAction('Basemap', self)
         self.actionShowBasemapLayer.setShortcut('Ctrl+B')
         self.actionShowBasemapLayer.setCheckable(True)
-
+        
         self.actionShowVectorLayer = QtGui.QAction('Landmarks', self)
         self.actionShowVectorLayer.setShortcut('Ctrl+L')
         self.actionShowVectorLayer.setCheckable(True)
@@ -566,35 +579,44 @@ class MainWindow(QtGui.QMainWindow):
         self.actionShowBasemapLayer.setChecked(True)
         self.actionShowVectorLayer.setChecked(True)
 
-        icon = QtGui.QIcon(':/icons/iconActionZoomIn.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionZoomIn.png')
         self.actionZoomIn = QtGui.QAction(icon, 'Zoom In', self)
         self.actionZoomIn.setShortcut(QtGui.QKeySequence.ZoomIn)
 
-        icon = QtGui.QIcon(':/icons/iconActionZoomOut.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionZoomOut.png')
         self.actionZoomOut = QtGui.QAction(icon, 'Zoom Out', self)
         self.actionZoomOut.setShortcut(QtGui.QKeySequence.ZoomOut)
 
-        icon = QtGui.QIcon(':/icons/iconActionPan.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionPan.png')
         self.actionPan = QtGui.QAction(icon, 'Pan', self)
         self.actionPan.setShortcut('Ctrl+1')
         self.actionPan.setCheckable(True)
 
-        icon = QtGui.QIcon(':/icons/iconActionExplore.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionExplore.png')
         self.actionExplore = QtGui.QAction(icon, 'Explore', self)
         self.actionExplore.setShortcut('Ctrl+2')
         self.actionExplore.setCheckable(True)
-
+        
+        icon = QtGui.QIcon(':/ui/icons/iconActionAdd.png')
+        self.actionAddLayer = QtGui.QAction(icon, 'Add Layer', self)
+        
+        icon = QtGui.QIcon(':/ui/icons/iconActionDelete.png')
+        self.actionDeleteLayer = QtGui.QAction(icon, 'Delete Layer', self)
+        self.actionDeleteLayer.setDisabled(True)
+        
         self.fileMenu.addAction(self.actionQuit)
-
-        self.viewMenu.addAction(self.actionShowBasemapLayer)
-        self.viewMenu.addAction(self.actionShowVectorLayer)
-        self.viewMenu.addSeparator()
+        
         self.viewMenu.addAction(self.actionZoomIn)
         self.viewMenu.addAction(self.actionZoomOut)
-
+        self.viewMenu.addSeparator()
+        self.viewMenu.addAction(self.actionShowBasemapLayer)
+        self.viewMenu.addAction(self.actionShowVectorLayer)
+        
         self.modeMenu.addAction(self.actionPan)
         self.modeMenu.addAction(self.actionExplore)
 
+        self.toolBar.addAction(self.actionAddLayer)
+        self.toolBar.addAction(self.actionDeleteLayer)
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoomOut)
         self.toolBar.addAction(self.actionPan)
@@ -698,6 +720,7 @@ class MainWindow(QtGui.QMainWindow):
         self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateLandUseChange)
         self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateWithScenario)
         
+        # Create the app window layouts
         self.layoutActiveProject = QtGui.QHBoxLayout()
         self.labelActiveProject = QtGui.QLabel(self)
         self.labelActiveProject.setText('Active project:')
@@ -707,18 +730,26 @@ class MainWindow(QtGui.QMainWindow):
         self.lineEditActiveProject.setReadOnly(True)
         self.layoutActiveProject.addWidget(self.lineEditActiveProject)
         
-        self.contentSidebar = QtGui.QWidget()
-        self.layoutSidebar = QtGui.QVBoxLayout()
-        self.contentSidebar.setLayout(self.layoutSidebar)
+        ##self.contentSidebar = QtGui.QWidget()
+        ##self.layoutSidebar = QtGui.QVBoxLayout()
+        ##self.contentSidebar.setLayout(self.layoutSidebar)
         
-        self.scrollSidebar = QtGui.QScrollArea()
-        self.scrollSidebar.setFixedWidth(200)
-        self.scrollSidebar.setWidget(self.contentSidebar)
+        self.layerListView = QtGui.QListView(self)
+        self.layerListView.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.layerListView.setFixedWidth(200)
+        
+        ##self.layoutSidebar.setContentsMargins(0, 0, 0, 0)
+        ##self.layoutSidebar.addWidget(self.layerListView)
+        
+        ##self.scrollSidebar = QtGui.QScrollArea()
+        ##self.scrollSidebar.setFixedWidth(200)
+        ##self.scrollSidebar.setWidget(self.contentSidebar)
         
         self.layoutBody = QtGui.QHBoxLayout()
         self.layoutBody.setContentsMargins(0, 0, 0, 0)
         self.layoutBody.setAlignment(QtCore.Qt.AlignLeft)
-        self.layoutBody.addWidget(self.scrollSidebar)
+        ##self.layoutBody.addWidget(self.scrollSidebar)
+        self.layoutBody.addWidget(self.layerListView)
         
         self.layoutMain = QtGui.QVBoxLayout()
         self.layoutMain.addLayout(self.layoutActiveProject)
@@ -729,6 +760,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.centralWidget.setLayout(self.layoutMain)
         
+        # Initialize the mapcanvas and map tools
         self.mapCanvas = QgsMapCanvas()
         self.mapCanvas.useImageToRender(False)
         self.mapCanvas.setCanvasColor(QtCore.Qt.white)
@@ -1146,10 +1178,10 @@ class MainWindow(QtGui.QMainWindow):
         QgsMapLayerRegistry.instance().addMapLayer(self.basemap_layer)
         
         if self.checkDefaultVector():
-            self.landmark_layer = QgsVectorLayer(self.appSettings['defaultVectorFilePath'], 'landmarks', 'ogr')
-            QgsMapLayerRegistry.instance().addMapLayer(self.landmark_layer)
+            self.vector_layer = QgsVectorLayer(self.appSettings['defaultVectorFilePath'], 'vector', 'ogr')
+            QgsMapLayerRegistry.instance().addMapLayer(self.vector_layer)
 
-            symbol = QgsSymbolV2.defaultSymbol(self.landmark_layer.geometryType())
+            symbol = QgsSymbolV2.defaultSymbol(self.vector_layer.geometryType())
             renderer = QgsRuleBasedRendererV2(symbol)
             root_rule = renderer.rootRule()
             default_rule = root_rule.children()[0]
@@ -1179,10 +1211,10 @@ class MainWindow(QtGui.QMainWindow):
             root_rule.appendChild(rule)
 
             root_rule.removeChildAt(0)
-            self.landmark_layer.setRendererV2(renderer)
+            self.vector_layer.setRendererV2(renderer)
 
             p = QgsPalLayerSettings()
-            p.readFromLayer(self.landmark_layer)
+            p.readFromLayer(self.vector_layer)
             p.enabled = True
             p.fieldName = "NAME"
             p.placement = QgsPalLayerSettings.OverPoint
@@ -1196,55 +1228,161 @@ class MainWindow(QtGui.QMainWindow):
             p.quadOffset = QgsPalLayerSettings.QuadrantBelow
             p.yOffset = 1
             p.labelOffsetInMapUnits = False
-            p.writeToLayer(self.landmark_layer)
+            p.writeToLayer(self.vector_layer)
 
             labelingEngine = QgsPalLabeling()
             self.mapCanvas.mapRenderer().setLabelingEngine(labelingEngine)
         
-        # center on South East Asia
-        self.mapCanvas.setExtent(QgsRectangle(95, -11, 140, 11))
         self.showVisibleMapLayers()
+        
+        ###self.addLayer([self.appSettings['defaultBasemapFilePath']])
+        ###self.addLayer([self.appSettings['defaultVectorFilePath']])
+        
         self.layoutBody.addWidget(self.mapCanvas)
         ##self.centralWidget.setLayout(self.layoutBody)
     
     
-    def showVisibleMapLayers(self):
+    def showVisibleMapLayers(self, mapCanvasLayers=None):
         """
         """
         layers = []
+        
+        if mapCanvasLayers:
+            for mapCanvasLayer in mapCanvasLayers:
+                layers.append(QgsMapCanvasLayer(mapCanvasLayer))
+        
         if self.actionShowVectorLayer.isChecked():
-            layers.append(QgsMapCanvasLayer(self.landmark_layer))
+            layers.append(QgsMapCanvasLayer(self.vector_layer))
+            self.mapCanvas.setExtent(QgsRectangle(95, -11, 140, 11))
         if self.actionShowBasemapLayer.isChecked():
             layers.append(QgsMapCanvasLayer(self.basemap_layer))
+            self.mapCanvas.setExtent(QgsRectangle(95, -11, 140, 11))
+        
         self.mapCanvas.setLayerSet(layers)
     
     
-    def showBasemapLayer(self):
+    def handlerShowBasemapLayer(self):
+        """
+        """
         self.showVisibleMapLayers()
     
     
-    def showVectorLayer(self):
+    def handlerShowVectorLayer(self):
+        """
+        """
         self.showVisibleMapLayers()
     
     
-    def zoomIn(self):
+    def handlerZoomIn(self):
+        """
+        """
         self.mapCanvas.zoomIn()
     
     
-    def zoomOut(self):
+    def handlerZoomOut(self):
+        """
+        """
         self.mapCanvas.zoomOut()
     
     
-    def setPanMode(self):
+    def handlerSetPanMode(self):
+        """
+        """
         self.actionPan.setChecked(True)
         self.actionExplore.setChecked(False)
         self.mapCanvas.setMapTool(self.panTool)
     
     
-    def setExploreMode(self):
+    def handlerSetExploreMode(self):
+        """
+        """
         self.actionPan.setChecked(False)
         self.actionExplore.setChecked(True)
         self.mapCanvas.setMapTool(self.exploreTool)
+    
+    
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    def handlerSelectLayer(self, layerItemIndex):
+        """
+        """
+        self.actionDeleteLayer.setEnabled(True)
+    
+    
+    def handlerCheckLayer(self, layerItem):
+        """TODO
+        """
+        if layerItem.checkState():
+            QtGui.QMessageBox.information(self, 'Layer', 'Checked ' + layerItem.data())
+        else:
+            QtGui.QMessageBox.information(self, 'Layer', 'Unchecked ' + layerItem.data())
+    
+    
+    def handlerAddLayer(self):
+        """
+        """
+        layerFormats = [self.appSettings['selectShapefileExt'], self.appSettings['selectRasterfileExt']]
+        filterFormats = ' '.join(['*' + ext for ext in layerFormats])
+        
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Vector/Raster File', QtCore.QDir.homePath(), 'Vector/Raster File ({0})'.format(filterFormats)))
+        
+        if file:
+            self.addLayer(file)
+    
+    
+    def addLayer(self, layerFile):
+        """
+        """
+        if os.path.isfile(layerFile):
+            fileName = os.path.basename(layerFile)
+            
+            # check for existing layers with same file name
+            existingLayerItems = self.layerListModel.findItems(fileName)
+                
+            for existingLayerItem in existingLayerItems:
+                if os.path.abspath(layerFile) == os.path.abspath(existingLayerItem.data()):
+                    QtGui.QMessageBox.warning(self, 'Duplicate Layer', 'Layer "{0}" has already been added.\nPlease select another file.'.format(fileName))
+                    return
+            
+            layer = None
+            fileType = None
+            fileExt = os.path.splitext(fileName)[1].lower()
+            
+            if  fileExt == '.shp':
+                fileType = 'vector'
+                layer = QgsVectorLayer(layerFile, fileName, 'ogr')
+            elif fileExt == '.tif':
+                fileType = 'raster'
+                layer = QgsRasterLayer(layerFile, fileName)
+            
+            if not layer.isValid():
+                print 'ERROR: Invalid layer!'
+                return
+            
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
+            self.mapCanvas.setExtent(layer.extent())
+            self.showVisibleMapLayers([layer])
+            
+            layerItem = QtGui.QStandardItem(fileName)
+            layerItem.setData(layerFile)
+            layerItem.setToolTip(layerFile)
+            layerItem.setEditable(False)
+            layerItem.setCheckable(True)
+            layerItem.setCheckState(QtCore.Qt.Checked)
+            self.layerListModel.appendRow(layerItem)
+    
+    
+    def handlerDeleteLayer(self):
+        """
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        #layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        #QtGui.QMessageBox.information(self, 'Layer', layerItem.data())
+        self.layerListModel.removeRow(layerItemIndex.row())
+        
+        if not self.layerListModel.rowCount():
+            self.actionDeleteLayer.setDisabled(True)
+        
 
 
 #############################################################################
@@ -1323,7 +1461,7 @@ def main():
     
     if window.checkDefaultBasemap():
         window.loadMap()
-        window.setPanMode()
+        window.handlerSetPanMode()
     
     app.exec_()
     app.deleteLater()
