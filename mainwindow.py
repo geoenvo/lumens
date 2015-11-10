@@ -39,7 +39,7 @@ from processing.tools import *
 
 splashLabel.close()
 
-from utils import QPlainTextEditLogger
+from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
 from dialog_lumens_importdatabase import DialogLumensImportDatabase
@@ -813,7 +813,7 @@ class MainWindow(QtGui.QMainWindow):
             self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
         
         if lumensDatabase:
-            logging.getLogger(type(self).__name__).info('select LUMENS database: %s', lumensDatabase)
+            logging.getLogger(__name__).info('select LUMENS database: %s', lumensDatabase)
             
             self.lumensOpenDatabase(lumensDatabase)
     
@@ -954,7 +954,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.actionLumensDeleteData.setEnabled(True)
         
-        logging.getLogger(type(self).__name__).info('end: lumensdeletedata')
+        logging.getLogger(__name__).info('end: lumensdeletedata')
     
     
     def handlerDialogLumensAddLandcoverRaster(self):
@@ -1233,30 +1233,21 @@ class MainWindow(QtGui.QMainWindow):
             labelingEngine = QgsPalLabeling()
             self.mapCanvas.mapRenderer().setLabelingEngine(labelingEngine)
         
-        self.showVisibleMapLayers()
-        
-        ###self.addLayer([self.appSettings['defaultBasemapFilePath']])
-        ###self.addLayer([self.appSettings['defaultVectorFilePath']])
-        
+        self.mapCanvas.setExtent(QgsRectangle(95, -11, 140, 11))
+        self.showVisibleLayers()
         self.layoutBody.addWidget(self.mapCanvas)
         ##self.centralWidget.setLayout(self.layoutBody)
     
     
-    def showVisibleMapLayers(self, mapCanvasLayers=None):
-        """
+    def showVisibleMapLayers(self, mapCanvasLayer=None):
+        """DEPRECATED
         """
         layers = []
         
-        if mapCanvasLayers:
-            for mapCanvasLayer in mapCanvasLayers:
-                layers.append(QgsMapCanvasLayer(mapCanvasLayer))
-        
         if self.actionShowVectorLayer.isChecked():
             layers.append(QgsMapCanvasLayer(self.vector_layer))
-            self.mapCanvas.setExtent(QgsRectangle(95, -11, 140, 11))
         if self.actionShowBasemapLayer.isChecked():
             layers.append(QgsMapCanvasLayer(self.basemap_layer))
-            self.mapCanvas.setExtent(QgsRectangle(95, -11, 140, 11))
         
         self.mapCanvas.setLayerSet(layers)
     
@@ -1264,13 +1255,13 @@ class MainWindow(QtGui.QMainWindow):
     def handlerShowBasemapLayer(self):
         """
         """
-        self.showVisibleMapLayers()
+        self.showVisibleLayers()
     
     
     def handlerShowVectorLayer(self):
         """
         """
-        self.showVisibleMapLayers()
+        self.showVisibleLayers()
     
     
     def handlerZoomIn(self):
@@ -1301,6 +1292,36 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.setMapTool(self.exploreTool)
     
     
+    def loadDefaultLayers(self):
+        """Replaces loadMap() ?
+        """
+        self.addLayer(self.appSettings['defaultBasemapFilePath'])
+        self.addLayer(self.appSettings['defaultVectorFilePath'])
+        self.layoutBody.addWidget(self.mapCanvas)
+    
+    
+    def showVisibleLayers(self):
+        """Find checked layers in layerlistmodel and add them to the mapcanvas layerset
+        """
+        layers = []
+        i = 0
+        
+        while self.layerListModel.item(i):
+            layerItem = self.layerListModel.item(i)
+            layerItemData = layerItem.data()
+            if layerItem.checkState():
+                logging.getLogger(__name__).info('showing layer: %s', layerItem.text())
+                layers.append(QgsMapCanvasLayer(layerItemData['layer']))
+            i += 1
+        
+        if self.actionShowVectorLayer.isChecked():
+            layers.append(QgsMapCanvasLayer(self.vector_layer))
+        if self.actionShowBasemapLayer.isChecked():
+            layers.append(QgsMapCanvasLayer(self.basemap_layer))
+        
+        self.mapCanvas.setLayerSet(layers)
+    
+    
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def handlerSelectLayer(self, layerItemIndex):
         """
@@ -1309,12 +1330,17 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerCheckLayer(self, layerItem):
-        """TODO
         """
+        """
+        self.showVisibleLayers()
+        
+        """
+        layerData = layerItem.data()
         if layerItem.checkState():
-            QtGui.QMessageBox.information(self, 'Layer', 'Checked ' + layerItem.data())
+            QtGui.QMessageBox.information(self, 'Layer', 'Checked ' + layerData['layerName'])
         else:
-            QtGui.QMessageBox.information(self, 'Layer', 'Unchecked ' + layerItem.data())
+            QtGui.QMessageBox.information(self, 'Layer', 'Unchecked ' + layerData['layerName'])
+        """
     
     
     def handlerAddLayer(self):
@@ -1334,56 +1360,66 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         if os.path.isfile(layerFile):
-            fileName = os.path.basename(layerFile)
+            layerName = os.path.basename(layerFile)
             
             # check for existing layers with same file name
-            existingLayerItems = self.layerListModel.findItems(fileName)
+            existingLayerItems = self.layerListModel.findItems(layerName)
                 
             for existingLayerItem in existingLayerItems:
-                if os.path.abspath(layerFile) == os.path.abspath(existingLayerItem.data()):
-                    QtGui.QMessageBox.warning(self, 'Duplicate Layer', 'Layer "{0}" has already been added.\nPlease select another file.'.format(fileName))
+                existingLayerData = existingLayerItem.data()
+                if os.path.abspath(layerFile) == os.path.abspath(existingLayerData['layerFile']):
+                    QtGui.QMessageBox.warning(self, 'Duplicate Layer', 'Layer "{0}" has already been added.\nPlease select another file.'.format(layerName))
                     return
             
             layer = None
-            fileType = None
-            fileExt = os.path.splitext(fileName)[1].lower()
+            layerType = None
+            fileExt = os.path.splitext(layerName)[1].lower()
             
             if  fileExt == '.shp':
-                fileType = 'vector'
-                layer = QgsVectorLayer(layerFile, fileName, 'ogr')
+                layerType = 'vector'
+                layer = QgsVectorLayer(layerFile, layerName, 'ogr')
             elif fileExt == '.tif':
-                fileType = 'raster'
-                layer = QgsRasterLayer(layerFile, fileName)
+                layerType = 'raster'
+                layer = QgsRasterLayer(layerFile, layerName)
             
             if not layer.isValid():
                 print 'ERROR: Invalid layer!'
                 return
             
-            QgsMapLayerRegistry.instance().addMapLayer(layer)
-            self.mapCanvas.setExtent(layer.extent())
-            self.showVisibleMapLayers([layer])
+            layerItemData = {
+                'layerFile': layerFile,
+                'layerName': layerName,
+                'layerType': layerType,
+                'layer': layer,
+            }
             
-            layerItem = QtGui.QStandardItem(fileName)
-            layerItem.setData(layerFile)
+            layerItem = QtGui.QStandardItem(layerName)
+            layerItem.setData(layerItemData)
             layerItem.setToolTip(layerFile)
             layerItem.setEditable(False)
             layerItem.setCheckable(True)
             layerItem.setCheckState(QtCore.Qt.Checked)
             self.layerListModel.appendRow(layerItem)
+            
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
+            self.mapCanvas.setExtent(layer.extent())
+            self.showVisibleLayers()
     
     
     def handlerDeleteLayer(self):
         """
         """
         layerItemIndex = self.layerListView.selectedIndexes()[0]
-        #layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        #QtGui.QMessageBox.information(self, 'Layer', layerItem.data())
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        ##QtGui.QMessageBox.information(self, 'Layer', layerItemData)
         self.layerListModel.removeRow(layerItemIndex.row())
+        
+        self.showVisibleLayers()
         
         if not self.layerListModel.rowCount():
             self.actionDeleteLayer.setDisabled(True)
         
-
 
 #############################################################################
 
@@ -1403,26 +1439,45 @@ class ExploreTool(QgsMapToolIdentify):
             layer = found_features[0].mLayer
             feature = found_features[0].mFeature
             geometry = feature.geometry()
-
+            
             info = []
-
+            
+            layerDataProvider = layer.dataProvider()
+            
+            if not layerDataProvider.isValid():
+                print 'ERROR: Invalid data provider!'
+                return
+            
+            for field in layerDataProvider.fields():
+                info.append(field.name() + ':\t' + str(feature.attribute(field.name())))
+            
+            """
             name = feature.attribute("NAME")
             if name != None: info.append(name)
-
+            
             admin_0 = feature.attribute("ADM0NAME")
             admin_1 = feature.attribute("ADM1NAME")
             if admin_0 and admin_1:
                 info.append(admin_1 + ", " + admin_0)
-
+            
             timezone = feature.attribute("TIMEZONE")
             if timezone != None:
                 info.append("Timezone: " + timezone)
-
+            
             longitude = geometry.asPoint().x()
             latitude  = geometry.asPoint().y()
             info.append("Lat/Long: %0.4f, %0.4f" % (latitude, longitude))
-
+            
             QtGui.QMessageBox.information(self.window, "Feature Info", "\n".join(info))
+            """
+            
+            mb = DetailedMessageBox(self.window)
+            mb.setWindowTitle('Feature Info')
+            mb.setText(layer.name())
+            mb.setDetailedText("\n".join(info))
+            ##mb.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+            ##mb.setSizeGripEnabled(True)
+            mb.exec_()
 
 
 #############################################################################
