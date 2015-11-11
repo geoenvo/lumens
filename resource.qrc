@@ -6,5 +6,9 @@
         <file>ui/icons/iconActionZoomOut.png</file>
         <file>ui/icons/iconActionPan.png</file>
         <file>ui/icons/iconActionExplore.png</file>
+        <file>ui/icons/iconActionInfo.png</file>
+        <file>ui/icons/iconActionRefresh.png</file>
+        <file>ui/icons/iconActionZoomFull.png</file>
+        <file>ui/icons/iconActionZoomLayer.png</file>
     </qresource>
 </RCC>
