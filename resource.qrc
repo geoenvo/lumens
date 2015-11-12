@@ -10,5 +10,9 @@
         <file>ui/icons/iconActionRefresh.png</file>
         <file>ui/icons/iconActionZoomFull.png</file>
         <file>ui/icons/iconActionZoomLayer.png</file>
+        <file>ui/icons/iconActionZoomSelected.png</file>
+        <file>ui/icons/iconActionPanSelected.png</file>
+        <file>ui/icons/iconActionZoomLast.png</file>
+        <file>ui/icons/iconActionZoomNext.png</file>
     </qresource>
 </RCC>

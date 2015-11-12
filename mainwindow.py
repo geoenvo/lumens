@@ -406,12 +406,18 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomOut.triggered.connect(self.handlerZoomOut)
         self.actionZoomFull.triggered.connect(self.handlerZoomFull)
         self.actionZoomLayer.triggered.connect(self.handlerZoomLayer)
+        self.actionZoomSelected.triggered.connect(self.handlerZoomSelected)
+        self.actionPanSelected.triggered.connect(self.handlerPanSelected)
         self.actionPan.triggered.connect(self.handlerSetPanMode)
         self.actionSelect.triggered.connect(self.handlerSetSelectMode)
         self.actionInfo.triggered.connect(self.handlerSetInfoMode)
         self.actionAddLayer.triggered.connect(self.handlerAddLayer)
         self.actionDeleteLayer.triggered.connect(self.handlerDeleteLayer)
         self.actionRefresh.triggered.connect(self.handlerRefresh)
+        self.mapCanvas.zoomLastStatusChanged.connect(self.handlerZoomLastStatus)
+        self.mapCanvas.zoomNextStatusChanged.connect(self.handlerZoomNextStatus)
+        self.actionZoomLast.triggered.connect(self.handlerZoomLast)
+        self.actionZoomNext.triggered.connect(self.handlerZoomNext)
         
         # LUMENS action handlers
         # Database menu
@@ -553,14 +559,36 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomLayer.setShortcut('Ctrl+L')
         self.actionZoomLayer.setDisabled(True)
         
+        icon = QtGui.QIcon(':/ui/icons/iconActionZoomSelected.png')
+        self.actionZoomSelected = QtGui.QAction(icon, 'Zoom to Selected', self)
+        self.actionZoomSelected.setShortcut('Ctrl+S')
+        
+        icon = QtGui.QIcon(':/ui/icons/iconActionPanSelected.png')
+        self.actionPanSelected = QtGui.QAction(icon, 'Pan to Selected', self)
+        self.actionPanSelected.setShortcut('Ctrl+P')
+        
+        icon = QtGui.QIcon(':/ui/icons/iconActionZoomLast.png')
+        self.actionZoomLast = QtGui.QAction(icon, 'Zoom Last', self)
+        self.actionZoomLast.setShortcut('Ctrl+,')
+        self.actionZoomLast.setDisabled(True)
+        
+        icon = QtGui.QIcon(':/ui/icons/iconActionZoomNext.png')
+        self.actionZoomNext = QtGui.QAction(icon, 'Zoom Next', self)
+        self.actionZoomNext.setShortcut('Ctrl+.')
+        self.actionZoomNext.setDisabled(True)
+        
         self.fileMenu.addAction(self.actionQuit)
         
         self.viewMenu.addAction(self.actionZoomIn)
         self.viewMenu.addAction(self.actionZoomOut)
-        self.viewMenu.addSeparator()
+        ##self.viewMenu.addSeparator()
         self.viewMenu.addAction(self.actionRefresh)
+        self.viewMenu.addAction(self.actionPanSelected)
         self.viewMenu.addAction(self.actionZoomFull)
         self.viewMenu.addAction(self.actionZoomLayer)
+        self.viewMenu.addAction(self.actionZoomSelected)
+        self.viewMenu.addAction(self.actionZoomLast)
+        self.viewMenu.addAction(self.actionZoomNext)
         
         self.modeMenu.addAction(self.actionPan)
         self.modeMenu.addAction(self.actionSelect)
@@ -568,11 +596,17 @@ class MainWindow(QtGui.QMainWindow):
 
         self.toolBar.addAction(self.actionAddLayer)
         self.toolBar.addAction(self.actionDeleteLayer)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionRefresh)
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoomOut)
+        self.toolBar.addAction(self.actionPanSelected)
         self.toolBar.addAction(self.actionZoomFull)
         self.toolBar.addAction(self.actionZoomLayer)
+        self.toolBar.addAction(self.actionZoomSelected)
+        self.toolBar.addAction(self.actionZoomLast)
+        self.toolBar.addAction(self.actionZoomNext)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPan)
         self.toolBar.addAction(self.actionSelect)
         self.toolBar.addAction(self.actionInfo)
@@ -723,8 +757,11 @@ class MainWindow(QtGui.QMainWindow):
         self.centralWidget.setLayout(self.layoutMain)
         
         # Initialize the mapcanvas and map tools
+        # Enable on the fly projection
         self.mapCanvas = QgsMapCanvas()
         self.mapCanvas.useImageToRender(False)
+        self.mapCanvas.mapRenderer().setProjectionsEnabled(True)
+        self.mapCanvas.mapRenderer().setDestinationCrs(QgsCoordinateReferenceSystem(4326))
         self.mapCanvas.setCanvasColor(QtCore.Qt.white)
         ##self.mapCanvas.show()
 
@@ -1171,6 +1208,28 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.refresh()
     
     
+    def handlerZoomSelected(self):
+        """
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        if layerItemData['layerType'] == 'vector':
+            self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
+            self.mapCanvas.zoomToSelected()
+    
+    
+    def handlerPanSelected(self):
+        """
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        if layerItemData['layerType'] == 'vector':
+            self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
+            self.mapCanvas.panToSelected()
+    
+    
     def handlerSetPanMode(self):
         """
         """
@@ -1242,6 +1301,8 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
+        
+        self.printDebugInfo()
     
     
     def handlerDropLayer(self):
@@ -1330,6 +1391,8 @@ class MainWindow(QtGui.QMainWindow):
             layerItem.setCheckState(QtCore.Qt.Checked)
             self.layerListModel.appendRow(layerItem)
             
+            # Set layer CRS to EPSG:4326 (in addition to on-the-fly CRS reprojection)
+            layer.setCrs(QgsCoordinateReferenceSystem(4326))
             QgsMapLayerRegistry.instance().addMapLayer(layer)
             self.mapCanvas.setExtent(layer.extent())
             self.showVisibleLayers()
@@ -1366,7 +1429,51 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.mapCanvas.refresh()
+    
+    
+    def handlerZoomLast(self):
+        """
+        """
+        self.mapCanvas.zoomToPreviousExtent()
+    
+    
+    def handlerZoomNext(self):
+        """
+        """
+        self.mapCanvas.zoomToNextExtent()
+    
+    
+    def handlerZoomLastStatus(self, status):
+        """
+        """
+        if status:
+            self.actionZoomLast.setEnabled(True)
+        else:
+            self.actionZoomLast.setDisabled(True)
+    
+    
+    def handlerZoomNextStatus(self, status):
+        """
+        """
+        if status:
+            self.actionZoomNext.setEnabled(True)
+        else:
+            self.actionZoomNext.setDisabled(True)
+    
+    
+    def printDebugInfo(self):
+        """
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
         
+        logging.getLogger(__name__).info('DEBUG INFO ===============================')
+        logging.getLogger(__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
+        logging.getLogger(__name__).info('MapCanvas destination CRS: ' + self.mapCanvas.mapRenderer().destinationCrs().authid())
+        logging.getLogger(__name__).info('On-the-fly projection enabled: ' + str(self.mapCanvas.hasCrsTransformEnabled()))
+        logging.getLogger(__name__).info('Selected layer CRS: ' + self.qgsLayerList[layerItemData['layer']].crs().authid())
+
 
 #############################################################################
 
