@@ -102,7 +102,7 @@ class MainWindow(QtGui.QMainWindow):
             'selectHTMLfileExt': '.html',
             'selectTextfileExt': '.txt',
             'selectCarfileExt': '.car',
-            'extentSEA': QgsRectangle(95, -11, 140, 11),
+            'extentSEA': QgsRectangle(95, -11, 140, 11), # Southeast Asia extent
             'DialogLumensCreateDatabase': {
                 'projectName': '',
                 'outputFolder': '',
@@ -382,12 +382,16 @@ class MainWindow(QtGui.QMainWindow):
         # For holding QgsVectorLayer/QgsRasterLayer objects
         self.qgsLayerList = dict()
         
+        # PyQT model+view for layers list
         self.layerListModel = QtGui.QStandardItemModel(self.layerListView)
-        self.layerListModel.setSupportedDragActions(QtCore.Qt.MoveAction)
+        ##self.layerListModel.setSupportedDragActions(QtCore.Qt.MoveAction)
         self.layerListView.setModel(self.layerListModel)
         
         self.layerListView.clicked.connect(self.handlerSelectLayer)
         self.layerListModel.itemChanged.connect(self.handlerCheckLayer)
+        
+        # Check drop events
+        self.layerListView.viewport().installEventFilter(self)
         
         # Init the logger
         self.logger = logging.getLogger(__name__)
@@ -403,6 +407,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomFull.triggered.connect(self.handlerZoomFull)
         self.actionZoomLayer.triggered.connect(self.handlerZoomLayer)
         self.actionPan.triggered.connect(self.handlerSetPanMode)
+        self.actionSelect.triggered.connect(self.handlerSetSelectMode)
         self.actionInfo.triggered.connect(self.handlerSetInfoMode)
         self.actionAddLayer.triggered.connect(self.handlerAddLayer)
         self.actionDeleteLayer.triggered.connect(self.handlerDeleteLayer)
@@ -456,93 +461,24 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOSimulateWithScenario.triggered.connect(self.handlerDialogLumensSCIENDOSimulateWithScenario)
     
     
-    def eventFilter(self, object, event):
+    def eventFilter(self, source, event):
         """
         """
         if event.type() == QtCore.QEvent.WindowActivate:
             print 'widget window has gained focus'
             if not self.appSettings['DialogLumensOpenDatabase']['projectFile']:
                 self.actionLumensCloseDatabase.setDisabled(True)
-                self.actionLumensDeleteData.setDisabled(True)
-                
-                self.actionDialogLumensAddLandcoverRaster.setDisabled(True)
-                self.actionDialogLumensAddPeatData.setDisabled(True)
-                self.actionDialogLumensAddFactorData.setDisabled(True)
-                self.actionDialogLumensAddPlanningUnitData.setDisabled(True)
-                self.actionDialogLumensPURCreateReferenceData.setDisabled(True)
-                self.actionDialogLumensPURPreparePlanningUnit.setDisabled(True)
-                self.actionDialogLumensPURReconcilePlanningUnit.setDisabled(True)
-                self.actionDialogLumensPURFinalization.setDisabled(True)
-                
-                self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setDisabled(True)
-                self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setDisabled(True)
-                self.actionDialogLumensQUESCCarbonAccounting.setDisabled(True)
-                self.actionDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
-                self.actionDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
-                self.actionDialogLumensQUESBAnalysis.setDisabled(True)
-                
-                self.actionDialogLumensTAAbacusOpportunityCost.setDisabled(True)
-                self.actionDialogLumensTAOpportunityCost.setDisabled(True)
-                self.actionDialogLumensTAOpportunityCostMap.setDisabled(True)
-                self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
-                self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
-                self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setDisabled(True)
-                self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setDisabled(True)
-                self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
-                self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
-                
-                self.actionDialogLumensSCIENDODriversAnalysis.setDisabled(True)
-                self.actionDialogLumensSCIENDOBuildScenario.setDisabled(True)
-                self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
-                self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setDisabled(True)
-                self.actionDialogLumensSCIENDOCreateRasterCube.setDisabled(True)
-                self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setDisabled(True)
-                self.actionDialogLumensSCIENDOSimulateLandUseChange.setDisabled(True)
-                self.actionDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
+                self.lumensDisableMenus()
             else:
-                self.actionLumensCloseDatabase.setEnabled(True)
-                self.actionLumensDeleteData.setEnabled(True)
-                
-                self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
-                self.actionDialogLumensAddPeatData.setEnabled(True)
-                self.actionDialogLumensAddFactorData.setEnabled(True)
-                self.actionDialogLumensAddPlanningUnitData.setEnabled(True)
-                self.actionDialogLumensPURCreateReferenceData.setEnabled(True)
-                self.actionDialogLumensPURPreparePlanningUnit.setEnabled(True)
-                self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
-                self.actionDialogLumensPURFinalization.setEnabled(True)
-                
-                self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
-                self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
-                self.actionDialogLumensQUESCCarbonAccounting.setEnabled(True)
-                self.actionDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
-                self.actionDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
-                self.actionDialogLumensQUESBAnalysis.setEnabled(True)
-                
-                self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
-                self.actionDialogLumensTAOpportunityCost.setEnabled(True)
-                self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
-                self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
-                self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
-                self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
-                self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
-                self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
-                self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
-                
-                self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
-                self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
-                self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
-                self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
-                self.actionDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
-                self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
-                self.actionDialogLumensSCIENDOSimulateLandUseChange.setEnabled(True)
-                self.actionDialogLumensSCIENDOSimulateWithScenario.setEnabled(True)
-        elif event.type()== QtCore.QEvent.WindowDeactivate:
+                self.lumensEnableMenus()
+        elif event.type() == QtCore.QEvent.WindowDeactivate:
             print 'widget window has lost focus'
-        elif event.type()== QtCore.QEvent.FocusIn:
+        elif event.type() == QtCore.QEvent.FocusIn:
             print 'widget has gained keyboard focus'
-        elif event.type()== QtCore.QEvent.FocusOut:
+        elif event.type() == QtCore.QEvent.FocusOut:
             print 'widget has lost keyboard focus'
+        elif event.type() == QtCore.QEvent.Drop and source == self.layerListView.viewport():
+            self.handlerDropLayer()
         
         return False
     
@@ -586,10 +522,15 @@ class MainWindow(QtGui.QMainWindow):
         self.actionPan = QtGui.QAction(icon, 'Pan', self)
         self.actionPan.setShortcut('Ctrl+1')
         self.actionPan.setCheckable(True)
-
+        
+        icon = QtGui.QIcon(':/ui/icons/iconActionSelect.png')
+        self.actionSelect = QtGui.QAction(icon, 'Select', self)
+        self.actionSelect.setShortcut('Ctrl+2')
+        self.actionSelect.setCheckable(True)
+        
         icon = QtGui.QIcon(':/ui/icons/iconActionInfo.png')
         self.actionInfo = QtGui.QAction(icon, 'Info', self)
-        self.actionInfo.setShortcut('Ctrl+2')
+        self.actionInfo.setShortcut('Ctrl+3')
         self.actionInfo.setCheckable(True)
         
         icon = QtGui.QIcon(':/ui/icons/iconActionAdd.png')
@@ -601,12 +542,15 @@ class MainWindow(QtGui.QMainWindow):
         
         icon = QtGui.QIcon(':/ui/icons/iconActionRefresh.png')
         self.actionRefresh = QtGui.QAction(icon, 'Refresh', self)
+        self.actionRefresh.setShortcut('Ctrl+R')
         
         icon = QtGui.QIcon(':/ui/icons/iconActionZoomFull.png')
         self.actionZoomFull = QtGui.QAction(icon, 'Zoom Full', self)
+        self.actionZoomFull.setShortcut('Ctrl+F')
         
         icon = QtGui.QIcon(':/ui/icons/iconActionZoomLayer.png')
         self.actionZoomLayer = QtGui.QAction(icon, 'Zoom to Layer', self)
+        self.actionZoomLayer.setShortcut('Ctrl+L')
         self.actionZoomLayer.setDisabled(True)
         
         self.fileMenu.addAction(self.actionQuit)
@@ -614,8 +558,12 @@ class MainWindow(QtGui.QMainWindow):
         self.viewMenu.addAction(self.actionZoomIn)
         self.viewMenu.addAction(self.actionZoomOut)
         self.viewMenu.addSeparator()
+        self.viewMenu.addAction(self.actionRefresh)
+        self.viewMenu.addAction(self.actionZoomFull)
+        self.viewMenu.addAction(self.actionZoomLayer)
         
         self.modeMenu.addAction(self.actionPan)
+        self.modeMenu.addAction(self.actionSelect)
         self.modeMenu.addAction(self.actionInfo)
 
         self.toolBar.addAction(self.actionAddLayer)
@@ -626,6 +574,7 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addAction(self.actionZoomFull)
         self.toolBar.addAction(self.actionZoomLayer)
         self.toolBar.addAction(self.actionPan)
+        self.toolBar.addAction(self.actionSelect)
         self.toolBar.addAction(self.actionInfo)
         
         # Database menu
@@ -781,6 +730,9 @@ class MainWindow(QtGui.QMainWindow):
 
         self.panTool = PanTool(self.mapCanvas)
         self.panTool.setAction(self.actionPan)
+        
+        self.selectTool = SelectTool(self)
+        self.selectTool.setAction(self.actionSelect)
 
         self.infoTool = InfoTool(self)
         self.infoTool.setAction(self.actionInfo)
@@ -831,91 +783,52 @@ class MainWindow(QtGui.QMainWindow):
             self.lumensOpenDatabase(lumensDatabase)
     
     
-    def lumensOpenDatabase(self, lumensDatabase):
+    def lumensEnableMenus(self):
         """
         """
-        logging.getLogger(__name__).info('start: LUMENS Open Database')
+        self.actionLumensCloseDatabase.setEnabled(True)
+        self.actionLumensDeleteData.setEnabled(True)
         
-        self.actionLumensOpenDatabase.setDisabled(True)
+        self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
+        self.actionDialogLumensAddPeatData.setEnabled(True)
+        self.actionDialogLumensAddFactorData.setEnabled(True)
+        self.actionDialogLumensAddPlanningUnitData.setEnabled(True)
         
-        outputs = general.runalg(
-            'modeler:lumens_open_database',
-            lumensDatabase,
-            None
-        )
+        self.actionDialogLumensPURCreateReferenceData.setEnabled(True)
+        self.actionDialogLumensPURPreparePlanningUnit.setEnabled(True)
+        self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
+        self.actionDialogLumensPURFinalization.setEnabled(True)
         
-        if outputs:
-            ##print outputs
-            # outputs['overview_ALG0'] => temporary raster file
-            
-            self.appSettings['DialogLumensOpenDatabase']['projectFile'] = lumensDatabase
-            self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = os.path.dirname(lumensDatabase)
-            
-            self.lineEditActiveProject.setText(lumensDatabase)
-            
-            self.actionLumensCloseDatabase.setEnabled(True)
-            self.actionLumensDeleteData.setEnabled(True)
-            self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
-            self.actionDialogLumensAddPeatData.setEnabled(True)
-            self.actionDialogLumensAddFactorData.setEnabled(True)
-            self.actionDialogLumensAddPlanningUnitData.setEnabled(True)
-            
-            self.actionDialogLumensPURCreateReferenceData.setEnabled(True)
-            self.actionDialogLumensPURPreparePlanningUnit.setEnabled(True)
-            self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
-            self.actionDialogLumensPURFinalization.setEnabled(True)
-            
-            self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
-            self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
-            self.actionDialogLumensQUESCCarbonAccounting.setEnabled(True)
-            self.actionDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
-            self.actionDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
-            self.actionDialogLumensQUESBAnalysis.setEnabled(True)
-            
-            self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
-            self.actionDialogLumensTAOpportunityCost.setEnabled(True)
-            self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
-            self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
-            self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
-            self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
-            self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
-            self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
-            self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
-            
-            self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
-            self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
-            self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
-            self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
-            self.actionDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
-            self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
-            self.actionDialogLumensSCIENDOSimulateLandUseChange.setEnabled(True)
-            self.actionDialogLumensSCIENDOSimulateWithScenario.setEnabled(True)
+        self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
+        self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
+        self.actionDialogLumensQUESCCarbonAccounting.setEnabled(True)
+        self.actionDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
+        self.actionDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
+        self.actionDialogLumensQUESBAnalysis.setEnabled(True)
         
-        self.actionLumensOpenDatabase.setEnabled(True)
+        self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
+        self.actionDialogLumensTAOpportunityCost.setEnabled(True)
+        self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
+        self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
+        self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
+        self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
+        self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
+        self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
+        self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
         
-        logging.getLogger(__name__).info('end: LUMENS Open Database')
+        self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
+        self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
+        self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
+        self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
+        self.actionDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
+        self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
+        self.actionDialogLumensSCIENDOSimulateLandUseChange.setEnabled(True)
+        self.actionDialogLumensSCIENDOSimulateWithScenario.setEnabled(True)
     
     
-    def handlerLumensCloseDatabase(self):
+    def lumensDisableMenus(self):
         """
         """
-        self.lumensCloseDatabase()
-    
-    
-    def lumensCloseDatabase(self):
-        """
-        """
-        logging.getLogger(__name__).info('start: LUMENS Close Database')
-        
-        self.actionLumensCloseDatabase.setDisabled(True)
-        
-        outputs = general.runalg('modeler:lumens_close_database')
-        
-        self.appSettings['DialogLumensOpenDatabase']['projectFile'] = ''
-        self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = ''
-        
-        self.lineEditActiveProject.clear()
-        
         self.actionLumensDeleteData.setDisabled(True)
         self.actionDialogLumensAddLandcoverRaster.setDisabled(True)
         self.actionDialogLumensAddPeatData.setDisabled(True)
@@ -952,6 +865,58 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setDisabled(True)
         self.actionDialogLumensSCIENDOSimulateLandUseChange.setDisabled(True)
         self.actionDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
+    
+    
+    def lumensOpenDatabase(self, lumensDatabase):
+        """
+        """
+        logging.getLogger(__name__).info('start: LUMENS Open Database')
+        
+        self.actionLumensOpenDatabase.setDisabled(True)
+        
+        outputs = general.runalg(
+            'modeler:lumens_open_database',
+            lumensDatabase,
+            None
+        )
+        
+        if outputs:
+            ##print outputs
+            # outputs['overview_ALG0'] => temporary raster file
+            
+            self.appSettings['DialogLumensOpenDatabase']['projectFile'] = lumensDatabase
+            self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = os.path.dirname(lumensDatabase)
+            
+            self.lineEditActiveProject.setText(lumensDatabase)
+            
+            self.lumensEnableMenus()
+        
+        self.actionLumensOpenDatabase.setEnabled(True)
+        
+        logging.getLogger(__name__).info('end: LUMENS Open Database')
+    
+    
+    def handlerLumensCloseDatabase(self):
+        """
+        """
+        self.lumensCloseDatabase()
+    
+    
+    def lumensCloseDatabase(self):
+        """
+        """
+        logging.getLogger(__name__).info('start: LUMENS Close Database')
+        
+        self.actionLumensCloseDatabase.setDisabled(True)
+        
+        outputs = general.runalg('modeler:lumens_close_database')
+        
+        self.appSettings['DialogLumensOpenDatabase']['projectFile'] = ''
+        self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = ''
+        
+        self.lineEditActiveProject.clear()
+        
+        self.lumensDisableMenus()
         
         logging.getLogger(__name__).info('end: LUMENS Close Database')
     
@@ -960,11 +925,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         logging.getLogger(type(self).__name__).info('start: lumensdeletedata')
-            
+        
         self.actionLumensDeleteData.setDisabled(True)
-        
         outputs = general.runalg('r:lumensdeletedata')
-        
         self.actionLumensDeleteData.setEnabled(True)
         
         logging.getLogger(__name__).info('end: lumensdeletedata')
@@ -1212,15 +1175,26 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.actionPan.setChecked(True)
+        self.actionSelect.setChecked(False)
         self.actionInfo.setChecked(False)
         self.mapCanvas.setMapTool(self.panTool)
+    
+    
+    def handlerSetSelectMode(self):
+        """
+        """
+        self.actionSelect.setChecked(True)
+        self.actionPan.setChecked(False)
+        self.actionInfo.setChecked(False)
+        self.mapCanvas.setMapTool(self.selectTool)
     
     
     def handlerSetInfoMode(self):
         """
         """
-        self.actionPan.setChecked(False)
         self.actionInfo.setChecked(True)
+        self.actionPan.setChecked(False)
+        self.actionSelect.setChecked(False)
         self.mapCanvas.setMapTool(self.infoTool)
     
     
@@ -1270,10 +1244,19 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setDisabled(True)
     
     
+    def handlerDropLayer(self):
+        """On dropping a layer in the layer list
+        """
+        pass
+    
+    
     def handlerCheckLayer(self, layerItem):
         """
         """
-        self.showVisibleLayers()
+        ##print 'DEBUG rowcount'
+        ##print self.layerListModel.rowCount()
+        
+        QtCore.QTimer.singleShot(1, self.showVisibleLayers)
         
         """
         layerData = layerItem.data()
@@ -1388,6 +1371,35 @@ class MainWindow(QtGui.QMainWindow):
 #############################################################################
 
 
+class SelectTool(QgsMapToolIdentify):
+    def __init__(self, window):
+        QgsMapToolIdentify.__init__(self, window.mapCanvas)
+        self.window = window
+        self.setCursor(QtCore.Qt.ArrowCursor)
+    
+    
+    def canvasReleaseEvent(self, event):
+        """
+        """
+        found_features = self.identify(event.x(), event.y(), self.TopDownStopAtFirst, self.VectorLayer)
+        if len(found_features) > 0:
+            layer = found_features[0].mLayer
+            feature = found_features[0].mFeature
+            geometry = feature.geometry()
+
+            if event.modifiers() & QtCore.Qt.ShiftModifier:
+                layer.select(feature.id())
+            else:
+                layer.setSelectedFeatures([feature.id()])
+        else:
+            for layerName, layer in self.window.qgsLayerList.iteritems():
+                if layer.type() == QgsMapLayer.VectorLayer:
+                    layer.removeSelection()
+
+
+#############################################################################
+
+
 class InfoTool(QgsMapToolIdentify):
     def __init__(self, window):
         QgsMapToolIdentify.__init__(self, window.mapCanvas)
@@ -1460,10 +1472,14 @@ def main():
     
     if window.checkDefaultBasemap():
         window.loadDefaultLayers()
-        window.handlerSetPanMode()
     
+    # Pan mode by default
+    window.handlerSetPanMode()
+    
+    app.setWindowIcon(QtGui.QIcon('ui/icons/app.ico'))
     app.exec_()
     app.deleteLater()
+    
     QgsApplication.exitQgis()
 
 
