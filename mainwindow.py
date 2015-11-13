@@ -40,6 +40,8 @@ from processing.tools import *
 splashLabel.close()
 
 from utils import QPlainTextEditLogger, DetailedMessageBox
+from dialog_layer_attribute_table import DialogLayerAttributeTable
+
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
 from dialog_lumens_importdatabase import DialogLumensImportDatabase
@@ -103,6 +105,7 @@ class MainWindow(QtGui.QMainWindow):
             'selectTextfileExt': '.txt',
             'selectCarfileExt': '.car',
             'extentSEA': QgsRectangle(95, -11, 140, 11), # Southeast Asia extent
+            'defaultCRS': 4326, # EPSG 4326 - WGS 84
             'DialogLumensCreateDatabase': {
                 'projectName': '',
                 'outputFolder': '',
@@ -418,6 +421,7 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.zoomNextStatusChanged.connect(self.handlerZoomNextStatus)
         self.actionZoomLast.triggered.connect(self.handlerZoomLast)
         self.actionZoomNext.triggered.connect(self.handlerZoomNext)
+        self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
         
         # LUMENS action handlers
         # Database menu
@@ -512,6 +516,13 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar = QtGui.QToolBar(self)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         
+        ##self.statusBar = QtGui.QStatusBar(self)
+        ##self.statusBar.setFixedHeight(10)
+        ##self.labelLayerCRS = QtGui.QLabel(self)
+        ##self.labelLayerCRS.setText('...')
+        ##self.statusBar.addPermanentWidget(self.labelLayerCRS)
+        ##self.setStatusBar(self.statusBar)
+        
         # Create the actions and assigned them to the menus
         self.actionQuit = QtGui.QAction('Quit', self)
         self.actionQuit.setShortcut(QtGui.QKeySequence.Quit)
@@ -577,18 +588,22 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomNext.setShortcut('Ctrl+.')
         self.actionZoomNext.setDisabled(True)
         
+        icon = QtGui.QIcon(':/ui/icons/iconActionLayerAttributeTable.png')
+        self.actionLayerAttributeTable = QtGui.QAction(icon, 'Layer Attribute Table', self)
+        self.actionLayerAttributeTable.setShortcut('Ctrl+T')
+        self.actionLayerAttributeTable.setDisabled(True)
+        
         self.fileMenu.addAction(self.actionQuit)
         
         self.viewMenu.addAction(self.actionZoomIn)
         self.viewMenu.addAction(self.actionZoomOut)
-        ##self.viewMenu.addSeparator()
-        self.viewMenu.addAction(self.actionRefresh)
         self.viewMenu.addAction(self.actionPanSelected)
         self.viewMenu.addAction(self.actionZoomFull)
         self.viewMenu.addAction(self.actionZoomLayer)
         self.viewMenu.addAction(self.actionZoomSelected)
         self.viewMenu.addAction(self.actionZoomLast)
         self.viewMenu.addAction(self.actionZoomNext)
+        self.viewMenu.addAction(self.actionRefresh)
         
         self.modeMenu.addAction(self.actionPan)
         self.modeMenu.addAction(self.actionSelect)
@@ -597,7 +612,6 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addAction(self.actionAddLayer)
         self.toolBar.addAction(self.actionDeleteLayer)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionRefresh)
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoomOut)
         self.toolBar.addAction(self.actionPanSelected)
@@ -606,6 +620,9 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addAction(self.actionZoomSelected)
         self.toolBar.addAction(self.actionZoomLast)
         self.toolBar.addAction(self.actionZoomNext)
+        self.toolBar.addAction(self.actionRefresh)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionLayerAttributeTable)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPan)
         self.toolBar.addAction(self.actionSelect)
@@ -749,10 +766,20 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutMain = QtGui.QVBoxLayout()
         self.layoutMain.addLayout(self.layoutActiveProject)
-        self.layoutMain.addLayout(self.layoutBody)
+        ###self.layoutMain.addLayout(self.layoutBody)
+        self.contentBody = QtGui.QWidget()
+        self.contentBody.setLayout(self.layoutBody)
         
         self.log_box = QPlainTextEditLogger(self)
-        self.layoutMain.addWidget(self.log_box.widget)
+        self.splitterMain = QtGui.QSplitter(self)
+        self.splitterMain.setOrientation(QtCore.Qt.Vertical)
+        ###self.layoutMain.addWidget(self.log_box.widget)
+        self.splitterMain.addWidget(self.contentBody)
+        self.splitterMain.addWidget(self.log_box.widget)
+        self.splitterMain.setStretchFactor(0, 5) # Bigger proportion for contentBody
+        self.splitterMain.setStretchFactor(1, 1) # Smaller proportion for log box
+        self.splitterMain.setCollapsible(0, False) # Don't collapse contentBody
+        self.layoutMain.addWidget(self.splitterMain)
         
         self.centralWidget.setLayout(self.layoutMain)
         
@@ -761,8 +788,10 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas = QgsMapCanvas()
         self.mapCanvas.useImageToRender(False)
         self.mapCanvas.mapRenderer().setProjectionsEnabled(True)
-        self.mapCanvas.mapRenderer().setDestinationCrs(QgsCoordinateReferenceSystem(4326))
+        self.mapCanvas.mapRenderer().setDestinationCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
         self.mapCanvas.setCanvasColor(QtCore.Qt.white)
+        self.mapCanvas.enableAntiAliasing(True)
+        ##self.mapCanvas.refresh()
         ##self.mapCanvas.show()
 
         self.panTool = PanTool(self.mapCanvas)
@@ -1296,13 +1325,26 @@ class MainWindow(QtGui.QMainWindow):
         # Check if selected layer is a vector
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
         layerItemData = layerItem.data()
+        self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
         
         if layerItemData['layerType'] == 'vector':
             self.actionZoomLayer.setEnabled(True)
+            self.actionLayerAttributeTable.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
+            self.actionLayerAttributeTable.setDisabled(True)
         
         self.printDebugInfo()
+    
+    
+    def handlerLayerAttributeTable(self):
+        """
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
+        dialog.exec_()
     
     
     def handlerDropLayer(self):
@@ -1391,8 +1433,8 @@ class MainWindow(QtGui.QMainWindow):
             layerItem.setCheckState(QtCore.Qt.Checked)
             self.layerListModel.appendRow(layerItem)
             
-            # Set layer CRS to EPSG:4326 (in addition to on-the-fly CRS reprojection)
-            layer.setCrs(QgsCoordinateReferenceSystem(4326))
+            # Set layer CRS to default CRS (in addition to on-the-fly CRS reprojection)
+            layer.setCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
             QgsMapLayerRegistry.instance().addMapLayer(layer)
             self.mapCanvas.setExtent(layer.extent())
             self.showVisibleLayers()
@@ -1421,8 +1463,10 @@ class MainWindow(QtGui.QMainWindow):
         
         if layerItemData['layerType'] == 'vector':
             self.actionZoomLayer.setEnabled(True)
+            self.actionLayerAttributeTable.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
+            self.actionLayerAttributeTable.setDisabled(True)
     
     
     def handlerRefresh(self):
@@ -1468,7 +1512,7 @@ class MainWindow(QtGui.QMainWindow):
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
         layerItemData = layerItem.data()
         
-        logging.getLogger(__name__).info('DEBUG INFO ===============================')
+        logging.getLogger(__name__).info('DEBUG INFO ===================================')
         logging.getLogger(__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
         logging.getLogger(__name__).info('MapCanvas destination CRS: ' + self.mapCanvas.mapRenderer().destinationCrs().authid())
         logging.getLogger(__name__).info('On-the-fly projection enabled: ' + str(self.mapCanvas.hasCrsTransformEnabled()))
