@@ -7,7 +7,6 @@ from qgis.gui import *
 from PyQt4 import QtCore, QtGui
 
 
-
 class DialogLayerAttributeTable(QtGui.QDialog):
     """
     """

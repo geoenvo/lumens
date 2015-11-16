@@ -15,5 +15,6 @@
         <file>ui/icons/iconActionZoomLast.png</file>
         <file>ui/icons/iconActionZoomNext.png</file>
         <file>ui/icons/iconActionLayerAttributeTable.png</file>
+        <file>ui/icons/iconActionFeatureSelectExpression.png</file>
     </qresource>
 </RCC>

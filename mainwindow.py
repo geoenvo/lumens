@@ -41,6 +41,7 @@ splashLabel.close()
 
 from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_layer_attribute_table import DialogLayerAttributeTable
+from dialog_feature_selectexpression import DialogFeatureSelectExpression
 
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
@@ -87,6 +88,7 @@ class MainWindow(QtGui.QMainWindow):
         """
         super(MainWindow, self).__init__(parent)
         
+        # Default settings for each LUMENS dialog
         self.appSettings = {
             'appDir': os.path.dirname(os.path.realpath(__file__)),
             'dataDir': 'data',
@@ -106,6 +108,10 @@ class MainWindow(QtGui.QMainWindow):
             'selectCarfileExt': '.car',
             'extentSEA': QgsRectangle(95, -11, 140, 11), # Southeast Asia extent
             'defaultCRS': 4326, # EPSG 4326 - WGS 84
+            
+            'DialogFeatureSelectExpression': {
+                'expression': '',
+            },
             'DialogLumensCreateDatabase': {
                 'projectName': '',
                 'outputFolder': '',
@@ -393,7 +399,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layerListView.clicked.connect(self.handlerSelectLayer)
         self.layerListModel.itemChanged.connect(self.handlerCheckLayer)
         
-        # Check drop events
+        # For checking drop events
         self.layerListView.viewport().installEventFilter(self)
         
         # Init the logger
@@ -422,6 +428,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomLast.triggered.connect(self.handlerZoomLast)
         self.actionZoomNext.triggered.connect(self.handlerZoomNext)
         self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
+        self.actionFeatureSelectExpression.triggered.connect(self.handlerFeatureSelectExpression)
         
         # LUMENS action handlers
         # Database menu
@@ -593,6 +600,11 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLayerAttributeTable.setShortcut('Ctrl+T')
         self.actionLayerAttributeTable.setDisabled(True)
         
+        icon = QtGui.QIcon(':/ui/icons/iconActionFeatureSelectExpression.png')
+        self.actionFeatureSelectExpression = QtGui.QAction(icon, 'Select Features By Expression', self)
+        self.actionFeatureSelectExpression.setShortcut('Ctrl+E')
+        self.actionFeatureSelectExpression.setDisabled(True)
+        
         self.fileMenu.addAction(self.actionQuit)
         
         self.viewMenu.addAction(self.actionZoomIn)
@@ -608,7 +620,7 @@ class MainWindow(QtGui.QMainWindow):
         self.modeMenu.addAction(self.actionPan)
         self.modeMenu.addAction(self.actionSelect)
         self.modeMenu.addAction(self.actionInfo)
-
+        
         self.toolBar.addAction(self.actionAddLayer)
         self.toolBar.addAction(self.actionDeleteLayer)
         self.toolBar.addSeparator()
@@ -623,6 +635,7 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addAction(self.actionRefresh)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionLayerAttributeTable)
+        self.toolBar.addAction(self.actionFeatureSelectExpression)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPan)
         self.toolBar.addAction(self.actionSelect)
@@ -770,6 +783,7 @@ class MainWindow(QtGui.QMainWindow):
         self.contentBody = QtGui.QWidget()
         self.contentBody.setLayout(self.layoutBody)
         
+        # A splitter between content body and the collapsible log box
         self.log_box = QPlainTextEditLogger(self)
         self.splitterMain = QtGui.QSplitter(self)
         self.splitterMain.setOrientation(QtCore.Qt.Vertical)
@@ -784,7 +798,7 @@ class MainWindow(QtGui.QMainWindow):
         self.centralWidget.setLayout(self.layoutMain)
         
         # Initialize the mapcanvas and map tools
-        # Enable on the fly projection
+        # Enable on the fly CRS projection
         self.mapCanvas = QgsMapCanvas()
         self.mapCanvas.useImageToRender(False)
         self.mapCanvas.mapRenderer().setProjectionsEnabled(True)
@@ -793,7 +807,8 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.enableAntiAliasing(True)
         ##self.mapCanvas.refresh()
         ##self.mapCanvas.show()
-
+        
+        # Initialize the map tools and assign to the related action
         self.panTool = PanTool(self.mapCanvas)
         self.panTool.setAction(self.actionPan)
         
@@ -1330,9 +1345,11 @@ class MainWindow(QtGui.QMainWindow):
         if layerItemData['layerType'] == 'vector':
             self.actionZoomLayer.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
+            self.actionFeatureSelectExpression.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
+            self.actionFeatureSelectExpression.setDisabled(True)
         
         self.printDebugInfo()
     
@@ -1344,6 +1361,16 @@ class MainWindow(QtGui.QMainWindow):
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
         layerItemData = layerItem.data()
         dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
+        dialog.exec_()
+    
+    
+    def handlerFeatureSelectExpression(self):
+        """
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
     
     
@@ -1359,6 +1386,7 @@ class MainWindow(QtGui.QMainWindow):
         ##print 'DEBUG rowcount'
         ##print self.layerListModel.rowCount()
         
+        # WORKAROUND for drag and drop reordering causing (count + 1) items in model
         QtCore.QTimer.singleShot(1, self.showVisibleLayers)
         
         """
@@ -1457,6 +1485,7 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setDisabled(True)
             return
         
+        # Check type of next selected item
         layerItemIndex = self.layerListView.selectedIndexes()[0]
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
         layerItemData = layerItem.data()
@@ -1464,9 +1493,11 @@ class MainWindow(QtGui.QMainWindow):
         if layerItemData['layerType'] == 'vector':
             self.actionZoomLayer.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
+            self.actionFeatureSelectExpression.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
+            self.actionFeatureSelectExpression.setDisabled(True)
     
     
     def handlerRefresh(self):
