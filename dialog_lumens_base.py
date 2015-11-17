@@ -38,6 +38,10 @@ class DialogLumensBase(QtGui.QDialog):
         
         self.dialogLayout.addWidget(self.logBox.widget)
         
+        # Show the logging widget only in debug mode
+        if not self.main.appSettings['debug']:
+            self.logBox.widget.setVisible(False)
+        
         self.setWindowTitle(self.dialogTitle)
     
     

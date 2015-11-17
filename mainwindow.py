@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, sys, logging, subprocess
+import os, sys, logging, subprocess, argparse
 
 from qgis.core import *
 from qgis.gui import *
@@ -90,6 +90,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Default settings for each LUMENS dialog
         self.appSettings = {
+            'debug': False,
             'appDir': os.path.dirname(os.path.realpath(__file__)),
             'dataDir': 'data',
             'basemapDir': 'basemap',
@@ -378,6 +379,16 @@ class MainWindow(QtGui.QMainWindow):
                 'location': '',
             },
         }
+        
+        # Process app arguments
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--debug', action='store_true', help='Show the logging widget')
+        
+        args = parser.parse_args()
+        
+        if args.debug:
+            self.appSettings['debug'] = True
+        
         
         self.appSettings['defaultBasemapFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['basemapDir'], self.appSettings['defaultBasemapFile'])
         self.appSettings['defaultVectorFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['vectorDir'], self.appSettings['defaultVectorFile'])
@@ -790,6 +801,11 @@ class MainWindow(QtGui.QMainWindow):
         ###self.layoutMain.addWidget(self.log_box.widget)
         self.splitterMain.addWidget(self.contentBody)
         self.splitterMain.addWidget(self.log_box.widget)
+        
+        # Show the logging widget only in debug mode
+        if not self.appSettings['debug']:
+            self.log_box.widget.setVisible(False)
+        
         self.splitterMain.setStretchFactor(0, 5) # Bigger proportion for contentBody
         self.splitterMain.setStretchFactor(1, 1) # Smaller proportion for log box
         self.splitterMain.setCollapsible(0, False) # Don't collapse contentBody
@@ -968,7 +984,7 @@ class MainWindow(QtGui.QMainWindow):
             self.appSettings['DialogLumensOpenDatabase']['projectFile'] = lumensDatabase
             self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = os.path.dirname(lumensDatabase)
             
-            self.lineEditActiveProject.setText(lumensDatabase)
+            self.lineEditActiveProject.setText(os.path.normpath(lumensDatabase))
             
             self.lumensEnableMenus()
         
