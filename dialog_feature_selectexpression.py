@@ -64,10 +64,36 @@ class DialogFeatureSelectExpression(DialogLumensBase):
             
             self.buttonDialogSubmit.setDisabled(True)
             
-            # TODO qgsexpression
+            expression = QgsExpression(self.main.appSettings[type(self).__name__]['expression'])
+            
+            if expression.hasParserError():
+                QtGui.QMessageBox.critical(self, 'Expression Error', 'Parse error:\n{0}'.format(expression.parserErrorString()))
+                return
+            
+            ##features = self.vectorLayer.getFeatures(QgsFeatureRequest(expression))
+            
+            features = []
+            
+            expression.prepare(self.vectorLayer.pendingFields())
+            for feature in self.vectorLayer.getFeatures():
+                result = expression.evaluate(feature)
+                if expression.hasEvalError():
+                    QtGui.QMessageBox.critical(self, 'Expression Error', 'Eval error:\n{0}'.format(expression.evalErrorString()))
+                    return
+                if bool(result):
+                    features.append(feature)
             
             self.buttonDialogSubmit.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
-            self.close()
+            if features:
+                QtGui.QMessageBox.information(self, 'Found Features', 'Number of features that match the expression: {0}'.format(len(features)))
+                self.vectorLayer.setSelectedFeatures([feature.id() for feature in features])
+                self.main.mapCanvas.setCurrentLayer(self.vectorLayer)
+                self.main.mapCanvas.zoomToSelected()
+                self.close()
+            else:
+                QtGui.QMessageBox.information(self, 'Found Features', 'No features match the expression.')
+                return
+                
