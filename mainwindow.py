@@ -411,7 +411,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layerListModel.itemChanged.connect(self.handlerCheckLayer)
         
         # For checking drop events
-        self.layerListView.viewport().installEventFilter(self)
+        ##self.layerListView.viewport().installEventFilter(self)
         
         # Init the logger
         self.logger = logging.getLogger(__name__)

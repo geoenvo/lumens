@@ -26,6 +26,43 @@ class DialogLumensPURCreateReferenceData(DialogLumensBase):
         self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
+    def showEvent(self, event):
+        """Called when the widget is shown
+        """
+        super(DialogLumensPURCreateReferenceData, self).showEvent(event)
+        self.loadSelectedLayerAttributes()
+    
+    
+    def loadSelectedLayerAttributes(self):
+        """Load the attributes of the selected layer into the shapefile attribute combobox
+        """
+        selectedIndexes = self.main.layerListView.selectedIndexes()
+        
+        if not selectedIndexes:
+            return
+        
+        layerItemIndex = selectedIndexes[0]
+        layerItem = self.main.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        
+        if layerItemData['layerType'] == 'vector':
+            provider = self.main.qgsLayerList[layerItemData['layer']].dataProvider()
+            
+            if not provider.isValid():
+                logging.getLogger(type(self).__name__).error('invalid shapefile')
+                return
+            
+            attributes = []
+            for field in provider.fields():
+                attributes.append(field.name())
+            
+            self.lineEditShapefile.setText(layerItemData['layerFile'])
+            
+            self.comboBoxShapefileAttr.clear()
+            self.comboBoxShapefileAttr.addItems(sorted(attributes))
+            self.comboBoxShapefileAttr.setEnabled(True)
+    
+    
     def setupUi(self, parent):
         super(DialogLumensPURCreateReferenceData, self).setupUi(self)
         
