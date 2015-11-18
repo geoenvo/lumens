@@ -27,6 +27,29 @@ class DialogLumensAddPlanningUnitData(DialogLumensBase):
         self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
+    def showEvent(self, event):
+        """Called when the widget is shown
+        """
+        super(DialogLumensAddPlanningUnitData, self).showEvent(event)
+        self.loadSelectedRasterLayer()
+    
+    
+    def loadSelectedRasterLayer(self):
+        """Load the selected raster layer into the raster field
+        """
+        selectedIndexes = self.main.layerListView.selectedIndexes()
+        
+        if not selectedIndexes:
+            return
+        
+        layerItemIndex = selectedIndexes[0]
+        layerItem = self.main.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        
+        if layerItemData['layerType'] == 'raster':
+            self.lineEditRasterfile.setText(layerItemData['layerFile'])
+    
+    
     def setupUi(self, parent):
         super(DialogLumensAddPlanningUnitData, self).setupUi(self)
         
