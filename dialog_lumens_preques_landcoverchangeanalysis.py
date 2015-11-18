@@ -103,7 +103,7 @@ class DialogLumensPreQUESLandcoverChangeAnalysis(DialogLumensBase):
         comboboxVal = None
         comboboxText = unicode(self.comboBoxOption.currentText())
         
-        if comboBoxText == 'All analysis':
+        if comboboxText == 'All analysis':
             comboboxVal = 0
         elif comboboxText == 'Perubahan dominan di tiap zona':
             comboboxVal = 1
@@ -116,6 +116,17 @@ class DialogLumensPreQUESLandcoverChangeAnalysis(DialogLumensBase):
         
         self.main.appSettings[type(self).__name__]['option'] = comboboxVal
         self.main.appSettings[type(self).__name__]['nodata'] = self.spinBox.value()
+    
+    
+    def validDialogForm(self):
+        """Override function from parent class
+        """
+        valid = True
+        
+        if not self.main.appSettings[type(self).__name__]['csvfile']:
+            valid = False
+        
+        return valid
     
     
     def handlerLumensDialogSubmit(self):
