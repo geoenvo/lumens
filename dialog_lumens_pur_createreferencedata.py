@@ -30,10 +30,10 @@ class DialogLumensPURCreateReferenceData(DialogLumensBase):
         """Called when the widget is shown
         """
         super(DialogLumensPURCreateReferenceData, self).showEvent(event)
-        self.loadSelectedLayerAttributes()
+        self.loadSelectedVectorLayer()
     
     
-    def loadSelectedLayerAttributes(self):
+    def loadSelectedVectorLayer(self):
         """Load the attributes of the selected layer into the shapefile attribute combobox
         """
         selectedIndexes = self.main.layerListView.selectedIndexes()
