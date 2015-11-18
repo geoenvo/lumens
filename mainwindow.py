@@ -1323,7 +1323,31 @@ class MainWindow(QtGui.QMainWindow):
         self.addLayer(self.appSettings['defaultBasemapFilePath'])
         ##self.addLayer(self.appSettings['defaultVectorFilePath'])
         self.mapCanvas.setExtent(self.appSettings['extentSEA'])
-        self.mapCanvas.refresh()
+        ###self.mapCanvas.refresh()
+        self.layoutBody.addWidget(self.mapCanvas)
+    
+    
+    def loadMap(self):
+        """DEBUG on-the-fly projection
+        """
+        cur_dir = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(cur_dir, 'data', 'basemap', 'basemap.tif')
+        self.basemap_layer = QgsRasterLayer(filename, 'basemap')
+        QgsMapLayerRegistry.instance().addMapLayer(self.basemap_layer)
+        
+        filename = os.path.join(cur_dir, 'data', 'vector', 'Paser_rtrwp2014_utm50s.shp')
+        self.landmark_layer = QgsVectorLayer(filename, 'landmarks', 'ogr')
+        QgsMapLayerRegistry.instance().addMapLayer(self.landmark_layer)
+
+        self.mapCanvas.setExtent(self.appSettings['extentSEA'])
+        
+        layers = []
+        
+        layers.append(QgsMapCanvasLayer(self.landmark_layer))
+        layers.append(QgsMapCanvasLayer(self.basemap_layer))
+        
+        self.mapCanvas.setLayerSet(layers)
+        
         self.layoutBody.addWidget(self.mapCanvas)
     
     
@@ -1477,10 +1501,12 @@ class MainWindow(QtGui.QMainWindow):
             layerItem.setCheckState(QtCore.Qt.Checked)
             self.layerListModel.appendRow(layerItem)
             
-            # Set layer CRS to default CRS (in addition to on-the-fly CRS reprojection)
-            layer.setCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
-            QgsMapLayerRegistry.instance().addMapLayer(layer)
-            self.mapCanvas.setExtent(layer.extent())
+            QgsMapLayerRegistry.instance().addMapLayer(self.qgsLayerList[layerName])
+            # FIX 20151118:
+            # since on-the-fly CRS reprojection is enabled no need to set layer CRS
+            # setting canvas extent to layer extent causes canvas to turn blank
+            ###self.qgsLayerList[layerName].setCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
+            ###self.mapCanvas.setExtent(self.qgsLayerList[layerName].extent())
             self.showVisibleLayers()
     
     
@@ -1670,6 +1696,7 @@ def main():
     
     if window.checkDefaultBasemap():
         window.loadDefaultLayers()
+        ##window.loadMap() # DEBUG on-the-fly projection
     
     # Pan mode by default
     window.handlerSetPanMode()
