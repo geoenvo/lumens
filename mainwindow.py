@@ -78,6 +78,7 @@ from dialog_lumens_sciendo_createrastercube import DialogLumensSCIENDOCreateRast
 from dialog_lumens_sciendo_calcweightevidence import DialogLumensSCIENDOCalculateWeightofEvidence
 from dialog_lumens_sciendo_simulatelandusechange import DialogLumensSCIENDOSimulateLandUseChange
 from dialog_lumens_sciendo_simulatewithscenario import DialogLumensSCIENDOSimulateWithScenario
+from dialog_lumens_tools_reddabacussp import DialogLumensToolsREDDAbacusSP
 
 
 #############################################################################
@@ -382,6 +383,9 @@ class MainWindow(QtGui.QMainWindow):
                 'baseYear': '',
                 'location': '',
             },
+            'DialogLumensToolsREDDAbacusSP': {
+                'carfile': '',
+            },
         }
         
         # Process app arguments
@@ -492,6 +496,9 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOCalculateWeightofEvidence.triggered.connect(self.handlerDialogLumensSCIENDOCalculateWeightofEvidence)
         self.actionDialogLumensSCIENDOSimulateLandUseChange.triggered.connect(self.handlerDialogLumensSCIENDOSimulateLandUseChange)
         self.actionDialogLumensSCIENDOSimulateWithScenario.triggered.connect(self.handlerDialogLumensSCIENDOSimulateWithScenario)
+        
+        # Tools menu
+        self.actionDialogLumensToolsREDDAbacusSP.triggered.connect(self.handlerDialogLumensToolsREDDAbacusSP)
     
     
     def eventFilter(self, source, event):
@@ -527,14 +534,15 @@ class MainWindow(QtGui.QMainWindow):
         
         # Create the default menus
         self.menubar = self.menuBar()
-        self.fileMenu = self.menubar.addMenu('File')
-        self.viewMenu = self.menubar.addMenu('View')
-        self.modeMenu = self.menubar.addMenu('Mode')
-        self.databaseMenu = self.menubar.addMenu('Database')
-        self.purMenu = self.menubar.addMenu('PUR')
-        self.quesMenu = self.menubar.addMenu('QUES')
-        self.taMenu = self.menubar.addMenu('TA')
-        self.sciendoMenu = self.menubar.addMenu('SCIENDO')
+        self.fileMenu = self.menubar.addMenu('&File')
+        self.viewMenu = self.menubar.addMenu('&View')
+        self.modeMenu = self.menubar.addMenu('&Mode')
+        self.databaseMenu = self.menubar.addMenu('&Database')
+        self.purMenu = self.menubar.addMenu('&PUR')
+        self.quesMenu = self.menubar.addMenu('&QUES')
+        self.taMenu = self.menubar.addMenu('&TA')
+        self.sciendoMenu = self.menubar.addMenu('&SCIENDO')
+        self.toolsMenu = self.menubar.addMenu('T&ools')
 
         self.toolBar = QtGui.QToolBar(self)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
@@ -756,6 +764,11 @@ class MainWindow(QtGui.QMainWindow):
         self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateWeightofEvidence)
         self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateLandUseChange)
         self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateWithScenario)
+        
+        # Tools menu
+        self.actionDialogLumensToolsREDDAbacusSP = QtGui.QAction('REDD Abacus SP', self)
+        
+        self.toolsMenu.addAction(self.actionDialogLumensToolsREDDAbacusSP)
         
         # Create the app window layouts
         self.layoutActiveProject = QtGui.QHBoxLayout()
@@ -1235,6 +1248,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensSCIENDOSimulateWithScenario)
+    
+    
+    def handlerDialogLumensToolsREDDAbacusSP(self):
+        """
+        """
+        self.openDialog(DialogLumensToolsREDDAbacusSP)
     
     
     def checkDefaultBasemap(self):
