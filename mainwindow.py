@@ -72,6 +72,7 @@ from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeM
 from dialog_lumens_sciendo_driversanalysis import DialogLumensSCIENDODriversAnalysis
 from dialog_lumens_sciendo_buildscenario import DialogLumensSCIENDOBuildScenario
 from dialog_lumens_sciendo_historicalbaselineproj import DialogLumensSCIENDOHistoricalBaselineProjection
+from dialog_lumens_sciendo_historicalbaselineannualproj import DialogLumensSCIENDOHistoricalBaselineAnnualProjection
 from dialog_lumens_sciendo_calctransitionmatrix import DialogLumensSCIENDOCalculateTransitionMatrix
 from dialog_lumens_sciendo_createrastercube import DialogLumensSCIENDOCreateRasterCube
 from dialog_lumens_sciendo_calcweightevidence import DialogLumensSCIENDOCalculateWeightofEvidence
@@ -341,6 +342,9 @@ class MainWindow(QtGui.QMainWindow):
                 't2': '',
                 'iteration': '',
             },
+            'DialogLumensSCIENDOHistoricalBaselineAnnualProjection': {
+                'iteration': '',
+            },
             'DialogLumensSCIENDODriversAnalysis': {
                 'landUseCoverChangeDrivers': '',
                 'landUseCoverChangeType': '',
@@ -482,6 +486,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDODriversAnalysis.triggered.connect(self.handlerDialogLumensSCIENDODriversAnalysis)
         self.actionDialogLumensSCIENDOBuildScenario.triggered.connect(self.handlerDialogLumensSCIENDOBuildScenario)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.triggered.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineProjection)
+        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection.triggered.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
         self.actionDialogLumensSCIENDOCalculateTransitionMatrix.triggered.connect(self.handlerDialogLumensSCIENDOCalculateTransitionMatrix)
         self.actionDialogLumensSCIENDOCreateRasterCube.triggered.connect(self.handlerDialogLumensSCIENDOCreateRasterCube)
         self.actionDialogLumensSCIENDOCalculateWeightofEvidence.triggered.connect(self.handlerDialogLumensSCIENDOCalculateWeightofEvidence)
@@ -732,6 +737,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDODriversAnalysis = QtGui.QAction('Drivers analysis', self)
         self.actionDialogLumensSCIENDOBuildScenario = QtGui.QAction('Build scenario', self)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection = QtGui.QAction('Historical baseline projection', self)
+        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection = QtGui.QAction('Historical baseline annual projection', self)
         self.actionDialogLumensSCIENDOCalculateTransitionMatrix = QtGui.QAction('Calculate transition matrix', self)
         self.actionDialogLumensSCIENDOCreateRasterCube = QtGui.QAction('Create raster cube of factors', self)
         self.actionDialogLumensSCIENDOCalculateWeightofEvidence = QtGui.QAction('Calculate weight of evidence', self)
@@ -742,6 +748,7 @@ class MainWindow(QtGui.QMainWindow):
         self.landUseChangeModelingMenu = self.sciendoMenu.addMenu('Land use change modeling')
         self.historicalBaselineMenu = self.lowEmissionDevelopmentMenu.addMenu('Historical baseline')
         self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineProjection)
+        self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
         self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDODriversAnalysis)
         self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDOBuildScenario)
         self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateTransitionMatrix)
@@ -916,6 +923,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
         self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
+        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection.setEnabled(True)
         self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
         self.actionDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
         self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
@@ -957,6 +965,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDODriversAnalysis.setDisabled(True)
         self.actionDialogLumensSCIENDOBuildScenario.setDisabled(True)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
+        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection.setDisabled(True)
         self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setDisabled(True)
         self.actionDialogLumensSCIENDOCreateRasterCube.setDisabled(True)
         self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setDisabled(True)
@@ -1190,6 +1199,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensSCIENDOHistoricalBaselineProjection)
+    
+    
+    def handlerDialogLumensSCIENDOHistoricalBaselineAnnualProjection(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDOHistoricalBaselineAnnualProjection)
     
     
     def handlerDialogLumensSCIENDOCalculateTransitionMatrix(self):
