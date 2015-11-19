@@ -8,8 +8,6 @@ from utils import QPlainTextEditLogger
 from processing.tools import *
 
 
-
-
 class DialogLumensBase(QtGui.QDialog):
     """
     """

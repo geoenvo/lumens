@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, datetime
+import os, logging
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
-from utils import QPlainTextEditLogger
 from processing.tools import *
 from dialog_lumens_base import DialogLumensBase
-
 
 
 class DialogLumensSCIENDOBuildScenario(DialogLumensBase):

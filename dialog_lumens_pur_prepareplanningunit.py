@@ -4,11 +4,8 @@
 import os, logging
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
-from utils import QPlainTextEditLogger
 from processing.tools import *
 from dialog_lumens_base import DialogLumensBase
-
-
 
 
 class DialogLumensPURPreparePlanningUnit(DialogLumensBase):
@@ -219,7 +216,7 @@ class DialogLumensPURPreparePlanningUnit(DialogLumensBase):
                     tableRowData['planningUnitType'],
                 )
             
-            print self.tableData
+            ##print self.tableData
             
             self.buttonLumensDialogSubmit.setEnabled(True)
             

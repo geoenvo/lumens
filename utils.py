@@ -4,6 +4,7 @@
 import logging
 from PyQt4 import QtGui
 
+
 class QPlainTextEditLogger(logging.Handler):
     """Custom logging widget class
     """
