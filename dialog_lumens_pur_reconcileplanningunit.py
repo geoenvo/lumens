@@ -61,7 +61,7 @@ class DialogLumensPURReconcilePlanningUnit(DialogLumensBase):
             self, 'Create/Select Output File', QtCore.QDir.homePath(), 'Output Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
         
         if shapefile:
-            self.lineEditShapefile.setText(shapefile)
+            self.lineEditOutputFile.setText(shapefile)
             
             logging.getLogger(type(self).__name__).info('select output file: %s', shapefile)
     
