@@ -42,6 +42,7 @@ splashLabel.close()
 from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_layer_attribute_table import DialogLayerAttributeTable
 from dialog_feature_selectexpression import DialogFeatureSelectExpression
+from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
 
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
@@ -542,7 +543,7 @@ class MainWindow(QtGui.QMainWindow):
         self.quesMenu = self.menubar.addMenu('&QUES')
         self.taMenu = self.menubar.addMenu('&TA')
         self.sciendoMenu = self.menubar.addMenu('&SCIENDO')
-        self.toolsMenu = self.menubar.addMenu('T&ools')
+        ###self.toolsMenu = self.menubar.addMenu('T&ools')
 
         self.toolBar = QtGui.QToolBar(self)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
@@ -768,7 +769,7 @@ class MainWindow(QtGui.QMainWindow):
         # Tools menu
         self.actionDialogLumensToolsREDDAbacusSP = QtGui.QAction('REDD Abacus SP', self)
         
-        self.toolsMenu.addAction(self.actionDialogLumensToolsREDDAbacusSP)
+        ###self.toolsMenu.addAction(self.actionDialogLumensToolsREDDAbacusSP)
         
         # Create the app window layouts
         self.layoutActiveProject = QtGui.QHBoxLayout()
@@ -1434,7 +1435,8 @@ class MainWindow(QtGui.QMainWindow):
         layerItemIndex = self.layerListView.selectedIndexes()[0]
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
         layerItemData = layerItem.data()
-        dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
+        ##dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
+        dialog = DialogLayerAttributeDualView(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
     
     
