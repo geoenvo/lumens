@@ -115,7 +115,7 @@ class MainWindow(QtGui.QMainWindow):
             'selectHTMLfileExt': '.html',
             'selectTextfileExt': '.txt',
             'selectCarfileExt': '.car',
-            'extentSEA': QgsRectangle(95, -11, 140, 11), # Southeast Asia extent
+            'defaultExtent': QgsRectangle(95, -11, 140, 11), # Southeast Asia extent
             'defaultCRS': 4326, # EPSG 4326 - WGS 84
             
             'DialogFeatureSelectExpression': {
@@ -454,6 +454,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomNext.triggered.connect(self.handlerZoomNext)
         self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
         self.actionFeatureSelectExpression.triggered.connect(self.handlerFeatureSelectExpression)
+        self.layerListView.customContextMenuRequested.connect(self.handlerLayerItemContextMenu)
         
         # LUMENS action handlers
         # Database menu
@@ -801,6 +802,8 @@ class MainWindow(QtGui.QMainWindow):
         self.layerListView.setDragEnabled(True)
         self.layerListView.setFixedWidth(200)
         
+        self.layerListView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        
         ##self.layoutSidebar.setContentsMargins(0, 0, 0, 0)
         ##self.layoutSidebar.addWidget(self.layerListView)
         
@@ -862,6 +865,20 @@ class MainWindow(QtGui.QMainWindow):
 
         self.setMinimumSize(800, 400)
         self.resize(self.sizeHint())
+    
+    
+    def handlerLayerItemContextMenu(self, pos):
+        """Construct the layer item context menu
+        """
+        self.contextMenu = QtGui.QMenu()
+        self.contextMenu.addAction(self.actionDeleteLayer)
+        self.contextMenu.addAction(self.actionZoomLayer)
+        self.contextMenu.addAction(self.actionLayerAttributeTable)
+        self.contextMenu.addAction(self.actionFeatureSelectExpression)
+        
+        parentPosition = self.layerListView.mapToGlobal(QtCore.QPoint(0, 0))
+        self.contextMenu.move(parentPosition + pos)
+        self.contextMenu.show()
     
     
     def openDialog(self, DialogClass):
@@ -1301,19 +1318,19 @@ class MainWindow(QtGui.QMainWindow):
     def handlerZoomLayer(self):
         """
         """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
-        self.mapCanvas.setExtent(self.qgsLayerList[layerItemData['layer']].extent())
-        self.mapCanvas.refresh()
+        layerItemData = self.getSelectedLayerData()
+        ##self.mapCanvas.setExtent(self.qgsLayerList[layerItemData['layer']].extent())
+        ##self.mapCanvas.refresh()
+        # Hack to fix blank map canvas from 2 lines above
+        self.qgsLayerList[layerItemData['layer']].selectAll()
+        self.mapCanvas.zoomToSelected()
+        self.qgsLayerList[layerItemData['layer']].removeSelection()
     
     
     def handlerZoomSelected(self):
         """
         """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
+        layerItemData = self.getSelectedLayerData()
         if layerItemData['layerType'] == 'vector':
             self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
             self.mapCanvas.zoomToSelected()
@@ -1322,9 +1339,7 @@ class MainWindow(QtGui.QMainWindow):
     def handlerPanSelected(self):
         """
         """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
+        layerItemData = self.getSelectedLayerData()
         if layerItemData['layerType'] == 'vector':
             self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
             self.mapCanvas.panToSelected()
@@ -1362,8 +1377,15 @@ class MainWindow(QtGui.QMainWindow):
         """
         self.addLayer(self.appSettings['defaultBasemapFilePath'])
         ##self.addLayer(self.appSettings['defaultVectorFilePath'])
-        self.mapCanvas.setExtent(self.appSettings['extentSEA'])
+        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
         ###self.mapCanvas.refresh()
+        self.layoutBody.addWidget(self.mapCanvas)
+    
+    
+    def loadMapCanvas(self):
+        """
+        """
+        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
         self.layoutBody.addWidget(self.mapCanvas)
     
     
@@ -1379,7 +1401,7 @@ class MainWindow(QtGui.QMainWindow):
         self.landmark_layer = QgsVectorLayer(filename, 'landmarks', 'ogr')
         QgsMapLayerRegistry.instance().addMapLayer(self.landmark_layer)
 
-        self.mapCanvas.setExtent(self.appSettings['extentSEA'])
+        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
         
         layers = []
         
@@ -1437,9 +1459,7 @@ class MainWindow(QtGui.QMainWindow):
     def handlerLayerAttributeTable(self):
         """
         """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
+        layerItemData = self.getSelectedLayerData()
         ##dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
         dialog = DialogLayerAttributeDualView(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
@@ -1448,9 +1468,7 @@ class MainWindow(QtGui.QMainWindow):
     def handlerFeatureSelectExpression(self):
         """
         """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
+        layerItemData = self.getSelectedLayerData()
         dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
     
@@ -1554,9 +1572,7 @@ class MainWindow(QtGui.QMainWindow):
     def handlerDeleteLayer(self):
         """
         """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
+        layerItemData = self.getSelectedLayerData()
         del self.qgsLayerList[layerItemData['layer']]
         ##QtGui.QMessageBox.information(self, 'Layer', layerItemData)
         self.layerListModel.removeRow(layerItemIndex.row())
@@ -1569,9 +1585,7 @@ class MainWindow(QtGui.QMainWindow):
             return
         
         # Check type of next selected item
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
+        layerItemData = self.getSelectedLayerData()
         
         if layerItemData['layerType'] == 'vector':
             self.actionZoomLayer.setEnabled(True)
@@ -1619,12 +1633,19 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomNext.setDisabled(True)
     
     
-    def printDebugInfo(self):
-        """
+    def getSelectedLayerData(self):
+        """Get the data of the selected layer
         """
         layerItemIndex = self.layerListView.selectedIndexes()[0]
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
         layerItemData = layerItem.data()
+        return layerItemData
+    
+    
+    def printDebugInfo(self):
+        """
+        """
+        layerItemData = self.getSelectedLayerData()
         
         logging.getLogger(__name__).info('DEBUG INFO ===================================')
         logging.getLogger(__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
@@ -1739,6 +1760,8 @@ def main():
     if window.checkDefaultBasemap():
         window.loadDefaultLayers()
         ##window.loadMap() # DEBUG on-the-fly projection
+    else:
+        window.loadMapCanvas()
     
     # Pan mode by default
     window.handlerSetPanMode()
