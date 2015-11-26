@@ -14,9 +14,14 @@ QgsApplication.initQgis()
 
 app = QtGui.QApplication(sys.argv)
 
-splashLabel = QtGui.QLabel('<font color=blue size=72><b>{0}</b></font>'.format('Loading'))
-splashLabel.setWindowFlags(QtCore.Qt.SplashScreen|QtCore.Qt.WindowStaysOnTopHint)
-splashLabel.show()
+##splashLabel = QtGui.QLabel('<font color=blue size=72><b>{0}</b></font>'.format('Loading'))
+##splashLabel.setWindowFlags(QtCore.Qt.SplashScreen|QtCore.Qt.WindowStaysOnTopHint)
+##splashLabel.show()
+
+splashImage = QtGui.QPixmap('ui/images/splash.png')
+splashScreen = QtGui.QSplashScreen(splashImage, QtCore.Qt.WindowStaysOnTopHint)
+splashScreen.setMask(splashImage.mask())
+splashScreen.show()
 
 # Get an iface object
 canvas = QgsMapCanvas()
@@ -37,7 +42,7 @@ ProcessingConfig.setSettingValue('R_SCRIPTS_FOLDER', os.environ['RSCRIPTS'])
 Processing.initialize()
 from processing.tools import *
 
-splashLabel.close()
+##splashLabel.close()
 
 from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_layer_attribute_table import DialogLayerAttributeTable
@@ -1728,6 +1733,7 @@ class PanTool(QgsMapTool):
 def main():
     window = MainWindow()
     window.show()
+    splashScreen.finish(window)
     window.raise_()
     
     if window.checkDefaultBasemap():
