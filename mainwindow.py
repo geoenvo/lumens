@@ -461,6 +461,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionRefresh.triggered.connect(self.handlerRefresh)
         self.mapCanvas.zoomLastStatusChanged.connect(self.handlerZoomLastStatus)
         self.mapCanvas.zoomNextStatusChanged.connect(self.handlerZoomNextStatus)
+        self.mapCanvas.xyCoordinates.connect(self.handlerUpdateCoordinates)
         self.actionZoomLast.triggered.connect(self.handlerZoomLast)
         self.actionZoomNext.triggered.connect(self.handlerZoomNext)
         self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
@@ -566,12 +567,18 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar = QtGui.QToolBar(self)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         
-        ##self.statusBar = QtGui.QStatusBar(self)
+        self.statusBar = QtGui.QStatusBar(self)
+        self.statusBar.setSizeGripEnabled(False)
+        ##self.statusBar.setStyleSheet('QStatusBar { background: green; } QStatusBar::item { background: blue; margin-right: 11px; }')
         ##self.statusBar.setFixedHeight(10)
         ##self.labelLayerCRS = QtGui.QLabel(self)
         ##self.labelLayerCRS.setText('...')
         ##self.statusBar.addPermanentWidget(self.labelLayerCRS)
-        ##self.setStatusBar(self.statusBar)
+        self.labelMapCanvasCoordinate = QtGui.QLabel(self)
+        self.labelMapCanvasCoordinate.setStyleSheet('QLabel { margin-right: 11px; }')
+        self.labelMapCanvasCoordinate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
+        self.statusBar.addPermanentWidget(self.labelMapCanvasCoordinate)
+        self.setStatusBar(self.statusBar)
         
         # Create the actions and assigned them to the menus
         self.actionQuit = QtGui.QAction('Quit', self)
@@ -832,6 +839,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutBody.addWidget(self.layerListView)
         
         self.layoutMain = QtGui.QVBoxLayout()
+        self.layoutMain.setContentsMargins(11, 11, 11, 0) # Reduce gap with statusbar
         self.layoutMain.addLayout(self.layoutActiveProject)
         ###self.layoutMain.addLayout(self.layoutBody)
         self.contentBody = QtGui.QWidget()
@@ -1651,6 +1659,15 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomNext.setEnabled(True)
         else:
             self.actionZoomNext.setDisabled(True)
+    
+    
+    def handlerUpdateCoordinates(self, point):
+        """
+        """
+        if self.mapCanvas.mapUnits() == QGis.DegreesMinutesSeconds:
+            self.labelMapCanvasCoordinate.setText(point.toDegreesMinutesSeconds(3))
+        else:
+            print self.labelMapCanvasCoordinate.setText(point.toString(3))
     
     
     def getSelectedLayerData(self):
