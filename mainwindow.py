@@ -68,6 +68,7 @@ from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummari
 from dialog_lumens_quesb_analysis import DialogLumensQUESBAnalysis
 from dialog_lumens_quesh_watershedmodelevaluation import DialogLumensQUESHWatershedModelEvaluation
 from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIndicators
+from dialog_lumens_quesh_dominanthru import DialogLumensQUESHDominantHRU
 from dialog_lumens_ta_abacusopportunitycost import DialogLumensTAAbacusOpportunityCost
 from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
@@ -239,6 +240,18 @@ class MainWindow(QtGui.QMainWindow):
                 'subWatershedOutput': '',
                 'outputInitialYearSubWatershedLevelIndicators': '',
                 'outputFinalYearSubWatershedLevelIndicators': '',
+            },
+            'DialogLumensQUESHDominantHRU': {
+                'workingDir': '',
+                'landUseMap': '',
+                'soilMap': '',
+                'slopeMap': '',
+                'subcatchmentMap': '',
+                'landUseClassification': '',
+                'soilClassification': '',
+                'slopeClassification': '',
+                'areaName': '',
+                'period': '',
             },
             'DialogLumensTAAbacusOpportunityCost': {
                 'projectFile': '',
@@ -506,6 +519,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESBAnalysis.triggered.connect(self.handlerDialogLumensQUESBAnalysis)
         self.actionDialogLumensQUESHWatershedModelEvaluation.triggered.connect(self.handlerDialogLumensQUESHWatershedModelEvaluation)
         self.actionDialogLumensQUESHWatershedIndicators.triggered.connect(self.handlerDialogLumensQUESHWatershedIndicators)
+        self.actionDialogLumensQUESHDominantHRU.triggered.connect(self.handlerDialogLumensQUESHDominantHRU)
         
         # TA menu
         self.actionDialogLumensTAAbacusOpportunityCost.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCost)
@@ -746,11 +760,13 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESBAnalysis = QtGui.QAction('QUES-B Analysis', self)
         self.actionDialogLumensQUESHWatershedModelEvaluation = QtGui.QAction('Watershed model evaluation', self)
         self.actionDialogLumensQUESHWatershedIndicators = QtGui.QAction('Watershed indicators', self)
+        self.actionDialogLumensQUESHDominantHRU = QtGui.QAction('Dominant HRU', self)
         
         self.preQUESMenu = self.quesMenu.addMenu('Pre-QUES')
         self.QUESCMenu = self.quesMenu.addMenu('QUES-C')
         self.QUESBMenu = self.quesMenu.addMenu('QUES-B')
         self.QUESHMenu = self.quesMenu.addMenu('QUES-H')
+        self.HRUDefMenu = self.QUESHMenu.addMenu('Hydrological Response Unit Definition')
         self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverChangeAnalysis)
         self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
         self.QUESCMenu.addAction(self.actionDialogLumensQUESCCarbonAccounting)
@@ -759,6 +775,7 @@ class MainWindow(QtGui.QMainWindow):
         self.QUESBMenu.addAction(self.actionDialogLumensQUESBAnalysis)
         self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedModelEvaluation)
         self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedIndicators)
+        self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantHRU)
         
         # TA menu
         self.actionDialogLumensTAAbacusOpportunityCost = QtGui.QAction('Abacus opportunity cost curve', self)
@@ -983,6 +1000,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESBAnalysis.setEnabled(True)
         self.actionDialogLumensQUESHWatershedModelEvaluation.setEnabled(True)
         self.actionDialogLumensQUESHWatershedIndicators.setEnabled(True)
+        self.actionDialogLumensQUESHDominantHRU.setEnabled(True)
         
         self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
         self.actionDialogLumensTAOpportunityCost.setEnabled(True)
@@ -1027,6 +1045,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESBAnalysis.setDisabled(True)
         self.actionDialogLumensQUESHWatershedModelEvaluation.setDisabled(True)
         self.actionDialogLumensQUESHWatershedIndicators.setDisabled(True)
+        self.actionDialogLumensQUESHDominantHRU.setDisabled(True)
         
         self.actionDialogLumensTAAbacusOpportunityCost.setDisabled(True)
         self.actionDialogLumensTAOpportunityCost.setDisabled(True)
@@ -1215,6 +1234,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensQUESHWatershedIndicators)
+    
+    
+    def handlerDialogLumensQUESHDominantHRU(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESHDominantHRU)
     
     
     def handlerDialogLumensTAAbacusOpportunityCost(self):
