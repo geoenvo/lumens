@@ -43,25 +43,25 @@ class DialogLumensQUESHWatershedModelEvaluation(DialogLumensBase):
         self.buttonSelectWorkingDir.setText('Select &Working Directory')
         layoutLumensDialog.addWidget(self.buttonSelectWorkingDir, 1, 0, 1, 2)
         
-        self.labelPeriod1 = QtGui.QLabel(parent)
-        self.labelPeriod1.setText('Initial date:')
-        layoutLumensDialog.addWidget(self.labelPeriod1, 2, 0)
+        self.labelDateInitial = QtGui.QLabel(parent)
+        self.labelDateInitial.setText('Initial date:')
+        layoutLumensDialog.addWidget(self.labelDateInitial, 2, 0)
         
         today = datetime.date.today()
         
-        self.datePeriod1 = QtGui.QDateEdit(QtCore.QDate.currentDate(), parent)
-        self.datePeriod1.setCalendarPopup(True)
-        self.datePeriod1.setDisplayFormat('dd/MM/yyyy')
-        layoutLumensDialog.addWidget(self.datePeriod1, 2, 1)
+        self.dateDateInitial = QtGui.QDateEdit(QtCore.QDate.currentDate(), parent)
+        self.dateDateInitial.setCalendarPopup(True)
+        self.dateDateInitial.setDisplayFormat('dd/MM/yyyy')
+        layoutLumensDialog.addWidget(self.dateDateInitial, 2, 1)
         
-        self.labelPeriod2 = QtGui.QLabel(parent)
-        self.labelPeriod2.setText('Final date:')
-        layoutLumensDialog.addWidget(self.labelPeriod2, 3, 0)
+        self.labelDateFinal = QtGui.QLabel(parent)
+        self.labelDateFinal.setText('Final date:')
+        layoutLumensDialog.addWidget(self.labelDateFinal, 3, 0)
         
-        self.datePeriod2 = QtGui.QDateEdit(QtCore.QDate.currentDate(), parent)
-        self.datePeriod2.setCalendarPopup(True)
-        self.datePeriod2.setDisplayFormat('dd/MM/yyyy')
-        layoutLumensDialog.addWidget(self.datePeriod2, 3, 1)
+        self.dateDateFinal = QtGui.QDateEdit(QtCore.QDate.currentDate(), parent)
+        self.dateDateFinal.setCalendarPopup(True)
+        self.dateDateFinal.setDisplayFormat('dd/MM/yyyy')
+        layoutLumensDialog.addWidget(self.dateDateFinal, 3, 1)
         
         self.labelSWATModel = QtGui.QLabel(parent)
         self.labelSWATModel.setText('SWAT &model:')
@@ -139,8 +139,8 @@ class DialogLumensQUESHWatershedModelEvaluation(DialogLumensBase):
         """Set the required values from the form widgets
         """
         self.main.appSettings[type(self).__name__]['workingDir'] = unicode(self.lineEditWorkingDir.text()).replace(os.path.sep, '/')
-        self.main.appSettings[type(self).__name__]['period1'] = self.datePeriod1.date().toString('dd/MM/yyyy')
-        self.main.appSettings[type(self).__name__]['period2'] = self.datePeriod2.date().toString('dd/MM/yyyy')
+        self.main.appSettings[type(self).__name__]['dateInitial'] = self.dateDateInitial.date().toString('dd/MM/yyyy')
+        self.main.appSettings[type(self).__name__]['dateFinal'] = self.dateDateFinal.date().toString('dd/MM/yyyy')
         
         comboboxVal = None
         comboboxText = unicode(self.comboBoxSWATModel.currentText())

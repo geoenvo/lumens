@@ -67,6 +67,7 @@ from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatla
 from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummarizeMultiplePeriod
 from dialog_lumens_quesb_analysis import DialogLumensQUESBAnalysis
 from dialog_lumens_quesh_watershedmodelevaluation import DialogLumensQUESHWatershedModelEvaluation
+from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIndicators
 from dialog_lumens_ta_abacusopportunitycost import DialogLumensTAAbacusOpportunityCost
 from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
@@ -221,13 +222,23 @@ class MainWindow(QtGui.QMainWindow):
             },
             'DialogLumensQUESHWatershedModelEvaluation': {
                 'workingDir': '',
-                'period1': '',
-                'period2': '',
+                'dateInitial': '',
+                'dateFinal': '',
                 'SWATModel': '',
                 'location': '',
                 'outletReachSubBasinID': '',
                 'observedDebitFile': '',
                 'outputWatershedModelEvaluation': '',
+            },
+            'DialogLumensQUESHWatershedIndicators': {
+                'SWATTXTINOUTDir': '',
+                'dateInitial': '',
+                'dateFinal': '',
+                'subWatershedPolygon': '',
+                'location': '',
+                'subWatershedOutput': '',
+                'outputInitialYearSubWatershedLevelIndicators': '',
+                'outputFinalYearSubWatershedLevelIndicators': '',
             },
             'DialogLumensTAAbacusOpportunityCost': {
                 'projectFile': '',
@@ -494,6 +505,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESCSummarizeMultiplePeriod.triggered.connect(self.handlerDialogLumensQUESCSummarizeMultiplePeriod)
         self.actionDialogLumensQUESBAnalysis.triggered.connect(self.handlerDialogLumensQUESBAnalysis)
         self.actionDialogLumensQUESHWatershedModelEvaluation.triggered.connect(self.handlerDialogLumensQUESHWatershedModelEvaluation)
+        self.actionDialogLumensQUESHWatershedIndicators.triggered.connect(self.handlerDialogLumensQUESHWatershedIndicators)
         
         # TA menu
         self.actionDialogLumensTAAbacusOpportunityCost.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCost)
@@ -733,6 +745,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESCSummarizeMultiplePeriod = QtGui.QAction('Summarize multiple period', self)
         self.actionDialogLumensQUESBAnalysis = QtGui.QAction('QUES-B Analysis', self)
         self.actionDialogLumensQUESHWatershedModelEvaluation = QtGui.QAction('Watershed model evaluation', self)
+        self.actionDialogLumensQUESHWatershedIndicators = QtGui.QAction('Watershed indicators', self)
         
         self.preQUESMenu = self.quesMenu.addMenu('Pre-QUES')
         self.QUESCMenu = self.quesMenu.addMenu('QUES-C')
@@ -745,6 +758,7 @@ class MainWindow(QtGui.QMainWindow):
         self.QUESCMenu.addAction(self.actionDialogLumensQUESCSummarizeMultiplePeriod)
         self.QUESBMenu.addAction(self.actionDialogLumensQUESBAnalysis)
         self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedModelEvaluation)
+        self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedIndicators)
         
         # TA menu
         self.actionDialogLumensTAAbacusOpportunityCost = QtGui.QAction('Abacus opportunity cost curve', self)
@@ -967,6 +981,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
         self.actionDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
         self.actionDialogLumensQUESBAnalysis.setEnabled(True)
+        self.actionDialogLumensQUESHWatershedModelEvaluation.setEnabled(True)
+        self.actionDialogLumensQUESHWatershedIndicators.setEnabled(True)
         
         self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
         self.actionDialogLumensTAOpportunityCost.setEnabled(True)
@@ -1009,6 +1025,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
         self.actionDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
         self.actionDialogLumensQUESBAnalysis.setDisabled(True)
+        self.actionDialogLumensQUESHWatershedModelEvaluation.setDisabled(True)
+        self.actionDialogLumensQUESHWatershedIndicators.setDisabled(True)
         
         self.actionDialogLumensTAAbacusOpportunityCost.setDisabled(True)
         self.actionDialogLumensTAOpportunityCost.setDisabled(True)
@@ -1191,6 +1209,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensQUESHWatershedModelEvaluation)
+    
+    
+    def handlerDialogLumensQUESHWatershedIndicators(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESHWatershedIndicators)
     
     
     def handlerDialogLumensTAAbacusOpportunityCost(self):
