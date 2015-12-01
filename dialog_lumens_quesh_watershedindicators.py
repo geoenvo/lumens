@@ -27,6 +27,29 @@ class DialogLumensQUESHWatershedIndicators(DialogLumensBase):
         self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
     
     
+    def showEvent(self, event):
+        """Called when the widget is shown
+        """
+        super(DialogLumensQUESHWatershedIndicators, self).showEvent(event)
+        self.loadSelectedVectorLayer()
+    
+    
+    def loadSelectedVectorLayer(self):
+        """Load the selected layer
+        """
+        selectedIndexes = self.main.layerListView.selectedIndexes()
+        
+        if not selectedIndexes:
+            return
+        
+        layerItemIndex = selectedIndexes[0]
+        layerItem = self.main.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        
+        if layerItemData['layerType'] == 'vector':
+            self.lineEditSubWatershedPolygon.setText(layerItemData['layerFile'])
+    
+    
     def setupUi(self, parent):
         super(DialogLumensQUESHWatershedIndicators, self).setupUi(self)
         
