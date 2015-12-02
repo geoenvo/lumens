@@ -70,6 +70,7 @@ from dialog_lumens_quesh_watershedmodelevaluation import DialogLumensQUESHWaters
 from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIndicators
 from dialog_lumens_quesh_dominanthru import DialogLumensQUESHDominantHRU
 from dialog_lumens_quesh_multiplehru import DialogLumensQUESHMultipleHRU
+from dialog_lumens_quesh_dominantlussl import DialogLumensQUESHDominantLUSSL
 from dialog_lumens_ta_abacusopportunitycost import DialogLumensTAAbacusOpportunityCost
 from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
@@ -243,6 +244,18 @@ class MainWindow(QtGui.QMainWindow):
                 'outputFinalYearSubWatershedLevelIndicators': '',
             },
             'DialogLumensQUESHDominantHRU': {
+                'workingDir': '',
+                'landUseMap': '',
+                'soilMap': '',
+                'slopeMap': '',
+                'subcatchmentMap': '',
+                'landUseClassification': '',
+                'soilClassification': '',
+                'slopeClassification': '',
+                'areaName': '',
+                'period': '',
+            },
+            'DialogLumensQUESHDominantLUSSL': {
                 'workingDir': '',
                 'landUseMap': '',
                 'soilMap': '',
@@ -536,6 +549,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHWatershedModelEvaluation.triggered.connect(self.handlerDialogLumensQUESHWatershedModelEvaluation)
         self.actionDialogLumensQUESHWatershedIndicators.triggered.connect(self.handlerDialogLumensQUESHWatershedIndicators)
         self.actionDialogLumensQUESHDominantHRU.triggered.connect(self.handlerDialogLumensQUESHDominantHRU)
+        self.actionDialogLumensQUESHDominantLUSSL.triggered.connect(self.handlerDialogLumensQUESHDominantLUSSL)
         self.actionDialogLumensQUESHMultipleHRU.triggered.connect(self.handlerDialogLumensQUESHMultipleHRU)
         
         # TA menu
@@ -778,6 +792,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHWatershedModelEvaluation = QtGui.QAction('Watershed model evaluation', self)
         self.actionDialogLumensQUESHWatershedIndicators = QtGui.QAction('Watershed indicators', self)
         self.actionDialogLumensQUESHDominantHRU = QtGui.QAction('Dominant HRU', self)
+        self.actionDialogLumensQUESHDominantLUSSL = QtGui.QAction('Dominant land use, soil, and slope', self)
         self.actionDialogLumensQUESHMultipleHRU = QtGui.QAction('Multiple HRU', self)
         
         self.preQUESMenu = self.quesMenu.addMenu('Pre-QUES')
@@ -794,6 +809,7 @@ class MainWindow(QtGui.QMainWindow):
         self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedModelEvaluation)
         self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedIndicators)
         self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantHRU)
+        self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantLUSSL)
         self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
         
         # TA menu
@@ -1020,6 +1036,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHWatershedModelEvaluation.setEnabled(True)
         self.actionDialogLumensQUESHWatershedIndicators.setEnabled(True)
         self.actionDialogLumensQUESHDominantHRU.setEnabled(True)
+        self.actionDialogLumensQUESHDominantLUSSL.setEnabled(True)
+        self.actionDialogLumensQUESHMultipleHRU.setEnabled(True)
         
         self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
         self.actionDialogLumensTAOpportunityCost.setEnabled(True)
@@ -1065,6 +1083,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHWatershedModelEvaluation.setDisabled(True)
         self.actionDialogLumensQUESHWatershedIndicators.setDisabled(True)
         self.actionDialogLumensQUESHDominantHRU.setDisabled(True)
+        self.actionDialogLumensQUESHDominantLUSSL.setDisabled(True)
+        self.actionDialogLumensQUESHMultipleHRU.setDisabled(True)
         
         self.actionDialogLumensTAAbacusOpportunityCost.setDisabled(True)
         self.actionDialogLumensTAOpportunityCost.setDisabled(True)
@@ -1259,6 +1279,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensQUESHDominantHRU)
+    
+    
+    def handlerDialogLumensQUESHDominantLUSSL(self):
+        """
+        """
+        self.openDialog(DialogLumensQUESHDominantLUSSL)
     
     
     def handlerDialogLumensQUESHMultipleHRU(self):
