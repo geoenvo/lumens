@@ -56,6 +56,7 @@ from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeatdata import DialogLumensAddPeatData
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunitdata import DialogLumensAddPlanningUnitData
+from dialog_lumens_pur import DialogLumensPUR
 from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReferenceData
 from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
 from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlanningUnit
@@ -534,6 +535,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensImportDatabase.triggered.connect(self.handlerDialogLumensImportDatabase)
         
         # PUR menu
+        self.actionDialogLumensPUR.triggered.connect(self.handlerDialogLumensPUR)
         self.actionDialogLumensPURCreateReferenceData.triggered.connect(self.handlerDialogLumensPURCreateReferenceData)
         self.actionDialogLumensPURPreparePlanningUnit.triggered.connect(self.handlerDialogLumensPURPreparePlanningUnit)
         self.actionDialogLumensPURReconcilePlanningUnit.triggered.connect(self.handlerDialogLumensPURReconcilePlanningUnit)
@@ -771,12 +773,14 @@ class MainWindow(QtGui.QMainWindow):
         self.databaseMenu.addAction(self.actionDialogLumensImportDatabase)
         
         # PUR menu
+        self.actionDialogLumensPUR = QtGui.QAction('Planning Unit Reconciliation', self)
         self.actionDialogLumensPURCreateReferenceData = QtGui.QAction('Create reference data', self)
         self.actionDialogLumensPURPreparePlanningUnit = QtGui.QAction('Prepare planning unit', self)
         self.actionDialogLumensPURReconcilePlanningUnit = QtGui.QAction('Reconcile planning unit', self)
         self.actionDialogLumensPURFinalization = QtGui.QAction('Finalization', self)
         
         self.functionsBasedReconciliationMenu = self.purMenu.addMenu('Functions-based Reconciliation')
+        self.purMenu.addAction(self.actionDialogLumensPUR)
         self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURCreateReferenceData)
         self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURPreparePlanningUnit)
         self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURReconcilePlanningUnit)
@@ -1022,6 +1026,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensAddFactorData.setEnabled(True)
         self.actionDialogLumensAddPlanningUnitData.setEnabled(True)
         
+        self.actionDialogLumensPUR.setEnabled(True)
         self.actionDialogLumensPURCreateReferenceData.setEnabled(True)
         self.actionDialogLumensPURPreparePlanningUnit.setEnabled(True)
         self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
@@ -1069,6 +1074,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensAddFactorData.setDisabled(True)
         self.actionDialogLumensAddPlanningUnitData.setDisabled(True)
         
+        self.actionDialogLumensPUR.setDisabled(True)
         self.actionDialogLumensPURCreateReferenceData.setDisabled(True)
         self.actionDialogLumensPURPreparePlanningUnit.setDisabled(True)
         self.actionDialogLumensPURReconcilePlanningUnit.setDisabled(True)
@@ -1201,6 +1207,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensImportDatabase)
+    
+    
+    def handlerDialogLumensPUR(self):
+        """
+        """
+        self.openDialog(DialogLumensPUR)
     
     
     def handlerDialogLumensPURCreateReferenceData(self):
