@@ -2,10 +2,10 @@
 #-*- coding:utf-8 -*-
 
 import os, logging
-from qgis.core import *
+##from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from utils import QPlainTextEditLogger
-from processing.tools import *
+##from processing.tools import *
 
 
 class DialogLumensBase(QtGui.QDialog):
