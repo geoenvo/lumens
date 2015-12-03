@@ -1700,6 +1700,7 @@ class MainWindow(QtGui.QMainWindow):
     def handlerDeleteLayer(self):
         """
         """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
         layerItemData = self.getSelectedLayerData()
         del self.qgsLayerList[layerItemData['layer']]
         ##QtGui.QMessageBox.information(self, 'Layer', layerItemData)
