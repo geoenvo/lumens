@@ -28,6 +28,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.setupUi(self)
         
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
+        self.comboBoxShapefileAttribute.currentIndexChanged.connect(self.handlerChangeShapefileAttribute)
     
     
     def setupUi(self, parent):
@@ -59,12 +60,6 @@ class DialogLumensPUR(QtGui.QDialog):
         self.groupBoxSetupReference.setLayout(self.layoutGroupBoxSetupReference)
         self.layoutSetupReferenceOptions = QtGui.QGridLayout()
         self.layoutGroupBoxSetupReference.addLayout(self.layoutSetupReferenceOptions)
-        self.layoutContentSetupReferenceMapping = QtGui.QVBoxLayout()
-        self.contentSetupReferenceMapping = QtGui.QWidget()
-        self.contentSetupReferenceMapping.setLayout(self.layoutContentSetupReferenceMapping)
-        self.scrollSetupReferenceMapping = QtGui.QScrollArea()
-        self.scrollSetupReferenceMapping.setWidget(self.contentSetupReferenceMapping)
-        self.layoutGroupBoxSetupReference.addWidget(self.scrollSetupReferenceMapping)
         
         self.labelShapefile = QtGui.QLabel()
         self.labelShapefile.setText('Reference data:')
@@ -96,6 +91,25 @@ class DialogLumensPUR(QtGui.QDialog):
         self.lineEditDataTitle.setText('title')
         self.layoutSetupReferenceOptions.addWidget(self.lineEditDataTitle, 3, 1)
         self.labelDataTitle.setBuddy(self.lineEditDataTitle)
+        
+        self.tableReferenceMapping = QtGui.QTableWidget()
+        self.tableReferenceMapping.setRowCount(20)
+        self.tableReferenceMapping.setColumnCount(2)
+        self.tableReferenceMapping.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        self.tableReferenceMapping.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tableReferenceMapping.verticalHeader().setVisible(False)
+        self.tableReferenceMapping.setHorizontalHeaderLabels(['Attribute value', 'Reference class'])
+        self.tableReferenceMapping.horizontalHeader().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
+        
+        attribute = QtGui.QTableWidgetItem('ATTRIBUTE_VALUE')
+        combobox = QtGui.QComboBox()
+        
+        for key, val in self.defaultReferenceClasses.iteritems():
+            combobox.addItem(val, key)
+        
+        self.tableReferenceMapping.setItem(0, 0, attribute)
+        self.tableReferenceMapping.setCellWidget(0, 1, combobox)
+        self.layoutGroupBoxSetupReference.addWidget(self.tableReferenceMapping)
         
         # 'Setup planning unit' GroupBox
         self.layoutContentGroupBoxSetupPlanningUnit = QtGui.QVBoxLayout()
@@ -138,6 +152,39 @@ class DialogLumensPUR(QtGui.QDialog):
         self.resize(parent.sizeHint())
     
     
+    def populateTableReferenceMapping(self, shapefileAttribute):
+        """Populate the reference mapping table from the selected shapefile attribute
+        """
+        registry = QgsProviderRegistry.instance()
+        provider = registry.provider('ogr', unicode(self.lineEditShapefile.text()))
+        
+        if not provider.isValid():
+            logging.getLogger(type(self).__name__).error('invalid shapefile')
+            return
+        
+        attributeValues = []
+        features = provider.getFeatures()
+        
+        if features:
+            for feature in features:
+                attributeValue = str(feature.attribute(shapefileAttribute))
+                attributeValues.append(attributeValue)
+            
+            # Clear the table first
+            self.tableReferenceMapping.setRowCount(0)
+            self.tableReferenceMapping.setRowCount(len(attributeValues))
+            
+            row = 0
+            for attributeValue in sorted(attributeValues):
+                comboboxReferenceClasses = QtGui.QComboBox()
+                for key, val in self.defaultReferenceClasses.iteritems():
+                    comboboxReferenceClasses.addItem(val, key)
+                
+                self.tableReferenceMapping.setItem(row, 0, QtGui.QTableWidgetItem(attributeValue))
+                self.tableReferenceMapping.setCellWidget(row, 1, comboboxReferenceClasses)
+                row = row + 1
+    
+    
     def showEvent(self, event):
         """Called when the widget is shown
         """
@@ -147,6 +194,8 @@ class DialogLumensPUR(QtGui.QDialog):
     
     def loadSelectedVectorLayer(self):
         """Load the attributes of the selected layer into the shapefile attribute combobox
+        """
+        pass
         """
         selectedIndexes = self.main.layerListView.selectedIndexes()
         
@@ -173,7 +222,7 @@ class DialogLumensPUR(QtGui.QDialog):
             self.comboBoxShapefileAttribute.clear()
             self.comboBoxShapefileAttribute.addItems(sorted(attributes))
             self.comboBoxShapefileAttribute.setEnabled(True)
-    
+        """
     
     def handlerSelectShapefile(self):
         """Select a shp file and load the attributes in the shapefile attribute combobox
@@ -200,4 +249,12 @@ class DialogLumensPUR(QtGui.QDialog):
             self.comboBoxShapefileAttribute.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('select shapefile: %s', file)
-        
+    
+    
+    def handlerChangeShapefileAttribute(self, currentIndex):
+        """
+        """
+        print 'debug: handlerChangeShapefileAttribute'
+        shapefileAttribute = self.comboBoxShapefileAttribute.currentText()
+        print shapefileAttribute
+        self.populateTableReferenceMapping(shapefileAttribute)
