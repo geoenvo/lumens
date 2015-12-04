@@ -17,5 +17,6 @@
         <file>ui/icons/iconActionLayerAttributeTable.png</file>
         <file>ui/icons/iconActionFeatureSelectExpression.png</file>
         <file>ui/icons/iconActionToggleEdit.png</file>
+        <file>ui/icons/iconActionClear.png</file>
     </qresource>
 </RCC>
