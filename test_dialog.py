@@ -7,12 +7,14 @@ from PyQt4 import QtGui, QtCore
 
 from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_pur import DialogLumensPUR
+from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
 
 def main():
     app = QtGui.QApplication(sys.argv)
     
     dialog = DialogLumensBase(None)
     dialog = DialogLumensPUR(None)
+    #dialog = DialogLumensPURReferenceClasses(None)
     dialog.show()
     
     app.exec_()

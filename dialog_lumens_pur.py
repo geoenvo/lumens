@@ -7,6 +7,7 @@ from qgis.core import *
 from processing.tools import *
 """
 from PyQt4 import QtCore, QtGui
+from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
 import resource
 
 
@@ -17,21 +18,22 @@ class DialogLumensPUR(QtGui.QDialog):
     
     def __init__(self, parent):
         super(DialogLumensPUR, self).__init__(parent)
-        print 'debug: DialogLumensPUR init'
+        print 'DEBUG: DialogLumensPUR init'
         
         self.main = parent
         self.dialogTitle = 'LUMENS Planning Unit Reconciliation'
-        self.defaultReferenceClasses = {
-            10: 'Conservation',
-            20: 'Production',
-            30: 'Other',
+        self.referenceClasses = {
+            1: 'Conservation',
+            2: 'Production',
+            3: 'Other',
         }
-        self.tableRowCount = 0
+        self.tableRowCount = 0 # Planning Unit table row count
         
         self.setupUi(self)
         
         # 'Setup reference' buttons
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
+        self.buttonEditReferenceClasses.clicked.connect(self.handlerEditReferenceClasses)
         self.comboBoxShapefileAttribute.currentIndexChanged.connect(self.handlerChangeShapefileAttribute)
         # 'Setup planning unit' buttons
         self.buttonAddRow.clicked.connect(self.handlerButtonAddRow)
@@ -65,9 +67,14 @@ class DialogLumensPUR(QtGui.QDialog):
         self.groupBoxSetupReference = QtGui.QGroupBox('Setup reference')
         self.layoutGroupBoxSetupReference = QtGui.QVBoxLayout()
         self.groupBoxSetupReference.setLayout(self.layoutGroupBoxSetupReference)
+        self.layoutSetupReferenceInfo = QtGui.QVBoxLayout()
         self.layoutSetupReferenceOptions = QtGui.QGridLayout()
+        self.layoutGroupBoxSetupReference.addLayout(self.layoutSetupReferenceInfo)
         self.layoutGroupBoxSetupReference.addLayout(self.layoutSetupReferenceOptions)
         
+        self.labelSetupReferenceInfo = QtGui.QLabel()
+        self.labelSetupReferenceInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutSetupReferenceInfo.addWidget(self.labelSetupReferenceInfo)
         self.labelShapefile = QtGui.QLabel()
         self.labelShapefile.setText('Reference data:')
         self.layoutSetupReferenceOptions.addWidget(self.labelShapefile, 0, 0)
@@ -109,14 +116,16 @@ class DialogLumensPUR(QtGui.QDialog):
         self.tableReferenceMapping.horizontalHeader().setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
         
         attribute = QtGui.QTableWidgetItem('ATTRIBUTE_VALUE')
-        combobox = QtGui.QComboBox()
+        comboBoxReferenceClasses = QtGui.QComboBox()
         
-        for key, val in self.defaultReferenceClasses.iteritems():
-            combobox.addItem(val, key)
+        for key, val in self.referenceClasses.iteritems():
+            comboBoxReferenceClasses.addItem(val, key)
         
         self.tableReferenceMapping.setItem(0, 0, attribute)
-        self.tableReferenceMapping.setCellWidget(0, 1, combobox)
+        self.tableReferenceMapping.setCellWidget(0, 1, comboBoxReferenceClasses)
         self.layoutGroupBoxSetupReference.addWidget(self.tableReferenceMapping)
+        
+        #######################################################################
         
         # 'Setup planning unit' GroupBox
         self.groupBoxSetupPlanningUnit = QtGui.QGroupBox('Setup planning unit')
@@ -134,8 +143,8 @@ class DialogLumensPUR(QtGui.QDialog):
         self.buttonAddRow.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         self.layoutButtonSetupPlanningUnit.addWidget(self.buttonAddRow)
         self.buttonClearAll = QtGui.QPushButton()
-        self.buttonClearAll.setVisible(False)
         self.buttonClearAll.setText('Clear All')
+        self.buttonClearAll.setVisible(False) # BUGGY
         self.buttonClearAll.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         self.layoutButtonSetupPlanningUnit.addWidget(self.buttonClearAll)
         ##self.layoutContentGroupBoxSetupPlanningUnit.addWidget(self.contentButtonSetupPlanningUnit)
@@ -148,7 +157,12 @@ class DialogLumensPUR(QtGui.QDialog):
         ##self.scrollSetupPlanningUnit.setStyleSheet('QScrollArea > QWidget > QWidget { background: white; }')
         self.scrollSetupPlanningUnit.setWidgetResizable(True);
         self.scrollSetupPlanningUnit.setWidget(self.contentGroupBoxSetupPlanningUnit)
+        self.layoutSetupPlanningUnitInfo = QtGui.QVBoxLayout()
+        self.labelSetupPlanningUnitInfo = QtGui.QLabel()
+        self.labelSetupPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutSetupPlanningUnitInfo.addWidget(self.labelSetupPlanningUnitInfo)
         
+        self.layoutGroupBoxSetupPlanningUnit.addLayout(self.layoutSetupPlanningUnitInfo)
         self.layoutGroupBoxSetupPlanningUnit.addWidget(self.contentButtonSetupPlanningUnit)
         self.layoutGroupBoxSetupPlanningUnit.addWidget(self.scrollSetupPlanningUnit)
         
@@ -185,7 +199,7 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(640, 480)
+        self.setMinimumSize(680, 480)
         self.resize(parent.sizeHint())
     
     
@@ -216,7 +230,7 @@ class DialogLumensPUR(QtGui.QDialog):
             row = 0
             for attributeValue in sorted(attributeValues):
                 comboboxReferenceClasses = QtGui.QComboBox()
-                for key, val in self.defaultReferenceClasses.iteritems():
+                for key, val in self.referenceClasses.iteritems():
                     comboboxReferenceClasses.addItem(val, key)
                 
                 self.tableReferenceMapping.setItem(row, 0, QtGui.QTableWidgetItem(attributeValue))
@@ -298,6 +312,12 @@ class DialogLumensPUR(QtGui.QDialog):
         lineEditPlanningUnitTitle.setObjectName('lineEditPlanningUnitTitle_{0}'.format(str(self.tableRowCount)))
         layoutRow.addWidget(lineEditPlanningUnitTitle)
         
+        comboBoxReferenceClasses = QtGui.QComboBox()
+        for key, val in self.referenceClasses.iteritems():
+            comboBoxReferenceClasses.addItem(val, key)
+        comboBoxReferenceClasses.setObjectName('comboBoxReferenceClasses_{0}'.format(str(self.tableRowCount)))
+        layoutRow.addWidget(comboBoxReferenceClasses)
+        
         comboBoxPlanningUnitType = QtGui.QComboBox()
         comboBoxPlanningUnitType.addItems(['Reconciliation', 'Additional'])
         comboBoxPlanningUnitType.setObjectName('comboBoxPlanningUnitType_{0}'.format(str(self.tableRowCount)))
@@ -337,6 +357,25 @@ class DialogLumensPUR(QtGui.QDialog):
                 self.clearLayout(item.layout())
             
             layout.removeItem(item)
+    
+    
+    def updateReferenceClasses(self, newReferenceClasses):
+        """
+        """
+        self.referenceClasses = newReferenceClasses
+        
+        # Update reference classes in 'Setup reference data' groupbox
+        for comboBoxReferenceClasses in self.tableReferenceMapping.findChildren(QtGui.QComboBox):
+            comboBoxReferenceClasses.clear()
+            for key, val in self.referenceClasses.iteritems():
+                comboBoxReferenceClasses.addItem(val, key)
+                
+        # Update reference classes in 'Setup planning unit' groupbox
+        for comboBoxReferenceClasses in self.contentGroupBoxSetupPlanningUnit.findChildren(QtGui.QComboBox):
+            if 'comboBoxReferenceClasses' in comboBoxReferenceClasses.objectName():
+                comboBoxReferenceClasses.clear()
+                for key, val in self.referenceClasses.iteritems():
+                    comboBoxReferenceClasses.addItem(val, key)
     
     
     def handlerButtonAddRow(self):
@@ -402,3 +441,14 @@ class DialogLumensPUR(QtGui.QDialog):
         """
         shapefileAttribute = self.comboBoxShapefileAttribute.currentText()
         self.populateTableReferenceMapping(shapefileAttribute)
+    
+    
+    def handlerEditReferenceClasses(self):
+        """
+        """
+        dialog = DialogLumensPURReferenceClasses(self)
+        
+        if dialog.exec_() == QtGui.QDialog.Accepted:
+            self.updateReferenceClasses(dialog.getReferenceClasses())
+        
+    
