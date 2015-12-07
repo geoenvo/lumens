@@ -2,10 +2,8 @@
 #-*- coding:utf-8 -*-
 
 import os, logging
-"""
 from qgis.core import *
 from processing.tools import *
-"""
 from PyQt4 import QtCore, QtGui
 from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
 import resource
@@ -27,17 +25,20 @@ class DialogLumensPUR(QtGui.QDialog):
             2: 'Production',
             3: 'Other',
         }
-        self.tableRowCount = 0 # Planning Unit table row count
+        self.tableReferenceMappingData = {}
+        self.tablePlanningUnitRowCount = 0
+        self.tablePlanningUnitData = []
         
         self.setupUi(self)
         
+        self.buttonProcessCreateReferenceData.clicked.connect(self.handlerProcessCreateReferenceData)
         # 'Setup reference' buttons
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
         self.buttonEditReferenceClasses.clicked.connect(self.handlerEditReferenceClasses)
         self.comboBoxShapefileAttribute.currentIndexChanged.connect(self.handlerChangeShapefileAttribute)
         # 'Setup planning unit' buttons
-        self.buttonAddRow.clicked.connect(self.handlerButtonAddRow)
-        self.buttonClearAll.clicked.connect(self.handlerButtonClearAll)
+        self.buttonAddPlanningUnitRow.clicked.connect(self.handlerButtonAddPlanningUnitRow)
+        self.buttonClearAllPlanningUnits.clicked.connect(self.handlerButtonClearAllPlanningUnits)
     
     
     def setupUi(self, parent):
@@ -135,18 +136,18 @@ class DialogLumensPUR(QtGui.QDialog):
         self.contentButtonSetupPlanningUnit = QtGui.QWidget()
         ##self.contentButtonSetupPlanningUnit.setFixedHeight(25)
         self.layoutButtonSetupPlanningUnit = QtGui.QHBoxLayout()
-        self.layoutButtonSetupPlanningUnit.setContentsMargins(0,0,0,0)
+        self.layoutButtonSetupPlanningUnit.setContentsMargins(0, 0, 0, 0)
         self.contentButtonSetupPlanningUnit.setLayout(self.layoutButtonSetupPlanningUnit)
         self.layoutButtonSetupPlanningUnit.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.buttonAddRow = QtGui.QPushButton()
-        self.buttonAddRow.setText('Add Planning Unit')
-        self.buttonAddRow.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
-        self.layoutButtonSetupPlanningUnit.addWidget(self.buttonAddRow)
-        self.buttonClearAll = QtGui.QPushButton()
-        self.buttonClearAll.setText('Clear All')
-        self.buttonClearAll.setVisible(False) # BUGGY
-        self.buttonClearAll.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
-        self.layoutButtonSetupPlanningUnit.addWidget(self.buttonClearAll)
+        self.buttonAddPlanningUnitRow = QtGui.QPushButton()
+        self.buttonAddPlanningUnitRow.setText('Add Planning Unit')
+        self.buttonAddPlanningUnitRow.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.layoutButtonSetupPlanningUnit.addWidget(self.buttonAddPlanningUnitRow)
+        self.buttonClearAllPlanningUnits = QtGui.QPushButton()
+        self.buttonClearAllPlanningUnits.setText('Clear All')
+        self.buttonClearAllPlanningUnits.setVisible(False) # BUG, hide it
+        self.buttonClearAllPlanningUnits.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.layoutButtonSetupPlanningUnit.addWidget(self.buttonClearAllPlanningUnits)
         ##self.layoutContentGroupBoxSetupPlanningUnit.addWidget(self.contentButtonSetupPlanningUnit)
         
         self.layoutContentGroupBoxSetupPlanningUnit = QtGui.QVBoxLayout()
@@ -170,9 +171,9 @@ class DialogLumensPUR(QtGui.QDialog):
         self.layoutTablePlanningUnit.setAlignment(QtCore.Qt.AlignTop)
         self.layoutContentGroupBoxSetupPlanningUnit.addLayout(self.layoutTablePlanningUnit)
         
-        self.addRow()
-        self.addRow()
-        self.addRow()
+        self.addPlanningUnitRow()
+        self.addPlanningUnitRow()
+        self.addPlanningUnitRow()
         
         # Process tab button
         self.layoutButtonCreateReferenceData = QtGui.QHBoxLayout()
@@ -199,14 +200,12 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(680, 480)
+        self.setMinimumSize(700, 480)
         self.resize(parent.sizeHint())
     
     
     def populateTableReferenceMapping(self, shapefileAttribute):
         """Populate the reference mapping table from the selected shapefile attribute
-        """
-        pass
         """
         registry = QgsProviderRegistry.instance()
         provider = registry.provider('ogr', unicode(self.lineEditShapefile.text()))
@@ -236,7 +235,6 @@ class DialogLumensPUR(QtGui.QDialog):
                 self.tableReferenceMapping.setItem(row, 0, QtGui.QTableWidgetItem(attributeValue))
                 self.tableReferenceMapping.setCellWidget(row, 1, comboboxReferenceClasses)
                 row = row + 1
-        """
     
     
     def showEvent(self, event):
@@ -248,8 +246,6 @@ class DialogLumensPUR(QtGui.QDialog):
     
     def loadSelectedVectorLayer(self):
         """Load the attributes of the selected layer into the shapefile attribute combobox
-        """
-        pass
         """
         selectedIndexes = self.main.layerListView.selectedIndexes()
         
@@ -276,51 +272,50 @@ class DialogLumensPUR(QtGui.QDialog):
             self.comboBoxShapefileAttribute.clear()
             self.comboBoxShapefileAttribute.addItems(sorted(attributes))
             self.comboBoxShapefileAttribute.setEnabled(True)
-        """
     
     
-    def addRow(self):
+    def addPlanningUnitRow(self):
         """Add a planning unit table row
         """
-        self.tableRowCount = self.tableRowCount + 1
+        self.tablePlanningUnitRowCount = self.tablePlanningUnitRowCount + 1
         
         layoutRow = QtGui.QHBoxLayout()
         
         buttonDeleteShapefile = QtGui.QPushButton()
         icon = QtGui.QIcon(':/ui/icons/iconActionClear.png')
         buttonDeleteShapefile.setIcon(icon)
-        buttonDeleteShapefile.setObjectName('buttonDeleteShapefile_{0}'.format(str(self.tableRowCount)))
+        buttonDeleteShapefile.setObjectName('buttonDeleteShapefile_{0}'.format(str(self.tablePlanningUnitRowCount)))
         layoutRow.addWidget(buttonDeleteShapefile)
         
         lineEditShapefile = QtGui.QLineEdit()
         lineEditShapefile.setReadOnly(True)
-        lineEditShapefile.setObjectName('lineEditShapefile_{0}'.format(str(self.tableRowCount)))
+        lineEditShapefile.setObjectName('lineEditShapefile_{0}'.format(str(self.tablePlanningUnitRowCount)))
         layoutRow.addWidget(lineEditShapefile)
         
         buttonSelectShapefile = QtGui.QPushButton()
         buttonSelectShapefile.setText('Select Shapefile')
-        buttonSelectShapefile.setObjectName('buttonSelectShapefile_{0}'.format(str(self.tableRowCount)))
+        buttonSelectShapefile.setObjectName('buttonSelectShapefile_{0}'.format(str(self.tablePlanningUnitRowCount)))
         layoutRow.addWidget(buttonSelectShapefile)
         
-        comboBoxShapefileAttr = QtGui.QComboBox()
-        comboBoxShapefileAttr.setDisabled(True)
-        comboBoxShapefileAttr.setObjectName('comboBoxShapefileAttr_{0}'.format(str(self.tableRowCount)))
-        layoutRow.addWidget(comboBoxShapefileAttr)
+        comboBoxShapefileAttribute = QtGui.QComboBox()
+        comboBoxShapefileAttribute.setDisabled(True)
+        comboBoxShapefileAttribute.setObjectName('comboBoxShapefileAttribute_{0}'.format(str(self.tablePlanningUnitRowCount)))
+        layoutRow.addWidget(comboBoxShapefileAttribute)
         
         lineEditPlanningUnitTitle = QtGui.QLineEdit()
         lineEditPlanningUnitTitle.setText('planning unit title')
-        lineEditPlanningUnitTitle.setObjectName('lineEditPlanningUnitTitle_{0}'.format(str(self.tableRowCount)))
+        lineEditPlanningUnitTitle.setObjectName('lineEditPlanningUnitTitle_{0}'.format(str(self.tablePlanningUnitRowCount)))
         layoutRow.addWidget(lineEditPlanningUnitTitle)
         
         comboBoxReferenceClasses = QtGui.QComboBox()
         for key, val in self.referenceClasses.iteritems():
             comboBoxReferenceClasses.addItem(val, key)
-        comboBoxReferenceClasses.setObjectName('comboBoxReferenceClasses_{0}'.format(str(self.tableRowCount)))
+        comboBoxReferenceClasses.setObjectName('comboBoxReferenceClasses_{0}'.format(str(self.tablePlanningUnitRowCount)))
         layoutRow.addWidget(comboBoxReferenceClasses)
         
         comboBoxPlanningUnitType = QtGui.QComboBox()
         comboBoxPlanningUnitType.addItems(['Reconciliation', 'Additional'])
-        comboBoxPlanningUnitType.setObjectName('comboBoxPlanningUnitType_{0}'.format(str(self.tableRowCount)))
+        comboBoxPlanningUnitType.setObjectName('comboBoxPlanningUnitType_{0}'.format(str(self.tablePlanningUnitRowCount)))
         layoutRow.addWidget(comboBoxPlanningUnitType)
         
         self.layoutTablePlanningUnit.addLayout(layoutRow)
@@ -329,18 +324,18 @@ class DialogLumensPUR(QtGui.QDialog):
         buttonDeleteShapefile.clicked.connect(self.handlerDeletePlanningUnitShapefile)
     
     
-    def clearRows(self):
+    def clearPlanningUnitRows(self):
         """BUG: handlerDeletePlanningUnitShapefile() cannot be triggered after calling clearRow()
         """
         for i in reversed(range(self.layoutTablePlanningUnit.count())): 
             layoutRow = self.layoutTablePlanningUnit.itemAt(i).layout()
             self.clearLayout(layoutRow)
         
-        self.tableRowCount = 0
+        self.tablePlanningUnitRowCount = 0
         
-        self.addRow()
-        self.addRow()
-        self.addRow()
+        self.addPlanningUnitRow()
+        self.addPlanningUnitRow()
+        self.addPlanningUnitRow()
     
     
     def clearLayout(self, layout):
@@ -360,7 +355,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def updateReferenceClasses(self, newReferenceClasses):
-        """
+        """Reload the Reference Classes comboboxes with the new values
         """
         self.referenceClasses = newReferenceClasses
         
@@ -378,22 +373,111 @@ class DialogLumensPUR(QtGui.QDialog):
                     comboBoxReferenceClasses.addItem(val, key)
     
     
-    def handlerButtonAddRow(self):
+    def setAppSettings(self):
         """
         """
-        self.addRow()
+        # 'Setup reference' GroupBox values
+        self.main.appSettings[type(self).__name__]['shapefile'] = unicode(self.lineEditShapefile.text())
+        self.main.appSettings[type(self).__name__]['shapefileAttr'] = unicode(self.comboBoxShapefileAttribute.currentText())
+        self.main.appSettings[type(self).__name__]['dataTitle'] = unicode(self.lineEditDataTitle.text())
+        self.main.appSettings[type(self).__name__]['referenceClasses'] = self.referenceClasses
+        
+        self.tableReferenceMappingData = {}
+        for tableRow in range(0, self.tableReferenceMapping.rowCount()):
+            attributeValue = self.tableReferenceMapping.item(tableRow, 0).text()
+            comboBoxReferenceClasses = self.tableReferenceMapping.cellWidget(tableRow, 1)
+            referenceClassID = comboBoxReferenceClasses.itemData(comboBoxReferenceClasses.currentIndex())
+            self.tableReferenceMappingData[attributeValue] = referenceClassID
+        
+        self.main.appSettings[type(self).__name__]['referenceMapping'] = self.tableReferenceMappingData
+        
+        # 'Setup planning unit' GroupBox values
+        self.tablePlanningUnitData = []
+        for tableRow in range(1, self.tablePlanningUnitRowCount + 1):
+            lineEditShapefile = self.findChild(QtGui.QLineEdit, 'lineEditShapefile_' + str(tableRow))
+            
+            if not lineEditShapefile: # Row has been deleted
+                print 'DEBUG: skipping a deleted row.'
+                continue
+            
+            comboBoxShapefileAttribute = self.findChild(QtGui.QComboBox, 'comboBoxShapefileAttribute_' + str(tableRow))
+            lineEditPlanningUnitTitle = self.findChild(QtGui.QLineEdit, 'lineEditPlanningUnitTitle_' + str(tableRow))
+            comboBoxReferenceClasses = self.findChild(QtGui.QComboBox, 'comboBoxReferenceClasses_' + str(tableRow))
+            comboBoxPlanningUnitType = self.findChild(QtGui.QComboBox, 'comboBoxPlanningUnitType_' + str(tableRow))
+            
+            shapefile = unicode(lineEditShapefile.text())
+            shapefileAttr = unicode(comboBoxShapefileAttribute.currentText())
+            planningUnitTitle = unicode(lineEditPlanningUnitTitle.text())
+            referenceClassID = comboBoxReferenceClasses.itemData(comboBoxReferenceClasses.currentIndex())
+            planningUnitType = unicode(comboBoxPlanningUnitType.currentText())
+            
+            if shapefile and shapefileAttr and planningUnitTitle and referenceClassID and planningUnitType:
+                if planningUnitType == 'Reconciliation':
+                    planningUnitType = 0
+                else:
+                    planningUnitType = 1
+                
+                tableRowData = {
+                    'shapefile': shapefile,
+                    'shapefileAttr': shapefileAttr,
+                    'planningUnitTitle': planningUnitTitle,
+                    'referenceClassID': referenceClassID,
+                    'planningUnitType': planningUnitType,
+                }
+                
+                self.tablePlanningUnitData.append(tableRowData)
+            else:
+                print 'DEBUG: ERROR incomplete planning unit details.'
+        
+        self.main.appSettings[type(self).__name__]['planningUnits'] = self.tablePlanningUnitData
+        
+        print 'DEBUG: appSettings["DialogLumensPUR"]'
+        print self.main.appSettings[type(self).__name__]
+        
+    
+    def handlerButtonAddPlanningUnitRow(self):
+        """
+        """
+        self.addPlanningUnitRow()
     
     
-    def handlerButtonClearAll(self):
+    def handlerButtonClearAllPlanningUnits(self):
         """
         """
-        self.clearRows()
+        self.clearPlanningUnitRows()
     
     
     def handlerSelectPlanningUnitShapefile(self):
         """
         """
-        pass
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if file:
+            self.lineEditShapefile.setText(file)
+            
+            buttonSender = self.sender()
+            objectName = buttonSender.objectName()
+            tableRow = objectName.split('_')[1]
+            
+            lineEditShapefile = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QLineEdit, 'lineEditShapefile_' + tableRow)
+            lineEditShapefile.setText(file)
+            
+            registry = QgsProviderRegistry.instance()
+            provider = registry.provider('ogr', file)
+            
+            if not provider.isValid():
+                logging.getLogger(type(self).__name__).error('invalid shapefile')
+                return
+            
+            attributes = []
+            for field in provider.fields():
+                attributes.append(field.name())
+            
+            comboBoxShapefileAttribute = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QComboBox, 'comboBoxShapefileAttribute_' + tableRow)
+            comboBoxShapefileAttribute.clear()
+            comboBoxShapefileAttribute.addItems(sorted(attributes))
+            comboBoxShapefileAttribute.setEnabled(True)
     
     
     def handlerDeletePlanningUnitShapefile(self):
@@ -408,8 +492,6 @@ class DialogLumensPUR(QtGui.QDialog):
     
     def handlerSelectShapefile(self):
         """Select a shp file and load the attributes in the shapefile attribute combobox
-        """
-        pass
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -433,7 +515,6 @@ class DialogLumensPUR(QtGui.QDialog):
             self.comboBoxShapefileAttribute.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('select shapefile: %s', file)
-        """
     
     
     def handlerChangeShapefileAttribute(self, currentIndex):
@@ -451,4 +532,9 @@ class DialogLumensPUR(QtGui.QDialog):
         if dialog.exec_() == QtGui.QDialog.Accepted:
             self.updateReferenceClasses(dialog.getReferenceClasses())
         
+    
+    def handlerProcessCreateReferenceData(self):
+        """
+        """
+        self.setAppSettings()
     

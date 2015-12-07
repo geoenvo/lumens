@@ -164,6 +164,14 @@ class MainWindow(QtGui.QMainWindow):
                 'csvfile': '',
                 'description': '',
             },
+            'DialogLumensPUR': {
+                'shapefile': '',
+                'shapefileAttr': '',
+                'dataTitle': '',
+                'referenceClasses': '',
+                'referenceMapping': '',
+                'planningUnits': '',
+            },
             'DialogLumensPURCreateReferenceData': {
                 'shapefile': '',
                 'shapefileAttr': '',
