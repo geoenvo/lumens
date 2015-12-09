@@ -177,23 +177,33 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
             
             lineEditReferenceClassTitle = self.findChild(QtGui.QLineEdit, 'lineEditReferenceClassTitle_' + str(tableRow))
             
+            # Check for duplicate reference class IDs and empty titles
             try:
                 referenceClassID = int(unicode(lineEditReferenceClassID.text()))
+                referenceClassTitle = unicode(lineEditReferenceClassTitle.text())
                 
                 if self.referenceClasses.has_key(referenceClassID):
                     print 'DEBUG ERROR found duplicate reference class ID.'
+                    QtGui.QMessageBox.critical(self, 'Duplicate Reference Class ID', 'Please make sure there are no duplicate reference class IDs.')
                     return
-                else:
-                    self.referenceClasses[referenceClassID] = unicode(lineEditReferenceClassTitle.text())
+                
+                if not referenceClassTitle:
+                    print 'DEBUG ERROR reference class title cannot be empty.'
+                    QtGui.QMessageBox.critical(self, 'Empty Reference Class Title', 'Please make sure there are no empty reference class titles.')
+                    return
+                
+                self.referenceClasses[referenceClassID] = referenceClassTitle
             except ValueError as verr:
                 print 'DEBUG: ERROR reference class ID must be an integer!'
+                QtGui.QMessageBox.critical(self, 'Non-number Reference Class ID', 'Please make sure that reference class IDs are numbers.')
                 return
         
         if self.referenceClasses:
             self.close()
             self.setResult(QtGui.QDialog.Accepted)
         else:
-            print 'DEBUG: ERROR no reference classes set.'
+            print 'DEBUG: ERROR no reference classes have been set.'
+            QtGui.QMessageBox.critical(self, 'No Reference Classes Found', 'Please input the reference classes.')
     
     
     def handlerButtonCancel(self):

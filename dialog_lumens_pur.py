@@ -74,7 +74,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.layoutGroupBoxSetupReference.addLayout(self.layoutSetupReferenceOptions)
         
         self.labelSetupReferenceInfo = QtGui.QLabel()
-        self.labelSetupReferenceInfo.setText('Lorem ipsum dolor sit amet...')
+        self.labelSetupReferenceInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutSetupReferenceInfo.addWidget(self.labelSetupReferenceInfo)
         self.labelShapefile = QtGui.QLabel()
         self.labelShapefile.setText('Reference data:')
@@ -133,6 +133,11 @@ class DialogLumensPUR(QtGui.QDialog):
         self.layoutGroupBoxSetupPlanningUnit = QtGui.QVBoxLayout()
         self.groupBoxSetupPlanningUnit.setLayout(self.layoutGroupBoxSetupPlanningUnit)
         
+        self.layoutSetupPlanningUnitInfo = QtGui.QVBoxLayout()
+        self.labelSetupPlanningUnitInfo = QtGui.QLabel()
+        self.labelSetupPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutSetupPlanningUnitInfo.addWidget(self.labelSetupPlanningUnitInfo)
+        
         self.contentButtonSetupPlanningUnit = QtGui.QWidget()
         ##self.contentButtonSetupPlanningUnit.setFixedHeight(25)
         self.layoutButtonSetupPlanningUnit = QtGui.QHBoxLayout()
@@ -158,10 +163,6 @@ class DialogLumensPUR(QtGui.QDialog):
         ##self.scrollSetupPlanningUnit.setStyleSheet('QScrollArea > QWidget > QWidget { background: white; }')
         self.scrollSetupPlanningUnit.setWidgetResizable(True);
         self.scrollSetupPlanningUnit.setWidget(self.contentGroupBoxSetupPlanningUnit)
-        self.layoutSetupPlanningUnitInfo = QtGui.QVBoxLayout()
-        self.labelSetupPlanningUnitInfo = QtGui.QLabel()
-        self.labelSetupPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...')
-        self.layoutSetupPlanningUnitInfo.addWidget(self.labelSetupPlanningUnitInfo)
         
         self.layoutGroupBoxSetupPlanningUnit.addLayout(self.layoutSetupPlanningUnitInfo)
         self.layoutGroupBoxSetupPlanningUnit.addWidget(self.contentButtonSetupPlanningUnit)
@@ -171,6 +172,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.layoutTablePlanningUnit.setAlignment(QtCore.Qt.AlignTop)
         self.layoutContentGroupBoxSetupPlanningUnit.addLayout(self.layoutTablePlanningUnit)
         
+        # Create 3 default planning units
         self.addPlanningUnitRow()
         self.addPlanningUnitRow()
         self.addPlanningUnitRow()
