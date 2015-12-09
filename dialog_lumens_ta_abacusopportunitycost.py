@@ -60,6 +60,18 @@ class DialogLumensTAAbacusOpportunityCost(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['projectFile'] = unicode(self.lineEditProjectFile.text())
     
     
+    def handlerSelectProjectFile(self):
+        """Select Project File
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Project File', QtCore.QDir.homePath(), 'Project File (*{0})'.format(self.main.appSettings['selectCarfileExt'])))
+        
+        if file:
+            self.lineEditProjectFile.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
     def handlerLumensDialogSubmit(self):
         """
         """
