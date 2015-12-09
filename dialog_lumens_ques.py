@@ -56,6 +56,7 @@ class DialogLumensQUES(QtGui.QDialog):
         # 'Planning unit' GroupBox
         self.groupBoxPlanningUnit = QtGui.QGroupBox('Planning unit')
         self.layoutGroupBoxPlanningUnit = QtGui.QVBoxLayout()
+        self.layoutGroupBoxPlanningUnit.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.groupBoxPlanningUnit.setLayout(self.layoutGroupBoxPlanningUnit)
         self.layoutPlanningUnitInfo = QtGui.QVBoxLayout()
         self.layoutPlanningUnit = QtGui.QGridLayout()

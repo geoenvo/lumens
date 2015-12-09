@@ -8,15 +8,15 @@ from processing.tools import *
 from dialog_lumens_base import DialogLumensBase
 
 
-class DialogLumensTAAbacusOpportunityCost(DialogLumensBase):
+class DialogLumensTAAbacusOpportunityCostCurve(DialogLumensBase):
     """
     """
     
     
     def __init__(self, parent):
-        super(DialogLumensTAAbacusOpportunityCost, self).__init__(parent)
+        super(DialogLumensTAAbacusOpportunityCostCurve, self).__init__(parent)
         
-        self.dialogTitle = 'LUMENS TA Abacus Opportunity Cost'
+        self.dialogTitle = 'LUMENS TA Abacus Opportunity Cost Curve'
         
         self.setupUi(self)
         
@@ -25,7 +25,7 @@ class DialogLumensTAAbacusOpportunityCost(DialogLumensBase):
     
     
     def setupUi(self, parent):
-        super(DialogLumensTAAbacusOpportunityCost, self).setupUi(self)
+        super(DialogLumensTAAbacusOpportunityCostCurve, self).setupUi(self)
         
         layoutLumensDialog = QtGui.QGridLayout()
         

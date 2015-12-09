@@ -131,6 +131,7 @@ class DialogLumensPUR(QtGui.QDialog):
         # 'Setup planning unit' GroupBox
         self.groupBoxSetupPlanningUnit = QtGui.QGroupBox('Setup planning unit')
         self.layoutGroupBoxSetupPlanningUnit = QtGui.QVBoxLayout()
+        self.layoutGroupBoxSetupPlanningUnit.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.groupBoxSetupPlanningUnit.setLayout(self.layoutGroupBoxSetupPlanningUnit)
         
         self.layoutSetupPlanningUnitInfo = QtGui.QVBoxLayout()
@@ -138,11 +139,8 @@ class DialogLumensPUR(QtGui.QDialog):
         self.labelSetupPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutSetupPlanningUnitInfo.addWidget(self.labelSetupPlanningUnitInfo)
         
-        self.contentButtonSetupPlanningUnit = QtGui.QWidget()
-        ##self.contentButtonSetupPlanningUnit.setFixedHeight(25)
         self.layoutButtonSetupPlanningUnit = QtGui.QHBoxLayout()
         self.layoutButtonSetupPlanningUnit.setContentsMargins(0, 0, 0, 0)
-        self.contentButtonSetupPlanningUnit.setLayout(self.layoutButtonSetupPlanningUnit)
         self.layoutButtonSetupPlanningUnit.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.buttonAddPlanningUnitRow = QtGui.QPushButton()
         self.buttonAddPlanningUnitRow.setText('Add Planning Unit')
@@ -153,7 +151,6 @@ class DialogLumensPUR(QtGui.QDialog):
         self.buttonClearAllPlanningUnits.setVisible(False) # BUG, hide it
         self.buttonClearAllPlanningUnits.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         self.layoutButtonSetupPlanningUnit.addWidget(self.buttonClearAllPlanningUnits)
-        ##self.layoutContentGroupBoxSetupPlanningUnit.addWidget(self.contentButtonSetupPlanningUnit)
         
         self.layoutContentGroupBoxSetupPlanningUnit = QtGui.QVBoxLayout()
         self.layoutContentGroupBoxSetupPlanningUnit.setContentsMargins(5, 5, 5, 5)
@@ -165,7 +162,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.scrollSetupPlanningUnit.setWidget(self.contentGroupBoxSetupPlanningUnit)
         
         self.layoutGroupBoxSetupPlanningUnit.addLayout(self.layoutSetupPlanningUnitInfo)
-        self.layoutGroupBoxSetupPlanningUnit.addWidget(self.contentButtonSetupPlanningUnit)
+        self.layoutGroupBoxSetupPlanningUnit.addLayout(self.layoutButtonSetupPlanningUnit)
         self.layoutGroupBoxSetupPlanningUnit.addWidget(self.scrollSetupPlanningUnit)
         
         self.layoutTablePlanningUnit = QtGui.QVBoxLayout()

@@ -72,8 +72,8 @@ from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIn
 from dialog_lumens_quesh_dominanthru import DialogLumensQUESHDominantHRU
 from dialog_lumens_quesh_multiplehru import DialogLumensQUESHMultipleHRU
 from dialog_lumens_quesh_dominantlussl import DialogLumensQUESHDominantLUSSL
-from dialog_lumens_ta_abacusopportunitycost import DialogLumensTAAbacusOpportunityCost
-from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
+from dialog_lumens_ta_abacusopportunitycostcurve import DialogLumensTAAbacusOpportunityCostCurve
+from dialog_lumens_ta_opportunitycostcurve import DialogLumensTAOpportunityCostCurve
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
 from dialog_lumens_ta_resioda import DialogLumensTARegionalEconomySingleIODescriptiveAnalysis
 from dialog_lumens_ta_retsioda import DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis
@@ -291,10 +291,10 @@ class MainWindow(QtGui.QMainWindow):
                 'soilThreshold': '',
                 'slopeThreshold': '',
             },
-            'DialogLumensTAAbacusOpportunityCost': {
+            'DialogLumensTAAbacusOpportunityCostCurve': {
                 'projectFile': '',
             },
-            'DialogLumensTAOpportunityCost': {
+            'DialogLumensTAOpportunityCostCurve': {
                 'workingDir': '',
                 'QUESCDatabase': '',
                 'csvNPVTable': '',
@@ -563,8 +563,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHMultipleHRU.triggered.connect(self.handlerDialogLumensQUESHMultipleHRU)
         
         # TA menu
-        self.actionDialogLumensTAAbacusOpportunityCost.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCost)
-        self.actionDialogLumensTAOpportunityCost.triggered.connect(self.handlerDialogLumensTAOpportunityCost)
+        self.actionDialogLumensTAAbacusOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCostCurve)
+        self.actionDialogLumensTAOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAOpportunityCostCurve)
         self.actionDialogLumensTAOpportunityCostMap.triggered.connect(self.handlerDialogLumensTAOpportunityCostMap)
         self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
         self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
@@ -825,8 +825,8 @@ class MainWindow(QtGui.QMainWindow):
         self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
         
         # TA menu
-        self.actionDialogLumensTAAbacusOpportunityCost = QtGui.QAction('Abacus opportunity cost curve', self)
-        self.actionDialogLumensTAOpportunityCost = QtGui.QAction('Opportunity cost curve', self)
+        self.actionDialogLumensTAAbacusOpportunityCostCurve = QtGui.QAction('Abacus opportunity cost curve', self)
+        self.actionDialogLumensTAOpportunityCostCurve = QtGui.QAction('Opportunity cost curve', self)
         self.actionDialogLumensTAOpportunityCostMap = QtGui.QAction('Opportunity cost map', self)
         self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis = QtGui.QAction('Descriptive analysis of regional economy (single time series)', self)
         self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis = QtGui.QAction('Descriptive analysis of regional economy (multiple time series)', self)
@@ -837,8 +837,8 @@ class MainWindow(QtGui.QMainWindow):
         
         self.opportunityCostMenu = self.taMenu.addMenu('Opportunity cost')
         self.regionalEconomyMenu = self.taMenu.addMenu('Regional economy')
-        self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCost)
-        self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCost)
+        self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCostCurve)
+        self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostCurve)
         self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostMap)
         self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
         self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
@@ -1052,8 +1052,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setEnabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setEnabled(True)
         
-        self.actionDialogLumensTAAbacusOpportunityCost.setEnabled(True)
-        self.actionDialogLumensTAOpportunityCost.setEnabled(True)
+        self.actionDialogLumensTAAbacusOpportunityCostCurve.setEnabled(True)
+        self.actionDialogLumensTAOpportunityCostCurve.setEnabled(True)
         self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
         self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
         self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
@@ -1100,8 +1100,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setDisabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setDisabled(True)
         
-        self.actionDialogLumensTAAbacusOpportunityCost.setDisabled(True)
-        self.actionDialogLumensTAOpportunityCost.setDisabled(True)
+        self.actionDialogLumensTAAbacusOpportunityCostCurve.setDisabled(True)
+        self.actionDialogLumensTAOpportunityCostCurve.setDisabled(True)
         self.actionDialogLumensTAOpportunityCostMap.setDisabled(True)
         self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
         self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
@@ -1313,16 +1313,16 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensQUESHMultipleHRU)
     
     
-    def handlerDialogLumensTAAbacusOpportunityCost(self):
+    def handlerDialogLumensTAAbacusOpportunityCostCurve(self):
         """
         """
-        self.openDialog(DialogLumensTAAbacusOpportunityCost)
+        self.openDialog(DialogLumensTAAbacusOpportunityCostCurve)
     
     
-    def handlerDialogLumensTAOpportunityCost(self):
+    def handlerDialogLumensTAOpportunityCostCurve(self):
         """
         """
-        self.openDialog(DialogLumensTAOpportunityCost)
+        self.openDialog(DialogLumensTAOpportunityCostCurve)
     
     
     def handlerDialogLumensTAOpportunityCostMap(self):
