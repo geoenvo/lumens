@@ -67,6 +67,7 @@ class DialogLumensPUR(QtGui.QDialog):
         # 'Setup reference' GroupBox
         self.groupBoxSetupReference = QtGui.QGroupBox('Setup reference')
         self.layoutGroupBoxSetupReference = QtGui.QVBoxLayout()
+        self.layoutGroupBoxSetupReference.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.groupBoxSetupReference.setLayout(self.layoutGroupBoxSetupReference)
         self.layoutSetupReferenceInfo = QtGui.QVBoxLayout()
         self.layoutSetupReferenceOptions = QtGui.QGridLayout()

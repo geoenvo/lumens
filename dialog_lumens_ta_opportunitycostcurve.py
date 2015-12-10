@@ -94,7 +94,7 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
         self.labelSpinBoxPeriod2.setBuddy(self.spinBoxPeriod2)
         
         self.labelSpinBoxCostThreshold = QtGui.QLabel(parent)
-        self.labelSpinBoxCostThreshold.setText('Cost &Threshold:')
+        self.labelSpinBoxCostThreshold.setText('Cost &threshold:')
         layoutLumensDialog.addWidget(self.labelSpinBoxCostThreshold, 8, 0)
         
         self.spinBoxCostThreshold = QtGui.QSpinBox(parent)
@@ -104,7 +104,7 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
         self.labelSpinBoxCostThreshold.setBuddy(self.spinBoxCostThreshold)
         
         self.labelOutputOpportunityCostDatabase = QtGui.QLabel(parent)
-        self.labelOutputOpportunityCostDatabase.setText('Opportunity cost database (output):')
+        self.labelOutputOpportunityCostDatabase.setText('Opportunity cost database [output]:')
         layoutLumensDialog.addWidget(self.labelOutputOpportunityCostDatabase, 9, 0)
         
         self.lineEditOutputOpportunityCostDatabase = QtGui.QLineEdit(parent)
@@ -116,7 +116,7 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
         layoutLumensDialog.addWidget(self.buttonSelectOutputOpportunityCostDatabase, 10, 0, 1, 2)
         
         self.labelOutputOpportunityCostReport = QtGui.QLabel(parent)
-        self.labelOutputOpportunityCostReport.setText('Opportunity cost report (output):')
+        self.labelOutputOpportunityCostReport.setText('Opportunity cost report [output]:')
         layoutLumensDialog.addWidget(self.labelOutputOpportunityCostReport, 11, 0)
         
         self.lineEditOutputOpportunityCostReport = QtGui.QLineEdit(parent)
