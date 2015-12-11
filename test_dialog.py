@@ -9,8 +9,9 @@ from PyQt4 import QtGui, QtCore
 ##from dialog_lumens_pur import DialogLumensPUR
 ##from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
 ##from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
+from dialog_lumens_ta_regionaleconomy import DialogLumensTARegionalEconomy
 ##from dialog_lumens_sciendo import DialogLumensSCIENDO
-from dialog_lumens_ques import DialogLumensQUES
+##from dialog_lumens_ques import DialogLumensQUES
 
 def main():
     app = QtGui.QApplication(sys.argv)
@@ -19,8 +20,9 @@ def main():
     ##dialog = DialogLumensPUR(None)
     ##dialog = DialogLumensPURReferenceClasses(None)
     ##dialog = DialogLumensTAOpportunityCost(None)
+    dialog = DialogLumensTARegionalEconomy(None)
     ##dialog = DialogLumensSCIENDO(None)
-    dialog = DialogLumensQUES(None)
+    ##dialog = DialogLumensQUES(None)
     
     dialog.show()
     

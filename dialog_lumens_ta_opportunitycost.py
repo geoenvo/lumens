@@ -218,6 +218,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCPeriod)
         self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCOther)
         self.layoutTabOpportunityCostCurve.addLayout(self.layoutButtonOpportunityCostCurve)
+        ##self.layoutTabOpportunityCostCurve.insertStretch(2, 1)
         
         self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCPeriod, 1)
         self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCOther, 4)

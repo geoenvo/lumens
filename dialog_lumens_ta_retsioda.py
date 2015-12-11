@@ -73,7 +73,7 @@ class DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis(DialogLumensB
         layoutLumensDialog.addWidget(self.lineEditIntermediateConsumptionMatrixP2, 4, 1)
         
         self.buttonSelectIntermediateConsumptionMatrixP2 = QtGui.QPushButton(parent)
-        self.buttonSelectIntermediateConsumptionMatrixP2.setText('Select Intermediate Consumption &Matrix Period 1')
+        self.buttonSelectIntermediateConsumptionMatrixP2.setText('Select Intermediate Consumption &Matrix Period 2')
         layoutLumensDialog.addWidget(self.buttonSelectIntermediateConsumptionMatrixP2, 5, 0, 1, 2)
         
         self.labelValueAddedMatrixP1 = QtGui.QLabel(parent)
