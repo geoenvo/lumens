@@ -47,8 +47,6 @@ class DialogLumensQUESHWatershedModelEvaluation(DialogLumensBase):
         self.labelDateInitial.setText('Initial date:')
         layoutLumensDialog.addWidget(self.labelDateInitial, 2, 0)
         
-        today = datetime.date.today()
-        
         self.dateDateInitial = QtGui.QDateEdit(QtCore.QDate.currentDate(), parent)
         self.dateDateInitial.setCalendarPopup(True)
         self.dateDateInitial.setDisplayFormat('dd/MM/yyyy')
@@ -67,12 +65,16 @@ class DialogLumensQUESHWatershedModelEvaluation(DialogLumensBase):
         self.labelSWATModel.setText('SWAT &model:')
         layoutLumensDialog.addWidget(self.labelSWATModel, 4, 0)
         
-        self.comboBoxSWATModel = QtGui.QComboBox(parent)
-        comboBoxItems = [
-            'Skip',
-            'Run',
-        ]
-        self.comboBoxSWATModel.addItems(comboBoxItems)
+        SWATModel = {
+            1: 'Skip',
+            2: 'Run',
+        }
+        
+        self.comboBoxSWATModel = QtGui.QComboBox()
+        
+        for key, val in SWATModel.iteritems():
+            self.comboBoxSWATModel.addItem(val, key)
+        
         layoutLumensDialog.addWidget(self.comboBoxSWATModel, 4, 1)
         
         self.labelSWATModel.setBuddy(self.comboBoxSWATModel)
@@ -141,18 +143,7 @@ class DialogLumensQUESHWatershedModelEvaluation(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['workingDir'] = unicode(self.lineEditWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings[type(self).__name__]['dateInitial'] = self.dateDateInitial.date().toString('dd/MM/yyyy')
         self.main.appSettings[type(self).__name__]['dateFinal'] = self.dateDateFinal.date().toString('dd/MM/yyyy')
-        
-        comboboxVal = None
-        comboboxText = unicode(self.comboBoxSWATModel.currentText())
-        
-        if comboboxText == 'Skip':
-            comboboxVal = 1
-        elif comboboxText == 'Run':
-            comboboxVal = 2
-        else:
-            comboboxVal = 1
-        
-        self.main.appSettings[type(self).__name__]['SWATModel'] = comboboxVal
+        self.main.appSettings[type(self).__name__]['SWATModel'] = self.comboBoxSWATModel.itemData(self.comboBoxSWATModel.currentIndex())
         self.main.appSettings[type(self).__name__]['location'] = unicode(self.lineEditLocation.text())
         self.main.appSettings[type(self).__name__]['outletReachSubBasinID'] = self.spinBoxOutletReachSubBasinID.value()
         self.main.appSettings[type(self).__name__]['observedDebitFile'] = unicode(self.lineEditObservedDebitFile.text())

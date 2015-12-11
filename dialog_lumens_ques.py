@@ -560,7 +560,15 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWatershedModelEvaluation.setLayout(self.layoutTabWatershedModelEvaluation)
         self.tabWatershedIndicators.setLayout(self.layoutTabWatershedIndicators)
         
+        #***********************************************************
+        # 'Watershed Delineation' sub tab
+        #***********************************************************
+        
+        
+        
+        #***********************************************************
         # 'Hydrological Response Unit Definition' sub tab
+        #***********************************************************
         self.layoutContentHRUDefinition = QtGui.QVBoxLayout()
         self.contentHRUDefinition = QtGui.QWidget()
         self.contentHRUDefinition.setLayout(self.layoutContentHRUDefinition)
@@ -1029,6 +1037,268 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutContentHRUDefinition.addWidget(self.groupBoxDominantLUSSL)
         self.layoutContentHRUDefinition.addWidget(self.groupBoxMultipleHRU)
         self.layoutContentHRUDefinition.addLayout(self.layoutButtonHRUDefinition)
+        
+        #***********************************************************
+        # 'Watershed Model Evaluation' sub tab
+        #***********************************************************
+        # 'Parameters' GroupBox
+        self.groupBoxWatershedModelEvaluationParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxWatershedModelEvaluationParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxWatershedModelEvaluationParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxWatershedModelEvaluationParameters.setLayout(self.layoutGroupBoxWatershedModelEvaluationParameters)
+        self.layoutWatershedModelEvaluationParametersInfo = QtGui.QVBoxLayout()
+        self.layoutWatershedModelEvaluationParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxWatershedModelEvaluationParameters.addLayout(self.layoutWatershedModelEvaluationParametersInfo)
+        self.layoutGroupBoxWatershedModelEvaluationParameters.addLayout(self.layoutWatershedModelEvaluationParameters)
+        
+        self.labelWatershedModelEvaluationParametersInfo = QtGui.QLabel()
+        self.labelWatershedModelEvaluationParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutWatershedModelEvaluationParametersInfo.addWidget(self.labelWatershedModelEvaluationParametersInfo)
+        
+        self.labelWatershedModelEvaluationWorkingDir = QtGui.QLabel()
+        self.labelWatershedModelEvaluationWorkingDir.setText('Working directory:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationWorkingDir, 0, 0)
+        
+        self.lineEditWatershedModelEvaluationWorkingDir = QtGui.QLineEdit()
+        self.lineEditWatershedModelEvaluationWorkingDir.setReadOnly(True)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationWorkingDir, 0, 1)
+        
+        self.buttonSelectWatershedModelEvaluationWorkingDir = QtGui.QPushButton()
+        self.buttonSelectWatershedModelEvaluationWorkingDir.setText('&Browse')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectWatershedModelEvaluationWorkingDir, 0, 2)
+        
+        self.labelWatershedModelEvaluationDateInitial = QtGui.QLabel()
+        self.labelWatershedModelEvaluationDateInitial.setText('Initial date:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateInitial, 1, 0)
+        
+        self.dateWatershedModelEvaluationDateInitial = QtGui.QDateEdit(QtCore.QDate.currentDate())
+        self.dateWatershedModelEvaluationDateInitial.setCalendarPopup(True)
+        self.dateWatershedModelEvaluationDateInitial.setDisplayFormat('dd/MM/yyyy')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateInitial, 1, 1)
+        
+        self.labelWatershedModelEvaluationDateFinal = QtGui.QLabel()
+        self.labelWatershedModelEvaluationDateFinal.setText('Final date:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateFinal, 2, 0)
+        
+        self.dateWatershedModelEvaluationDateFinal = QtGui.QDateEdit(QtCore.QDate.currentDate(), )
+        self.dateWatershedModelEvaluationDateFinal.setCalendarPopup(True)
+        self.dateWatershedModelEvaluationDateFinal.setDisplayFormat('dd/MM/yyyy')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateFinal, 2, 1)
+        
+        self.labelSWATModel = QtGui.QLabel()
+        self.labelSWATModel.setText('SWAT &model:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelSWATModel, 3, 0)
+        
+        SWATModel = {
+            1: 'Skip',
+            2: 'Run',
+        }
+        
+        self.comboBoxSWATModel = QtGui.QComboBox()
+        
+        for key, val in SWATModel.iteritems():
+            self.comboBoxSWATModel.addItem(val, key)
+        
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.comboBoxSWATModel, 3, 1)
+        self.labelSWATModel.setBuddy(self.comboBoxSWATModel)
+        
+        self.labelWatershedModelEvaluationLocation = QtGui.QLabel()
+        self.labelWatershedModelEvaluationLocation.setText('&Location:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationLocation, 4, 0)
+        
+        self.lineEditWatershedModelEvaluationLocation = QtGui.QLineEdit()
+        self.lineEditWatershedModelEvaluationLocation.setText('location')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationLocation, 4, 1)
+        self.labelWatershedModelEvaluationLocation.setBuddy(self.lineEditWatershedModelEvaluationLocation)
+        
+        self.labelOutletReachSubBasinID = QtGui.QLabel()
+        self.labelOutletReachSubBasinID.setText('Outlet reach/sub-basin ID:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelOutletReachSubBasinID, 5, 0)
+        
+        self.spinBoxOutletReachSubBasinID = QtGui.QSpinBox()
+        self.spinBoxOutletReachSubBasinID.setRange(1, 99999)
+        self.spinBoxOutletReachSubBasinID.setValue(10)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.spinBoxOutletReachSubBasinID, 5, 1)
+        self.labelOutletReachSubBasinID.setBuddy(self.spinBoxOutletReachSubBasinID)
+        
+        self.labelObservedDebitFile = QtGui.QLabel()
+        self.labelObservedDebitFile.setText('Observed debit file:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelObservedDebitFile, 6, 0)
+        
+        self.lineEditObservedDebitFile = QtGui.QLineEdit()
+        self.lineEditObservedDebitFile.setReadOnly(True)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditObservedDebitFile, 6, 1)
+        
+        self.buttonSelectObservedDebitFile = QtGui.QPushButton()
+        self.buttonSelectObservedDebitFile.setText('&Browse')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectObservedDebitFile, 6, 2)
+        
+        # 'Output' GroupBox
+        self.groupBoxWatershedModelEvaluationOutput = QtGui.QGroupBox('Output')
+        self.layoutGroupBoxWatershedModelEvaluationOutput = QtGui.QVBoxLayout()
+        self.layoutGroupBoxWatershedModelEvaluationOutput.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxWatershedModelEvaluationOutput.setLayout(self.layoutGroupBoxWatershedModelEvaluationOutput)
+        self.layoutWatershedModelEvaluationOutputInfo = QtGui.QVBoxLayout()
+        self.layoutWatershedModelEvaluationOutput = QtGui.QGridLayout()
+        self.layoutGroupBoxWatershedModelEvaluationOutput.addLayout(self.layoutWatershedModelEvaluationOutputInfo)
+        self.layoutGroupBoxWatershedModelEvaluationOutput.addLayout(self.layoutWatershedModelEvaluationOutput)
+        
+        self.labelWatershedModelEvaluationOutputInfo = QtGui.QLabel()
+        self.labelWatershedModelEvaluationOutputInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutWatershedModelEvaluationOutputInfo.addWidget(self.labelWatershedModelEvaluationOutputInfo)
+        
+        self.labelOutputWatershedModelEvaluation = QtGui.QLabel()
+        self.labelOutputWatershedModelEvaluation.setText('[Output] Watershed model evaluation:')
+        self.layoutWatershedModelEvaluationOutput.addWidget(self.labelOutputWatershedModelEvaluation, 0, 0)
+        
+        self.lineEditOutputWatershedModelEvaluation = QtGui.QLineEdit()
+        self.lineEditOutputWatershedModelEvaluation.setReadOnly(True)
+        self.layoutWatershedModelEvaluationOutput.addWidget(self.lineEditOutputWatershedModelEvaluation, 0, 1)
+        
+        self.buttonSelectOutputWatershedModelEvaluation = QtGui.QPushButton()
+        self.buttonSelectOutputWatershedModelEvaluation.setText('&Browse')
+        self.layoutWatershedModelEvaluationOutput.addWidget(self.buttonSelectOutputWatershedModelEvaluation, 0, 2)
+        
+        # Process tab button
+        self.layoutButtonWatershedModelEvaluation = QtGui.QHBoxLayout()
+        self.buttonProcessWatershedModelEvaluation = QtGui.QPushButton()
+        self.buttonProcessWatershedModelEvaluation.setText('&Process')
+        self.layoutButtonWatershedModelEvaluation.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonWatershedModelEvaluation.addWidget(self.buttonProcessWatershedModelEvaluation)
+        
+        # Place the GroupBoxes
+        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationParameters)
+        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationOutput)
+        self.layoutTabWatershedModelEvaluation.addLayout(self.layoutButtonWatershedModelEvaluation)
+        
+        #***********************************************************
+        # 'Watershed Indicators' sub tab
+        #***********************************************************
+        # 'Parameters' GroupBox
+        self.groupBoxWatershedIndicatorsParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxWatershedIndicatorsParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxWatershedIndicatorsParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxWatershedIndicatorsParameters.setLayout(self.layoutGroupBoxWatershedIndicatorsParameters)
+        self.layoutWatershedIndicatorsParametersInfo = QtGui.QVBoxLayout()
+        self.layoutWatershedIndicatorsParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxWatershedIndicatorsParameters.addLayout(self.layoutWatershedIndicatorsParametersInfo)
+        self.layoutGroupBoxWatershedIndicatorsParameters.addLayout(self.layoutWatershedIndicatorsParameters)
+        
+        self.labelWatershedIndicatorsParametersInfo = QtGui.QLabel()
+        self.labelWatershedIndicatorsParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutWatershedIndicatorsParametersInfo.addWidget(self.labelWatershedIndicatorsParametersInfo)
+        
+        self.labelSWATTXTINOUTDir = QtGui.QLabel()
+        self.labelSWATTXTINOUTDir.setText('SWAT TXTINOUT directory:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelSWATTXTINOUTDir, 0, 0)
+        
+        self.lineEditSWATTXTINOUTDir = QtGui.QLineEdit()
+        self.lineEditSWATTXTINOUTDir.setReadOnly(True)
+        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditSWATTXTINOUTDir, 0, 1)
+        
+        self.buttonSelectSWATTXTINOUTDir = QtGui.QPushButton()
+        self.buttonSelectSWATTXTINOUTDir.setText('&Browse')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.buttonSelectSWATTXTINOUTDir, 0, 2)
+        
+        self.labelWatershedIndicatorsDateInitial = QtGui.QLabel()
+        self.labelWatershedIndicatorsDateInitial.setText('Initial date:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelWatershedIndicatorsDateInitial, 1, 0)
+        
+        self.dateWatershedIndicatorsDateInitial = QtGui.QDateEdit(QtCore.QDate.currentDate())
+        self.dateWatershedIndicatorsDateInitial.setCalendarPopup(True)
+        self.dateWatershedIndicatorsDateInitial.setDisplayFormat('dd/MM/yyyy')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.dateWatershedIndicatorsDateInitial, 1, 1)
+        
+        self.labelWatershedIndicatorsDateFinal = QtGui.QLabel()
+        self.labelWatershedIndicatorsDateFinal.setText('Final date:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelWatershedIndicatorsDateFinal, 2, 0)
+        
+        self.dateWatershedIndicatorsDateFinal = QtGui.QDateEdit(QtCore.QDate.currentDate())
+        self.dateWatershedIndicatorsDateFinal.setCalendarPopup(True)
+        self.dateWatershedIndicatorsDateFinal.setDisplayFormat('dd/MM/yyyy')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.dateWatershedIndicatorsDateFinal, 2, 1)
+        
+        self.labelSubWatershedPolygon = QtGui.QLabel()
+        self.labelSubWatershedPolygon.setText('Sub watershed polygon:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelSubWatershedPolygon, 3, 0)
+        
+        self.lineEditSubWatershedPolygon = QtGui.QLineEdit()
+        self.lineEditSubWatershedPolygon.setReadOnly(True)
+        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditSubWatershedPolygon, 3, 1)
+        
+        self.buttonSelectSubWatershedPolygon = QtGui.QPushButton()
+        self.buttonSelectSubWatershedPolygon.setText('&Browse')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.buttonSelectSubWatershedPolygon, 3, 2)
+        
+        self.labelWatershedIndicatorsLocation = QtGui.QLabel()
+        self.labelWatershedIndicatorsLocation.setText('&Location:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelWatershedIndicatorsLocation, 4, 0)
+        
+        self.lineEditWatershedIndicatorsLocation = QtGui.QLineEdit()
+        self.lineEditWatershedIndicatorsLocation.setText('location')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditWatershedIndicatorsLocation, 4, 1)
+        self.labelWatershedIndicatorsLocation.setBuddy(self.lineEditWatershedIndicatorsLocation)
+        
+        self.labelSubWatershedOutput = QtGui.QLabel()
+        self.labelSubWatershedOutput.setText('&Sub watershed output:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelSubWatershedOutput, 5, 0)
+        
+        self.spinBoxSubWatershedOutput = QtGui.QSpinBox()
+        self.spinBoxSubWatershedOutput.setRange(1, 99999)
+        self.spinBoxSubWatershedOutput.setValue(10)
+        self.layoutWatershedIndicatorsParameters.addWidget(self.spinBoxSubWatershedOutput, 5, 1)
+        self.labelSubWatershedOutput.setBuddy(self.spinBoxSubWatershedOutput)
+        
+        # 'Output' GroupBox
+        self.groupBoxWatershedIndicatorsOutput = QtGui.QGroupBox('Output')
+        self.layoutGroupBoxWatershedIndicatorsOutput = QtGui.QVBoxLayout()
+        self.layoutGroupBoxWatershedIndicatorsOutput.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxWatershedIndicatorsOutput.setLayout(self.layoutGroupBoxWatershedIndicatorsOutput)
+        self.layoutWatershedIndicatorsOutputInfo = QtGui.QVBoxLayout()
+        self.layoutWatershedIndicatorsOutput = QtGui.QGridLayout()
+        self.layoutGroupBoxWatershedIndicatorsOutput.addLayout(self.layoutWatershedIndicatorsOutputInfo)
+        self.layoutGroupBoxWatershedIndicatorsOutput.addLayout(self.layoutWatershedIndicatorsOutput)
+        
+        self.labelWatershedIndicatorsOutputInfo = QtGui.QLabel()
+        self.labelWatershedIndicatorsOutputInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutWatershedIndicatorsOutputInfo.addWidget(self.labelWatershedIndicatorsOutputInfo)
+        
+        self.labelOutputInitialYearSubWatershedLevelIndicators = QtGui.QLabel()
+        self.labelOutputInitialYearSubWatershedLevelIndicators.setText('[Output] Initial year sub watershed level indicators:')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.labelOutputInitialYearSubWatershedLevelIndicators, 0, 0)
+        
+        self.lineEditOutputInitialYearSubWatershedLevelIndicators = QtGui.QLineEdit()
+        self.lineEditOutputInitialYearSubWatershedLevelIndicators.setReadOnly(True)
+        self.layoutWatershedIndicatorsOutput.addWidget(self.lineEditOutputInitialYearSubWatershedLevelIndicators, 0, 1)
+        
+        self.buttonSelectOutputInitialYearSubWatershedLevelIndicators = QtGui.QPushButton()
+        self.buttonSelectOutputInitialYearSubWatershedLevelIndicators.setText('&Browse')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.buttonSelectOutputInitialYearSubWatershedLevelIndicators, 0, 2)
+        
+        self.labelOutputFinalYearSubWatershedLevelIndicators = QtGui.QLabel()
+        self.labelOutputFinalYearSubWatershedLevelIndicators.setText('[Output] Final year sub watershed level indicators:')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.labelOutputFinalYearSubWatershedLevelIndicators, 1, 0)
+        
+        self.lineEditOutputFinalYearSubWatershedLevelIndicators = QtGui.QLineEdit()
+        self.lineEditOutputFinalYearSubWatershedLevelIndicators.setReadOnly(True)
+        self.layoutWatershedIndicatorsOutput.addWidget(self.lineEditOutputFinalYearSubWatershedLevelIndicators, 1, 1)
+        
+        self.buttonSelectOutputFinalYearSubWatershedLevelIndicators = QtGui.QPushButton()
+        self.buttonSelectOutputFinalYearSubWatershedLevelIndicators.setText('&Browse')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.buttonSelectOutputFinalYearSubWatershedLevelIndicators, 1, 2)
+        
+        # Process tab button
+        self.layoutButtonWatershedIndicators = QtGui.QHBoxLayout()
+        self.buttonProcessWatershedIndicators = QtGui.QPushButton()
+        self.buttonProcessWatershedIndicators.setText('&Process')
+        self.layoutButtonWatershedIndicators.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonWatershedIndicators.addWidget(self.buttonProcessWatershedIndicators)
+        
+        # Place the GroupBoxes
+        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsParameters)
+        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsOutput)
+        self.layoutTabWatershedIndicators.addLayout(self.layoutButtonWatershedIndicators)
+        
         
         #***********************************************************
         # Setup 'Reclassification' tab

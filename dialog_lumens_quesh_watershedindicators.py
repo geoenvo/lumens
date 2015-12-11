@@ -71,8 +71,6 @@ class DialogLumensQUESHWatershedIndicators(DialogLumensBase):
         self.labelDateInitial.setText('Initial date:')
         layoutLumensDialog.addWidget(self.labelDateInitial, 2, 0)
         
-        today = datetime.date.today()
-        
         self.dateInitial = QtGui.QDateEdit(QtCore.QDate.currentDate(), parent)
         self.dateInitial.setCalendarPopup(True)
         self.dateInitial.setDisplayFormat('dd/MM/yyyy')
