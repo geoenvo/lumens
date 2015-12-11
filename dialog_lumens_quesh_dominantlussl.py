@@ -147,8 +147,9 @@ class DialogLumensQUESHDominantLUSSL(DialogLumensBase):
         layoutLumensDialog.addWidget(self.labelPeriod, 17, 0)
         
         self.spinBoxPeriod = QtGui.QSpinBox(parent)
-        self.spinBoxPeriod.setRange(1, 99999)
-        self.spinBoxPeriod.setValue(2015)
+        self.spinBoxPeriod.setRange(1, 9999)
+        td = datetime.date.today()
+        self.spinBoxPeriod.setValue(td.year)
         layoutLumensDialog.addWidget(self.spinBoxPeriod, 17, 1)
         
         self.labelPeriod.setBuddy(self.spinBoxPeriod)

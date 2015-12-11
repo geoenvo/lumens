@@ -130,16 +130,28 @@ class DialogLumensQUESBAnalysis(DialogLumensBase):
         self.buttonSelectCsvZoneLookup.setText('Select &Zone Lookup')
         layoutLumensDialog.addWidget(self.buttonSelectCsvZoneLookup, 11, 0, 1, 2)
         
-        self.labelSpinBoxRefMapID = QtGui.QLabel(parent)
-        self.labelSpinBoxRefMapID.setText('&Reference map ID:')
-        layoutLumensDialog.addWidget(self.labelSpinBoxRefMapID, 12, 0)
+        self.labelRefMapID = QtGui.QLabel(parent)
+        self.labelRefMapID.setText('Reference map ID:')
+        layoutLumensDialog.addWidget(self.labelRefMapID, 12, 0)
         
-        self.spinBoxRefMapID = QtGui.QSpinBox(parent)
-        self.spinBoxRefMapID.setRange(-9999, 9999)
-        self.spinBoxRefMapID.setValue(1)
-        layoutLumensDialog.addWidget(self.spinBoxRefMapID, 12, 1)
+        ##self.spinBoxRefMapID = QtGui.QSpinBox(parent)
+        ##self.spinBoxRefMapID.setRange(-9999, 9999)
+        ##self.spinBoxRefMapID.setValue(1)
+        ##layoutLumensDialog.addWidget(self.spinBoxRefMapID, 12, 1)
         
-        self.labelSpinBoxRefMapID.setBuddy(self.spinBoxRefMapID)
+        ##self.labelSpinBoxRefMapID.setBuddy(self.spinBoxRefMapID)
+        
+        refMapID = {
+            1: 'Land cover T1',
+            2: 'Land cover T2',
+            3: 'Zone',
+        }
+        
+        self.comboBoxRefMapID = QtGui.QComboBox()
+        
+        for key, val in refMapID.iteritems():
+            self.comboBoxRefMapID.addItem(val, key)
+        layoutLumensDialog.addWidget(self.comboBoxRefMapID, 12, 1)
         
         self.labelOutputTECIInitial = QtGui.QLabel(parent)
         self.labelOutputTECIInitial.setText('TECI initial (output):')
@@ -357,7 +369,8 @@ class DialogLumensQUESBAnalysis(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['csvClassDescriptors'] = unicode(self.lineEditCsvClassDescriptors.text())
         self.main.appSettings[type(self).__name__]['csvEdgeContrast'] = unicode(self.lineEditCsvEdgeContrast.text())
         self.main.appSettings[type(self).__name__]['csvZoneLookup'] = unicode(self.lineEditCsvZoneLookup.text())
-        self.main.appSettings[type(self).__name__]['refMapID'] = self.spinBoxRefMapID.value()
+        ##self.main.appSettings[type(self).__name__]['refMapID'] = self.spinBoxRefMapID.value()
+        self.main.appSettings[type(self).__name__]['refMapID'] = = self.comboBoxRefMapID.itemData(self.comboBoxRefMapID.currentIndex())
         
         outputTECIInitial = unicode(self.lineEditOutputTECIInitial.text())
         outputTECIFinal = unicode(self.lineEditOutputTECIFinal.text())

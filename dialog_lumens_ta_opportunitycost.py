@@ -34,9 +34,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.tabOpportunityCostMap = QtGui.QWidget()
         self.tabResult = QtGui.QWidget()
         
-        self.tabWidget.addTab(self.tabAbacusOpportunityCost, 'Abacus opportunity cost')
-        self.tabWidget.addTab(self.tabOpportunityCostCurve, 'Opportunity cost curve')
-        self.tabWidget.addTab(self.tabOpportunityCostMap, 'Opportunity cost map')
+        self.tabWidget.addTab(self.tabAbacusOpportunityCost, 'Abacus Opportunity Cost')
+        self.tabWidget.addTab(self.tabOpportunityCostCurve, 'Opportunity Cost Curve')
+        self.tabWidget.addTab(self.tabOpportunityCostMap, 'Opportunity Cost Map')
         self.tabWidget.addTab(self.tabResult, 'Result')
         
         self.layoutTabAbacusOpportunityCost = QtGui.QVBoxLayout()
@@ -184,7 +184,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.labelSpinBoxCostThreshold.setBuddy(self.spinBoxCostThreshold)
         
         self.labelOutputOpportunityCostDatabase = QtGui.QLabel()
-        self.labelOutputOpportunityCostDatabase.setText('Opportunity cost database [output]:')
+        self.labelOutputOpportunityCostDatabase.setText('[Output] Opportunity cost database:')
         self.layoutOCCOther.addWidget(self.labelOutputOpportunityCostDatabase, 4, 0)
         
         self.lineEditOutputOpportunityCostDatabase = QtGui.QLineEdit()
@@ -196,7 +196,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutOCCOther.addWidget(self.buttonSelectOutputOpportunityCostDatabase, 4, 2)
         
         self.labelOutputOpportunityCostReport = QtGui.QLabel()
-        self.labelOutputOpportunityCostReport.setText('Opportunity cost report [output]:')
+        self.labelOutputOpportunityCostReport.setText('[Output] Opportunity cost report:')
         self.layoutOCCOther.addWidget(self.labelOutputOpportunityCostReport, 5, 0)
         
         self.lineEditOutputOpportunityCostReport = QtGui.QLineEdit()

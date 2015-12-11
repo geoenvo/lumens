@@ -31,7 +31,7 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setupUi(self)
         
-        self.buttonProcessCreateReferenceData.clicked.connect(self.handlerProcessCreateReferenceData)
+        self.buttonProcessSetup.clicked.connect(self.handlerProcessSetup)
         # 'Setup reference' buttons
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
         self.buttonEditReferenceClasses.clicked.connect(self.handlerEditReferenceClasses)
@@ -45,15 +45,15 @@ class DialogLumensPUR(QtGui.QDialog):
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         
-        self.tabCreateReferenceData = QtGui.QWidget()
+        self.tabSetup = QtGui.QWidget()
         self.tabReconcile = QtGui.QWidget()
         self.tabResult = QtGui.QWidget()
         
-        self.tabWidget.addTab(self.tabCreateReferenceData, 'Create reference data')
+        self.tabWidget.addTab(self.tabSetup, 'Setup')
         self.tabWidget.addTab(self.tabReconcile, 'Reconcile')
         self.tabWidget.addTab(self.tabResult, 'Result')
         
-        self.layoutTabCreateReferenceData = QtGui.QVBoxLayout()
+        self.layoutTabSetup = QtGui.QVBoxLayout()
         self.layoutTabReconcile = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         
@@ -176,17 +176,17 @@ class DialogLumensPUR(QtGui.QDialog):
         self.addPlanningUnitRow()
         
         # Process tab button
-        self.layoutButtonCreateReferenceData = QtGui.QHBoxLayout()
-        self.buttonProcessCreateReferenceData = QtGui.QPushButton()
-        self.buttonProcessCreateReferenceData.setText('&Process')
-        self.layoutButtonCreateReferenceData.setAlignment(QtCore.Qt.AlignRight)
-        self.layoutButtonCreateReferenceData.addWidget(self.buttonProcessCreateReferenceData)
+        self.layoutButtonSetup = QtGui.QHBoxLayout()
+        self.buttonProcessSetup = QtGui.QPushButton()
+        self.buttonProcessSetup.setText('&Process')
+        self.layoutButtonSetup.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonSetup.addWidget(self.buttonProcessSetup)
         
-        self.layoutTabCreateReferenceData.addWidget(self.groupBoxSetupReference)
-        self.layoutTabCreateReferenceData.addWidget(self.groupBoxSetupPlanningUnit)
-        self.layoutTabCreateReferenceData.addLayout(self.layoutButtonCreateReferenceData)
+        self.layoutTabSetup.addWidget(self.groupBoxSetupReference)
+        self.layoutTabSetup.addWidget(self.groupBoxSetupPlanningUnit)
+        self.layoutTabSetup.addLayout(self.layoutButtonSetup)
         
-        self.tabCreateReferenceData.setLayout(self.layoutTabCreateReferenceData)
+        self.tabSetup.setLayout(self.layoutTabSetup)
         
         #***********************************************************
         # Setup 'Reconcile' tab
@@ -533,7 +533,7 @@ class DialogLumensPUR(QtGui.QDialog):
             self.updateReferenceClasses(dialog.getReferenceClasses())
         
     
-    def handlerProcessCreateReferenceData(self):
+    def handlerProcessSetup(self):
         """
         """
         self.setAppSettings()
