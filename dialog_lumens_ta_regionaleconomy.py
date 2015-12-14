@@ -35,6 +35,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.tabDescriptiveAnalysis = QtGui.QWidget()
         self.tabRegionalEconomicScenarioImpact = QtGui.QWidget()
         self.tabLandRequirementAnalysis = QtGui.QWidget()
+        self.tabLandUseChangeImpact = QtGui.QWidget()
         self.tabResult = QtGui.QWidget()
         self.tabReport = QtGui.QWidget()
         self.tabLog = QtGui.QWidget()
@@ -42,6 +43,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.tabWidget.addTab(self.tabDescriptiveAnalysis, 'Descriptive Analysis of Regional Economy')
         self.tabWidget.addTab(self.tabRegionalEconomicScenarioImpact, 'Regional Economic Scenario Impact')
         self.tabWidget.addTab(self.tabLandRequirementAnalysis, 'Land Requirement Analysis')
+        self.tabWidget.addTab(self.tabLandUseChangeImpact, 'Land Use Change Impact')
         self.tabWidget.addTab(self.tabResult, 'Result')
         self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
@@ -49,6 +51,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutTabDescriptiveAnalysis = QtGui.QVBoxLayout()
         self.layoutTabRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
         self.layoutTabLandRequirementAnalysis = QtGui.QVBoxLayout()
+        self.layoutTabLandUseChangeImpact = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
@@ -56,6 +59,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.tabDescriptiveAnalysis.setLayout(self.layoutTabDescriptiveAnalysis)
         self.tabRegionalEconomicScenarioImpact.setLayout(self.layoutTabRegionalEconomicScenarioImpact)
         self.tabLandRequirementAnalysis.setLayout(self.layoutTabLandRequirementAnalysis)
+        self.tabLandUseChangeImpact.setLayout(self.layoutTabLandUseChangeImpact)
         self.tabResult.setLayout(self.layoutTabResult)
         self.tabReport.setLayout(self.layoutTabReport)
         self.tabLog.setLayout(self.layoutTabLog)
@@ -751,6 +755,227 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         # Place the GroupBoxes
         self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisParameters)
         self.layoutContentLandRequirementAnalysis.addLayout(self.layoutButtonLandRequirementAnalysis)
+        
+        #***********************************************************
+        # Setup 'Land Use Change Impact' tab
+        #***********************************************************
+        # Use QScrollArea
+        self.layoutContentLandUseChangeImpact = QtGui.QVBoxLayout()
+        self.contentLandUseChangeImpact = QtGui.QWidget()
+        self.contentLandUseChangeImpact.setLayout(self.layoutContentLandUseChangeImpact)
+        self.scrollLandUseChangeImpact = QtGui.QScrollArea()
+        self.scrollLandUseChangeImpact.setWidgetResizable(True);
+        self.scrollLandUseChangeImpact.setWidget(self.contentLandUseChangeImpact)
+        self.layoutTabLandUseChangeImpact.addWidget(self.scrollLandUseChangeImpact)
+        
+        # Parameters 'GroupBox'
+        self.groupBoxLandUseChangeImpactParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxLandUseChangeImpactParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLandUseChangeImpactParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLandUseChangeImpactParameters.setLayout(self.layoutGroupBoxLandUseChangeImpactParameters)
+        self.layoutLandUseChangeImpactParametersInfo = QtGui.QVBoxLayout()
+        self.layoutLandUseChangeImpactParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxLandUseChangeImpactParameters.addLayout(self.layoutLandUseChangeImpactParametersInfo)
+        self.layoutGroupBoxLandUseChangeImpactParameters.addLayout(self.layoutLandUseChangeImpactParameters)
+        
+        self.labelLandUseChangeImpactParametersInfo = QtGui.QLabel()
+        self.labelLandUseChangeImpactParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutLandUseChangeImpactParametersInfo.addWidget(self.labelLandUseChangeImpactParametersInfo)
+        
+        self.labelLandUseChangeImpactWorkingDir = QtGui.QLabel()
+        self.labelLandUseChangeImpactWorkingDir.setText('Working directory:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactWorkingDir, 0, 0)
+        
+        self.lineEditLandUseChangeImpactWorkingDir = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactWorkingDir.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactWorkingDir, 0, 1)
+        
+        self.buttonSelectLandUseChangeImpactWorkingDir = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactWorkingDir.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactWorkingDir, 0, 2)
+        
+        self.labelLandUseChangeImpactLandCoverMapP1 = QtGui.QLabel()
+        self.labelLandUseChangeImpactLandCoverMapP1.setText('Land cover map period 1:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactLandCoverMapP1, 1, 0)
+        
+        self.lineEditLandUseChangeImpactLandCoverMapP1 = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactLandCoverMapP1.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactLandCoverMapP1, 1, 1)
+        
+        self.buttonSelectLandUseChangeImpactLandCoverMapP1 = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactLandCoverMapP1.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactLandCoverMapP1, 1, 2)
+        
+        self.labelLandUseChangeImpactLandCoverMapP2 = QtGui.QLabel()
+        self.labelLandUseChangeImpactLandCoverMapP2.setText('Land cover map period 2:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactLandCoverMapP2, 2, 0)
+        
+        self.lineEditLandUseChangeImpactLandCoverMapP2 = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactLandCoverMapP2.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactLandCoverMapP2, 2, 1)
+        
+        self.buttonSelectLandUseChangeImpactLandCoverMapP2 = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactLandCoverMapP2.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactLandCoverMapP2, 2, 2)
+        
+        self.labelLandUseChangeImpactIntermediateConsumptionMatrix = QtGui.QLabel()
+        self.labelLandUseChangeImpactIntermediateConsumptionMatrix.setText('Intermediate consumption matrix:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactIntermediateConsumptionMatrix, 3, 0)
+        
+        self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix, 3, 1)
+        
+        self.buttonSelectLandUseChangeImpactIntermediateConsumptionMatrix = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactIntermediateConsumptionMatrix.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactIntermediateConsumptionMatrix, 3, 2)
+        
+        self.labelLandUseChangeImpactValueAddedMatrix = QtGui.QLabel()
+        self.labelLandUseChangeImpactValueAddedMatrix.setText('Value added matrix:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactValueAddedMatrix, 4, 0)
+        
+        self.lineEditLandUseChangeImpactValueAddedMatrix = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactValueAddedMatrix.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactValueAddedMatrix, 4, 1)
+        
+        self.buttonSelectLandUseChangeImpactValueAddedMatrix = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactValueAddedMatrix.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactValueAddedMatrix, 4, 2)
+        
+        self.labelLandUseChangeImpactFinalConsumptionMatrix = QtGui.QLabel()
+        self.labelLandUseChangeImpactFinalConsumptionMatrix.setText('Final consumption matrix:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactFinalConsumptionMatrix, 5, 0)
+        
+        self.lineEditLandUseChangeImpactFinalConsumptionMatrix = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactFinalConsumptionMatrix, 5, 1)
+        
+        self.buttonSelectLandUseChangeImpactFinalConsumptionMatrix = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactFinalConsumptionMatrix.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactFinalConsumptionMatrix, 5, 2)
+        
+        self.labelLandUseChangeImpactValueAddedComponent = QtGui.QLabel()
+        self.labelLandUseChangeImpactValueAddedComponent.setText('Value added component:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactValueAddedComponent, 6, 0)
+        
+        self.lineEditLandUseChangeImpactValueAddedComponent = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactValueAddedComponent.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactValueAddedComponent, 6, 1)
+        
+        self.buttonSelectLandUseChangeImpactValueAddedComponent = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactValueAddedComponent.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactValueAddedComponent, 6, 2)
+        
+        self.labelLandUseChangeImpactFinalConsumptionComponent = QtGui.QLabel()
+        self.labelLandUseChangeImpactFinalConsumptionComponent.setText('Final consumption component:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactFinalConsumptionComponent, 7, 0)
+        
+        self.lineEditLandUseChangeImpactFinalConsumptionComponent = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactFinalConsumptionComponent.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactFinalConsumptionComponent, 7, 1)
+        
+        self.buttonSelectLandUseChangeImpactFinalConsumptionComponent = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactFinalConsumptionComponent.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactFinalConsumptionComponent, 7, 2)
+        
+        self.labelLandUseChangeImpactListOfEconomicSector = QtGui.QLabel()
+        self.labelLandUseChangeImpactListOfEconomicSector.setText('List of economic sector:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactListOfEconomicSector, 8, 0)
+        
+        self.lineEditLandUseChangeImpactListOfEconomicSector = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactListOfEconomicSector.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactListOfEconomicSector, 8, 1)
+        
+        self.buttonSelectLandUseChangeImpactListOfEconomicSector = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactListOfEconomicSector.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactListOfEconomicSector, 8, 2)
+        
+        self.labelLandUseChangeImpactLandDistributionMatrix = QtGui.QLabel()
+        self.labelLandUseChangeImpactLandDistributionMatrix.setText('Land distribution matrix:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactLandDistributionMatrix, 9, 0)
+        
+        self.lineEditLandUseChangeImpactLandDistributionMatrix = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactLandDistributionMatrix.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactLandDistributionMatrix, 9, 1)
+        
+        self.buttonSelectLandUseChangeImpactLandDistributionMatrix = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactLandDistributionMatrix.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactLandDistributionMatrix, 9, 2)
+        
+        self.labelLandUseChangeImpactLandRequirementCoefficientMatrix = QtGui.QLabel()
+        self.labelLandUseChangeImpactLandRequirementCoefficientMatrix.setText('Land requirement coefficient matrix:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactLandRequirementCoefficientMatrix, 10, 0)
+        
+        self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix, 10, 1)
+        
+        self.buttonSelectLandUseChangeImpactLandRequirementCoefficientMatrix = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactLandRequirementCoefficientMatrix.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactLandRequirementCoefficientMatrix, 10, 2)
+        
+        self.labelLandUseChangeImpactLandCoverComponent = QtGui.QLabel()
+        self.labelLandUseChangeImpactLandCoverComponent.setText('Land cover component:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactLandCoverComponent, 11, 0)
+        
+        self.lineEditLandUseChangeImpactLandCoverComponent = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactLandCoverComponent.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactLandCoverComponent, 11, 1)
+        
+        self.buttonSelectLandUseChangeImpactLandCoverComponent = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactLandCoverComponent.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactLandCoverComponent, 11, 2)
+        
+        self.labelLandUseChangeImpactLabourRequirement = QtGui.QLabel()
+        self.labelLandUseChangeImpactLabourRequirement.setText('Labour requirement:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactLabourRequirement, 12, 0)
+        
+        self.lineEditLandUseChangeImpactLabourRequirement = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactLabourRequirement.setReadOnly(True)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactLabourRequirement, 12, 1)
+        
+        self.buttonSelectLandUseChangeImpactLabourRequirement = QtGui.QPushButton()
+        self.buttonSelectLandUseChangeImpactLabourRequirement.setText('&Browse')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.buttonSelectLandUseChangeImpactLabourRequirement, 12, 2)
+        
+        self.labelLandUseChangeImpactFinancialUnit = QtGui.QLabel()
+        self.labelLandUseChangeImpactFinancialUnit.setText('Financial &unit:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactFinancialUnit, 13, 0)
+        
+        self.lineEditLandUseChangeImpactFinancialUnit = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactFinancialUnit.setText('Million Rupiah')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactFinancialUnit, 13, 1)
+        self.labelLandUseChangeImpactFinancialUnit.setBuddy(self.lineEditLandUseChangeImpactFinancialUnit)
+        
+        self.labelLandUseChangeImpactAreaName = QtGui.QLabel()
+        self.labelLandUseChangeImpactAreaName.setText('&Area name:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactAreaName, 14, 0)
+        
+        self.lineEditLandUseChangeImpactAreaName = QtGui.QLineEdit()
+        self.lineEditLandUseChangeImpactAreaName.setText('area')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.lineEditLandUseChangeImpactAreaName, 14, 1)
+        self.labelLandUseChangeImpactAreaName.setBuddy(self.lineEditLandUseChangeImpactAreaName)
+        
+        self.labelLandUseChangeImpactPeriod = QtGui.QLabel()
+        self.labelLandUseChangeImpactPeriod.setText('&Period:')
+        self.layoutLandUseChangeImpactParameters.addWidget(self.labelLandUseChangeImpactPeriod, 15, 0)
+        
+        self.spinBoxLandUseChangeImpactPeriod = QtGui.QSpinBox()
+        self.spinBoxLandUseChangeImpactPeriod.setRange(1, 9999)
+        self.spinBoxLandUseChangeImpactPeriod.setValue(td.year)
+        self.layoutLandUseChangeImpactParameters.addWidget(self.spinBoxLandUseChangeImpactPeriod, 15, 1)
+        self.labelLandUseChangeImpactPeriod.setBuddy(self.spinBoxLandUseChangeImpactPeriod)
+        
+        # Process tab button
+        self.layoutButtonLandUseChangeImpact = QtGui.QHBoxLayout()
+        self.buttonProcessLandUseChangeImpact = QtGui.QPushButton()
+        self.buttonProcessLandUseChangeImpact.setText('&Process')
+        self.layoutButtonLandUseChangeImpact.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonLandUseChangeImpact.addWidget(self.buttonProcessLandUseChangeImpact)
+        
+        # Place the GroupBoxes
+        self.layoutContentLandUseChangeImpact.addWidget(self.groupBoxLandUseChangeImpactParameters)
+        self.layoutContentLandUseChangeImpact.addLayout(self.layoutButtonLandUseChangeImpact)
         
         #***********************************************************
         # Setup 'Result' tab
