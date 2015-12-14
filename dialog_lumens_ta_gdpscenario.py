@@ -136,7 +136,6 @@ class DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis(DialogLumensBase)
         self.buttonSelectLandDistributionMatrix.setText('Select &Land Distribution Matrix')
         layoutLumensDialog.addWidget(self.buttonSelectLandDistributionMatrix, 15, 0, 1, 2)
         
-        
         self.labelLandRequirementCoefficientMatrix = QtGui.QLabel(parent)
         self.labelLandRequirementCoefficientMatrix.setText('Land requirement coefficient matrix:')
         layoutLumensDialog.addWidget(self.labelLandRequirementCoefficientMatrix, 16, 0)
@@ -148,7 +147,6 @@ class DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis(DialogLumensBase)
         self.buttonSelectLandRequirementCoefficientMatrix = QtGui.QPushButton(parent)
         self.buttonSelectLandRequirementCoefficientMatrix.setText('Select Land &Requirement Coefficient Matrix')
         layoutLumensDialog.addWidget(self.buttonSelectLandRequirementCoefficientMatrix, 17, 0, 1, 2)
-        
         
         self.labelLandCoverComponent = QtGui.QLabel(parent)
         self.labelLandCoverComponent.setText('Land cover component:')

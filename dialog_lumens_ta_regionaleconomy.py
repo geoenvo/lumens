@@ -23,6 +23,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.setupUi(self)
         
         self.checkBoxMultiplePeriod.toggled.connect(self.toggleMultiplePeriod)
+        
+        self.radioRegionalEconomicScenarioImpactFinalDemand.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.radioRegionalEconomicScenarioImpactFinalDemand))
+        self.radioRegionalEconomicScenarioImpactGDP.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.radioRegionalEconomicScenarioImpactGDP))
     
     
     def setupUi(self, parent):
@@ -30,27 +33,35 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.tabWidget = QtGui.QTabWidget()
         
         self.tabDescriptiveAnalysis = QtGui.QWidget()
+        self.tabRegionalEconomicScenarioImpact = QtGui.QWidget()
         self.tabResult = QtGui.QWidget()
         self.tabReport = QtGui.QWidget()
         self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabDescriptiveAnalysis, 'Descriptive Analysis of Regional Economy')
+        self.tabWidget.addTab(self.tabRegionalEconomicScenarioImpact, 'Regional Economic Scenario Impact')
         self.tabWidget.addTab(self.tabResult, 'Result')
         self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
         self.layoutTabDescriptiveAnalysis = QtGui.QVBoxLayout()
+        self.layoutTabRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.tabDescriptiveAnalysis.setLayout(self.layoutTabDescriptiveAnalysis)
+        self.tabRegionalEconomicScenarioImpact.setLayout(self.layoutTabRegionalEconomicScenarioImpact)
         self.tabResult.setLayout(self.layoutTabResult)
         self.tabReport.setLayout(self.layoutTabReport)
         self.tabLog.setLayout(self.layoutTabLog)
         
         self.dialogLayout.addWidget(self.tabWidget)
         
+        #***********************************************************
+        # Setup 'Descriptive Analysis of Regional Economy' tab
+        #***********************************************************
+        # Use QScrollArea
         self.layoutContentDescriptiveAnalysis = QtGui.QVBoxLayout()
         self.contentDescriptiveAnalysis = QtGui.QWidget()
         self.contentDescriptiveAnalysis.setLayout(self.layoutContentDescriptiveAnalysis)
@@ -59,9 +70,6 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.scrollDescriptiveAnalysis.setWidget(self.contentDescriptiveAnalysis)
         self.layoutTabDescriptiveAnalysis.addWidget(self.scrollDescriptiveAnalysis)
         
-        #***********************************************************
-        # Setup 'Descriptive Analysis of Regional Economy' tab
-        #***********************************************************
         # 'Single period' GroupBox
         self.groupBoxSinglePeriod = QtGui.QGroupBox('Single period')
         self.layoutGroupBoxSinglePeriod = QtGui.QVBoxLayout()
@@ -305,11 +313,242 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutButtonDescriptiveAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonDescriptiveAnalysis.addWidget(self.buttonProcessDescriptiveAnalysis)
         
+        # Place the GroupBoxes
         self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxSinglePeriod)
         self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxMultiplePeriod)
         self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxOther)
         self.layoutContentDescriptiveAnalysis.addLayout(self.layoutButtonDescriptiveAnalysis)
         
+        #***********************************************************
+        # Setup 'Regional Economic Scenario Impact' tab
+        #***********************************************************
+        # Use QScrollArea
+        self.layoutContentRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
+        self.contentRegionalEconomicScenarioImpact = QtGui.QWidget()
+        self.contentRegionalEconomicScenarioImpact.setLayout(self.layoutContentRegionalEconomicScenarioImpact)
+        self.scrollRegionalEconomicScenarioImpact = QtGui.QScrollArea()
+        self.scrollRegionalEconomicScenarioImpact.setWidgetResizable(True);
+        self.scrollRegionalEconomicScenarioImpact.setWidget(self.contentRegionalEconomicScenarioImpact)
+        self.layoutTabRegionalEconomicScenarioImpact.addWidget(self.scrollRegionalEconomicScenarioImpact)
+        
+        # 'Type' GroupBox
+        self.groupBoxRegionalEconomicScenarioImpactType = QtGui.QGroupBox('Scenario type')
+        self.layoutGroupBoxRegionalEconomicScenarioImpactType = QtGui.QVBoxLayout()
+        self.layoutGroupBoxRegionalEconomicScenarioImpactType.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxRegionalEconomicScenarioImpactType.setLayout(self.layoutGroupBoxRegionalEconomicScenarioImpactType)
+        self.layoutRegionalEconomicScenarioImpactTypeInfo = QtGui.QVBoxLayout()
+        self.layoutRegionalEconomicScenarioImpactType = QtGui.QGridLayout()
+        self.layoutGroupBoxRegionalEconomicScenarioImpactType.addLayout(self.layoutRegionalEconomicScenarioImpactTypeInfo)
+        self.layoutGroupBoxRegionalEconomicScenarioImpactType.addLayout(self.layoutRegionalEconomicScenarioImpactType)
+        
+        self.labelRegionalEconomicScenarioImpactTypeInfo = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactTypeInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutRegionalEconomicScenarioImpactTypeInfo.addWidget(self.labelRegionalEconomicScenarioImpactTypeInfo)
+        
+        self.radioRegionalEconomicScenarioImpactFinalDemand = QtGui.QRadioButton('Final Demand Scenario')
+        self.radioRegionalEconomicScenarioImpactFinalDemand.setChecked(True)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.radioRegionalEconomicScenarioImpactFinalDemand, 0, 0)
+        
+        self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('Final demand change scenario:')
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario, 1, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario, 1, 1)
+        
+        self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario, 1, 2)
+        
+        self.radioRegionalEconomicScenarioImpactGDP = QtGui.QRadioButton('GDP Scenario')
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.radioRegionalEconomicScenarioImpactGDP, 2, 0)
+        
+        # 'Parameters' GroupBox
+        self.groupBoxRegionalEconomicScenarioImpactParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxRegionalEconomicScenarioImpactParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxRegionalEconomicScenarioImpactParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxRegionalEconomicScenarioImpactParameters.setLayout(self.layoutGroupBoxRegionalEconomicScenarioImpactParameters)
+        self.layoutRegionalEconomicScenarioImpactParametersInfo = QtGui.QVBoxLayout()
+        self.layoutRegionalEconomicScenarioImpactParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxRegionalEconomicScenarioImpactParameters.addLayout(self.layoutRegionalEconomicScenarioImpactParametersInfo)
+        self.layoutGroupBoxRegionalEconomicScenarioImpactParameters.addLayout(self.layoutRegionalEconomicScenarioImpactParameters)
+        
+        self.labelRegionalEconomicScenarioImpactParametersInfo = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutRegionalEconomicScenarioImpactParametersInfo.addWidget(self.labelRegionalEconomicScenarioImpactParametersInfo)
+        
+        self.labelRegionalEconomicScenarioImpactWorkingDir = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactWorkingDir.setText('Working directory:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactWorkingDir, 0, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactWorkingDir = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactWorkingDir.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactWorkingDir, 0, 1)
+        
+        self.buttonSelectRegionalEconomicScenarioImpactWorkingDir = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactWorkingDir, 0, 2)
+        
+        self.labelRegionalEconomicScenarioImpactIntermediateConsumptionMatrix = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText('Intermediate consumption matrix:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactIntermediateConsumptionMatrix, 1, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix, 1, 1)
+        
+        self.buttonSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix, 1, 2)
+        
+        self.labelRegionalEconomicScenarioImpactValueAddedMatrix = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactValueAddedMatrix.setText('Value added matrix:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactValueAddedMatrix, 2, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix, 2, 1)
+        
+        self.buttonSelectRegionalEconomicScenarioImpactValueAddedMatrix = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactValueAddedMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactValueAddedMatrix, 2, 2)
+        
+        self.labelRegionalEconomicScenarioImpactFinalConsumptionMatrix = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText('Final consumption matrix:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactFinalConsumptionMatrix, 3, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix, 3, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionMatrix = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionMatrix, 3, 2)
+        
+        self.labelRegionalEconomicScenarioImpactValueAddedComponent = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactValueAddedComponent.setText('Value added component:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactValueAddedComponent, 4, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactValueAddedComponent = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactValueAddedComponent, 4, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectValueAddedComponent = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectValueAddedComponent.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectValueAddedComponent, 4, 2)
+        
+        self.labelRegionalEconomicScenarioImpactFinalConsumptionComponent = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactFinalConsumptionComponent.setText('Final consumption component:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactFinalConsumptionComponent, 5, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent, 5, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionComponent = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionComponent.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionComponent, 5, 2)
+        
+        self.labelRegionalEconomicScenarioImpactListOfEconomicSector = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactListOfEconomicSector.setText('List of economic sector:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactListOfEconomicSector, 6, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector, 6, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectListOfEconomicSector = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectListOfEconomicSector.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectListOfEconomicSector, 6, 2)
+        
+        self.labelRegionalEconomicScenarioImpactLandDistributionMatrix = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactLandDistributionMatrix.setText('Land distribution matrix:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactLandDistributionMatrix, 7, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix, 7, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectLandDistributionMatrix = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectLandDistributionMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLandDistributionMatrix, 7, 2)
+        
+        self.labelRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText('Land requirement coefficient matrix:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix, 8, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix, 8, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectLandRequirementCoefficientMatrix = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectLandRequirementCoefficientMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLandRequirementCoefficientMatrix, 8, 2)
+        
+        self.labelRegionalEconomicScenarioImpactLandCoverComponent = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactLandCoverComponent.setText('Land cover component:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactLandCoverComponent, 9, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactLandCoverComponent = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLandCoverComponent, 9, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectLandCoverComponent = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectLandCoverComponent.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLandCoverComponent, 9, 2)
+        
+        self.labelRegionalEconomicScenarioImpactLabourRequirement = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactLabourRequirement.setText('Labour requirement:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactLabourRequirement, 10, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactLabourRequirement = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setReadOnly(True)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLabourRequirement, 10, 1)
+        
+        self.buttonRegionalEconomicScenarioImpactSelectLabourRequirement = QtGui.QPushButton()
+        self.buttonRegionalEconomicScenarioImpactSelectLabourRequirement.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLabourRequirement, 10, 2)
+        
+        self.labelRegionalEconomicScenarioImpactFinancialUnit = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactFinancialUnit.setText('Financial &unit:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactFinancialUnit, 11, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactFinancialUnit = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText('Million Rupiah')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactFinancialUnit, 11, 1)
+        self.labelRegionalEconomicScenarioImpactFinancialUnit.setBuddy(self.lineEditRegionalEconomicScenarioImpactFinancialUnit)
+        
+        self.labelRegionalEconomicScenarioImpactAreaName = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactAreaName.setText('&Area name:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactAreaName, 12, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactAreaName = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactAreaName.setText('area')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactAreaName, 12, 1)
+        self.labelRegionalEconomicScenarioImpactAreaName.setBuddy(self.lineEditRegionalEconomicScenarioImpactAreaName)
+        
+        self.labelRegionalEconomicScenarioImpactSpinBoxPeriod = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactSpinBoxPeriod.setText('&Period:')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactSpinBoxPeriod, 13, 0)
+        
+        self.spinBoxRegionalEconomicScenarioImpactPeriod = QtGui.QSpinBox()
+        self.spinBoxRegionalEconomicScenarioImpactPeriod.setRange(1, 9999)
+        self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(td.year)
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.spinBoxRegionalEconomicScenarioImpactPeriod, 13, 1)
+        self.labelRegionalEconomicScenarioImpactSpinBoxPeriod.setBuddy(self.spinBoxRegionalEconomicScenarioImpactPeriod)
+        
+        # Process tab button
+        self.layoutButtonRegionalEconomicScenarioImpact = QtGui.QHBoxLayout()
+        self.buttonProcessRegionalEconomicScenarioImpact = QtGui.QPushButton()
+        self.buttonProcessRegionalEconomicScenarioImpact.setText('&Process')
+        self.layoutButtonRegionalEconomicScenarioImpact.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonRegionalEconomicScenarioImpact.addWidget(self.buttonProcessRegionalEconomicScenarioImpact)
+        
+        # Place the GroupBoxes
+        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
+        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactParameters)
+        self.layoutContentRegionalEconomicScenarioImpact.addLayout(self.layoutButtonRegionalEconomicScenarioImpact)
         
         #***********************************************************
         # Setup 'Result' tab
@@ -345,4 +584,17 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.contentOptionsMultiplePeriod.setEnabled(True)
         else:
             self.contentOptionsMultiplePeriod.setDisabled(True)
+    
+    
+    def toggleRegionalEconomicScenarioImpactType(self, radio):
+        """
+        """
+        if radio.text() == 'Final Demand Scenario':
+            self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
+            self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
+            self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
+        elif radio.text() == 'GDP Scenario': 
+            self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+            self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+            self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
     
