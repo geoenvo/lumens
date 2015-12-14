@@ -34,24 +34,28 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         self.tabDescriptiveAnalysis = QtGui.QWidget()
         self.tabRegionalEconomicScenarioImpact = QtGui.QWidget()
+        self.tabLandRequirementAnalysis = QtGui.QWidget()
         self.tabResult = QtGui.QWidget()
         self.tabReport = QtGui.QWidget()
         self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabDescriptiveAnalysis, 'Descriptive Analysis of Regional Economy')
         self.tabWidget.addTab(self.tabRegionalEconomicScenarioImpact, 'Regional Economic Scenario Impact')
+        self.tabWidget.addTab(self.tabLandRequirementAnalysis, 'Land Requirement Analysis')
         self.tabWidget.addTab(self.tabResult, 'Result')
         self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
         self.layoutTabDescriptiveAnalysis = QtGui.QVBoxLayout()
         self.layoutTabRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
+        self.layoutTabLandRequirementAnalysis = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.tabDescriptiveAnalysis.setLayout(self.layoutTabDescriptiveAnalysis)
         self.tabRegionalEconomicScenarioImpact.setLayout(self.layoutTabRegionalEconomicScenarioImpact)
+        self.tabLandRequirementAnalysis.setLayout(self.layoutTabLandRequirementAnalysis)
         self.tabResult.setLayout(self.layoutTabResult)
         self.tabReport.setLayout(self.layoutTabReport)
         self.tabLog.setLayout(self.layoutTabLog)
@@ -549,6 +553,204 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
         self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactParameters)
         self.layoutContentRegionalEconomicScenarioImpact.addLayout(self.layoutButtonRegionalEconomicScenarioImpact)
+        
+        #***********************************************************
+        # Setup 'Land Requirement Analysis' tab
+        #***********************************************************
+        # Use QScrollArea
+        self.layoutContentLandRequirementAnalysis = QtGui.QVBoxLayout()
+        self.contentLandRequirementAnalysis = QtGui.QWidget()
+        self.contentLandRequirementAnalysis.setLayout(self.layoutContentLandRequirementAnalysis)
+        self.scrollLandRequirementAnalysis = QtGui.QScrollArea()
+        self.scrollLandRequirementAnalysis.setWidgetResizable(True);
+        self.scrollLandRequirementAnalysis.setWidget(self.contentLandRequirementAnalysis)
+        self.layoutTabLandRequirementAnalysis.addWidget(self.scrollLandRequirementAnalysis)
+        
+        # Parameters 'GroupBox'
+        self.groupBoxLandRequirementAnalysisParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxLandRequirementAnalysisParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLandRequirementAnalysisParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLandRequirementAnalysisParameters.setLayout(self.layoutGroupBoxLandRequirementAnalysisParameters)
+        self.layoutLandRequirementAnalysisParametersInfo = QtGui.QVBoxLayout()
+        self.layoutLandRequirementAnalysisParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxLandRequirementAnalysisParameters.addLayout(self.layoutLandRequirementAnalysisParametersInfo)
+        self.layoutGroupBoxLandRequirementAnalysisParameters.addLayout(self.layoutLandRequirementAnalysisParameters)
+        
+        self.labelLandRequirementAnalysisParametersInfo = QtGui.QLabel()
+        self.labelLandRequirementAnalysisParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutLandRequirementAnalysisParametersInfo.addWidget(self.labelLandRequirementAnalysisParametersInfo)
+        
+        self.labelLandRequirementAnalysisWorkingDir = QtGui.QLabel()
+        self.labelLandRequirementAnalysisWorkingDir.setText('Working directory:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisWorkingDir, 0, 0)
+        
+        self.lineEditLandRequirementAnalysisWorkingDir = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisWorkingDir.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisWorkingDir, 0, 1)
+        
+        self.buttonSelectLandRequirementAnalysisWorkingDir = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisWorkingDir.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisWorkingDir, 0, 2)
+        
+        self.labelLandRequirementAnalysisLandCoverMap = QtGui.QLabel()
+        self.labelLandRequirementAnalysisLandCoverMap.setText('Land cover map:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisLandCoverMap, 1, 0)
+        
+        self.lineEditLandRequirementAnalysisLandCoverMap = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisLandCoverMap.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisLandCoverMap, 1, 1)
+        
+        self.buttonSelectLandRequirementAnalysisLandCoverMap = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisLandCoverMap.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisLandCoverMap, 1, 2)
+        
+        self.labelLandRequirementAnalysisIntermediateConsumptionMatrix = QtGui.QLabel()
+        self.labelLandRequirementAnalysisIntermediateConsumptionMatrix.setText('Intermediate consumption matrix:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisIntermediateConsumptionMatrix, 2, 0)
+        
+        self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix, 2, 1)
+        
+        self.buttonSelectLandRequirementAnalysisIntermediateConsumptionMatrix = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisIntermediateConsumptionMatrix.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisIntermediateConsumptionMatrix, 2, 2)
+        
+        self.labelLandRequirementAnalysisValueAddedMatrix = QtGui.QLabel()
+        self.labelLandRequirementAnalysisValueAddedMatrix.setText('Value added matrix:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisValueAddedMatrix, 3, 0)
+        
+        self.lineEditLandRequirementAnalysisValueAddedMatrix = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisValueAddedMatrix.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisValueAddedMatrix, 3, 1)
+        
+        self.buttonSelectLandRequirementAnalysisValueAddedMatrix = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisValueAddedMatrix.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisValueAddedMatrix, 3, 2)
+        
+        self.labelLandRequirementAnalysisFinalConsumptionMatrix = QtGui.QLabel()
+        self.labelLandRequirementAnalysisFinalConsumptionMatrix.setText('Final consumption matrix:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisFinalConsumptionMatrix, 4, 0)
+        
+        self.lineEditLandRequirementAnalysisFinalConsumptionMatrix = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisFinalConsumptionMatrix, 4, 1)
+        
+        self.buttonSelectLandRequirementAnalysisFinalConsumptionMatrix = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisFinalConsumptionMatrix.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisFinalConsumptionMatrix, 4, 2)
+        
+        self.labelLandRequirementAnalysisValueAddedComponent = QtGui.QLabel()
+        self.labelLandRequirementAnalysisValueAddedComponent.setText('Value added component:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisValueAddedComponent, 5, 0)
+        
+        self.lineEditLandRequirementAnalysisValueAddedComponent = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisValueAddedComponent.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisValueAddedComponent, 5, 1)
+        
+        self.buttonSelectLandRequirementAnalysisValueAddedComponent = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisValueAddedComponent.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisValueAddedComponent, 5, 2)
+        
+        self.labelLandRequirementAnalysisFinalConsumptionComponent = QtGui.QLabel()
+        self.labelLandRequirementAnalysisFinalConsumptionComponent.setText('Final consumption component:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisFinalConsumptionComponent, 6, 0)
+        
+        self.lineEditLandRequirementAnalysisFinalConsumptionComponent = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisFinalConsumptionComponent, 6, 1)
+        
+        self.buttonSelectLandRequirementAnalysisFinalConsumptionComponent = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisFinalConsumptionComponent.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisFinalConsumptionComponent, 6, 2)
+        
+        self.labelLandRequirementAnalysisListOfEconomicSector = QtGui.QLabel()
+        self.labelLandRequirementAnalysisListOfEconomicSector.setText('List of economic sector:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisListOfEconomicSector, 7, 0)
+        
+        self.lineEditLandRequirementAnalysisListOfEconomicSector = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisListOfEconomicSector.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisListOfEconomicSector, 7, 1)
+        
+        self.buttonSelectLandRequirementAnalysisListOfEconomicSector = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisListOfEconomicSector.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisListOfEconomicSector, 7, 2)
+        
+        self.labelLandRequirementAnalysisLandDistributionMatrix = QtGui.QLabel()
+        self.labelLandRequirementAnalysisLandDistributionMatrix.setText('Land distribution matrix:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisLandDistributionMatrix, 8, 0)
+        
+        self.lineEditLandRequirementAnalysisLandDistributionMatrix = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisLandDistributionMatrix.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisLandDistributionMatrix, 8, 1)
+        
+        self.buttonSelectLandRequirementAnalysisLandDistributionMatrix = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisLandDistributionMatrix.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisLandDistributionMatrix, 8, 2)
+        
+        self.labelLandRequirementAnalysisLandCoverComponent = QtGui.QLabel()
+        self.labelLandRequirementAnalysisLandCoverComponent.setText('Land cover component:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisLandCoverComponent, 9, 0)
+        
+        self.lineEditLandRequirementAnalysisLandCoverComponent = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisLandCoverComponent.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisLandCoverComponent, 9, 1)
+        
+        self.buttonSelectLandRequirementAnalysisLandCoverComponent = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisLandCoverComponent.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisLandCoverComponent, 9, 2)
+        
+        self.labelLandRequirementAnalysisLabourRequirement = QtGui.QLabel()
+        self.labelLandRequirementAnalysisLabourRequirement.setText('Labour requirement:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisLabourRequirement, 10, 0)
+        
+        self.lineEditLandRequirementAnalysisLabourRequirement = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisLabourRequirement.setReadOnly(True)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisLabourRequirement, 10, 1)
+        
+        self.buttonSelectLandRequirementAnalysisLabourRequirement = QtGui.QPushButton()
+        self.buttonSelectLandRequirementAnalysisLabourRequirement.setText('&Browse')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.buttonSelectLandRequirementAnalysisLabourRequirement, 10, 2)
+        
+        self.labelLandRequirementAnalysisFinancialUnit = QtGui.QLabel()
+        self.labelLandRequirementAnalysisFinancialUnit.setText('Financial &unit:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisFinancialUnit, 11, 0)
+        
+        self.lineEditLandRequirementAnalysisFinancialUnit = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisFinancialUnit.setText('Million Rupiah')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisFinancialUnit, 11, 1)
+        
+        self.labelLandRequirementAnalysisFinancialUnit.setBuddy(self.lineEditLandRequirementAnalysisFinancialUnit)
+        
+        self.labelLandRequirementAnalysisAreaName = QtGui.QLabel()
+        self.labelLandRequirementAnalysisAreaName.setText('&Area name:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisAreaName, 12, 0)
+        
+        self.lineEditLandRequirementAnalysisAreaName = QtGui.QLineEdit()
+        self.lineEditLandRequirementAnalysisAreaName.setText('area')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.lineEditLandRequirementAnalysisAreaName, 12, 1)
+        self.labelLandRequirementAnalysisAreaName.setBuddy(self.lineEditLandRequirementAnalysisAreaName)
+        
+        self.labelLandRequirementAnalysisPeriod = QtGui.QLabel()
+        self.labelLandRequirementAnalysisPeriod.setText('&Period:')
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.labelLandRequirementAnalysisPeriod, 13, 0)
+        
+        self.spinBoxLandRequirementAnalysisPeriod = QtGui.QSpinBox()
+        self.spinBoxLandRequirementAnalysisPeriod.setRange(1, 9999)
+        self.spinBoxLandRequirementAnalysisPeriod.setValue(td.year)
+        self.layoutLandRequirementAnalysisParameters.addWidget(self.spinBoxLandRequirementAnalysisPeriod, 13, 1)
+        self.labelLandRequirementAnalysisPeriod.setBuddy(self.spinBoxLandRequirementAnalysisPeriod)
+            
+        # Process tab button
+        self.layoutButtonLandRequirementAnalysis = QtGui.QHBoxLayout()
+        self.buttonProcessLandRequirementAnalysis = QtGui.QPushButton()
+        self.buttonProcessLandRequirementAnalysis.setText('&Process')
+        self.layoutButtonLandRequirementAnalysis.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonLandRequirementAnalysis.addWidget(self.buttonProcessLandRequirementAnalysis)
+        
+        # Place the GroupBoxes
+        self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisParameters)
+        self.layoutContentLandRequirementAnalysis.addLayout(self.layoutButtonLandRequirementAnalysis)
         
         #***********************************************************
         # Setup 'Result' tab
