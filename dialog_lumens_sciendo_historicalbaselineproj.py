@@ -72,7 +72,6 @@ class DialogLumensSCIENDOHistoricalBaselineProjection(DialogLumensBase):
         
         self.spinBoxT2 = QtGui.QSpinBox(parent)
         self.spinBoxT2.setRange(1, 9999)
-        td = datetime.date.today()
         self.spinBoxT2.setValue(td.year)
         layoutLumensDialog.addWidget(self.spinBoxT2, 5, 1)
         
