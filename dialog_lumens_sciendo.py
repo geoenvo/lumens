@@ -22,10 +22,21 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         
         self.setupUi(self)
         
+        # 'Low Emission Development Analysis' tab checkboxes
         self.checkBoxHistoricalBaselineProjection.toggled.connect(self.toggleHistoricalBaselineProjection)
         self.checkBoxHistoricalBaselineAnnualProjection.toggled.connect(self.toggleHistoricalBaselineAnnualProjection)
         self.checkBoxDriversAnalysis.toggled.connect(self.toggleDriversAnalysis)
         self.checkBoxBuildScenario.toggled.connect(self.toggleBuildScenario)
+        
+        # 'Low Emission Development Analysis' tab buttons
+        self.buttonSelectHistoricalBaselineProjectionWorkingDir.clicked.connect(self.handlerSelectHistoricalBaselineProjectionWorkingDir)
+        self.buttonSelectHistoricalBaselineProjectionQUESCDatabase.clicked.connect(self.handlerSelectHistoricalBaselineProjectionQUESCDatabase)
+        self.buttonSelectDriversAnalysisLandUseCoverChangeDrivers.clicked.connect(self.handlerSelectDriversAnalysisLandUseCoverChangeDrivers)
+        self.buttonSelectBuildScenarioHistoricalBaselineCar.clicked.connect(self.handlerSelectBuildScenarioHistoricalBaselineCar)
+        
+        # 'Land Use Change Modeling' tab buttons
+        self.buttonSelectLandUseChangeModelingFactorsDir.clicked.connect(self.handlerSelectLandUseChangeModelingFactorsDir)
+        self.buttonSelectLandUseChangeModelingLandUseLookup.clicked.connect(self.handlerSelectLandUseChangeModelingLandUseLookup)
     
     
     def setupUi(self, parent):
@@ -256,18 +267,18 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutBuildScenario.addWidget(self.buttonSelectBuildScenarioHistoricalBaselineCar, 0, 2)
         
         # Process tab button
-        self.layoutButtonHistoricalBaselineProjection = QtGui.QHBoxLayout()
-        self.buttonProcessHistoricalBaselineProjection = QtGui.QPushButton()
-        self.buttonProcessHistoricalBaselineProjection.setText('&Process')
-        self.layoutButtonHistoricalBaselineProjection.setAlignment(QtCore.Qt.AlignRight)
-        self.layoutButtonHistoricalBaselineProjection.addWidget(self.buttonProcessHistoricalBaselineProjection)
+        self.layoutButtonLowEmissionDevelopmentAnalysis = QtGui.QHBoxLayout()
+        self.buttonProcessLowEmissionDevelopmentAnalysis = QtGui.QPushButton()
+        self.buttonProcessLowEmissionDevelopmentAnalysis.setText('&Process')
+        self.layoutButtonLowEmissionDevelopmentAnalysis.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonLowEmissionDevelopmentAnalysis.addWidget(self.buttonProcessLowEmissionDevelopmentAnalysis)
         
         # Place the GroupBoxes
         self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxHistoricalBaselineProjection)
         self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxHistoricalBaselineAnnualProjection)
         self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxDriversAnalysis)
         self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxBuildScenario)
-        self.layoutTabLowEmissionDevelopmentAnalysis.addLayout(self.layoutButtonHistoricalBaselineProjection)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addLayout(self.layoutButtonLowEmissionDevelopmentAnalysis)
         
         #***********************************************************
         # Setup 'Land Use Change Modeling' tab
@@ -375,12 +386,13 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         #***********************************************************
         # Setup 'Report' tab
         #***********************************************************
-        self.tabReport.setLayout(self.layoutTabReport)
+        
         
         #***********************************************************
         # Setup 'Log' tab
         #***********************************************************
-        self.tabLog.setLayout(self.layoutTabLog)
+        
+        
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -394,6 +406,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         super(DialogLumensSCIENDO, self).showEvent(event)
     
     
+    #***********************************************************
+    # 'Low Emission Development Analysis' tab QGroupBox toggle handlers
+    #***********************************************************
     def toggleHistoricalBaselineProjection(self, checked):
         """
         """
@@ -428,4 +443,95 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             self.contentOptionsBuildScenario.setEnabled(True)
         else:
             self.contentOptionsBuildScenario.setDisabled(True)
+    
+    
+    #***********************************************************
+    # 'Low Emission Development Analysis' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectHistoricalBaselineProjectionWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditHistoricalBaselineProjectionWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectHistoricalBaselineProjectionQUESCDatabase(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if file:
+            self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDriversAnalysisLandUseCoverChangeDrivers(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use/Cover Change Drivers', QtCore.QDir.homePath(), 'Land Use/Cover Change Drivers (*{0})'.format(self.main.appSettings['selectTextfileExt'])))
+        
+        if file:
+            self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectBuildScenarioHistoricalBaselineCar(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Historical Baseline Car', QtCore.QDir.homePath(), 'Historical Baseline Car (*{0})'.format(self.main.appSettings['selectCarfileExt'])))
+        
+        if file:
+            self.lineEditBuildScenarioHistoricalBaselineCar.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'Land Use Change Modeling' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectLandUseChangeModelingFactorsDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Factors Directory'))
+        
+        if dir:
+            self.lineEditLandUseChangeModelingFactorsDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectLandUseChangeModelingLandUseLookup(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Lookup Table', QtCore.QDir.homePath(), 'Land Use Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeModelingLandUseLookup.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # Process tabs
+    #***********************************************************
+    def setAppSetings(self):
+        """
+        """
+        pass
+    
+    
+    def handlerProcessLowEmissionDevelopmentAnalysis(self):
+        """
+        """
+        pass
+    
+    
+    def handlerProcessLandUseChangeModeling(self):
+        """
+        """
+        pass
     

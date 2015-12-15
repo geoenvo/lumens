@@ -22,15 +22,79 @@ class DialogLumensQUES(QtGui.QDialog):
         
         self.setupUi(self)
         
+        # 'Pre-QUES' tab buttons
+        self.buttonSelectPreQUESWorkingDir.clicked.connect(self.handlerSelectPreQUESWorkingDir)
+        self.buttonSelectPreQUESPlanningUnit.clicked.connect(self.handlerSelectPreQUESPlanningUnit)
+        self.buttonSelectPreQUESCsvPlanningUnit.clicked.connect(self.handlerSelectPreQUESCsvPlanningUnit)
+        self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
+        
+        # 'QUES-C' tab checkboxes
         self.checkBoxCarbonAccounting.toggled.connect(self.toggleCarbonAccounting)
         self.checkBoxPeatlandCarbonAccounting.toggled.connect(self.togglePeatlandCarbonAccounting)
         self.checkBoxSummarizeMultiplePeriod.toggled.connect(self.toggleSummarizeMultiplePeriod)
         
+        # 'QUES-C' tab buttons
+        self.buttonSelectCACsvfile.clicked.connect(self.handlerSelectCACsvfile)
+        self.buttonSelectPCACsvfile.clicked.connect(self.handlerSelectPCACsvfile)
+        
+        # 'QUES-B' tab buttons
+        self.buttonSelectQUESBCsvLandCover.clicked.connect(self.handlerSelectQUESBCsvLandCover)
+        self.buttonSelectQUESBCsvClassDescriptors.clicked.connect(self.handlerSelectQUESBCsvClassDescriptors)
+        self.buttonSelectQUESBCsvEdgeContrast.clicked.connect(self.handlerSelectQUESBCsvEdgeContrast)
+        self.buttonSelectQUESBCsvZoneLookup.clicked.connect(self.handlerSelectQUESBCsvZoneLookup)
+        self.buttonSelectQUESBOutputTECIInitial.clicked.connect(self.handlerSelectQUESBOutputTECIInitial)
+        self.buttonSelectQUESBOutputTECIFinal.clicked.connect(self.handlerSelectQUESBOutputTECIFinal)
+        self.buttonSelectQUESBOutputHabitatLoss.clicked.connect(self.handlerSelectQUESBOutputHabitatLoss)
+        self.buttonSelectQUESBOutputDegradedHabitat.clicked.connect(self.handlerSelectQUESBOutputDegradedHabitat)
+        self.buttonSelectQUESBOutputHabitatGain.clicked.connect(self.handlerSelectQUESBOutputHabitatGain)
+        self.buttonSelectQUESBOutputRecoveredHabitat.clicked.connect(self.handlerSelectQUESBOutputRecoveredHabitat)
+        
+        # 'QUES-H' tab checkboxes
         self.checkBoxDominantHRU.toggled.connect(self.toggleDominantHRU)
         self.checkBoxDominantLUSSL.toggled.connect(self.toggleDominantLUSSL)
         self.checkBoxMultipleHRU.toggled.connect(self.toggleMultipleHRU)
         
-    
+        # 'QUES-H' Dominant HRU tab buttons
+        self.buttonSelectDominantHRUWorkingDir.clicked.connect(self.handlerSelectDominantHRUWorkingDir)
+        self.buttonSelectDominantHRULandUseMap.clicked.connect(self.handlerSelectDominantHRULandUseMap)
+        self.buttonSelectDominantHRUSoilMap.clicked.connect(self.handlerSelectDominantHRUSoilMap)
+        self.buttonSelectDominantHRUSlopeMap.clicked.connect(self.handlerSelectDominantHRUSlopeMap)
+        self.buttonSelectDominantHRUSubcatchmentMap.clicked.connect(self.handlerSelectDominantHRUSubcatchmentMap)
+        self.buttonSelectDominantHRULandUseClassification.clicked.connect(self.handlerSelectDominantHRULandUseClassification)
+        self.buttonSelectDominantHRUSoilClassification.clicked.connect(self.handlerSelectDominantHRUSoilClassification)
+        self.buttonSelectDominantHRUSlopeClassification.clicked.connect(self.handlerSelectDominantHRUSlopeClassification)
+        
+        # 'QUES-H' Dominant LUSSL tab buttons
+        self.buttonSelectDominantLUSSLWorkingDir.clicked.connect(self.handlerSelectDominantLUSSLWorkingDir)
+        self.buttonSelectDominantLUSSLLandUseMap.clicked.connect(self.handlerSelectDominantLUSSLLandUseMap)
+        self.buttonSelectDominantLUSSLSoilMap.clicked.connect(self.handlerSelectDominantLUSSLSoilMap)
+        self.buttonSelectDominantLUSSLSlopeMap.clicked.connect(self.handlerSelectDominantLUSSLSlopeMap)
+        self.buttonSelectDominantLUSSLSubcatchmentMap.clicked.connect(self.handlerSelectDominantLUSSLSubcatchmentMap)
+        self.buttonSelectDominantLUSSLLandUseClassification.clicked.connect(self.handlerSelectDominantLUSSLLandUseClassification)
+        self.buttonSelectDominantLUSSLSoilClassification.clicked.connect(self.handlerSelectDominantLUSSLSoilClassification)
+        self.buttonSelectDominantLUSSLSlopeClassification.clicked.connect(self.handlerSelectDominantLUSSLSlopeClassification)
+        
+        # 'QUES-H' Multiple HRU tab buttons
+        self.buttonSelectMultipleHRUWorkingDir.clicked.connect(self.handlerSelectMultipleHRUWorkingDir)
+        self.buttonSelectMultipleHRULandUseMap.clicked.connect(self.handlerSelectMultipleHRULandUseMap)
+        self.buttonSelectMultipleHRUSoilMap.clicked.connect(self.handlerSelectMultipleHRUSoilMap)
+        self.buttonSelectMultipleHRUSlopeMap.clicked.connect(self.handlerSelectMultipleHRUSlopeMap)
+        self.buttonSelectMultipleHRUSubcatchmentMap.clicked.connect(self.handlerSelectMultipleHRUSubcatchmentMap)
+        self.buttonSelectMultipleHRULandUseClassification.clicked.connect(self.handlerSelectMultipleHRULandUseClassification)
+        self.buttonSelectMultipleHRUSoilClassification.clicked.connect(self.handlerSelectMultipleHRUSoilClassification)
+        self.buttonSelectMultipleHRUSlopeClassification.clicked.connect(self.handlerSelectMultipleHRUSlopeClassification)
+        
+        # 'QUES-H' Watershed Model Evaluation tab buttons
+        self.buttonSelectWatershedModelEvaluationWorkingDir.clicked.connect(self.handlerSelectWatershedModelEvaluationWorkingDir)
+        self.buttonSelectWatershedModelEvaluationObservedDebitFile.clicked.connect(self.handlerSelectWatershedModelEvaluationObservedDebitFile)
+        self.buttonSelectOutputWatershedModelEvaluation.clicked.connect(self.handlerSelectOutputWatershedModelEvaluation)
+        
+        # 'QUES-H' Watershed Indicators tab buttons
+        self.buttonSelectWatershedIndicatorsSWATTXTINOUTDir.clicked.connect(self.handlerSelectWatershedIndicatorsSWATTXTINOUTDir)
+        self.buttonSelectWatershedIndicatorsSubWatershedPolygon.clicked.connect(self.handlerSelectWatershedIndicatorsSubWatershedPolygon)
+        self.buttonSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.clicked.connect(self.handlerSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators)
+        self.buttonSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.clicked.connect(self.handlerSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators)
+        
     
     def setupUi(self, parent):
         self.dialogLayout = QtGui.QVBoxLayout()
@@ -57,6 +121,13 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutTabReclassification = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         
+        self.tabPreQUES.setLayout(self.layoutTabPreQUES)
+        self.tabQUESC.setLayout(self.layoutTabQUESC)
+        self.tabQUESB.setLayout(self.layoutTabQUESB)
+        self.tabQUESH.setLayout(self.layoutTabQUESH)
+        self.tabReclassification.setLayout(self.layoutTabReclassification)
+        self.tabResult.setLayout(self.layoutTabResult)
+        
         self.dialogLayout.addWidget(self.tabWidget)
         
         #***********************************************************
@@ -76,43 +147,43 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutPlanningUnitInfo.addWidget(self.labelPlanningUnitInfo)
         
-        self.labelWorkingDir = QtGui.QLabel()
-        self.labelWorkingDir.setText('Working directory:')
-        self.layoutPlanningUnit.addWidget(self.labelWorkingDir, 0, 0)
-        self.lineEditWorkingDir = QtGui.QLineEdit()
-        self.lineEditWorkingDir.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditWorkingDir, 0, 1)
-        self.buttonSelectWorkingDir = QtGui.QPushButton()
-        self.buttonSelectWorkingDir.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectWorkingDir, 0, 2)
+        self.labelPreQUESWorkingDir = QtGui.QLabel()
+        self.labelPreQUESWorkingDir.setText('Working directory:')
+        self.layoutPlanningUnit.addWidget(self.labelPreQUESWorkingDir, 0, 0)
+        self.lineEditPreQUESWorkingDir = QtGui.QLineEdit()
+        self.lineEditPreQUESWorkingDir.setReadOnly(True)
+        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESWorkingDir, 0, 1)
+        self.buttonSelectPreQUESWorkingDir = QtGui.QPushButton()
+        self.buttonSelectPreQUESWorkingDir.setText('&Browse')
+        self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESWorkingDir, 0, 2)
         
-        self.labelLocation = QtGui.QLabel()
-        self.labelLocation.setText('&Location:')
-        self.layoutPlanningUnit.addWidget(self.labelLocation, 1, 0)
-        self.lineEditLocation = QtGui.QLineEdit()
-        self.lineEditLocation.setText('location')
-        self.layoutPlanningUnit.addWidget(self.lineEditLocation, 1, 1)
-        self.labelLocation.setBuddy(self.lineEditLocation)
+        self.labelPreQUESLocation = QtGui.QLabel()
+        self.labelPreQUESLocation.setText('&Location:')
+        self.layoutPlanningUnit.addWidget(self.labelPreQUESLocation, 1, 0)
+        self.lineEditPreQUESLocation = QtGui.QLineEdit()
+        self.lineEditPreQUESLocation.setText('location')
+        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESLocation, 1, 1)
+        self.labelPreQUESLocation.setBuddy(self.lineEditPreQUESLocation)
         
-        self.labelPlanningUnit = QtGui.QLabel()
-        self.labelPlanningUnit.setText('Planning unit map:')
-        self.layoutPlanningUnit.addWidget(self.labelPlanningUnit, 2, 0)
-        self.lineEditPlanningUnit = QtGui.QLineEdit()
-        self.lineEditPlanningUnit.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditPlanningUnit, 2, 1)
-        self.buttonSelectPlanningUnit = QtGui.QPushButton()
-        self.buttonSelectPlanningUnit.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectPlanningUnit, 2, 2)
+        self.labelPreQUESPlanningUnit = QtGui.QLabel()
+        self.labelPreQUESPlanningUnit.setText('Planning unit map:')
+        self.layoutPlanningUnit.addWidget(self.labelPreQUESPlanningUnit, 2, 0)
+        self.lineEditPreQUESPlanningUnit = QtGui.QLineEdit()
+        self.lineEditPreQUESPlanningUnit.setReadOnly(True)
+        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESPlanningUnit, 2, 1)
+        self.buttonSelectPreQUESPlanningUnit = QtGui.QPushButton()
+        self.buttonSelectPreQUESPlanningUnit.setText('&Browse')
+        self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESPlanningUnit, 2, 2)
         
-        self.labelCsvPlanningUnit = QtGui.QLabel()
-        self.labelCsvPlanningUnit.setText('Planning unit lookup table:')
-        self.layoutPlanningUnit.addWidget(self.labelCsvPlanningUnit, 3, 0)
-        self.lineEditCsvPlanningUnit = QtGui.QLineEdit()
-        self.lineEditCsvPlanningUnit.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditCsvPlanningUnit, 3, 1)
-        self.buttonSelectCsvPlanningUnit = QtGui.QPushButton()
-        self.buttonSelectCsvPlanningUnit.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectCsvPlanningUnit, 3, 2)
+        self.labelPreQUESCsvPlanningUnit = QtGui.QLabel()
+        self.labelPreQUESCsvPlanningUnit.setText('Planning unit lookup table:')
+        self.layoutPlanningUnit.addWidget(self.labelPreQUESCsvPlanningUnit, 3, 0)
+        self.lineEditPreQUESCsvPlanningUnit = QtGui.QLineEdit()
+        self.lineEditPreQUESCsvPlanningUnit.setReadOnly(True)
+        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESCsvPlanningUnit, 3, 1)
+        self.buttonSelectPreQUESCsvPlanningUnit = QtGui.QPushButton()
+        self.buttonSelectPreQUESCsvPlanningUnit.setText('&Browse')
+        self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESCsvPlanningUnit, 3, 2)
         
         #######################################################################
         # 'Land cover' GroupBox
@@ -128,15 +199,15 @@ class DialogLumensQUES(QtGui.QDialog):
         
         self.layoutLandCoverOptions = QtGui.QGridLayout()
         self.layoutLandCoverOptions.setContentsMargins(0, 0, 0, 0)
-        self.labelCsvLandUse = QtGui.QLabel()
-        self.labelCsvLandUse.setText('Land use lookup table:')
-        self.layoutLandCoverOptions.addWidget(self.labelCsvLandUse, 0, 0)
-        self.lineEditCsvLandUse = QtGui.QLineEdit()
-        self.lineEditCsvLandUse.setReadOnly(True)
-        self.layoutLandCoverOptions.addWidget(self.lineEditCsvLandUse, 0, 1)
-        self.buttonSelectCsvLandUse = QtGui.QPushButton()
-        self.buttonSelectCsvLandUse.setText('&Browse')
-        self.layoutLandCoverOptions.addWidget(self.buttonSelectCsvLandUse, 0, 2)
+        self.labelLandCoverCsvLandUse = QtGui.QLabel()
+        self.labelLandCoverCsvLandUse.setText('Land use lookup table:')
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverCsvLandUse, 0, 0)
+        self.lineEditLandCoverCsvLandUse = QtGui.QLineEdit()
+        self.lineEditLandCoverCsvLandUse.setReadOnly(True)
+        self.layoutLandCoverOptions.addWidget(self.lineEditLandCoverCsvLandUse, 0, 1)
+        self.buttonSelectLandCoverCsvLandUse = QtGui.QPushButton()
+        self.buttonSelectLandCoverCsvLandUse.setText('&Browse')
+        self.layoutLandCoverOptions.addWidget(self.buttonSelectLandCoverCsvLandUse, 0, 2)
         
         self.layoutContentGroupBoxLandCover = QtGui.QVBoxLayout()
         self.layoutContentGroupBoxLandCover.setContentsMargins(10, 10, 10, 10)
@@ -171,8 +242,6 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutTabPreQUES.addWidget(self.groupBoxPlanningUnit)
         self.layoutTabPreQUES.addWidget(self.groupBoxLandCover)
         self.layoutTabPreQUES.addLayout(self.layoutButtonPreQUES)
-        
-        self.tabPreQUES.setLayout(self.layoutTabPreQUES)
         
         #***********************************************************
         # Setup 'QUES-C' tab
@@ -306,118 +375,114 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutTabQUESC.addWidget(self.groupBoxSummarizeMultiplePeriod)
         self.layoutTabQUESC.addLayout(self.layoutButtonQUESC)
         
-        self.tabQUESC.setLayout(self.layoutTabQUESC)
-        
         #***********************************************************
         # Setup 'QUES-B' tab
         #***********************************************************
         # 'Parameters' GroupBox
-        self.groupBoxParameters = QtGui.QGroupBox('Parameters')
-        self.layoutGroupBoxParameters = QtGui.QVBoxLayout()
-        self.layoutGroupBoxParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.groupBoxParameters.setLayout(self.layoutGroupBoxParameters)
-        self.layoutParametersInfo = QtGui.QVBoxLayout()
-        self.layoutParameters = QtGui.QGridLayout()
-        self.layoutGroupBoxParameters.addLayout(self.layoutParametersInfo)
-        self.layoutGroupBoxParameters.addLayout(self.layoutParameters)
+        self.groupBoxQUESBParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxQUESBParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxQUESBParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxQUESBParameters.setLayout(self.layoutGroupBoxQUESBParameters)
+        self.layoutQUESBParametersInfo = QtGui.QVBoxLayout()
+        self.layoutQUESBParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxQUESBParameters.addLayout(self.layoutQUESBParametersInfo)
+        self.layoutGroupBoxQUESBParameters.addLayout(self.layoutQUESBParameters)
         
-        self.labelParametersInfo = QtGui.QLabel()
-        self.labelParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutParametersInfo.addWidget(self.labelParametersInfo)
+        self.labelQUESBParametersInfo = QtGui.QLabel()
+        self.labelQUESBParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutQUESBParametersInfo.addWidget(self.labelQUESBParametersInfo)
         
-        self.labelCsvLandCover = QtGui.QLabel()
-        self.labelCsvLandCover.setText('Land cover lookup:')
-        self.layoutParameters.addWidget(self.labelCsvLandCover, 0, 0)
+        self.labelQUESBCsvLandCover = QtGui.QLabel()
+        self.labelQUESBCsvLandCover.setText('Land cover lookup:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBCsvLandCover, 0, 0)
         
-        self.lineEditCsvLandCover = QtGui.QLineEdit()
-        self.lineEditCsvLandCover.setReadOnly(True)
-        self.layoutParameters.addWidget(self.lineEditCsvLandCover, 0, 1)
+        self.lineEditQUESBCsvLandCover = QtGui.QLineEdit()
+        self.lineEditQUESBCsvLandCover.setReadOnly(True)
+        self.layoutQUESBParameters.addWidget(self.lineEditQUESBCsvLandCover, 0, 1)
         
-        self.buttonSelectCsvLandCover = QtGui.QPushButton()
-        self.buttonSelectCsvLandCover.setText('&Browse')
-        self.layoutParameters.addWidget(self.buttonSelectCsvLandCover, 0, 2)
+        self.buttonSelectQUESBCsvLandCover = QtGui.QPushButton()
+        self.buttonSelectQUESBCsvLandCover.setText('&Browse')
+        self.layoutQUESBParameters.addWidget(self.buttonSelectQUESBCsvLandCover, 0, 2)
         
-        self.labelSpinBoxSamplingGridRes = QtGui.QLabel()
-        self.labelSpinBoxSamplingGridRes.setText('Sampling grid &resolution:')
-        self.layoutParameters.addWidget(self.labelSpinBoxSamplingGridRes, 1, 0)
+        self.labelQUESBSamplingGridRes = QtGui.QLabel()
+        self.labelQUESBSamplingGridRes.setText('Sampling grid &resolution:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBSamplingGridRes, 1, 0)
         
         self.spinBoxSamplingGridRes = QtGui.QSpinBox()
         self.spinBoxSamplingGridRes.setRange(1, 9999)
         self.spinBoxSamplingGridRes.setValue(10000)
-        self.layoutParameters.addWidget(self.spinBoxSamplingGridRes, 1, 1)
-        self.labelSpinBoxSamplingGridRes.setBuddy(self.spinBoxSamplingGridRes)
+        self.layoutQUESBParameters.addWidget(self.spinBoxSamplingGridRes, 1, 1)
+        self.labelQUESBSamplingGridRes.setBuddy(self.spinBoxSamplingGridRes)
         
-        self.labelSpinBoxSamplingWindowSize = QtGui.QLabel()
-        self.labelSpinBoxSamplingWindowSize.setText('Sampling &window size:')
-        self.layoutParameters.addWidget(self.labelSpinBoxSamplingWindowSize, 2, 0)
+        self.labelQUESBSamplingWindowSize = QtGui.QLabel()
+        self.labelQUESBSamplingWindowSize.setText('Sampling &window size:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBSamplingWindowSize, 2, 0)
         
         self.spinBoxSamplingWindowSize = QtGui.QSpinBox()
         self.spinBoxSamplingWindowSize.setRange(1, 9999)
         self.spinBoxSamplingWindowSize.setValue(1000)
-        self.layoutParameters.addWidget(self.spinBoxSamplingWindowSize, 2, 1)
+        self.layoutQUESBParameters.addWidget(self.spinBoxSamplingWindowSize, 2, 1)
+        self.labelQUESBSamplingWindowSize.setBuddy(self.spinBoxSamplingWindowSize)
         
-        self.labelSpinBoxSamplingWindowSize.setBuddy(self.spinBoxSamplingWindowSize)
-        
-        self.labelSpinBoxWindowShape = QtGui.QLabel()
-        self.labelSpinBoxWindowShape.setText('Window &shape:')
-        self.layoutParameters.addWidget(self.labelSpinBoxWindowShape, 3, 0)
+        self.labelQUESBWindowShape = QtGui.QLabel()
+        self.labelQUESBWindowShape.setText('Window &shape:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBWindowShape, 3, 0)
         
         self.spinBoxWindowShape = QtGui.QSpinBox()
         self.spinBoxWindowShape.setRange(1, 9999)
         self.spinBoxWindowShape.setValue(1)
-        self.layoutParameters.addWidget(self.spinBoxWindowShape, 3, 1)
-        self.labelSpinBoxWindowShape.setBuddy(self.spinBoxWindowShape)
+        self.layoutQUESBParameters.addWidget(self.spinBoxWindowShape, 3, 1)
+        self.labelQUESBWindowShape.setBuddy(self.spinBoxWindowShape)
         
-        self.labelSpinBoxNodata = QtGui.QLabel()
-        self.labelSpinBoxNodata.setText('&No data value:')
-        self.layoutParameters.addWidget(self.labelSpinBoxNodata, 4, 0)
+        self.labelQUESBNodata = QtGui.QLabel()
+        self.labelQUESBNodata.setText('&No data value:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBNodata, 4, 0)
         
         self.spinBoxNodata = QtGui.QSpinBox()
         self.spinBoxNodata.setRange(-9999, 9999)
         self.spinBoxNodata.setValue(0)
-        self.layoutParameters.addWidget(self.spinBoxNodata, 4, 1)
+        self.layoutQUESBParameters.addWidget(self.spinBoxNodata, 4, 1)
+        self.labelQUESBNodata.setBuddy(self.spinBoxNodata)
         
-        self.labelSpinBoxNodata.setBuddy(self.spinBoxNodata)
+        self.labelQUESBCsvClassDescriptors = QtGui.QLabel()
+        self.labelQUESBCsvClassDescriptors.setText('Class descriptors:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBCsvClassDescriptors, 5, 0)
         
-        self.labelCsvClassDescriptors = QtGui.QLabel()
-        self.labelCsvClassDescriptors.setText('Class descriptors:')
-        self.layoutParameters.addWidget(self.labelCsvClassDescriptors, 5, 0)
+        self.lineEditQUESBCsvClassDescriptors = QtGui.QLineEdit()
+        self.lineEditQUESBCsvClassDescriptors.setReadOnly(True)
+        self.layoutQUESBParameters.addWidget(self.lineEditQUESBCsvClassDescriptors, 5, 1)
         
-        self.lineEditCsvClassDescriptors = QtGui.QLineEdit()
-        self.lineEditCsvClassDescriptors.setReadOnly(True)
-        self.layoutParameters.addWidget(self.lineEditCsvClassDescriptors, 5, 1)
+        self.buttonSelectQUESBCsvClassDescriptors = QtGui.QPushButton()
+        self.buttonSelectQUESBCsvClassDescriptors.setText('&Browse')
+        self.layoutQUESBParameters.addWidget(self.buttonSelectQUESBCsvClassDescriptors, 5, 2)
         
-        self.buttonSelectCsvClassDescriptors = QtGui.QPushButton()
-        self.buttonSelectCsvClassDescriptors.setText('&Browse')
-        self.layoutParameters.addWidget(self.buttonSelectCsvClassDescriptors, 5, 2)
+        self.labelQUESBCsvEdgeContrast = QtGui.QLabel()
+        self.labelQUESBCsvEdgeContrast.setText('Edge contrast:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBCsvEdgeContrast, 6, 0)
         
-        self.labelCsvEdgeContrast = QtGui.QLabel()
-        self.labelCsvEdgeContrast.setText('Edge contrast:')
-        self.layoutParameters.addWidget(self.labelCsvEdgeContrast, 6, 0)
+        self.lineEditQUESBCsvEdgeContrast = QtGui.QLineEdit()
+        self.lineEditQUESBCsvEdgeContrast.setReadOnly(True)
+        self.layoutQUESBParameters.addWidget(self.lineEditQUESBCsvEdgeContrast, 6, 1)
         
-        self.lineEditCsvEdgeContrast = QtGui.QLineEdit()
-        self.lineEditCsvEdgeContrast.setReadOnly(True)
-        self.layoutParameters.addWidget(self.lineEditCsvEdgeContrast, 6, 1)
+        self.buttonSelectQUESBCsvEdgeContrast = QtGui.QPushButton()
+        self.buttonSelectQUESBCsvEdgeContrast.setText('&Browse')
+        self.layoutQUESBParameters.addWidget(self.buttonSelectQUESBCsvEdgeContrast, 6, 2)
         
-        self.buttonSelectCsvEdgeContrast = QtGui.QPushButton()
-        self.buttonSelectCsvEdgeContrast.setText('&Browse')
-        self.layoutParameters.addWidget(self.buttonSelectCsvEdgeContrast, 6, 2)
+        self.labelQUESBCsvZoneLookup = QtGui.QLabel()
+        self.labelQUESBCsvZoneLookup.setText('Zone lookup:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBCsvZoneLookup, 7, 0)
         
-        self.labelCsvZoneLookup = QtGui.QLabel()
-        self.labelCsvZoneLookup.setText('Zone lookup:')
-        self.layoutParameters.addWidget(self.labelCsvZoneLookup, 7, 0)
+        self.lineEditQUESBCsvZoneLookup = QtGui.QLineEdit()
+        self.lineEditQUESBCsvZoneLookup.setReadOnly(True)
+        self.layoutQUESBParameters.addWidget(self.lineEditQUESBCsvZoneLookup, 7, 1)
         
-        self.lineEditCsvZoneLookup = QtGui.QLineEdit()
-        self.lineEditCsvZoneLookup.setReadOnly(True)
-        self.layoutParameters.addWidget(self.lineEditCsvZoneLookup, 7, 1)
+        self.buttonSelectQUESBCsvZoneLookup = QtGui.QPushButton()
+        self.buttonSelectQUESBCsvZoneLookup.setText('&Browse')
+        self.layoutQUESBParameters.addWidget(self.buttonSelectQUESBCsvZoneLookup, 7, 2)
         
-        self.buttonSelectCsvZoneLookup = QtGui.QPushButton()
-        self.buttonSelectCsvZoneLookup.setText('&Browse')
-        self.layoutParameters.addWidget(self.buttonSelectCsvZoneLookup, 7, 2)
-        
-        self.labelSpinBoxRefMapID = QtGui.QLabel()
-        self.labelSpinBoxRefMapID.setText('Reference map ID:')
-        self.layoutParameters.addWidget(self.labelSpinBoxRefMapID, 8, 0)
+        self.labelQUESBRefMapID = QtGui.QLabel()
+        self.labelQUESBRefMapID.setText('Reference map ID:')
+        self.layoutQUESBParameters.addWidget(self.labelQUESBRefMapID, 8, 0)
         
         refMapID = {
             1: 'Land cover T1',
@@ -425,97 +490,97 @@ class DialogLumensQUES(QtGui.QDialog):
             3: 'Zone',
         }
         
-        self.comboBoxRefMapID = QtGui.QComboBox()
+        self.comboBoxQUESBRefMapID = QtGui.QComboBox()
         
         for key, val in refMapID.iteritems():
-            self.comboBoxRefMapID.addItem(val, key)
-        self.layoutParameters.addWidget(self.comboBoxRefMapID, 8, 1)
+            self.comboBoxQUESBRefMapID.addItem(val, key)
+        self.layoutQUESBParameters.addWidget(self.comboBoxQUESBRefMapID, 8, 1)
         
         # 'Output' GroupBox
-        self.groupBoxOutput = QtGui.QGroupBox('Output')
-        self.layoutGroupBoxOutput = QtGui.QVBoxLayout()
-        self.layoutGroupBoxOutput.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.groupBoxOutput.setLayout(self.layoutGroupBoxOutput)
-        self.layoutOutputInfo = QtGui.QVBoxLayout()
-        self.layoutOutput = QtGui.QGridLayout()
-        self.layoutGroupBoxOutput.addLayout(self.layoutOutputInfo)
-        self.layoutGroupBoxOutput.addLayout(self.layoutOutput)
+        self.groupBoxQUESBOutput = QtGui.QGroupBox('QUESBOutput')
+        self.layoutGroupBoxQUESBOutput = QtGui.QVBoxLayout()
+        self.layoutGroupBoxQUESBOutput.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxQUESBOutput.setLayout(self.layoutGroupBoxQUESBOutput)
+        self.layoutQUESBOutputInfo = QtGui.QVBoxLayout()
+        self.layoutQUESBOutput = QtGui.QGridLayout()
+        self.layoutGroupBoxQUESBOutput.addLayout(self.layoutQUESBOutputInfo)
+        self.layoutGroupBoxQUESBOutput.addLayout(self.layoutQUESBOutput)
         
-        self.labelOutputInfo = QtGui.QLabel()
-        self.labelOutputInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutOutputInfo.addWidget(self.labelOutputInfo)
+        self.labelQUESBOutputInfo = QtGui.QLabel()
+        self.labelQUESBOutputInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutQUESBOutputInfo.addWidget(self.labelQUESBOutputInfo)
         
-        self.labelOutputTECIInitial = QtGui.QLabel()
-        self.labelOutputTECIInitial.setText('[Output] TECI initial:')
-        self.layoutOutput.addWidget(self.labelOutputTECIInitial, 0, 0)
+        self.labelQUESBOutputTECIInitial = QtGui.QLabel()
+        self.labelQUESBOutputTECIInitial.setText('[QUESBOutput] TECI initial:')
+        self.layoutQUESBOutput.addWidget(self.labelQUESBOutputTECIInitial, 0, 0)
         
-        self.lineEditOutputTECIInitial = QtGui.QLineEdit()
-        self.lineEditOutputTECIInitial.setReadOnly(True)
-        self.layoutOutput.addWidget(self.lineEditOutputTECIInitial, 0, 1)
+        self.lineEditQUESBOutputTECIInitial = QtGui.QLineEdit()
+        self.lineEditQUESBOutputTECIInitial.setReadOnly(True)
+        self.layoutQUESBOutput.addWidget(self.lineEditQUESBOutputTECIInitial, 0, 1)
         
-        self.buttonSelectOutputTECIInitial = QtGui.QPushButton()
-        self.buttonSelectOutputTECIInitial.setText('&Browse')
-        self.layoutOutput.addWidget(self.buttonSelectOutputTECIInitial, 0, 2)
+        self.buttonSelectQUESBOutputTECIInitial = QtGui.QPushButton()
+        self.buttonSelectQUESBOutputTECIInitial.setText('&Browse')
+        self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputTECIInitial, 0, 2)
         
-        self.labelOutputTECIFinal = QtGui.QLabel()
-        self.labelOutputTECIFinal.setText('[Output] TECI final:')
-        self.layoutOutput.addWidget(self.labelOutputTECIFinal, 1, 0)
+        self.labelQUESBOutputTECIFinal = QtGui.QLabel()
+        self.labelQUESBOutputTECIFinal.setText('[QUESBOutput] TECI final:')
+        self.layoutQUESBOutput.addWidget(self.labelQUESBOutputTECIFinal, 1, 0)
         
-        self.lineEditOutputTECIFinal = QtGui.QLineEdit()
-        self.lineEditOutputTECIFinal.setReadOnly(True)
-        self.layoutOutput.addWidget(self.lineEditOutputTECIFinal, 1, 1)
+        self.lineEditQUESBOutputTECIFinal = QtGui.QLineEdit()
+        self.lineEditQUESBOutputTECIFinal.setReadOnly(True)
+        self.layoutQUESBOutput.addWidget(self.lineEditQUESBOutputTECIFinal, 1, 1)
         
-        self.buttonSelectOutputTECIFinal = QtGui.QPushButton()
-        self.buttonSelectOutputTECIFinal.setText('&Browse')
-        self.layoutOutput.addWidget(self.buttonSelectOutputTECIFinal, 1, 2)
+        self.buttonSelectQUESBOutputTECIFinal = QtGui.QPushButton()
+        self.buttonSelectQUESBOutputTECIFinal.setText('&Browse')
+        self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputTECIFinal, 1, 2)
         
-        self.labelOutputHabitatLoss = QtGui.QLabel()
-        self.labelOutputHabitatLoss.setText('[Output] Habitat Loss:')
-        self.layoutOutput.addWidget(self.labelOutputHabitatLoss, 2, 0)
+        self.labelQUESBOutputHabitatLoss = QtGui.QLabel()
+        self.labelQUESBOutputHabitatLoss.setText('[QUESBOutput] Habitat Loss:')
+        self.layoutQUESBOutput.addWidget(self.labelQUESBOutputHabitatLoss, 2, 0)
         
-        self.lineEditOutputHabitatLoss = QtGui.QLineEdit()
-        self.lineEditOutputHabitatLoss.setReadOnly(True)
-        self.layoutOutput.addWidget(self.lineEditOutputHabitatLoss, 2, 1)
+        self.lineEditQUESBOutputHabitatLoss = QtGui.QLineEdit()
+        self.lineEditQUESBOutputHabitatLoss.setReadOnly(True)
+        self.layoutQUESBOutput.addWidget(self.lineEditQUESBOutputHabitatLoss, 2, 1)
         
-        self.buttonSelectOutputHabitatLoss = QtGui.QPushButton()
-        self.buttonSelectOutputHabitatLoss.setText('&Browse')
-        self.layoutOutput.addWidget(self.buttonSelectOutputHabitatLoss, 2, 2)
+        self.buttonSelectQUESBOutputHabitatLoss = QtGui.QPushButton()
+        self.buttonSelectQUESBOutputHabitatLoss.setText('&Browse')
+        self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputHabitatLoss, 2, 2)
         
-        self.labelOutputDegradedHabitat = QtGui.QLabel()
-        self.labelOutputDegradedHabitat.setText('[Output] Degraded habitat:')
-        self.layoutOutput.addWidget(self.labelOutputDegradedHabitat, 3, 0)
+        self.labelQUESBOutputDegradedHabitat = QtGui.QLabel()
+        self.labelQUESBOutputDegradedHabitat.setText('[QUESBOutput] Degraded habitat:')
+        self.layoutQUESBOutput.addWidget(self.labelQUESBOutputDegradedHabitat, 3, 0)
         
-        self.lineEditOutputDegradedHabitat = QtGui.QLineEdit()
-        self.lineEditOutputDegradedHabitat.setReadOnly(True)
-        self.layoutOutput.addWidget(self.lineEditOutputDegradedHabitat, 3, 1)
+        self.lineEditQUESBOutputDegradedHabitat = QtGui.QLineEdit()
+        self.lineEditQUESBOutputDegradedHabitat.setReadOnly(True)
+        self.layoutQUESBOutput.addWidget(self.lineEditQUESBOutputDegradedHabitat, 3, 1)
         
-        self.buttonSelectOutputDegradedHabitat = QtGui.QPushButton()
-        self.buttonSelectOutputDegradedHabitat.setText('&Browse')
-        self.layoutOutput.addWidget(self.buttonSelectOutputDegradedHabitat, 3, 2)
+        self.buttonSelectQUESBOutputDegradedHabitat = QtGui.QPushButton()
+        self.buttonSelectQUESBOutputDegradedHabitat.setText('&Browse')
+        self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputDegradedHabitat, 3, 2)
         
-        self.labelOutputHabitatGain = QtGui.QLabel()
-        self.labelOutputHabitatGain.setText('[Output] Habitat gain:')
-        self.layoutOutput.addWidget(self.labelOutputHabitatGain, 4, 0)
+        self.labelQUESBOutputHabitatGain = QtGui.QLabel()
+        self.labelQUESBOutputHabitatGain.setText('[QUESBOutput] Habitat gain:')
+        self.layoutQUESBOutput.addWidget(self.labelQUESBOutputHabitatGain, 4, 0)
         
-        self.lineEditOutputHabitatGain = QtGui.QLineEdit()
-        self.lineEditOutputHabitatGain.setReadOnly(True)
-        self.layoutOutput.addWidget(self.lineEditOutputHabitatGain, 4, 1)
+        self.lineEditQUESBOutputHabitatGain = QtGui.QLineEdit()
+        self.lineEditQUESBOutputHabitatGain.setReadOnly(True)
+        self.layoutQUESBOutput.addWidget(self.lineEditQUESBOutputHabitatGain, 4, 1)
         
-        self.buttonSelectOutputHabitatGain = QtGui.QPushButton()
-        self.buttonSelectOutputHabitatGain.setText('&Browse')
-        self.layoutOutput.addWidget(self.buttonSelectOutputHabitatGain, 4, 2)
+        self.buttonSelectQUESBOutputHabitatGain = QtGui.QPushButton()
+        self.buttonSelectQUESBOutputHabitatGain.setText('&Browse')
+        self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputHabitatGain, 4, 2)
         
-        self.labelOutputRecoveredHabitat = QtGui.QLabel()
-        self.labelOutputRecoveredHabitat.setText('[Output] Recovered habitat:')
-        self.layoutOutput.addWidget(self.labelOutputRecoveredHabitat, 5, 0)
+        self.labelQUESBOutputRecoveredHabitat = QtGui.QLabel()
+        self.labelQUESBOutputRecoveredHabitat.setText('[QUESBOutput] Recovered habitat:')
+        self.layoutQUESBOutput.addWidget(self.labelQUESBOutputRecoveredHabitat, 5, 0)
         
-        self.lineEditOutputRecoveredHabitat = QtGui.QLineEdit()
-        self.lineEditOutputRecoveredHabitat.setReadOnly(True)
-        self.layoutOutput.addWidget(self.lineEditOutputRecoveredHabitat, 5, 1)
+        self.lineEditQUESBOutputRecoveredHabitat = QtGui.QLineEdit()
+        self.lineEditQUESBOutputRecoveredHabitat.setReadOnly(True)
+        self.layoutQUESBOutput.addWidget(self.lineEditQUESBOutputRecoveredHabitat, 5, 1)
         
-        self.buttonSelectOutputRecoveredHabitat = QtGui.QPushButton()
-        self.buttonSelectOutputRecoveredHabitat.setText('&Browse')
-        self.layoutOutput.addWidget(self.buttonSelectOutputRecoveredHabitat, 5, 2)
+        self.buttonSelectQUESBOutputRecoveredHabitat = QtGui.QPushButton()
+        self.buttonSelectQUESBOutputRecoveredHabitat.setText('&Browse')
+        self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputRecoveredHabitat, 5, 2)
         
         # Process tab button
         self.layoutButtonQUESB = QtGui.QHBoxLayout()
@@ -525,17 +590,13 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonQUESB.addWidget(self.buttonProcessQUESB)
         
         # Place the GroupBoxes
-        self.layoutTabQUESB.addWidget(self.groupBoxParameters)
-        self.layoutTabQUESB.addWidget(self.groupBoxOutput)
+        self.layoutTabQUESB.addWidget(self.groupBoxQUESBParameters)
+        self.layoutTabQUESB.addWidget(self.groupBoxQUESBOutput)
         self.layoutTabQUESB.addLayout(self.layoutButtonQUESB)
-        
-        self.tabQUESB.setLayout(self.layoutTabQUESB)
         
         #***********************************************************
         # Setup 'QUES-H' tab
         #***********************************************************
-        self.tabQUESH.setLayout(self.layoutTabQUESH)
-        
         self.tabWidgetQUESH = QtGui.QTabWidget()
         
         self.tabWatershedDelineation = QtGui.QWidget()
@@ -1111,27 +1172,27 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationLocation, 4, 1)
         self.labelWatershedModelEvaluationLocation.setBuddy(self.lineEditWatershedModelEvaluationLocation)
         
-        self.labelOutletReachSubBasinID = QtGui.QLabel()
-        self.labelOutletReachSubBasinID.setText('Outlet reach/sub-basin ID:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelOutletReachSubBasinID, 5, 0)
+        self.labelWatershedModelEvaluationOutletReachSubBasinID = QtGui.QLabel()
+        self.labelWatershedModelEvaluationOutletReachSubBasinID.setText('Outlet reach/sub-basin ID:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationOutletReachSubBasinID, 5, 0)
         
-        self.spinBoxOutletReachSubBasinID = QtGui.QSpinBox()
-        self.spinBoxOutletReachSubBasinID.setRange(1, 99999)
-        self.spinBoxOutletReachSubBasinID.setValue(10)
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.spinBoxOutletReachSubBasinID, 5, 1)
-        self.labelOutletReachSubBasinID.setBuddy(self.spinBoxOutletReachSubBasinID)
+        self.spinBoxWatershedModelEvaluationOutletReachSubBasinID = QtGui.QSpinBox()
+        self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setRange(1, 99999)
+        self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(10)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.spinBoxWatershedModelEvaluationOutletReachSubBasinID, 5, 1)
+        self.labelWatershedModelEvaluationOutletReachSubBasinID.setBuddy(self.spinBoxWatershedModelEvaluationOutletReachSubBasinID)
         
-        self.labelObservedDebitFile = QtGui.QLabel()
-        self.labelObservedDebitFile.setText('Observed debit file:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelObservedDebitFile, 6, 0)
+        self.labelWatershedModelEvaluationObservedDebitFile = QtGui.QLabel()
+        self.labelWatershedModelEvaluationObservedDebitFile.setText('Observed debit file:')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationObservedDebitFile, 6, 0)
         
-        self.lineEditObservedDebitFile = QtGui.QLineEdit()
-        self.lineEditObservedDebitFile.setReadOnly(True)
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditObservedDebitFile, 6, 1)
+        self.lineEditWatershedModelEvaluationObservedDebitFile = QtGui.QLineEdit()
+        self.lineEditWatershedModelEvaluationObservedDebitFile.setReadOnly(True)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationObservedDebitFile, 6, 1)
         
-        self.buttonSelectObservedDebitFile = QtGui.QPushButton()
-        self.buttonSelectObservedDebitFile.setText('&Browse')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectObservedDebitFile, 6, 2)
+        self.buttonSelectWatershedModelEvaluationObservedDebitFile = QtGui.QPushButton()
+        self.buttonSelectWatershedModelEvaluationObservedDebitFile.setText('&Browse')
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectWatershedModelEvaluationObservedDebitFile, 6, 2)
         
         # 'Output' GroupBox
         self.groupBoxWatershedModelEvaluationOutput = QtGui.QGroupBox('Output')
@@ -1188,17 +1249,17 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelWatershedIndicatorsParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutWatershedIndicatorsParametersInfo.addWidget(self.labelWatershedIndicatorsParametersInfo)
         
-        self.labelSWATTXTINOUTDir = QtGui.QLabel()
-        self.labelSWATTXTINOUTDir.setText('SWAT TXTINOUT directory:')
-        self.layoutWatershedIndicatorsParameters.addWidget(self.labelSWATTXTINOUTDir, 0, 0)
+        self.labelWatershedIndicatorsSWATTXTINOUTDir = QtGui.QLabel()
+        self.labelWatershedIndicatorsSWATTXTINOUTDir.setText('SWAT TXTINOUT directory:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelWatershedIndicatorsSWATTXTINOUTDir, 0, 0)
         
-        self.lineEditSWATTXTINOUTDir = QtGui.QLineEdit()
-        self.lineEditSWATTXTINOUTDir.setReadOnly(True)
-        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditSWATTXTINOUTDir, 0, 1)
+        self.lineEditWatershedIndicatorsSWATTXTINOUTDir = QtGui.QLineEdit()
+        self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setReadOnly(True)
+        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditWatershedIndicatorsSWATTXTINOUTDir, 0, 1)
         
-        self.buttonSelectSWATTXTINOUTDir = QtGui.QPushButton()
-        self.buttonSelectSWATTXTINOUTDir.setText('&Browse')
-        self.layoutWatershedIndicatorsParameters.addWidget(self.buttonSelectSWATTXTINOUTDir, 0, 2)
+        self.buttonSelectWatershedIndicatorsSWATTXTINOUTDir = QtGui.QPushButton()
+        self.buttonSelectWatershedIndicatorsSWATTXTINOUTDir.setText('&Browse')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.buttonSelectWatershedIndicatorsSWATTXTINOUTDir, 0, 2)
         
         self.labelWatershedIndicatorsDateInitial = QtGui.QLabel()
         self.labelWatershedIndicatorsDateInitial.setText('Initial date:')
@@ -1218,17 +1279,17 @@ class DialogLumensQUES(QtGui.QDialog):
         self.dateWatershedIndicatorsDateFinal.setDisplayFormat('dd/MM/yyyy')
         self.layoutWatershedIndicatorsParameters.addWidget(self.dateWatershedIndicatorsDateFinal, 2, 1)
         
-        self.labelSubWatershedPolygon = QtGui.QLabel()
-        self.labelSubWatershedPolygon.setText('Sub watershed polygon:')
-        self.layoutWatershedIndicatorsParameters.addWidget(self.labelSubWatershedPolygon, 3, 0)
+        self.labelWatershedIndicatorsSubWatershedPolygon = QtGui.QLabel()
+        self.labelWatershedIndicatorsSubWatershedPolygon.setText('Sub watershed polygon:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelWatershedIndicatorsSubWatershedPolygon, 3, 0)
         
-        self.lineEditSubWatershedPolygon = QtGui.QLineEdit()
-        self.lineEditSubWatershedPolygon.setReadOnly(True)
-        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditSubWatershedPolygon, 3, 1)
+        self.lineEditWatershedIndicatorsSubWatershedPolygon = QtGui.QLineEdit()
+        self.lineEditWatershedIndicatorsSubWatershedPolygon.setReadOnly(True)
+        self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditWatershedIndicatorsSubWatershedPolygon, 3, 1)
         
-        self.buttonSelectSubWatershedPolygon = QtGui.QPushButton()
-        self.buttonSelectSubWatershedPolygon.setText('&Browse')
-        self.layoutWatershedIndicatorsParameters.addWidget(self.buttonSelectSubWatershedPolygon, 3, 2)
+        self.buttonSelectWatershedIndicatorsSubWatershedPolygon = QtGui.QPushButton()
+        self.buttonSelectWatershedIndicatorsSubWatershedPolygon.setText('&Browse')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.buttonSelectWatershedIndicatorsSubWatershedPolygon, 3, 2)
         
         self.labelWatershedIndicatorsLocation = QtGui.QLabel()
         self.labelWatershedIndicatorsLocation.setText('&Location:')
@@ -1239,15 +1300,15 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutWatershedIndicatorsParameters.addWidget(self.lineEditWatershedIndicatorsLocation, 4, 1)
         self.labelWatershedIndicatorsLocation.setBuddy(self.lineEditWatershedIndicatorsLocation)
         
-        self.labelSubWatershedOutput = QtGui.QLabel()
-        self.labelSubWatershedOutput.setText('&Sub watershed output:')
-        self.layoutWatershedIndicatorsParameters.addWidget(self.labelSubWatershedOutput, 5, 0)
+        self.labelWatershedIndicatorsSubWatershedOutput = QtGui.QLabel()
+        self.labelWatershedIndicatorsSubWatershedOutput.setText('&Sub watershed output:')
+        self.layoutWatershedIndicatorsParameters.addWidget(self.labelWatershedIndicatorsSubWatershedOutput, 5, 0)
         
-        self.spinBoxSubWatershedOutput = QtGui.QSpinBox()
-        self.spinBoxSubWatershedOutput.setRange(1, 99999)
-        self.spinBoxSubWatershedOutput.setValue(10)
-        self.layoutWatershedIndicatorsParameters.addWidget(self.spinBoxSubWatershedOutput, 5, 1)
-        self.labelSubWatershedOutput.setBuddy(self.spinBoxSubWatershedOutput)
+        self.spinBoxWatershedIndicatorsSubWatershedOutput = QtGui.QSpinBox()
+        self.spinBoxWatershedIndicatorsSubWatershedOutput.setRange(1, 99999)
+        self.spinBoxWatershedIndicatorsSubWatershedOutput.setValue(10)
+        self.layoutWatershedIndicatorsParameters.addWidget(self.spinBoxWatershedIndicatorsSubWatershedOutput, 5, 1)
+        self.labelWatershedIndicatorsSubWatershedOutput.setBuddy(self.spinBoxWatershedIndicatorsSubWatershedOutput)
         
         # 'Output' GroupBox
         self.groupBoxWatershedIndicatorsOutput = QtGui.QGroupBox('Output')
@@ -1263,29 +1324,29 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelWatershedIndicatorsOutputInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutWatershedIndicatorsOutputInfo.addWidget(self.labelWatershedIndicatorsOutputInfo)
         
-        self.labelOutputInitialYearSubWatershedLevelIndicators = QtGui.QLabel()
-        self.labelOutputInitialYearSubWatershedLevelIndicators.setText('[Output] Initial year sub watershed level indicators:')
-        self.layoutWatershedIndicatorsOutput.addWidget(self.labelOutputInitialYearSubWatershedLevelIndicators, 0, 0)
+        self.labelWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators = QtGui.QLabel()
+        self.labelWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText('[Output] Initial year sub watershed level indicators:')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.labelWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators, 0, 0)
         
-        self.lineEditOutputInitialYearSubWatershedLevelIndicators = QtGui.QLineEdit()
-        self.lineEditOutputInitialYearSubWatershedLevelIndicators.setReadOnly(True)
-        self.layoutWatershedIndicatorsOutput.addWidget(self.lineEditOutputInitialYearSubWatershedLevelIndicators, 0, 1)
+        self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators = QtGui.QLineEdit()
+        self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setReadOnly(True)
+        self.layoutWatershedIndicatorsOutput.addWidget(self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators, 0, 1)
         
-        self.buttonSelectOutputInitialYearSubWatershedLevelIndicators = QtGui.QPushButton()
-        self.buttonSelectOutputInitialYearSubWatershedLevelIndicators.setText('&Browse')
-        self.layoutWatershedIndicatorsOutput.addWidget(self.buttonSelectOutputInitialYearSubWatershedLevelIndicators, 0, 2)
+        self.buttonSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators = QtGui.QPushButton()
+        self.buttonSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText('&Browse')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.buttonSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators, 0, 2)
         
-        self.labelOutputFinalYearSubWatershedLevelIndicators = QtGui.QLabel()
-        self.labelOutputFinalYearSubWatershedLevelIndicators.setText('[Output] Final year sub watershed level indicators:')
-        self.layoutWatershedIndicatorsOutput.addWidget(self.labelOutputFinalYearSubWatershedLevelIndicators, 1, 0)
+        self.labelWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators = QtGui.QLabel()
+        self.labelWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText('[Output] Final year sub watershed level indicators:')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.labelWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators, 1, 0)
         
-        self.lineEditOutputFinalYearSubWatershedLevelIndicators = QtGui.QLineEdit()
-        self.lineEditOutputFinalYearSubWatershedLevelIndicators.setReadOnly(True)
-        self.layoutWatershedIndicatorsOutput.addWidget(self.lineEditOutputFinalYearSubWatershedLevelIndicators, 1, 1)
+        self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators = QtGui.QLineEdit()
+        self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setReadOnly(True)
+        self.layoutWatershedIndicatorsOutput.addWidget(self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators, 1, 1)
         
-        self.buttonSelectOutputFinalYearSubWatershedLevelIndicators = QtGui.QPushButton()
-        self.buttonSelectOutputFinalYearSubWatershedLevelIndicators.setText('&Browse')
-        self.layoutWatershedIndicatorsOutput.addWidget(self.buttonSelectOutputFinalYearSubWatershedLevelIndicators, 1, 2)
+        self.buttonSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators = QtGui.QPushButton()
+        self.buttonSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText('&Browse')
+        self.layoutWatershedIndicatorsOutput.addWidget(self.buttonSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators, 1, 2)
         
         # Process tab button
         self.layoutButtonWatershedIndicators = QtGui.QHBoxLayout()
@@ -1303,12 +1364,14 @@ class DialogLumensQUES(QtGui.QDialog):
         #***********************************************************
         # Setup 'Reclassification' tab
         #***********************************************************
-        self.tabReclassification.setLayout(self.layoutTabReclassification)
+        
+        
         
         #***********************************************************
         # Setup 'Result' tab
         #***********************************************************
-        self.tabResult.setLayout(self.layoutTabResult)
+        
+        
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -1322,6 +1385,9 @@ class DialogLumensQUES(QtGui.QDialog):
         super(DialogLumensQUES, self).showEvent(event)
     
     
+    #***********************************************************
+    # 'QUES-C' tab QGroupBox toggle handlers
+    #***********************************************************
     def toggleCarbonAccounting(self, checked):
         """
         """
@@ -1349,6 +1415,9 @@ class DialogLumensQUES(QtGui.QDialog):
             self.contentOptionsSummarizeMultiplePeriod.setDisabled(True)
     
     
+    #***********************************************************
+    # 'QUES-H' tab QGroupBox toggle handlers
+    #***********************************************************
     def toggleDominantHRU(self, checked):
         """
         """
@@ -1376,6 +1445,9 @@ class DialogLumensQUES(QtGui.QDialog):
             self.contentOptionsMultipleHRU.setDisabled(True)
     
     
+    #***********************************************************
+    # 'Pre-QUES' tab QPushButton handlers
+    #***********************************************************
     def addLandCoverRow(self, period):
         """
         """
@@ -1411,4 +1483,531 @@ class DialogLumensQUES(QtGui.QDialog):
         """
         """
         pass
+    
+    
+    def handlerSelectPreQUESWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditPreQUESWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectPreQUESPlanningUnit(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Planning Unit Map', QtCore.QDir.homePath(), 'Planning Unit Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditPreQUESPlanningUnit.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectPreQUESCsvPlanningUnit(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Planning Unit Lookup Table', QtCore.QDir.homePath(), 'Planning Unit Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditPreQUESCsvPlanningUnit.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandCoverCsvLandUse(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Lookup Table', QtCore.QDir.homePath(), 'Land Use Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandCoverCsvLandUse.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'QUES-C' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectCACsvfile(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Carbon Density Lookup Table', QtCore.QDir.homePath(), 'Carbon Density Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditCACsvfile.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectPCACsvfile(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Carbon Stock Lookup Table', QtCore.QDir.homePath(), 'Carbon Stock Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditPCACsvfile.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'QUES-B' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectQUESBCsvLandCover(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Lookup', QtCore.QDir.homePath(), 'Land Cover Lookup (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditQUESBCsvLandCover.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectQUESBCsvClassDescriptors(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Class Descriptors', QtCore.QDir.homePath(), 'Class Descriptors (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditQUESBCsvClassDescriptors.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectQUESBCsvEdgeContrast(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Edge Contrast', QtCore.QDir.homePath(), 'Edge Contrast (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditQUESBCsvEdgeContrast.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectQUESBCsvZoneLookup(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Zone Lookup', QtCore.QDir.homePath(), 'Zone Lookup (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditQUESBCsvZoneLookup.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectQUESBOutputTECIInitial(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select TECI Initial Output', QtCore.QDir.homePath(), 'TECI Initial (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if outputfile:
+            self.lineEditQUESBOutputTECIInitial.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectQUESBOutputTECIFinal(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select TECI Final Output', QtCore.QDir.homePath(), 'TECI Final (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if outputfile:
+            self.lineEditQUESBOutputTECIFinal.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectQUESBOutputHabitatLoss(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Habitat Loss Output', QtCore.QDir.homePath(), 'Habitat Loss (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if outputfile:
+            self.lineEditOutputHabitatLoss.setText(outputfile)
+            
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectQUESBOutputDegradedHabitat(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Degraded Habitat', QtCore.QDir.homePath(), 'Degraded Habitat (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if outputfile:
+            self.lineEditQUESBOutputDegradedHabitat.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectQUESBOutputHabitatGain(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Habitat Gain', QtCore.QDir.homePath(), 'Habitat Gain (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if outputfile:
+            self.lineEditQUESBOutputHabitatGain.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectQUESBOutputRecoveredHabitat(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Recovered Habitat Output', QtCore.QDir.homePath(), 'Recovered Habitat (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if outputfile:
+            self.lineEditQUESBOutputRecoveredHabitat.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    #***********************************************************
+    # 'QUES-H' Hydrological Response Unit Definition tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectDominantHRUWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditDominantHRUWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectDominantHRULandUseMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Map', QtCore.QDir.homePath(), 'Land Use Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRULandUseMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantHRUSoilMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Soil Map', QtCore.QDir.homePath(), 'Soil Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRUSoilMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantHRUSlopeMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Slope Map', QtCore.QDir.homePath(), 'Slope Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRUSlopeMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantHRUSubcatchmentMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Subcatchment Map', QtCore.QDir.homePath(), 'Subcatchment Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRUSubcatchmentMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantHRULandUseClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Classification', QtCore.QDir.homePath(), 'Land Use Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRULandUseClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantHRUSoilClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Soil Classification', QtCore.QDir.homePath(), 'Soil Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRUSoilClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantHRUSlopeClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Slope Classification', QtCore.QDir.homePath(), 'Slope Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditDominantHRUSlopeClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditDominantLUSSLWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectDominantLUSSLLandUseMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Map', QtCore.QDir.homePath(), 'Land Use Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLLandUseMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLSoilMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Soil Map', QtCore.QDir.homePath(), 'Soil Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLSoilMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLSlopeMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Slope Map', QtCore.QDir.homePath(), 'Slope Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLSlopeMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLSubcatchmentMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Subcatchment Map', QtCore.QDir.homePath(), 'Subcatchment Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLSubcatchmentMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLLandUseClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Classification', QtCore.QDir.homePath(), 'Land Use Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLLandUseClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLSoilClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Soil Classification', QtCore.QDir.homePath(), 'Soil Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLSoilClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectDominantLUSSLSlopeClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Slope Classification', QtCore.QDir.homePath(), 'Slope Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditDominantLUSSLSlopeClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRUWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditMultipleHRUWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectMultipleHRULandUseMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Map', QtCore.QDir.homePath(), 'Land Use Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRULandUseMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRUSoilMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Soil Map', QtCore.QDir.homePath(), 'Soil Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRUSoilMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRUSlopeMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Slope Map', QtCore.QDir.homePath(), 'Slope Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRUSlopeMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRUSubcatchmentMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Subcatchment Map', QtCore.QDir.homePath(), 'Subcatchment Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRUSubcatchmentMap.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRULandUseClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Classification', QtCore.QDir.homePath(), 'Land Use Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRULandUseClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRUSoilClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Soil Classification', QtCore.QDir.homePath(), 'Soil Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRUSoilClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleHRUSlopeClassification(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Slope Classification', QtCore.QDir.homePath(), 'Slope Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditMultipleHRUSlopeClassification.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'QUES-H' Watershed Model Evaluation tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectWatershedModelEvaluationWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditWatershedModelEvaluationWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectWatershedModelEvaluationObservedDebitFile(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Observed Debit File', QtCore.QDir.homePath(), 'Observed Debit File (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if file:
+            self.lineEditWatershedModelEvaluationObservedDebitFile.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOutputWatershedModelEvaluation(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Watershed Model Evaluation Output', QtCore.QDir.homePath(), 'Watershed Model Evaluation (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if outputfile:
+            self.lineEditOutputWatershedModelEvaluation.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    #***********************************************************
+    # 'QUES-H' Watershed Indicators tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectWatershedIndicatorsSWATTXTINOUTDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select SWAT TXTINOUT Directory'))
+        
+        if dir:
+            self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    
+    
+    def handlerSelectWatershedIndicatorsSubWatershedPolygon(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Sub Watershed Polygon', QtCore.QDir.homePath(), 'Sub Watershed Polygon (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if file:
+            self.lineEditWatershedIndicatorsSubWatershedPolygon.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Initial Year Sub Watershed Level Indicators Output', QtCore.QDir.homePath(), 'Initial Year Sub Watershed Level Indicators (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if outputfile:
+            self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Final Year Sub Watershed Level Indicators Output', QtCore.QDir.homePath(), 'Final Year Sub Watershed Level Indicators (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if outputfile:
+            self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
     

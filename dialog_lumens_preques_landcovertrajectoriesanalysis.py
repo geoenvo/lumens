@@ -187,18 +187,6 @@ class DialogLumensPreQUESLandcoverTrajectoriesAnalysis(DialogLumensBase):
             logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
     
     
-    def handlerSelectLandCoverT1(self):
-        """Select a raster file
-        """
-        rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Land Cover Map of T1', QtCore.QDir.homePath(), 'Land Cover Map of T1 (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
-        
-        if rasterfile:
-            self.lineEditLandCoverT1.setText(rasterfile)
-            
-            logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
-    
-    
     def handlerSelectPlanningUnit(self):
         """Select a raster file
         """
@@ -206,7 +194,7 @@ class DialogLumensPreQUESLandcoverTrajectoriesAnalysis(DialogLumensBase):
             self, 'Select Planning Unit Map', QtCore.QDir.homePath(), 'Planning Unit Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
         
         if rasterfile:
-            self.lineEditLandCoverT2.setText(rasterfile)
+            self.lineEditPlanningUnit.setText(rasterfile)
             
             logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
     

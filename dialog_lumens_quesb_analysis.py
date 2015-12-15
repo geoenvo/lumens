@@ -370,7 +370,7 @@ class DialogLumensQUESBAnalysis(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['csvEdgeContrast'] = unicode(self.lineEditCsvEdgeContrast.text())
         self.main.appSettings[type(self).__name__]['csvZoneLookup'] = unicode(self.lineEditCsvZoneLookup.text())
         ##self.main.appSettings[type(self).__name__]['refMapID'] = self.spinBoxRefMapID.value()
-        self.main.appSettings[type(self).__name__]['refMapID'] = = self.comboBoxRefMapID.itemData(self.comboBoxRefMapID.currentIndex())
+        self.main.appSettings[type(self).__name__]['refMapID'] = self.comboBoxRefMapID.itemData(self.comboBoxRefMapID.currentIndex())
         
         outputTECIInitial = unicode(self.lineEditOutputTECIInitial.text())
         outputTECIFinal = unicode(self.lineEditOutputTECIFinal.text())

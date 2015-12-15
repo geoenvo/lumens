@@ -63,6 +63,7 @@ from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlan
 from dialog_lumens_pur_finalization import DialogLumensPURFinalization
 from dialog_lumens_preques_landcoverchangeanalysis import DialogLumensPreQUESLandcoverChangeAnalysis
 from dialog_lumens_preques_landcovertrajectoriesanalysis import DialogLumensPreQUESLandcoverTrajectoriesAnalysis
+from dialog_lumens_ques import DialogLumensQUES
 from dialog_lumens_quesc_carbonaccounting import DialogLumensQUESCCarbonAccounting
 from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatlandCarbonAccounting
 from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummarizeMultiplePeriod
@@ -81,6 +82,7 @@ from dialog_lumens_ta_landdistribreq import DialogLumensTARegionalEconomyLandDis
 from dialog_lumens_ta_impactlanduse import DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis
 from dialog_lumens_ta_finaldemandscenario import DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis
 from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis
+from dialog_lumens_sciendo import DialogLumensSCIENDO
 from dialog_lumens_sciendo_driversanalysis import DialogLumensSCIENDODriversAnalysis
 from dialog_lumens_sciendo_buildscenario import DialogLumensSCIENDOBuildScenario
 from dialog_lumens_sciendo_historicalbaselineproj import DialogLumensSCIENDOHistoricalBaselineProjection
@@ -550,6 +552,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensPURFinalization.triggered.connect(self.handlerDialogLumensPURFinalization)
         
         # QUES menu
+        self.actionDialogLumensQUES.triggered.connect(self.handlerDialogLumensQUES)
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis.triggered.connect(self.handlerDialogLumensPreQUESLandcoverChangeAnalysis)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.triggered.connect(self.handlerDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
         self.actionDialogLumensQUESCCarbonAccounting.triggered.connect(self.handlerDialogLumensQUESCCarbonAccounting)
@@ -574,6 +577,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
         
         # SCIENDO menu
+        self.actionDialogLumensSCIENDO.triggered.connect(self.handlerDialogLumensSCIENDO)
         self.actionDialogLumensSCIENDODriversAnalysis.triggered.connect(self.handlerDialogLumensSCIENDODriversAnalysis)
         self.actionDialogLumensSCIENDOBuildScenario.triggered.connect(self.handlerDialogLumensSCIENDOBuildScenario)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.triggered.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineProjection)
@@ -795,6 +799,7 @@ class MainWindow(QtGui.QMainWindow):
         self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURFinalization)
         
         # QUES menu
+        self.actionDialogLumensQUES = QtGui.QAction('Quantification Environmental Services', self)
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis = QtGui.QAction('Land cover change analysis', self)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis = QtGui.QAction('Land cover trajectories analysis', self)
         self.actionDialogLumensQUESCCarbonAccounting = QtGui.QAction('Carbon accounting', self)
@@ -811,6 +816,7 @@ class MainWindow(QtGui.QMainWindow):
         self.QUESCMenu = self.quesMenu.addMenu('QUES-C')
         self.QUESBMenu = self.quesMenu.addMenu('QUES-B')
         self.QUESHMenu = self.quesMenu.addMenu('QUES-H')
+        self.quesMenu.addAction(self.actionDialogLumensQUES)
         self.HRUDefMenu = self.QUESHMenu.addMenu('Hydrological Response Unit Definition')
         self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverChangeAnalysis)
         self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
@@ -848,6 +854,7 @@ class MainWindow(QtGui.QMainWindow):
         self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
         
         # SCIENDO menu
+        self.actionDialogLumensSCIENDO = QtGui.QAction('SCIENDO', self)
         self.actionDialogLumensSCIENDODriversAnalysis = QtGui.QAction('Drivers analysis', self)
         self.actionDialogLumensSCIENDOBuildScenario = QtGui.QAction('Build scenario', self)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection = QtGui.QAction('Historical baseline projection', self)
@@ -860,6 +867,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.lowEmissionDevelopmentMenu = self.sciendoMenu.addMenu('Low emission development analysis')
         self.landUseChangeModelingMenu = self.sciendoMenu.addMenu('Land use change modeling')
+        self.sciendoMenu.addAction(self.actionDialogLumensSCIENDO)
         self.historicalBaselineMenu = self.lowEmissionDevelopmentMenu.addMenu('Historical baseline')
         self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineProjection)
         self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
@@ -1040,6 +1048,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
         self.actionDialogLumensPURFinalization.setEnabled(True)
         
+        self.actionDialogLumensQUES.setEnabled(True)
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
         self.actionDialogLumensQUESCCarbonAccounting.setEnabled(True)
@@ -1062,6 +1071,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
         self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
         
+        self.actionDialogLumensSCIENDO.setEnabled(True)
         self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
         self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
@@ -1088,6 +1098,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensPURReconcilePlanningUnit.setDisabled(True)
         self.actionDialogLumensPURFinalization.setDisabled(True)
         
+        self.actionDialogLumensQUES.setDisabled(True)
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setDisabled(True)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setDisabled(True)
         self.actionDialogLumensQUESCCarbonAccounting.setDisabled(True)
@@ -1110,6 +1121,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
         self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
         
+        self.actionDialogLumensSCIENDO.setDisabled(True)
         self.actionDialogLumensSCIENDODriversAnalysis.setDisabled(True)
         self.actionDialogLumensSCIENDOBuildScenario.setDisabled(True)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
@@ -1247,6 +1259,12 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensPURFinalization)
     
     
+    def handlerDialogLumensQUES(self):
+        """
+        """
+        self.openDialog(DialogLumensQUES)
+    
+    
     def handlerDialogLumensPreQUESLandcoverChangeAnalysis(self):
         """
         """
@@ -1365,6 +1383,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
+    
+    
+    def handlerDialogLumensSCIENDO(self):
+        """
+        """
+        self.openDialog(DialogLumensSCIENDO)
     
     
     def handlerDialogLumensSCIENDODriversAnalysis(self):
