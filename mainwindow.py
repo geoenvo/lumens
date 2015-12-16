@@ -73,6 +73,7 @@ from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIn
 from dialog_lumens_quesh_dominanthru import DialogLumensQUESHDominantHRU
 from dialog_lumens_quesh_multiplehru import DialogLumensQUESHMultipleHRU
 from dialog_lumens_quesh_dominantlussl import DialogLumensQUESHDominantLUSSL
+from dialog_lumens_ta_regionaleconomy import DialogLumensTARegionalEconomy
 from dialog_lumens_ta_abacusopportunitycostcurve import DialogLumensTAAbacusOpportunityCostCurve
 from dialog_lumens_ta_opportunitycostcurve import DialogLumensTAOpportunityCostCurve
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
@@ -566,6 +567,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHMultipleHRU.triggered.connect(self.handlerDialogLumensQUESHMultipleHRU)
         
         # TA menu
+        self.actionDialogLumensTARegionalEconomy.triggered.connect(self.handlerDialogLumensTARegionalEconomy)
         self.actionDialogLumensTAAbacusOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCostCurve)
         self.actionDialogLumensTAOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAOpportunityCostCurve)
         self.actionDialogLumensTAOpportunityCostMap.triggered.connect(self.handlerDialogLumensTAOpportunityCostMap)
@@ -831,6 +833,7 @@ class MainWindow(QtGui.QMainWindow):
         self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
         
         # TA menu
+        self.actionDialogLumensTARegionalEconomy = QtGui.QAction('Trade-off Analysis [Regional Economy]', self)
         self.actionDialogLumensTAAbacusOpportunityCostCurve = QtGui.QAction('Abacus opportunity cost curve', self)
         self.actionDialogLumensTAOpportunityCostCurve = QtGui.QAction('Opportunity cost curve', self)
         self.actionDialogLumensTAOpportunityCostMap = QtGui.QAction('Opportunity cost map', self)
@@ -843,6 +846,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.opportunityCostMenu = self.taMenu.addMenu('Opportunity cost')
         self.regionalEconomyMenu = self.taMenu.addMenu('Regional economy')
+        self.taMenu.addAction(self.actionDialogLumensTARegionalEconomy)
         self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCostCurve)
         self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostCurve)
         self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostMap)
@@ -1061,6 +1065,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setEnabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setEnabled(True)
         
+        self.actionDialogLumensTARegionalEconomy.setEnabled(True)
         self.actionDialogLumensTAAbacusOpportunityCostCurve.setEnabled(True)
         self.actionDialogLumensTAOpportunityCostCurve.setEnabled(True)
         self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
@@ -1111,6 +1116,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setDisabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setDisabled(True)
         
+        self.actionDialogLumensTARegionalEconomy.setDisabled(True)
         self.actionDialogLumensTAAbacusOpportunityCostCurve.setDisabled(True)
         self.actionDialogLumensTAOpportunityCostCurve.setDisabled(True)
         self.actionDialogLumensTAOpportunityCostMap.setDisabled(True)
@@ -1329,6 +1335,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensQUESHMultipleHRU)
+    
+    
+    def handlerDialogLumensTARegionalEconomy(self):
+        """
+        """
+        self.openDialog(DialogLumensTARegionalEconomy)
     
     
     def handlerDialogLumensTAAbacusOpportunityCostCurve(self):

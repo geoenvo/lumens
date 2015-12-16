@@ -24,9 +24,66 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         self.checkBoxMultiplePeriod.toggled.connect(self.toggleMultiplePeriod)
         
+        # 'Descriptive Analysis of Regional Economy' tab buttons
+        self.buttonSelectSingleIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectSingleIntermediateConsumptionMatrix)
+        self.buttonSelectSingleValueAddedMatrix.clicked.connect(self.handlerSelectSingleValueAddedMatrix)
+        self.buttonSelectSingleFinalConsumptionMatrix.clicked.connect(self.handlerSelectSingleFinalConsumptionMatrix)
+        self.buttonSelectSingleLabourRequirement.clicked.connect(self.handlerSelectSingleLabourRequirement)
+        self.buttonSelectMultipleIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectMultipleIntermediateConsumptionMatrix)
+        self.buttonSelectMultipleValueAddedMatrix.clicked.connect(self.handlerSelectMultipleValueAddedMatrix)
+        self.buttonSelectMultipleFinalConsumptionMatrix.clicked.connect(self.handlerSelectMultipleFinalConsumptionMatrix)
+        self.buttonSelectMultipleLabourRequirement.clicked.connect(self.handlerSelectMultipleLabourRequirement)
+        self.buttonSelectOtherWorkingDir.clicked.connect(self.handlerSelectOtherWorkingDir)
+        self.buttonSelectOtherValueAddedComponent.clicked.connect(self.handlerSelectOtherValueAddedComponent)
+        self.buttonSelectOtherFinalConsumptionComponent.clicked.connect(self.handlerSelectOtherFinalConsumptionComponent)
+        self.buttonSelectOtherListOfEconomicSector.clicked.connect(self.handlerSelectOtherListOfEconomicSector)
+        
+        # 'Regional Economic Scenario Impact' tab radios
         self.radioRegionalEconomicScenarioImpactFinalDemand.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.radioRegionalEconomicScenarioImpactFinalDemand))
         self.radioRegionalEconomicScenarioImpactGDP.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.radioRegionalEconomicScenarioImpactGDP))
-    
+        
+        # 'Regional Economic Scenario Impact' tab buttons
+        self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario)
+        self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactWorkingDir)
+        self.buttonSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix)
+        self.buttonSelectRegionalEconomicScenarioImpactValueAddedMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactValueAddedMatrix)
+        self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix)
+        self.buttonSelectRegionalEconomicScenarioImpactValueAddedComponent.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactValueAddedComponent)
+        self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionComponent.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalConsumptionComponent)
+        self.buttonSelectRegionalEconomicScenarioImpactListOfEconomicSector.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactListOfEconomicSector)
+        self.buttonSelectRegionalEconomicScenarioImpactLandDistributionMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandDistributionMatrix)
+        self.buttonSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix)
+        self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandCoverComponent)
+        self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLabourRequirement)
+        
+        # 'Land Requirement Analysis' tab buttons
+        self.buttonSelectLandRequirementAnalysisWorkingDir.clicked.connect(self.handlerSelectLandRequirementAnalysisWorkingDir)
+        self.buttonSelectLandRequirementAnalysisLandCoverMap.clicked.connect(self.handlerSelectLandRequirementAnalysisLandCoverMap)
+        self.buttonSelectLandRequirementAnalysisIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectLandRequirementAnalysisIntermediateConsumptionMatrix)
+        self.buttonSelectLandRequirementAnalysisValueAddedMatrix.clicked.connect(self.handlerSelectLandRequirementAnalysisValueAddedMatrix)
+        self.buttonSelectLandRequirementAnalysisFinalConsumptionMatrix.clicked.connect(self.handlerSelectLandRequirementAnalysisFinalConsumptionMatrix)
+        self.buttonSelectLandRequirementAnalysisValueAddedComponent.clicked.connect(self.handlerSelectLandRequirementAnalysisValueAddedComponent)
+        self.buttonSelectLandRequirementAnalysisFinalConsumptionComponent.clicked.connect(self.handlerSelectLandRequirementAnalysisFinalConsumptionComponent)
+        self.buttonSelectLandRequirementAnalysisListOfEconomicSector.clicked.connect(self.handlerSelectLandRequirementAnalysisListOfEconomicSector)
+        self.buttonSelectLandRequirementAnalysisLandDistributionMatrix.clicked.connect(self.handlerSelectLandRequirementAnalysisLandDistributionMatrix)
+        self.buttonSelectLandRequirementAnalysisLandCoverComponent.clicked.connect(self.handlerSelectLandRequirementAnalysisLandCoverComponent)
+        self.buttonSelectLandRequirementAnalysisLabourRequirement.clicked.connect(self.handlerSelectLandRequirementAnalysisLabourRequirement)
+        
+        # 'Land Use Change Impact' tab buttons
+        self.buttonSelectLandUseChangeImpactWorkingDir.clicked.connect(self.handlerSelectLandUseChangeImpactWorkingDir)
+        self.buttonSelectLandUseChangeImpactLandCoverMapP1.clicked.connect(self.handlerSelectLandUseChangeImpactLandCoverMapP1)
+        self.buttonSelectLandUseChangeImpactLandCoverMapP2.clicked.connect(self.handlerSelectLandUseChangeImpactLandCoverMapP2)
+        self.buttonSelectLandUseChangeImpactIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectLandUseChangeImpactIntermediateConsumptionMatrix)
+        self.buttonSelectLandUseChangeImpactValueAddedMatrix.clicked.connect(self.handlerSelectLandUseChangeImpactValueAddedMatrix)
+        self.buttonSelectLandUseChangeImpactFinalConsumptionMatrix.clicked.connect(self.handlerSelectLandUseChangeImpactFinalConsumptionMatrix)
+        self.buttonSelectLandUseChangeImpactValueAddedComponent.clicked.connect(self.handlerSelectLandUseChangeImpactValueAddedComponent)
+        self.buttonSelectLandUseChangeImpactFinalConsumptionComponent.clicked.connect(self.handlerSelectLandUseChangeImpactFinalConsumptionComponent)
+        self.buttonSelectLandUseChangeImpactListOfEconomicSector.clicked.connect(self.handlerSelectLandUseChangeImpactListOfEconomicSector)
+        self.buttonSelectLandUseChangeImpactLandDistributionMatrix.clicked.connect(self.handlerSelectLandUseChangeImpactLandDistributionMatrix)
+        self.buttonSelectLandUseChangeImpactLandRequirementCoefficientMatrix.clicked.connect(self.handlerSelectLandUseChangeImpactLandRequirementCoefficientMatrix)
+        self.buttonSelectLandUseChangeImpactLandCoverComponent.clicked.connect(self.handlerSelectLandUseChangeImpactLandCoverComponent)
+        self.buttonSelectLandUseChangeImpactLabourRequirement.clicked.connect(self.handlerSelectLandUseChangeImpactLabourRequirement)
+        
     
     def setupUi(self, parent):
         self.dialogLayout = QtGui.QVBoxLayout()
@@ -248,71 +305,71 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.labelOtherInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutOtherInfo.addWidget(self.labelOtherInfo)
         
-        self.labelWorkingDir = QtGui.QLabel()
-        self.labelWorkingDir.setText('Working directory:')
-        self.layoutOther.addWidget(self.labelWorkingDir, 0, 0)
+        self.labelOtherWorkingDir = QtGui.QLabel()
+        self.labelOtherWorkingDir.setText('Working directory:')
+        self.layoutOther.addWidget(self.labelOtherWorkingDir, 0, 0)
         
-        self.lineEditWorkingDir = QtGui.QLineEdit()
-        self.lineEditWorkingDir.setReadOnly(True)
-        self.layoutOther.addWidget(self.lineEditWorkingDir, 0, 1)
+        self.lineEditOtherWorkingDir = QtGui.QLineEdit()
+        self.lineEditOtherWorkingDir.setReadOnly(True)
+        self.layoutOther.addWidget(self.lineEditOtherWorkingDir, 0, 1)
         
-        self.buttonSelectWorkingDir = QtGui.QPushButton()
-        self.buttonSelectWorkingDir.setText('&Browse')
-        self.layoutOther.addWidget(self.buttonSelectWorkingDir, 0, 2)
+        self.buttonSelectOtherWorkingDir = QtGui.QPushButton()
+        self.buttonSelectOtherWorkingDir.setText('&Browse')
+        self.layoutOther.addWidget(self.buttonSelectOtherWorkingDir, 0, 2)
         
-        self.labelValueAddedComponent = QtGui.QLabel()
-        self.labelValueAddedComponent.setText('Value added component:')
-        self.layoutOther.addWidget(self.labelValueAddedComponent, 1, 0)
+        self.labelOtherValueAddedComponent = QtGui.QLabel()
+        self.labelOtherValueAddedComponent.setText('Value added component:')
+        self.layoutOther.addWidget(self.labelOtherValueAddedComponent, 1, 0)
         
-        self.lineEditValueAddedComponent = QtGui.QLineEdit()
-        self.lineEditValueAddedComponent.setReadOnly(True)
-        self.layoutOther.addWidget(self.lineEditValueAddedComponent, 1, 1)
+        self.lineEditOtherValueAddedComponent = QtGui.QLineEdit()
+        self.lineEditOtherValueAddedComponent.setReadOnly(True)
+        self.layoutOther.addWidget(self.lineEditOtherValueAddedComponent, 1, 1)
         
-        self.buttonSelectValueAddedComponent = QtGui.QPushButton()
-        self.buttonSelectValueAddedComponent.setText('&Browse')
-        self.layoutOther.addWidget(self.buttonSelectValueAddedComponent, 1, 2)
+        self.buttonSelectOtherValueAddedComponent = QtGui.QPushButton()
+        self.buttonSelectOtherValueAddedComponent.setText('&Browse')
+        self.layoutOther.addWidget(self.buttonSelectOtherValueAddedComponent, 1, 2)
         
-        self.labelFinalConsumptionComponent = QtGui.QLabel()
-        self.labelFinalConsumptionComponent.setText('Final consumption component:')
-        self.layoutOther.addWidget(self.labelFinalConsumptionComponent, 2, 0)
+        self.labelOtherFinalConsumptionComponent = QtGui.QLabel()
+        self.labelOtherFinalConsumptionComponent.setText('Final consumption component:')
+        self.layoutOther.addWidget(self.labelOtherFinalConsumptionComponent, 2, 0)
         
-        self.lineEditFinalConsumptionComponent = QtGui.QLineEdit()
-        self.lineEditFinalConsumptionComponent.setReadOnly(True)
-        self.layoutOther.addWidget(self.lineEditFinalConsumptionComponent, 2, 1)
+        self.lineEditOtherFinalConsumptionComponent = QtGui.QLineEdit()
+        self.lineEditOtherFinalConsumptionComponent.setReadOnly(True)
+        self.layoutOther.addWidget(self.lineEditOtherFinalConsumptionComponent, 2, 1)
         
-        self.buttonSelectFinalConsumptionComponent = QtGui.QPushButton()
-        self.buttonSelectFinalConsumptionComponent.setText('&Browse')
-        self.layoutOther.addWidget(self.buttonSelectFinalConsumptionComponent, 2, 2)
+        self.buttonSelectOtherFinalConsumptionComponent = QtGui.QPushButton()
+        self.buttonSelectOtherFinalConsumptionComponent.setText('&Browse')
+        self.layoutOther.addWidget(self.buttonSelectOtherFinalConsumptionComponent, 2, 2)
         
-        self.labelListOfEconomicSector = QtGui.QLabel()
-        self.labelListOfEconomicSector.setText('List of economic sector:')
-        self.layoutOther.addWidget(self.labelListOfEconomicSector, 3, 0)
+        self.labelOtherListOfEconomicSector = QtGui.QLabel()
+        self.labelOtherListOfEconomicSector.setText('List of economic sector:')
+        self.layoutOther.addWidget(self.labelOtherListOfEconomicSector, 3, 0)
         
-        self.lineEditListOfEconomicSector = QtGui.QLineEdit()
-        self.lineEditListOfEconomicSector.setReadOnly(True)
-        self.layoutOther.addWidget(self.lineEditListOfEconomicSector, 3, 1)
+        self.lineEditOtherListOfEconomicSector = QtGui.QLineEdit()
+        self.lineEditOtherListOfEconomicSector.setReadOnly(True)
+        self.layoutOther.addWidget(self.lineEditOtherListOfEconomicSector, 3, 1)
         
-        self.buttonSelectListOfEconomicSector = QtGui.QPushButton()
-        self.buttonSelectListOfEconomicSector.setText('&Browse')
-        self.layoutOther.addWidget(self.buttonSelectListOfEconomicSector, 3, 2)
+        self.buttonSelectOtherListOfEconomicSector = QtGui.QPushButton()
+        self.buttonSelectOtherListOfEconomicSector.setText('&Browse')
+        self.layoutOther.addWidget(self.buttonSelectOtherListOfEconomicSector, 3, 2)
         
-        self.labelFinancialUnit = QtGui.QLabel()
-        self.labelFinancialUnit.setText('Financial &unit:')
-        self.layoutOther.addWidget(self.labelFinancialUnit, 4, 0)
+        self.labelOtherFinancialUnit = QtGui.QLabel()
+        self.labelOtherFinancialUnit.setText('Financial &unit:')
+        self.layoutOther.addWidget(self.labelOtherFinancialUnit, 4, 0)
         
-        self.lineEditFinancialUnit = QtGui.QLineEdit()
-        self.lineEditFinancialUnit.setText('Million Rupiah')
-        self.layoutOther.addWidget(self.lineEditFinancialUnit, 4, 1)
-        self.labelFinancialUnit.setBuddy(self.lineEditFinancialUnit)
+        self.lineEditOtherFinancialUnit = QtGui.QLineEdit()
+        self.lineEditOtherFinancialUnit.setText('Million Rupiah')
+        self.layoutOther.addWidget(self.lineEditOtherFinancialUnit, 4, 1)
+        self.labelOtherFinancialUnit.setBuddy(self.lineEditOtherFinancialUnit)
         
-        self.labelAreaName = QtGui.QLabel()
-        self.labelAreaName.setText('&Area name:')
-        self.layoutOther.addWidget(self.labelAreaName, 5, 0)
+        self.labelOtherAreaName = QtGui.QLabel()
+        self.labelOtherAreaName.setText('&Area name:')
+        self.layoutOther.addWidget(self.labelOtherAreaName, 5, 0)
         
-        self.lineEditAreaName = QtGui.QLineEdit()
-        self.lineEditAreaName.setText('area')
-        self.layoutOther.addWidget(self.lineEditAreaName, 5, 1)
-        self.labelAreaName.setBuddy(self.lineEditAreaName)
+        self.lineEditOtherAreaName = QtGui.QLineEdit()
+        self.lineEditOtherAreaName.setText('area')
+        self.layoutOther.addWidget(self.lineEditOtherAreaName, 5, 1)
+        self.labelOtherAreaName.setBuddy(self.lineEditOtherAreaName)
         
         # Process tab button
         self.layoutButtonDescriptiveAnalysis = QtGui.QHBoxLayout()
@@ -430,9 +487,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix, 3, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionMatrix = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionMatrix.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionMatrix, 3, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix, 3, 2)
         
         self.labelRegionalEconomicScenarioImpactValueAddedComponent = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactValueAddedComponent.setText('Value added component:')
@@ -442,9 +499,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactValueAddedComponent, 4, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectValueAddedComponent = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectValueAddedComponent.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectValueAddedComponent, 4, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactValueAddedComponent = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactValueAddedComponent.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactValueAddedComponent, 4, 2)
         
         self.labelRegionalEconomicScenarioImpactFinalConsumptionComponent = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactFinalConsumptionComponent.setText('Final consumption component:')
@@ -454,9 +511,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent, 5, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionComponent = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionComponent.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectFinalConsumptionComponent, 5, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionComponent = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionComponent.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionComponent, 5, 2)
         
         self.labelRegionalEconomicScenarioImpactListOfEconomicSector = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactListOfEconomicSector.setText('List of economic sector:')
@@ -466,9 +523,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector, 6, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectListOfEconomicSector = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectListOfEconomicSector.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectListOfEconomicSector, 6, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactListOfEconomicSector = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactListOfEconomicSector.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactListOfEconomicSector, 6, 2)
         
         self.labelRegionalEconomicScenarioImpactLandDistributionMatrix = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactLandDistributionMatrix.setText('Land distribution matrix:')
@@ -478,9 +535,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix, 7, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectLandDistributionMatrix = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectLandDistributionMatrix.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLandDistributionMatrix, 7, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactLandDistributionMatrix = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactLandDistributionMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactLandDistributionMatrix, 7, 2)
         
         self.labelRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText('Land requirement coefficient matrix:')
@@ -490,9 +547,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix, 8, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectLandRequirementCoefficientMatrix = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectLandRequirementCoefficientMatrix.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLandRequirementCoefficientMatrix, 8, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix, 8, 2)
         
         self.labelRegionalEconomicScenarioImpactLandCoverComponent = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactLandCoverComponent.setText('Land cover component:')
@@ -502,9 +559,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLandCoverComponent, 9, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectLandCoverComponent = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectLandCoverComponent.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLandCoverComponent, 9, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent, 9, 2)
         
         self.labelRegionalEconomicScenarioImpactLabourRequirement = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactLabourRequirement.setText('Labour requirement:')
@@ -514,9 +571,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setReadOnly(True)
         self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactLabourRequirement, 10, 1)
         
-        self.buttonRegionalEconomicScenarioImpactSelectLabourRequirement = QtGui.QPushButton()
-        self.buttonRegionalEconomicScenarioImpactSelectLabourRequirement.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonRegionalEconomicScenarioImpactSelectLabourRequirement, 10, 2)
+        self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement.setText('&Browse')
+        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement, 10, 2)
         
         self.labelRegionalEconomicScenarioImpactFinancialUnit = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactFinancialUnit.setText('Financial &unit:')
@@ -1024,4 +1081,552 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
             self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
             self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+    
+    
+    #***********************************************************
+    # 'Descriptive Analysis of Regional Economy' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectSingleIntermediateConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditSingleIntermediateConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectSingleValueAddedMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditSingleValueAddedMatrix.setText(file) 
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectSingleFinalConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditSingleFinalConsumptionMatrix.setText(file) 
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectSingleLabourRequirement(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditSingleLabourRequirement.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOtherWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditOtherWorkingDir.setText(dir) 
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectOtherValueAddedComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditOtherValueAddedComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOtherFinalConsumptionComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditOtherFinalConsumptionComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOtherListOfEconomicSector(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditOtherListOfEconomicSector.setText(file) 
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleIntermediateConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleIntermediateConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleValueAddedMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleValueAddedMatrix.setText(file) 
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleFinalConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditMultipleFinalConsumptionMatrix.setText(file) 
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectMultipleLabourRequirement(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditMultipleLabourRequirement.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'Regional Economic Impact Scenario' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Demand Change Scenario', QtCore.QDir.homePath(), 'Final Demand Change Scenario (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(dir)
+            
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactValueAddedMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactValueAddedComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactFinalConsumptionComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactListOfEconomicSector(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactLandDistributionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Requirement Coefficient Matrix', QtCore.QDir.homePath(), 'Land Requirement Coefficient Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactLandCoverComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactLabourRequirement(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'Land Requirement Analysis' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectLandRequirementAnalysisWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditLandRequirementAnalysisWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectLandRequirementAnalysisLandCoverMap(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Map', QtCore.QDir.homePath(), 'Land Cover Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisLandCoverMap.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisIntermediateConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisValueAddedMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisValueAddedMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisFinalConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisValueAddedComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisValueAddedComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisFinalConsumptionComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisListOfEconomicSector(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisListOfEconomicSector.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisLandDistributionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisLandCoverComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisLandCoverComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandRequirementAnalysisLabourRequirement(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandRequirementAnalysisLabourRequirement.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'Land Use Change Impact' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectLandUseChangeImpactWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditLandUseChangeImpactWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectLandUseChangeImpactLandCoverMapP1(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Map Period 1', QtCore.QDir.homePath(), 'Land Cover Map Period 1 (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactLandCoverMapP1.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactLandCoverMapP2(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Map Period 2', QtCore.QDir.homePath(), 'Land Cover Map Period 2 (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactLandCoverMapP2.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactIntermediateConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactValueAddedMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactValueAddedMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactFinalConsumptionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactValueAddedComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactValueAddedComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactFinalConsumptionComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactListOfEconomicSector(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactListOfEconomicSector.setText(file)
+            
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactLandDistributionMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactLandDistributionMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactLandRequirementCoefficientMatrix(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Requirement Coefficient Matrix', QtCore.QDir.homePath(), 'Land Requirement Coefficient Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactLandCoverComponent(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactLandCoverComponent.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectLandUseChangeImpactLabourRequirement(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditLandUseChangeImpactLabourRequirement.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # Process tabs
+    #***********************************************************
+    def setAppSetings(self):
+        """
+        """
+        pass
     
