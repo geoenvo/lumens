@@ -22,8 +22,25 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         self.setupUi(self)
         
-        self.buttonSelectProjectFile.clicked.connect(self.handlerSelectProjectFile)
-    
+        # 'Abacus Opportunity Cost' tab buttons
+        self.buttonSelectAOCProjectFile.clicked.connect(self.handlerSelectAOCProjectFile)
+        
+        # 'Opportunity Cost Curve' tab buttons
+        self.buttonSelectOCCWorkingDir.clicked.connect(self.handlerSelectOCCWorkingDir)
+        self.buttonSelectOCCQUESCDatabase.clicked.connect(self.handlerSelectOCCQUESCDatabase)
+        self.buttonSelectOCCCsvNPVTable.clicked.connect(self.handlerSelectOCCCsvNPVTable)
+        self.buttonSelectOCCOutputOpportunityCostDatabase.clicked.connect(self.handlerSelectOCCOutputOpportunityCostDatabase)
+        self.buttonSelectOCCOutputOpportunityCostReport.clicked.connect(self.handlerSelectOCCOutputOpportunityCostReport)
+        
+        # 'Opportunity Cost Map' tab buttons
+        self.buttonSelectOCMLandUseT1.clicked.connect(self.handlerSelectOCMLandUseT1)
+        self.buttonSelectOCMLandUseT2.clicked.connect(self.handlerSelectOCMLandUseT2)
+        self.buttonSelectPlanningUnit.clicked.connect(self.handlerSelectPlanningUnit)
+        self.buttonSelectCsvPlanningUnit.clicked.connect(self.handlerSelectCsvPlanningUnit)
+        self.buttonSelectOCMWorkingDir.clicked.connect(self.handlerSelectOCMWorkingDir)
+        self.buttonSelectOCMCsvCarbon.clicked.connect(self.handlerSelectOCMCsvCarbon)
+        self.buttonSelectOCMCsvProfitability.clicked.connect(self.handlerSelectOCMCsvProfitability)
+        
     
     def setupUi(self, parent):
         self.dialogLayout = QtGui.QVBoxLayout()
@@ -44,6 +61,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabOpportunityCostMap = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         
+        self.tabAbacusOpportunityCost.setLayout(self.layoutTabAbacusOpportunityCost)
+        self.tabOpportunityCostCurve.setLayout(self.layoutTabOpportunityCostCurve)
+        self.tabOpportunityCostMap.setLayout(self.layoutTabOpportunityCostMap)
+        self.tabResult.setLayout(self.layoutTabResult)
+        
         self.dialogLayout.addWidget(self.tabWidget)
         
         #***********************************************************
@@ -63,17 +85,17 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.labelOtherInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutOtherInfo.addWidget(self.labelOtherInfo)
         
-        self.labelProjectFile = QtGui.QLabel(parent)
-        self.labelProjectFile.setText('Abacus project file:')
-        self.layoutOther.addWidget(self.labelProjectFile, 0, 0)
+        self.labelAOCProjectFile = QtGui.QLabel(parent)
+        self.labelAOCProjectFile.setText('Abacus project file:')
+        self.layoutOther.addWidget(self.labelAOCProjectFile, 0, 0)
         
-        self.lineEditProjectFile = QtGui.QLineEdit(parent)
-        self.lineEditProjectFile.setReadOnly(True)
-        self.layoutOther.addWidget(self.lineEditProjectFile, 0, 1)
+        self.lineEditAOCProjectFile = QtGui.QLineEdit(parent)
+        self.lineEditAOCProjectFile.setReadOnly(True)
+        self.layoutOther.addWidget(self.lineEditAOCProjectFile, 0, 1)
         
-        self.buttonSelectProjectFile = QtGui.QPushButton(parent)
-        self.buttonSelectProjectFile.setText('&Browse')
-        self.layoutOther.addWidget(self.buttonSelectProjectFile, 0, 2)
+        self.buttonSelectAOCProjectFile = QtGui.QPushButton(parent)
+        self.buttonSelectAOCProjectFile.setText('&Browse')
+        self.layoutOther.addWidget(self.buttonSelectAOCProjectFile, 0, 2)
         
         # Process tab button
         self.layoutButtonAbacusOpportunityCost = QtGui.QHBoxLayout()
@@ -85,7 +107,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabAbacusOpportunityCost.addWidget(self.groupBoxOther)
         self.layoutTabAbacusOpportunityCost.addLayout(self.layoutButtonAbacusOpportunityCost)
         
-        self.tabAbacusOpportunityCost.setLayout(self.layoutTabAbacusOpportunityCost)
         
         #***********************************************************
         # Setup 'Opportunity cost curve' tab
@@ -150,62 +171,62 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.buttonSelectOCCWorkingDir.setText('&Browse')
         self.layoutOCCOther.addWidget(self.buttonSelectOCCWorkingDir, 0, 2)
         
-        self.labelQUESCDatabase = QtGui.QLabel(parent)
-        self.labelQUESCDatabase.setText('QUES-C Database:')
-        self.layoutOCCOther.addWidget(self.labelQUESCDatabase, 1, 0)
+        self.labelOCCQUESCDatabase = QtGui.QLabel(parent)
+        self.labelOCCQUESCDatabase.setText('QUES-C Database:')
+        self.layoutOCCOther.addWidget(self.labelOCCQUESCDatabase, 1, 0)
         
-        self.lineEditQUESCDatabase = QtGui.QLineEdit()
-        self.lineEditQUESCDatabase.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditQUESCDatabase, 1, 1)
+        self.lineEditOCCQUESCDatabase = QtGui.QLineEdit()
+        self.lineEditOCCQUESCDatabase.setReadOnly(True)
+        self.layoutOCCOther.addWidget(self.lineEditOCCQUESCDatabase, 1, 1)
         
-        self.buttonSelectQUESCDatabase = QtGui.QPushButton()
-        self.buttonSelectQUESCDatabase.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectQUESCDatabase, 1, 2)
+        self.buttonSelectOCCQUESCDatabase = QtGui.QPushButton()
+        self.buttonSelectOCCQUESCDatabase.setText('&Browse')
+        self.layoutOCCOther.addWidget(self.buttonSelectOCCQUESCDatabase, 1, 2)
         
-        self.labelCsvNPVTable = QtGui.QLabel(parent)
-        self.labelCsvNPVTable.setText('Net Present Value (NPV) table:')
-        self.layoutOCCOther.addWidget(self.labelCsvNPVTable, 2, 0)
+        self.labelOCCCsvNPVTable = QtGui.QLabel(parent)
+        self.labelOCCCsvNPVTable.setText('Net Present Value (NPV) table:')
+        self.layoutOCCOther.addWidget(self.labelOCCCsvNPVTable, 2, 0)
         
-        self.lineEditCsvNPVTable = QtGui.QLineEdit(parent)
-        self.lineEditCsvNPVTable.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditCsvNPVTable, 2, 1)
+        self.lineEditOCCCsvNPVTable = QtGui.QLineEdit(parent)
+        self.lineEditOCCCsvNPVTable.setReadOnly(True)
+        self.layoutOCCOther.addWidget(self.lineEditOCCCsvNPVTable, 2, 1)
         
-        self.buttonSelectCsvNPVTable = QtGui.QPushButton()
-        self.buttonSelectCsvNPVTable.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectCsvNPVTable, 2, 2)
+        self.buttonSelectOCCCsvNPVTable = QtGui.QPushButton()
+        self.buttonSelectOCCCsvNPVTable.setText('&Browse')
+        self.layoutOCCOther.addWidget(self.buttonSelectOCCCsvNPVTable, 2, 2)
         
-        self.labelSpinBoxCostThreshold = QtGui.QLabel()
-        self.labelSpinBoxCostThreshold.setText('Cost &Threshold:')
-        self.layoutOCCOther.addWidget(self.labelSpinBoxCostThreshold, 3, 0)
+        self.labelOCCCostThreshold = QtGui.QLabel()
+        self.labelOCCCostThreshold.setText('Cost &Threshold:')
+        self.layoutOCCOther.addWidget(self.labelOCCCostThreshold, 3, 0)
         
-        self.spinBoxCostThreshold = QtGui.QSpinBox()
-        self.spinBoxCostThreshold.setValue(5)
-        self.layoutOCCOther.addWidget(self.spinBoxCostThreshold, 3, 1)
-        self.labelSpinBoxCostThreshold.setBuddy(self.spinBoxCostThreshold)
+        self.spinBoxOCCCostThreshold = QtGui.QSpinBox()
+        self.spinBoxOCCCostThreshold.setValue(5)
+        self.layoutOCCOther.addWidget(self.spinBoxOCCCostThreshold, 3, 1)
+        self.labelOCCCostThreshold.setBuddy(self.spinBoxOCCCostThreshold)
         
-        self.labelOutputOpportunityCostDatabase = QtGui.QLabel()
-        self.labelOutputOpportunityCostDatabase.setText('[Output] Opportunity cost database:')
-        self.layoutOCCOther.addWidget(self.labelOutputOpportunityCostDatabase, 4, 0)
+        self.labelOCCOutputOpportunityCostDatabase = QtGui.QLabel()
+        self.labelOCCOutputOpportunityCostDatabase.setText('[Output] Opportunity cost database:')
+        self.layoutOCCOther.addWidget(self.labelOCCOutputOpportunityCostDatabase, 4, 0)
         
-        self.lineEditOutputOpportunityCostDatabase = QtGui.QLineEdit()
-        self.lineEditOutputOpportunityCostDatabase.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOutputOpportunityCostDatabase, 4, 1)
+        self.lineEditOCCOutputOpportunityCostDatabase = QtGui.QLineEdit()
+        self.lineEditOCCOutputOpportunityCostDatabase.setReadOnly(True)
+        self.layoutOCCOther.addWidget(self.lineEditOCCOutputOpportunityCostDatabase, 4, 1)
         
-        self.buttonSelectOutputOpportunityCostDatabase = QtGui.QPushButton(parent)
-        self.buttonSelectOutputOpportunityCostDatabase.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOutputOpportunityCostDatabase, 4, 2)
+        self.buttonSelectOCCOutputOpportunityCostDatabase = QtGui.QPushButton(parent)
+        self.buttonSelectOCCOutputOpportunityCostDatabase.setText('&Browse')
+        self.layoutOCCOther.addWidget(self.buttonSelectOCCOutputOpportunityCostDatabase, 4, 2)
         
-        self.labelOutputOpportunityCostReport = QtGui.QLabel()
-        self.labelOutputOpportunityCostReport.setText('[Output] Opportunity cost report:')
-        self.layoutOCCOther.addWidget(self.labelOutputOpportunityCostReport, 5, 0)
+        self.labelOCCOutputOpportunityCostReport = QtGui.QLabel()
+        self.labelOCCOutputOpportunityCostReport.setText('[Output] Opportunity cost report:')
+        self.layoutOCCOther.addWidget(self.labelOCCOutputOpportunityCostReport, 5, 0)
         
-        self.lineEditOutputOpportunityCostReport = QtGui.QLineEdit()
-        self.lineEditOutputOpportunityCostReport.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOutputOpportunityCostReport, 5, 1)
+        self.lineEditOCCOutputOpportunityCostReport = QtGui.QLineEdit()
+        self.lineEditOCCOutputOpportunityCostReport.setReadOnly(True)
+        self.layoutOCCOther.addWidget(self.lineEditOCCOutputOpportunityCostReport, 5, 1)
         
-        self.buttonSelectOutputOpportunityCostReport = QtGui.QPushButton(parent)
-        self.buttonSelectOutputOpportunityCostReport.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOutputOpportunityCostReport, 5, 2)
+        self.buttonSelectOCCOutputOpportunityCostReport = QtGui.QPushButton(parent)
+        self.buttonSelectOCCOutputOpportunityCostReport.setText('&Browse')
+        self.layoutOCCOther.addWidget(self.buttonSelectOCCOutputOpportunityCostReport, 5, 2)
         
         # Process tab button
         self.layoutButtonOpportunityCostCurve = QtGui.QHBoxLayout()
@@ -223,7 +244,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCPeriod, 1)
         self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCOther, 4)
         
-        self.tabOpportunityCostCurve.setLayout(self.layoutTabOpportunityCostCurve)
         
         #***********************************************************
         # Setup 'Opportunity cost map' tab
@@ -242,25 +262,24 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.labelOCMPeriodInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutOCMPeriodInfo.addWidget(self.labelOCMPeriodInfo)
         
-        self.labelSpinBoxOCMPeriod1 = QtGui.QLabel(parent)
-        self.labelSpinBoxOCMPeriod1.setText('T&1:')
-        self.layoutOCMPeriod.addWidget(self.labelSpinBoxOCMPeriod1, 0, 0)
+        self.labelOCMPeriod1 = QtGui.QLabel(parent)
+        self.labelOCMPeriod1.setText('T&1:')
+        self.layoutOCMPeriod.addWidget(self.labelOCMPeriod1, 0, 0)
         self.spinBoxOCMPeriod1 = QtGui.QSpinBox(parent)
         self.spinBoxOCMPeriod1.setRange(1, 9999)
         td = datetime.date.today()
         self.spinBoxOCMPeriod1.setValue(td.year)
         self.layoutOCMPeriod.addWidget(self.spinBoxOCMPeriod1, 0, 1)
-        self.labelSpinBoxOCMPeriod1.setBuddy(self.spinBoxOCMPeriod1)
+        self.labelOCMPeriod1.setBuddy(self.spinBoxOCMPeriod1)
         
-        self.labelSpinBoxOCMPeriod2 = QtGui.QLabel(parent)
-        self.labelSpinBoxOCMPeriod2.setText('T&2:')
-        self.layoutOCMPeriod.addWidget(self.labelSpinBoxOCMPeriod2, 1, 0)
+        self.labelOCMPeriod2 = QtGui.QLabel(parent)
+        self.labelOCMPeriod2.setText('T&2:')
+        self.layoutOCMPeriod.addWidget(self.labelOCMPeriod2, 1, 0)
         self.spinBoxOCMPeriod2 = QtGui.QSpinBox(parent)
         self.spinBoxOCMPeriod2.setRange(1, 9999)
-        td = datetime.date.today()
         self.spinBoxOCMPeriod2.setValue(td.year)
         self.layoutOCMPeriod.addWidget(self.spinBoxOCMPeriod2, 1, 1)
-        self.labelSpinBoxOCMPeriod2.setBuddy(self.spinBoxOCMPeriod2)
+        self.labelOCMPeriod2.setBuddy(self.spinBoxOCMPeriod2)
         
         # 'Land use map' GroupBox
         self.groupBoxLandUseMap = QtGui.QGroupBox('Land use map')
@@ -276,29 +295,29 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.labelLandUseMapInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutLandUseMapInfo.addWidget(self.labelLandUseMapInfo)
         
-        self.labelLandUseT1 = QtGui.QLabel(parent)
-        self.labelLandUseT1.setText('T1:')
-        self.layoutLandUseMap.addWidget(self.labelLandUseT1, 0, 0)
+        self.labelOCMLandUseT1 = QtGui.QLabel(parent)
+        self.labelOCMLandUseT1.setText('T1:')
+        self.layoutLandUseMap.addWidget(self.labelOCMLandUseT1, 0, 0)
         
-        self.lineEditLandUseT1 = QtGui.QLineEdit(parent)
-        self.lineEditLandUseT1.setReadOnly(True)
-        self.layoutLandUseMap.addWidget(self.lineEditLandUseT1, 0, 1)
+        self.lineEditOCMLandUseT1 = QtGui.QLineEdit(parent)
+        self.lineEditOCMLandUseT1.setReadOnly(True)
+        self.layoutLandUseMap.addWidget(self.lineEditOCMLandUseT1, 0, 1)
         
-        self.buttonSelectLandUseT1 = QtGui.QPushButton(parent)
-        self.buttonSelectLandUseT1.setText('&Browse')
-        self.layoutLandUseMap.addWidget(self.buttonSelectLandUseT1, 0, 2)
+        self.buttonSelectOCMLandUseT1 = QtGui.QPushButton(parent)
+        self.buttonSelectOCMLandUseT1.setText('&Browse')
+        self.layoutLandUseMap.addWidget(self.buttonSelectOCMLandUseT1, 0, 2)
         
-        self.labelLandUseT2 = QtGui.QLabel(parent)
-        self.labelLandUseT2.setText('T2:')
-        self.layoutLandUseMap.addWidget(self.labelLandUseT2, 1, 0)
+        self.labelOCMLandUseT2 = QtGui.QLabel(parent)
+        self.labelOCMLandUseT2.setText('T2:')
+        self.layoutLandUseMap.addWidget(self.labelOCMLandUseT2, 1, 0)
         
-        self.lineEditLandUseT2 = QtGui.QLineEdit(parent)
-        self.lineEditLandUseT2.setReadOnly(True)
-        self.layoutLandUseMap.addWidget(self.lineEditLandUseT2, 1, 1)
+        self.lineEditOCMLandUseT2 = QtGui.QLineEdit(parent)
+        self.lineEditOCMLandUseT2.setReadOnly(True)
+        self.layoutLandUseMap.addWidget(self.lineEditOCMLandUseT2, 1, 1)
         
-        self.buttonSelectLandUseT2 = QtGui.QPushButton(parent)
-        self.buttonSelectLandUseT2.setText('&Browse')
-        self.layoutLandUseMap.addWidget(self.buttonSelectLandUseT2, 1, 2)
+        self.buttonSelectOCMLandUseT2 = QtGui.QPushButton(parent)
+        self.buttonSelectOCMLandUseT2.setText('&Browse')
+        self.layoutLandUseMap.addWidget(self.buttonSelectOCMLandUseT2, 1, 2)
         
         # 'Planning unit' GroupBox
         self.groupBoxPlanningUnit = QtGui.QGroupBox('Planning unit')
@@ -364,38 +383,38 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.buttonSelectOCMWorkingDir.setText('&Browse')
         self.layoutOCMOther.addWidget(self.buttonSelectOCMWorkingDir, 0, 2)
         
-        self.labelLocation = QtGui.QLabel()
-        self.labelLocation.setText('&Location:')
-        self.layoutOCMOther.addWidget(self.labelLocation, 1, 0)
+        self.labelOCMLocation = QtGui.QLabel()
+        self.labelOCMLocation.setText('&Location:')
+        self.layoutOCMOther.addWidget(self.labelOCMLocation, 1, 0)
         
-        self.lineEditLocation = QtGui.QLineEdit()
-        self.lineEditLocation.setText('location')
-        self.layoutOCMOther.addWidget(self.lineEditLocation, 1, 1)
-        self.labelLocation.setBuddy(self.lineEditLocation)
+        self.lineEditOCMLocation = QtGui.QLineEdit()
+        self.lineEditOCMLocation.setText('location')
+        self.layoutOCMOther.addWidget(self.lineEditOCMLocation, 1, 1)
+        self.labelOCMLocation.setBuddy(self.lineEditOCMLocation)
         
-        self.labelCsvCarbon = QtGui.QLabel()
-        self.labelCsvCarbon.setText('Carbon lookup table:')
-        self.layoutOCMOther.addWidget(self.labelCsvCarbon, 2, 0)
+        self.labelOCMCsvCarbon = QtGui.QLabel()
+        self.labelOCMCsvCarbon.setText('Carbon lookup table:')
+        self.layoutOCMOther.addWidget(self.labelOCMCsvCarbon, 2, 0)
         
-        self.lineEditCsvCarbon = QtGui.QLineEdit()
-        self.lineEditCsvCarbon.setReadOnly(True)
-        self.layoutOCMOther.addWidget(self.lineEditCsvCarbon, 2, 1)
+        self.lineEditOCMCsvCarbon = QtGui.QLineEdit()
+        self.lineEditOCMCsvCarbon.setReadOnly(True)
+        self.layoutOCMOther.addWidget(self.lineEditOCMCsvCarbon, 2, 1)
         
-        self.buttonSelectCsvCarbon = QtGui.QPushButton()
-        self.buttonSelectCsvCarbon.setText('&Browse')
-        self.layoutOCMOther.addWidget(self.buttonSelectCsvCarbon, 2, 2)
+        self.buttonSelectOCMCsvCarbon = QtGui.QPushButton()
+        self.buttonSelectOCMCsvCarbon.setText('&Browse')
+        self.layoutOCMOther.addWidget(self.buttonSelectOCMCsvCarbon, 2, 2)
         
-        self.labelCsvProfitability = QtGui.QLabel(parent)
-        self.labelCsvProfitability.setText('Profitability lookup table:')
-        self.layoutOCMOther.addWidget(self.labelCsvProfitability, 3, 0)
+        self.labelOCMCsvProfitability = QtGui.QLabel(parent)
+        self.labelOCMCsvProfitability.setText('Profitability lookup table:')
+        self.layoutOCMOther.addWidget(self.labelOCMCsvProfitability, 3, 0)
         
-        self.lineEditCsvProfitability = QtGui.QLineEdit(parent)
-        self.lineEditCsvProfitability.setReadOnly(True)
-        self.layoutOCMOther.addWidget(self.lineEditCsvProfitability, 3, 1)
+        self.lineEditOCMCsvProfitability = QtGui.QLineEdit(parent)
+        self.lineEditOCMCsvProfitability.setReadOnly(True)
+        self.layoutOCMOther.addWidget(self.lineEditOCMCsvProfitability, 3, 1)
         
-        self.buttonSelectCsvProfitability = QtGui.QPushButton()
-        self.buttonSelectCsvProfitability.setText('&Browse')
-        self.layoutOCMOther.addWidget(self.buttonSelectCsvProfitability, 3, 2)
+        self.buttonSelectOCMCsvProfitability = QtGui.QPushButton()
+        self.buttonSelectOCMCsvProfitability.setText('&Browse')
+        self.layoutOCMOther.addWidget(self.buttonSelectOCMCsvProfitability, 3, 2)
         
         # Process tab button
         self.layoutButtonOpportunityCostMap = QtGui.QHBoxLayout()
@@ -411,12 +430,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabOpportunityCostMap.addWidget(self.groupBoxOCMOther)
         self.layoutTabOpportunityCostMap.addLayout(self.layoutButtonOpportunityCostMap)
         
-        self.tabOpportunityCostMap.setLayout(self.layoutTabOpportunityCostMap)
         
         #***********************************************************
         # Setup 'Result' tab
         #***********************************************************
-        self.tabResult.setLayout(self.layoutTabResult)
+        
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -430,13 +448,161 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         super(DialogLumensTAOpportunityCost, self).showEvent(event)
     
     
-    def handlerSelectProjectFile(self):
-        """Select Project File
+    #***********************************************************
+    # 'Abacus Opportunity Cost' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectAOCProjectFile(self):
+        """
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Project File', QtCore.QDir.homePath(), 'Project File (*{0})'.format(self.main.appSettings['selectCarfileExt'])))
         
         if file:
-            self.lineEditProjectFile.setText(file)
-            
+            self.lineEditAOCProjectFile.setText(file)
             logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # 'Opportunity Cost Curve' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectOCCWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditOCCWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectOCCQUESCDatabase(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if file:
+            self.lineEditOCCQUESCDatabase.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOCCCsvNPVTable(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select NPV Table', QtCore.QDir.homePath(), 'NPV Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditOCCCsvNPVTable.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOCCOutputOpportunityCostDatabase(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Opportunity Cost Database Output', QtCore.QDir.homePath(), 'Opportunity Cost Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
+        
+        if outputfile:
+            self.lineEditOCCOutputOpportunityCostDatabase.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    def handlerSelectOCCOutputOpportunityCostReport(self):
+        """
+        """
+        outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
+            self, 'Create/Select Opportunity Cost Report Output', QtCore.QDir.homePath(), 'Opportunity Cost Report (*{0})'.format(self.main.appSettings['selectHTMLfileExt'])))
+        
+        if outputfile:
+            self.lineEditOCCOutputOpportunityCostReport.setText(outputfile)
+            logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
+    
+    
+    #***********************************************************
+    # 'Opportunity Cost Map' tab QPushButton handlers
+    #***********************************************************
+    def handlerSelectOCMWorkingDir(self):
+        """
+        """
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        
+        if dir:
+            self.lineEditOCMWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    
+    
+    def handlerSelectOCMLandUseT1(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Map T1', QtCore.QDir.homePath(), 'Land Use Map T1 (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditOCMLandUseT1.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOCMLandUseT2(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Land Use Map T2', QtCore.QDir.homePath(), 'Land Use Map T2 (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditOCMLandUseT2.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectPlanningUnit(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Planning Unit Map', QtCore.QDir.homePath(), 'Planning Unit Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            self.lineEditPlanningUnit.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectCsvPlanningUnit(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Planning Unit Lookup Table', QtCore.QDir.homePath(), 'Planning Unit Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditCsvPlanningUnit.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOCMCsvCarbon(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Carbon Lookup Table', QtCore.QDir.homePath(), 'Carbon Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditOCMCsvCarbon.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectOCMCsvProfitability(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Profitability Lookup Table', QtCore.QDir.homePath(), 'Profitability Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditOCMCsvProfitability.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    #***********************************************************
+    # Process tabs
+    #***********************************************************
+    def setAppSetings(self):
+        """
+        """
+        pass
+    

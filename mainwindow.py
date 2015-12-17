@@ -56,6 +56,7 @@ from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeatdata import DialogLumensAddPeatData
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunitdata import DialogLumensAddPlanningUnitData
+
 from dialog_lumens_pur import DialogLumensPUR
 from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReferenceData
 from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
@@ -63,6 +64,7 @@ from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlan
 from dialog_lumens_pur_finalization import DialogLumensPURFinalization
 from dialog_lumens_preques_landcoverchangeanalysis import DialogLumensPreQUESLandcoverChangeAnalysis
 from dialog_lumens_preques_landcovertrajectoriesanalysis import DialogLumensPreQUESLandcoverTrajectoriesAnalysis
+
 from dialog_lumens_ques import DialogLumensQUES
 from dialog_lumens_quesc_carbonaccounting import DialogLumensQUESCCarbonAccounting
 from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatlandCarbonAccounting
@@ -73,6 +75,8 @@ from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIn
 from dialog_lumens_quesh_dominanthru import DialogLumensQUESHDominantHRU
 from dialog_lumens_quesh_multiplehru import DialogLumensQUESHMultipleHRU
 from dialog_lumens_quesh_dominantlussl import DialogLumensQUESHDominantLUSSL
+
+from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_regionaleconomy import DialogLumensTARegionalEconomy
 from dialog_lumens_ta_abacusopportunitycostcurve import DialogLumensTAAbacusOpportunityCostCurve
 from dialog_lumens_ta_opportunitycostcurve import DialogLumensTAOpportunityCostCurve
@@ -83,6 +87,7 @@ from dialog_lumens_ta_landdistribreq import DialogLumensTARegionalEconomyLandDis
 from dialog_lumens_ta_impactlanduse import DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis
 from dialog_lumens_ta_finaldemandscenario import DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis
 from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis
+
 from dialog_lumens_sciendo import DialogLumensSCIENDO
 from dialog_lumens_sciendo_driversanalysis import DialogLumensSCIENDODriversAnalysis
 from dialog_lumens_sciendo_buildscenario import DialogLumensSCIENDOBuildScenario
@@ -567,6 +572,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHMultipleHRU.triggered.connect(self.handlerDialogLumensQUESHMultipleHRU)
         
         # TA menu
+        self.actionDialogLumensTAOpportunityCost.triggered.connect(self.handlerDialogLumensTAOpportunityCost)
         self.actionDialogLumensTARegionalEconomy.triggered.connect(self.handlerDialogLumensTARegionalEconomy)
         self.actionDialogLumensTAAbacusOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCostCurve)
         self.actionDialogLumensTAOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAOpportunityCostCurve)
@@ -833,6 +839,7 @@ class MainWindow(QtGui.QMainWindow):
         self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
         
         # TA menu
+        self.actionDialogLumensTAOpportunityCost = QtGui.QAction('Trade-off Analysis [Opportunity Cost]', self)
         self.actionDialogLumensTARegionalEconomy = QtGui.QAction('Trade-off Analysis [Regional Economy]', self)
         self.actionDialogLumensTAAbacusOpportunityCostCurve = QtGui.QAction('Abacus opportunity cost curve', self)
         self.actionDialogLumensTAOpportunityCostCurve = QtGui.QAction('Opportunity cost curve', self)
@@ -846,6 +853,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.opportunityCostMenu = self.taMenu.addMenu('Opportunity cost')
         self.regionalEconomyMenu = self.taMenu.addMenu('Regional economy')
+        self.taMenu.addAction(self.actionDialogLumensTAOpportunityCost)
         self.taMenu.addAction(self.actionDialogLumensTARegionalEconomy)
         self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCostCurve)
         self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostCurve)
@@ -1065,6 +1073,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setEnabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setEnabled(True)
         
+        self.actionDialogLumensTAOpportunityCost.setEnabled(True)
         self.actionDialogLumensTARegionalEconomy.setEnabled(True)
         self.actionDialogLumensTAAbacusOpportunityCostCurve.setEnabled(True)
         self.actionDialogLumensTAOpportunityCostCurve.setEnabled(True)
@@ -1116,6 +1125,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setDisabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setDisabled(True)
         
+        self.actionDialogLumensTAOpportunityCost.setDisabled(True)
         self.actionDialogLumensTARegionalEconomy.setDisabled(True)
         self.actionDialogLumensTAAbacusOpportunityCostCurve.setDisabled(True)
         self.actionDialogLumensTAOpportunityCostCurve.setDisabled(True)
@@ -1335,6 +1345,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensQUESHMultipleHRU)
+    
+    
+    def handlerDialogLumensTAOpportunityCost(self):
+        """
+        """
+        self.openDialog(DialogLumensTAOpportunityCost)
     
     
     def handlerDialogLumensTARegionalEconomy(self):
