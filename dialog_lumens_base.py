@@ -14,7 +14,7 @@ class DialogLumensBase(QtGui.QDialog):
     
     
     def __init__(self, parent):
-        print 'debug: DialogLumensBase init'
+        print 'DEBUG: DialogLumensBase init'
         
         super(DialogLumensBase, self).__init__(parent)
         

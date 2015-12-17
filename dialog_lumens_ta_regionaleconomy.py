@@ -37,13 +37,16 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectOtherValueAddedComponent.clicked.connect(self.handlerSelectOtherValueAddedComponent)
         self.buttonSelectOtherFinalConsumptionComponent.clicked.connect(self.handlerSelectOtherFinalConsumptionComponent)
         self.buttonSelectOtherListOfEconomicSector.clicked.connect(self.handlerSelectOtherListOfEconomicSector)
+        self.buttonProcessDescriptiveAnalysis.clicked.connect(self.handlerProcessDescriptiveAnalysis)
         
-        # 'Regional Economic Scenario Impact' tab radios
-        self.radioRegionalEconomicScenarioImpactFinalDemand.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.radioRegionalEconomicScenarioImpactFinalDemand))
-        self.radioRegionalEconomicScenarioImpactGDP.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.radioRegionalEconomicScenarioImpactGDP))
+        # 'Regional Economic Scenario Impact' tab checkboxes
+        self.checkBoxRegionalEconomicScenarioImpactFinalDemand.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.checkBoxRegionalEconomicScenarioImpactFinalDemand))
+        self.checkBoxRegionalEconomicScenarioImpactGDP.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.checkBoxRegionalEconomicScenarioImpactGDP))
+        
         
         # 'Regional Economic Scenario Impact' tab buttons
         self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario)
+        self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactGDPChangeScenario)
         self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactWorkingDir)
         self.buttonSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix)
         self.buttonSelectRegionalEconomicScenarioImpactValueAddedMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactValueAddedMatrix)
@@ -55,6 +58,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix)
         self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandCoverComponent)
         self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLabourRequirement)
+        self.buttonProcessRegionalEconomicScenarioImpact.clicked.connect(self.handlerProcessRegionalEconomicScenarioImpact)
         
         # 'Land Requirement Analysis' tab buttons
         self.buttonSelectLandRequirementAnalysisWorkingDir.clicked.connect(self.handlerSelectLandRequirementAnalysisWorkingDir)
@@ -68,6 +72,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectLandRequirementAnalysisLandDistributionMatrix.clicked.connect(self.handlerSelectLandRequirementAnalysisLandDistributionMatrix)
         self.buttonSelectLandRequirementAnalysisLandCoverComponent.clicked.connect(self.handlerSelectLandRequirementAnalysisLandCoverComponent)
         self.buttonSelectLandRequirementAnalysisLabourRequirement.clicked.connect(self.handlerSelectLandRequirementAnalysisLabourRequirement)
+        self.buttonProcessLandRequirementAnalysis.clicked.connect(self.handlerProcessLandRequirementAnalysis)
         
         # 'Land Use Change Impact' tab buttons
         self.buttonSelectLandUseChangeImpactWorkingDir.clicked.connect(self.handlerSelectLandUseChangeImpactWorkingDir)
@@ -83,6 +88,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectLandUseChangeImpactLandRequirementCoefficientMatrix.clicked.connect(self.handlerSelectLandUseChangeImpactLandRequirementCoefficientMatrix)
         self.buttonSelectLandUseChangeImpactLandCoverComponent.clicked.connect(self.handlerSelectLandUseChangeImpactLandCoverComponent)
         self.buttonSelectLandUseChangeImpactLabourRequirement.clicked.connect(self.handlerSelectLandUseChangeImpactLabourRequirement)
+        self.buttonProcessLandUseChangeImpact.clicked.connect(self.handlerProcessLandUseChangeImpact)
         
     
     def setupUi(self, parent):
@@ -410,9 +416,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.labelRegionalEconomicScenarioImpactTypeInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutRegionalEconomicScenarioImpactTypeInfo.addWidget(self.labelRegionalEconomicScenarioImpactTypeInfo)
         
-        self.radioRegionalEconomicScenarioImpactFinalDemand = QtGui.QRadioButton('Final Demand Scenario')
-        self.radioRegionalEconomicScenarioImpactFinalDemand.setChecked(True)
-        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.radioRegionalEconomicScenarioImpactFinalDemand, 0, 0)
+        self.checkBoxRegionalEconomicScenarioImpactFinalDemand = QtGui.QCheckBox('Final Demand Scenario')
+        self.checkBoxRegionalEconomicScenarioImpactFinalDemand.setChecked(True)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.checkBoxRegionalEconomicScenarioImpactFinalDemand, 0, 0)
         
         self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('Final demand change scenario:')
@@ -426,8 +432,24 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('&Browse')
         self.layoutRegionalEconomicScenarioImpactType.addWidget(self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario, 1, 2)
         
-        self.radioRegionalEconomicScenarioImpactGDP = QtGui.QRadioButton('GDP Scenario')
-        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.radioRegionalEconomicScenarioImpactGDP, 2, 0)
+        self.checkBoxRegionalEconomicScenarioImpactGDP = QtGui.QCheckBox('GDP Scenario')
+        self.checkBoxRegionalEconomicScenarioImpactGDP.setChecked(False)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.checkBoxRegionalEconomicScenarioImpactGDP, 2, 0)
+        
+        self.labelRegionalEconomicScenarioImpactGDPChangeScenario = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactGDPChangeScenario.setText('GDP change scenario:')
+        self.labelRegionalEconomicScenarioImpactGDPChangeScenario.setDisabled(True)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.labelRegionalEconomicScenarioImpactGDPChangeScenario, 3, 0)
+        
+        self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario = QtGui.QLineEdit()
+        self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setReadOnly(True)
+        self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setDisabled(True)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario, 3, 1)
+        
+        self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario = QtGui.QPushButton()
+        self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario.setText('&Browse')
+        self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario.setDisabled(True)
+        self.layoutRegionalEconomicScenarioImpactType.addWidget(self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario, 3, 2)
         
         # 'Parameters' GroupBox
         self.groupBoxRegionalEconomicScenarioImpactParameters = QtGui.QGroupBox('Parameters')
@@ -1070,17 +1092,27 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.contentOptionsMultiplePeriod.setDisabled(True)
     
     
-    def toggleRegionalEconomicScenarioImpactType(self, radio):
+    def toggleRegionalEconomicScenarioImpactType(self, widget):
         """
         """
-        if radio.text() == 'Final Demand Scenario':
-            self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
-            self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
-            self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
-        elif radio.text() == 'GDP Scenario': 
-            self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
-            self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
-            self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+        if widget.text() == 'Final Demand Scenario':
+            if widget.isChecked():
+                self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
+                self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
+                self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setEnabled(True)
+            else:
+                self.labelRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+                self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+                self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.setDisabled(True)
+        elif widget.text() == 'GDP Scenario':
+            if widget.isChecked():
+                self.labelRegionalEconomicScenarioImpactGDPChangeScenario.setEnabled(True)
+                self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setEnabled(True)
+                self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario.setEnabled(True)
+            else:
+                self.labelRegionalEconomicScenarioImpactGDPChangeScenario.setDisabled(True)
+                self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setDisabled(True)
+                self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario.setDisabled(True)
     
     
     #***********************************************************
@@ -1228,6 +1260,17 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         if file:
             self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
+    
+    
+    def handlerSelectRegionalEconomicScenarioImpactGDPChangeScenario(self):
+        """
+        """
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select GDP Change Scenario', QtCore.QDir.homePath(), 'Final Demand Change Scenario (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
+        
+        if file:
+            self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText(file)
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
@@ -1626,6 +1669,267 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     # Process tabs
     #***********************************************************
     def setAppSetings(self):
+        """
+        """
+        # 'Descriptive Analysis of Regional Economy' tab fields
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['period'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['period1'] \
+            = self.spinBoxSinglePeriod.value()
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['intermediateConsumptionMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['intermediateConsumptionMatrixP1'] \
+            = unicode(self.lineEditSingleIntermediateConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['valueAddedMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedMatrixP1'] \
+            = unicode(self.lineEditSingleValueAddedMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['finalConsumptionMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionMatrixP1'] \
+            = unicode(self.lineEditSingleFinalConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['labourRequirement'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['labourRequirementP1'] \
+            = unicode(self.lineEditSingleLabourRequirement.text())
+        
+        self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['period2'] \
+            = self.spinBoxMultiplePeriod.value()
+        self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['intermediateConsumptionMatrixP2'] \
+            = unicode(self.lineEditMultipleIntermediateConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedMatrixP2'] \
+            = unicode(self.lineEditMultipleValueAddedMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionMatrixP2'] \
+            = unicode(self.lineEditMultipleFinalConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['labourRequirementP2'] \
+            = unicode(self.lineEditMultipleLabourRequirement.text())
+        
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['workingDir'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['workingDir'] \
+            = unicode(self.lineEditOtherWorkingDir.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['valueAddedComponent'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedComponent'] \
+            = unicode(self.lineEditOtherValueAddedComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['finalConsumptionComponent'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionComponent'] \
+            = unicode(self.lineEditOtherFinalConsumptionComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['listOfEconomicSector'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['listOfEconomicSector'] \
+            = unicode(self.lineEditOtherListOfEconomicSector.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['financialUnit'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['financialUnit'] \
+            = unicode(self.lineEditOtherFinancialUnit.text())
+        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['areaName'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['areaName'] \
+            = unicode(self.lineEditOtherAreaName.text())
+        
+        # 'Regional Economic Impact Scenario' tab fields
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['workingDir'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['workingDir'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactWorkingDir.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['intermediateConsumptionMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['intermediateConsumptionMatrix'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['valueAddedMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['valueAddedMatrix'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalConsumptionMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['finalConsumptionMatrix'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['valueAddedComponent'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['valueAddedComponent'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalConsumptionComponent'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['finalConsumptionComponent'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['listOfEconomicSector'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['listOfEconomicSector'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['landDistributionMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['landDistributionMatrix'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['landRequirementCoefficientMatrix'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['landRequirementCoefficientMatrix'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['landCoverComponent'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['landCoverComponent'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['financialUnit'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['financialUnit'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactFinancialUnit.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['areaName'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['areaName'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactAreaName.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['period'] \
+            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['period'] \
+            = self.spinBoxRegionalEconomicScenarioImpactPeriod.value()
+        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalDemandChangeScenario'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['gdpChangeScenario'] \
+            = unicode(self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.text())
+        
+        # 'Land Requirement Analysis' tab fields
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['workingDir'] \
+            = unicode(self.lineEditLandRequirementAnalysisWorkingDir.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['landCoverMap'] \
+            = unicode(self.lineEditLandRequirementAnalysisLandCoverMap.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['intermediateConsumptionMatrix'] \
+            = unicode(self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['valueAddedMatrix'] \
+            = unicode(self.lineEditLandRequirementAnalysisValueAddedMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['finalConsumptionMatrix'] \
+            = unicode(self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['valueAddedComponent'] \
+            = unicode(self.lineEditLandRequirementAnalysisValueAddedComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['finalConsumptionComponent'] \
+            = unicode(self.lineEditLandRequirementAnalysisFinalConsumptionComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['listOfEconomicSector'] \
+            = unicode(self.lineEditLandRequirementAnalysisListOfEconomicSector.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['landDistributionMatrix'] \
+            = unicode(self.lineEditLandRequirementAnalysisLandDistributionMatrix.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['landCoverComponent'] \
+            = unicode(self.lineEditLandRequirementAnalysisLandCoverComponent.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['labourRequirement'] \
+            = unicode(self.lineEditLandRequirementAnalysisLabourRequirement.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['financialUnit'] \
+            = unicode(self.lineEditLandRequirementAnalysisFinancialUnit.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['areaName'] \
+            = unicode(self.lineEditLandRequirementAnalysisAreaName.text())
+        self.main.appSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['period'] \
+            = self.spinBoxLandRequirementAnalysisPeriod.value()
+        
+        # 'Land Use Change Impact' tab fields
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['workingDir'] \
+            = unicode(self.lineEditLandUseChangeImpactWorkingDir.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landCoverMapP1'] \
+            = unicode(self.lineEditLandUseChangeImpactLandCoverMapP1.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landCoverMapP2'] \
+            = unicode(self.lineEditLandUseChangeImpactLandCoverMapP2.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['intermediateConsumptionMatrix'] \
+            = unicode(self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['valueAddedMatrix'] \
+            = unicode(self.lineEditLandUseChangeImpactValueAddedMatrix.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['finalConsumptionMatrix'] \
+            = unicode(self.lineEditLandUseChangeImpactFinalConsumptionMatrix.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['valueAddedComponent'] \
+            = unicode(self.lineEditLandUseChangeImpactValueAddedComponent.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['finalConsumptionComponent'] \
+            = unicode(self.lineEditLandUseChangeImpactFinalConsumptionComponent.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['listOfEconomicSector'] \
+            = unicode(self.lineEditLandUseChangeImpactListOfEconomicSector.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landDistributionMatrix'] \
+            = unicode(self.lineEditLandUseChangeImpactLandDistributionMatrix.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landRequirementCoefficientMatrix'] \
+            = unicode(self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landCoverComponent'] \
+            = unicode(self.lineEditLandUseChangeImpactLandCoverComponent.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['labourRequirement'] \
+            = unicode(self.lineEditLandUseChangeImpactLabourRequirement.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['financialUnit'] \
+            = unicode(self.lineEditLandUseChangeImpactFinancialUnit.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['areaName'] \
+            = unicode(self.lineEditLandUseChangeImpactAreaName.text())
+        self.main.appSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['period'] \
+            = self.spinBoxLandUseChangeImpactPeriod.value()
+    
+    
+    def validForm(self, formName):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
+        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
+        
+        valid = True
+        
+        for key, val in self.main.appSettings[formName].iteritems():
+            if not val:
+                valid = False
+        
+        if not valid:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
+    
+    
+    def handlerProcessDescriptiveAnalysis(self):
+        """
+        """
+        self.setAppSetings()
+        
+        formName = 'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis'
+        algName = 'modeler:ta_reg_io_da'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['intermediateConsumptionMatrix'],
+                self.main.appSettings[formName]['valueAddedMatrix'],
+                self.main.appSettings[formName]['finalConsumptionMatrix'],
+                self.main.appSettings[formName]['valueAddedComponent'],
+                self.main.appSettings[formName]['finalConsumptionComponent'],
+                self.main.appSettings[formName]['listOfEconomicSector'],
+                self.main.appSettings[formName]['labourRequirement'],
+                self.main.appSettings[formName]['financialUnit'],
+                self.main.appSettings[formName]['areaName'],
+                self.main.appSettings[formName]['period'],
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessDescriptiveAnalysis.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        # Run multiple period if checked
+        if self.checkBoxMultiplePeriod.isChecked():
+            formName = 'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis'
+            algName = 'modeler:ta_reg_io_da'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['intermediateConsumptionMatrixP1'],
+                    self.main.appSettings[formName]['intermediateConsumptionMatrixP2'],
+                    self.main.appSettings[formName]['valueAddedMatrixP1'],
+                    self.main.appSettings[formName]['valueAddedMatrixP2'],
+                    self.main.appSettings[formName]['finalConsumptionMatrixP1'],
+                    self.main.appSettings[formName]['finalConsumptionMatrixP2'],
+                    self.main.appSettings[formName]['valueAddedComponent'],
+                    self.main.appSettings[formName]['finalConsumptionComponent'],
+                    self.main.appSettings[formName]['listOfEconomicSector'],
+                    self.main.appSettings[formName]['labourRequirementP1'],
+                    self.main.appSettings[formName]['labourRequirementP2'],
+                    self.main.appSettings[formName]['financialUnit'],
+                    self.main.appSettings[formName]['areaName'],
+                    self.main.appSettings[formName]['period1'],
+                    self.main.appSettings[formName]['period2'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessDescriptiveAnalysis.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+    
+    
+    def handlerProcessRegionalEconomicScenarioImpact(self):
+        """
+        """
+        pass
+    
+    
+    def handlerProcessLandRequirementAnalysis(self):
+        """
+        """
+        pass
+    
+    
+    def handlerProcessLandUseChangeImpact(self):
         """
         """
         pass
