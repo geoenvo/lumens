@@ -68,7 +68,6 @@ class DialogLumensTAAbacusOpportunityCostCurve(DialogLumensBase):
         
         if file:
             self.lineEditProjectFile.setText(file)
-            
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     

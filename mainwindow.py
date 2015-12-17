@@ -484,11 +484,24 @@ class MainWindow(QtGui.QMainWindow):
         if args.debug:
             self.appSettings['debug'] = True
         
-        
         self.appSettings['defaultBasemapFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['basemapDir'], self.appSettings['defaultBasemapFile'])
         self.appSettings['defaultVectorFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['vectorDir'], self.appSettings['defaultVectorFile'])
 
         self.setupUi()
+        
+        if args.debug:
+            # Init the logger
+            self.logger = logging.getLogger(__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.log_box.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.addHandler(self.log_box)
+            self.logger.setLevel(logging.DEBUG)
         
         self.installEventFilter(self)
         
@@ -507,13 +520,6 @@ class MainWindow(QtGui.QMainWindow):
         
         # For checking drop events
         ##self.layerListView.viewport().installEventFilter(self)
-        
-        # Init the logger
-        self.logger = logging.getLogger(__name__)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        self.log_box.setFormatter(formatter)
-        self.logger.addHandler(self.log_box)
-        self.logger.setLevel(logging.DEBUG)
         
         # App action handlers
         self.actionQuit.triggered.connect(QtGui.qApp.quit)

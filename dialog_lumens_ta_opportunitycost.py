@@ -2,8 +2,8 @@
 #-*- coding:utf-8 -*-
 
 import os, logging, datetime
-##from qgis.core import *
-##from processing.tools import *
+from qgis.core import *
+from processing.tools import *
 from PyQt4 import QtCore, QtGui
 import resource
 
@@ -15,15 +15,27 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     def __init__(self, parent):
         super(DialogLumensTAOpportunityCost, self).__init__(parent)
-        print 'DEBUG: DialogLumensTAOpportunityCost init'
         
         self.main = parent
         self.dialogTitle = 'LUMENS Trade-Off Analysis [Opportunity Cost]'
+        
+        if self.main.appSettings['debug']:
+            print 'DEBUG: DialogLumensTAOpportunityCost init'
+            self.logger = logging.getLogger(type(self).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.setLevel(logging.DEBUG)
         
         self.setupUi(self)
         
         # 'Abacus Opportunity Cost' tab buttons
         self.buttonSelectAOCProjectFile.clicked.connect(self.handlerSelectAOCProjectFile)
+        self.buttonProcessAbacusOpportunityCost.clicked.connect(self.handlerProcessAbacusOpportunityCost)
         
         # 'Opportunity Cost Curve' tab buttons
         self.buttonSelectOCCWorkingDir.clicked.connect(self.handlerSelectOCCWorkingDir)
@@ -31,6 +43,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.buttonSelectOCCCsvNPVTable.clicked.connect(self.handlerSelectOCCCsvNPVTable)
         self.buttonSelectOCCOutputOpportunityCostDatabase.clicked.connect(self.handlerSelectOCCOutputOpportunityCostDatabase)
         self.buttonSelectOCCOutputOpportunityCostReport.clicked.connect(self.handlerSelectOCCOutputOpportunityCostReport)
+        self.buttonProcessOpportunityCostCurve.clicked.connect(self.handlerProcessOpportunityCostCurve)
         
         # 'Opportunity Cost Map' tab buttons
         self.buttonSelectOCMLandUseT1.clicked.connect(self.handlerSelectOCMLandUseT1)
@@ -40,6 +53,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.buttonSelectOCMWorkingDir.clicked.connect(self.handlerSelectOCMWorkingDir)
         self.buttonSelectOCMCsvCarbon.clicked.connect(self.handlerSelectOCMCsvCarbon)
         self.buttonSelectOCMCsvProfitability.clicked.connect(self.handlerSelectOCMCsvProfitability)
+        self.buttonProcessOpportunityCostMap.clicked.connect(self.handlerProcessOpportunityCostMap)
         
     
     def setupUi(self, parent):
@@ -604,5 +618,154 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     def setAppSetings(self):
         """
         """
-        pass
+        # 'Abacus Opportunity Cost' tab fields
+        self.main.appSettings['DialogLumensTAAbacusOpportunityCostCurve']['projectFile'] = unicode(self.lineEditAOCProjectFile.text())
+        
+        # 'Opportunity Cost Curve' tab fields
+        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['workingDir'] = unicode(self.lineEditOCCWorkingDir.text()).replace(os.path.sep, '/')
+        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['QUESCDatabase'] = unicode(self.lineEditOCCQUESCDatabase.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['csvNPVTable'] = unicode(self.lineEditOCCCsvNPVTable.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['period1'] = self.spinBoxOCCPeriod1.value()
+        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['period2'] = self.spinBoxOCCPeriod2.value()
+        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['costThreshold'] = self.spinBoxOCCCostThreshold.value()
+        
+        outputOpportunityCostDatabase = unicode(self.lineEditOCCOutputOpportunityCostDatabase.text())
+        outputOpportunityCostReport = unicode(self.lineEditOCCOutputOpportunityCostReport.text())
+        
+        if not outputOpportunityCostDatabase:
+            self.main.appSettings['DialogLumensTAOpportunityCostCurve']['outputOpportunityCostDatabase'] = '__UNSET__'
+        
+        if not outputOpportunityCostReport:
+            self.main.appSettings['DialogLumensTAOpportunityCostCurve']['outputOpportunityCostReport'] = '__UNSET__'
+        
+        # 'Opportunity Cost Map' tab fields
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['workingDir'] = unicode(self.lineEditOCMWorkingDir.text()).replace(os.path.sep, '/')
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['landUseT1'] = unicode(self.lineEditOCMLandUseT1.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['landUseT2'] = unicode(self.lineEditOCMLandUseT2.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['planningUnit'] = unicode(self.lineEditPlanningUnit.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvPlanningUnit'] = unicode(self.lineEditCsvPlanningUnit.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvCarbon'] = unicode(self.lineEditOCMCsvCarbon.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvProfitability'] = unicode(self.lineEditOCMCsvProfitability.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['location'] = unicode(self.lineEditOCMLocation.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['t1'] = self.spinBoxOCMPeriod1.value()
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['t2'] = self.spinBoxOCMPeriod2.value()
+        
+    
+    def validForm(self, formName):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
+        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
+        
+        valid = True
+        
+        for key, val in self.main.appSettings[formName].iteritems():
+            if not val:
+                valid = False
+        
+        if not valid:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
+    
+    
+    def handlerProcessAbacusOpportunityCost(self):
+        """
+        """
+        formName = 'DialogLumensTAAbacusOpportunityCostCurve'
+        algName = 'modeler:abacus_opportunity_cost'
+        
+        self.setAppSetings()
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessAbacusOpportunityCost.setDisabled(True)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['projectFile'],
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessAbacusOpportunityCost.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+    
+    
+    def handlerProcessOpportunityCostCurve(self):
+        """
+        """
+        formName = 'DialogLumensTAOpportunityCostCurve'
+        algName = 'modeler:opportunity_cost'
+        
+        self.setAppSetings()
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessOpportunityCostCurve.setDisabled(True)
+            
+            outputOpportunityCostDatabase = self.main.appSettings[formName]['outputOpportunityCostDatabase']
+            outputOpportunityCostReport = self.main.appSettings[formName]['outputOpportunityCostReport']
+            
+            if outputOpportunityCostDatabase == '__UNSET__':
+                outputOpportunityCostDatabase = None
+            
+            if outputOpportunityCostReport == '__UNSET__':
+                outputOpportunityCostReport = None
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['QUESCDatabase'],
+                self.main.appSettings[formName]['csvNPVTable'],
+                self.main.appSettings[formName]['period1'],
+                self.main.appSettings[formName]['period2'],
+                self.main.appSettings[formName]['costThreshold'],
+                outputOpportunityCostDatabase,
+                outputOpportunityCostReport,
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessOpportunityCostCurve.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+    
+    
+    def handlerProcessOpportunityCostMap(self):
+        """
+        """
+        formName = 'DialogLumensTAOpportunityCostMap'
+        algName = 'modeler:opcost_map'
+        
+        self.setAppSetings()
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessOpportunityCostMap.setDisabled(True)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['landUseT1'],
+                self.main.appSettings[formName]['landUseT2'],
+                self.main.appSettings[formName]['planningUnit'],
+                self.main.appSettings[formName]['csvCarbon'],
+                self.main.appSettings[formName]['csvProfitability'],
+                self.main.appSettings[formName]['csvPlanningUnit'],
+                self.main.appSettings[formName]['location'],
+                self.main.appSettings[formName]['t1'],
+                self.main.appSettings[formName]['t2'],
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessOpportunityCostMap.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
     

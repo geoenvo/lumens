@@ -6,6 +6,8 @@
 _*
 processing/*
 qgis.db
+logs/*
+!logs/.gitkeep
 output/*
 !output/.gitkeep
 data/*

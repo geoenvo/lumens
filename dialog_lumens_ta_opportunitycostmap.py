@@ -183,12 +183,11 @@ class DialogLumensTAOpportunityCostMap(DialogLumensBase):
     def handlerSelectWorkingDir(self):
         """Select a folder as working dir
         """
-        workingDir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
-        if workingDir:
-            self.lineEditWorkingDir.setText(workingDir)
-            
-            logging.getLogger(type(self).__name__).info('select working directory: %s', workingDir)
+        if dir:
+            self.lineEditWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
     
     
     def handlerSelectLandUseT1(self):
@@ -199,7 +198,6 @@ class DialogLumensTAOpportunityCostMap(DialogLumensBase):
         
         if file:
             self.lineEditLandUseT1.setText(file)
-            
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
@@ -211,7 +209,6 @@ class DialogLumensTAOpportunityCostMap(DialogLumensBase):
         
         if file:
             self.lineEditLandUseT2.setText(file)
-            
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
@@ -223,44 +220,40 @@ class DialogLumensTAOpportunityCostMap(DialogLumensBase):
         
         if file:
             self.lineEditPlanningUnit.setText(file)
-            
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
     def handlerSelectCsvCarbon(self):
         """Select a csv file
         """
-        csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Carbon Lookup Table', QtCore.QDir.homePath(), 'Carbon Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
-        if csvfile:
-            self.lineEditCsvCarbon.setText(csvfile)
-            
-            logging.getLogger(type(self).__name__).info('select csvfile: %s', csvfile)
+        if file:
+            self.lineEditCsvCarbon.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
     def handlerSelectCsvProfitability(self):
         """Select a csv file
         """
-        csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Profitability Lookup Table', QtCore.QDir.homePath(), 'Profitability Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
-        if csvfile:
-            self.lineEditCsvProfitability.setText(csvfile)
-            
-            logging.getLogger(type(self).__name__).info('select csvfile: %s', csvfile)
+        if file:
+            self.lineEditCsvProfitability.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
     def handlerSelectCsvPlanningUnit(self):
         """Select a csv file
         """
-        csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Planning Unit Lookup Table', QtCore.QDir.homePath(), 'Planning Unit Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
-        if csvfile:
-            self.lineEditCsvPlanningUnit.setText(csvfile)
-            
-            logging.getLogger(type(self).__name__).info('select csvfile: %s', csvfile)
+        if file:
+            self.lineEditCsvPlanningUnit.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
     def handlerLumensDialogSubmit(self):
@@ -287,9 +280,7 @@ class DialogLumensTAOpportunityCostMap(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['t2'],
             )
             
-            """
-            print outputs
-            """
+            ##print outputs
             
             self.buttonLumensDialogSubmit.setEnabled(True)
             

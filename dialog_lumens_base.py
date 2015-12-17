@@ -26,18 +26,22 @@ class DialogLumensBase(QtGui.QDialog):
         self.dialogLayout = QtGui.QVBoxLayout(parent)
         
         self.logBox = QPlainTextEditLogger(parent)
-        
-        self.logger = logging.getLogger(type(parent).__name__)
-        formatter = logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        self.logBox.setFormatter(formatter)
-        self.logger.addHandler(self.logBox)
-        self.logger.setLevel(logging.DEBUG)
-        
         self.dialogLayout.addWidget(self.logBox.widget)
         
-        # Show the logging widget only in debug mode
-        if not self.main.appSettings['debug']:
+        if self.main.appSettings['debug']:
+            self.logger = logging.getLogger(type(parent).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(parent).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logBox.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.addHandler(self.logBox)
+            self.logger.setLevel(logging.DEBUG)
+        else:
+            # Show the logging widget only in debug mode
             self.logBox.widget.setVisible(False)
         
         self.setWindowTitle(self.dialogTitle)

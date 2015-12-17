@@ -167,12 +167,11 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
     def handlerSelectWorkingDir(self):
         """Select a folder as working dir
         """
-        workingDir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
-        if workingDir:
-            self.lineEditWorkingDir.setText(workingDir)
-            
-            logging.getLogger(type(self).__name__).info('select working directory: %s', workingDir)
+        if dir:
+            self.lineEditWorkingDir.setText(dir)
+            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
     
     
     def handlerSelectQUESCDatabase(self):
@@ -183,20 +182,18 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
         
         if file:
             self.lineEditQUESCDatabase.setText(file)
-            
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
     def handlerSelectCsvNPVTable(self):
         """Select a csv file
         """
-        csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select NPV Table', QtCore.QDir.homePath(), 'NPV Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
-        if csvfile:
-            self.lineEditCsvNPVTable.setText(csvfile)
-            
-            logging.getLogger(type(self).__name__).info('select csvfile: %s', csvfile)
+        if file:
+            self.lineEditCsvNPVTable.setText(file)
+            logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
     def handlerSelectOutputOpportunityCostDatabase(self):
@@ -207,7 +204,6 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
         
         if outputfile:
             self.lineEditOutputOpportunityCostDatabase.setText(outputfile)
-            
             logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
     
     
@@ -219,7 +215,6 @@ class DialogLumensTAOpportunityCostCurve(DialogLumensBase):
         
         if outputfile:
             self.lineEditOutputOpportunityCostReport.setText(outputfile)
-            
             logging.getLogger(type(self).__name__).info('select output file: %s', outputfile)
     
     
