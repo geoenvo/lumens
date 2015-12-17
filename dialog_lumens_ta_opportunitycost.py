@@ -672,10 +672,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     def handlerProcessAbacusOpportunityCost(self):
         """
         """
+        self.setAppSetings()
+        
         formName = 'DialogLumensTAAbacusOpportunityCostCurve'
         algName = 'modeler:abacus_opportunity_cost'
-        
-        self.setAppSetings()
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -697,10 +697,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     def handlerProcessOpportunityCostCurve(self):
         """
         """
+        self.setAppSetings()
+        
         formName = 'DialogLumensTAOpportunityCostCurve'
         algName = 'modeler:opportunity_cost'
-        
-        self.setAppSetings()
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -738,10 +738,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     def handlerProcessOpportunityCostMap(self):
         """
         """
+        self.setAppSetings()
+        
         formName = 'DialogLumensTAOpportunityCostMap'
         algName = 'modeler:opcost_map'
-        
-        self.setAppSetings()
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)

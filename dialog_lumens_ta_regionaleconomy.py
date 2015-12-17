@@ -2,8 +2,8 @@
 #-*- coding:utf-8 -*-
 
 import os, logging, datetime
-##from qgis.core import *
-##from processing.tools import *
+from qgis.core import *
+from processing.tools import *
 from PyQt4 import QtCore, QtGui
 import resource
 
@@ -15,13 +15,25 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     def __init__(self, parent):
         super(DialogLumensTARegionalEconomy, self).__init__(parent)
-        print 'DEBUG: DialogLumensTARegionalEconomy init'
         
         self.main = parent
         self.dialogTitle = 'LUMENS Trade-Off Analysis [Regional Economy]'
         
+        if self.main.appSettings['debug']:
+            print 'DEBUG: DialogLumensTARegionalEconomy init'
+            self.logger = logging.getLogger(type(self).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.setLevel(logging.DEBUG)
+        
         self.setupUi(self)
         
+        # 'Descriptive Analysis of Regional Economy' tab checkbox
         self.checkBoxMultiplePeriod.toggled.connect(self.toggleMultiplePeriod)
         
         # 'Descriptive Analysis of Regional Economy' tab buttons
@@ -42,7 +54,6 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         # 'Regional Economic Scenario Impact' tab checkboxes
         self.checkBoxRegionalEconomicScenarioImpactFinalDemand.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.checkBoxRegionalEconomicScenarioImpactFinalDemand))
         self.checkBoxRegionalEconomicScenarioImpactGDP.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.checkBoxRegionalEconomicScenarioImpactGDP))
-        
         
         # 'Regional Economic Scenario Impact' tab buttons
         self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario)
@@ -1920,17 +1931,151 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     def handlerProcessRegionalEconomicScenarioImpact(self):
         """
         """
-        pass
+        self.setAppSetings()
+        
+        if self.checkBoxRegionalEconomicScenarioImpactFinalDemand.isChecked():
+            formName = 'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis'
+            algName = 'modeler:ta_reg_luc_5a_lcc_fd'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessRegionalEconomicScenarioImpact.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['intermediateConsumptionMatrix'],
+                    self.main.appSettings[formName]['valueAddedMatrix'],
+                    self.main.appSettings[formName]['finalConsumptionMatrix'],
+                    self.main.appSettings[formName]['valueAddedComponent'],
+                    self.main.appSettings[formName]['finalConsumptionComponent'],
+                    self.main.appSettings[formName]['listOfEconomicSector'],
+                    self.main.appSettings[formName]['landDistributionMatrix'],
+                    self.main.appSettings[formName]['landRequirementCoefficientMatrix'],
+                    self.main.appSettings[formName]['landCoverComponent'],
+                    self.main.appSettings[formName]['labourRequirement'],
+                    self.main.appSettings[formName]['financialUnit'],
+                    self.main.appSettings[formName]['areaName'],
+                    self.main.appSettings[formName]['period'],
+                    self.main.appSettings[formName]['finalDemandChangeScenario'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessRegionalEconomicScenarioImpact.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxRegionalEconomicScenarioImpactGDP.isChecked():
+            formName = 'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis'
+            algName = 'modeler:ta_reg_luc_5a_lcc_gdp'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessRegionalEconomicScenarioImpact.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['intermediateConsumptionMatrix'],
+                    self.main.appSettings[formName]['valueAddedMatrix'],
+                    self.main.appSettings[formName]['finalConsumptionMatrix'],
+                    self.main.appSettings[formName]['valueAddedComponent'],
+                    self.main.appSettings[formName]['finalConsumptionComponent'],
+                    self.main.appSettings[formName]['listOfEconomicSector'],
+                    self.main.appSettings[formName]['landDistributionMatrix'],
+                    self.main.appSettings[formName]['landRequirementCoefficientMatrix'],
+                    self.main.appSettings[formName]['landCoverComponent'],
+                    self.main.appSettings[formName]['labourRequirement'],
+                    self.main.appSettings[formName]['gdpChangeScenario'],
+                    self.main.appSettings[formName]['financialUnit'],
+                    self.main.appSettings[formName]['areaName'],
+                    self.main.appSettings[formName]['period'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessRegionalEconomicScenarioImpact.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessLandRequirementAnalysis(self):
         """
         """
-        pass
+        self.setAppSetings()
+        
+        formName = 'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis'
+        algName = 'modeler:ta_reg_ld_lr'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['landCoverMap'],
+                self.main.appSettings[formName]['intermediateConsumptionMatrix'],
+                self.main.appSettings[formName]['valueAddedMatrix'],
+                self.main.appSettings[formName]['finalConsumptionMatrix'],
+                self.main.appSettings[formName]['valueAddedComponent'],
+                self.main.appSettings[formName]['finalConsumptionComponent'],
+                self.main.appSettings[formName]['listOfEconomicSector'],
+                self.main.appSettings[formName]['landDistributionMatrix'],
+                self.main.appSettings[formName]['landCoverComponent'],
+                self.main.appSettings[formName]['labourRequirement'],
+                self.main.appSettings[formName]['financialUnit'],
+                self.main.appSettings[formName]['areaName'],
+                self.main.appSettings[formName]['period'],
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessDescriptiveAnalysis.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessLandUseChangeImpact(self):
         """
         """
-        pass
+        self.setAppSetings()
+        
+        formName = 'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis'
+        algName = 'modeler:ta_reg_luc_gdp_lcc'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['landCoverMapP1'],
+                self.main.appSettings[formName]['landCoverMapP2'],
+                self.main.appSettings[formName]['intermediateConsumptionMatrix'],
+                self.main.appSettings[formName]['valueAddedMatrix'],
+                self.main.appSettings[formName]['finalConsumptionMatrix'],
+                self.main.appSettings[formName]['valueAddedComponent'],
+                self.main.appSettings[formName]['finalConsumptionComponent'],
+                self.main.appSettings[formName]['listOfEconomicSector'],
+                self.main.appSettings[formName]['landDistributionMatrix'],
+                self.main.appSettings[formName]['landRequirementCoefficientMatrix'],
+                self.main.appSettings[formName]['landCoverComponent'],
+                self.main.appSettings[formName]['labourRequirement'],
+                self.main.appSettings[formName]['financialUnit'],
+                self.main.appSettings[formName]['areaName'],
+                self.main.appSettings[formName]['period'],
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessDescriptiveAnalysis.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
