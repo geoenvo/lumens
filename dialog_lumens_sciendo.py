@@ -521,17 +521,264 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     def setAppSetings(self):
         """
         """
-        pass
+        # 'Historical baseline projection' groupbox fields
+        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['workingDir'] \
+            = unicode(self.lineEditHistoricalBaselineProjectionWorkingDir.text()).replace(os.path.sep, '/')
+        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['QUESCDatabase'] \
+            = unicode(self.lineEditHistoricalBaselineProjectionQUESCDatabase.text())
+        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t1'] \
+            = self.spinBoxHistoricalBaselineProjectionT1.value()
+        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t2'] \
+            = self.spinBoxHistoricalBaselineProjectionT2.value()
+        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['iteration'] \
+            = self.spinBoxHistoricalBaselineProjectionIteration.value()
+        
+        # 'Historical baseline annual projection' groupbox fields
+        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineAnnualProjection']['iteration'] \
+            = self.spinBoxHistoricalBaselineAnnualProjectionIteration.value()
+        
+        # 'Drivers analysis' groupbox fields
+        self.main.appSettings['DialogLumensSCIENDODriversAnalysis']['landUseCoverChangeDrivers'] \
+            = unicode(self.lineEditDriversAnalysisLandUseCoverChangeDrivers.text())
+        self.main.appSettings['DialogLumensSCIENDODriversAnalysis']['landUseCoverChangeType'] \
+            = unicode(self.lineEditDriversAnalysislandUseCoverChangeType.text())
+        
+        # 'Build scenario' groupbox fields
+        self.main.appSettings['DialogLumensSCIENDOBuildScenario']['historicalBaselineCar'] \
+            = unicode(self.lineEditBuildScenarioHistoricalBaselineCar.text())
+        
+        # 'Land Use Change Modeling' tab fields
+        self.main.appSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['factorsDir'] \
+            = self.main.appSettings['DialogLumensSCIENDOCreateRasterCube']['factorsDir'] \
+            = self.main.appSettings['DialogLumensSCIENDOCalculateWeightofEvidence']['factorsDir'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateLandUseChange']['factorsDir'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateWithScenario']['factorsDir'] \
+            = unicode(self.lineEditLandUseChangeModelingFactorsDir.text()).replace(os.path.sep, '/')
+        self.main.appSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['landUseLookup'] \
+            = self.main.appSettings['DialogLumensSCIENDOCreateRasterCube']['landUseLookup'] \
+            = self.main.appSettings['DialogLumensSCIENDOCalculateWeightofEvidence']['landUseLookup'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateLandUseChange']['landUseLookup'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateWithScenario']['landUseLookup'] \
+            = unicode(self.lineEditLandUseChangeModelingLandUseLookup.text())
+        self.main.appSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['baseYear'] \
+            = self.main.appSettings['DialogLumensSCIENDOCreateRasterCube']['baseYear'] \
+            = self.main.appSettings['DialogLumensSCIENDOCalculateWeightofEvidence']['baseYear'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateLandUseChange']['baseYear'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateWithScenario']['baseYear'] \
+            = self.spinBoxLandUseChangeModelingBaseYear.value()
+        self.main.appSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['location'] \
+            = self.main.appSettings['DialogLumensSCIENDOCreateRasterCube']['location'] \
+            = self.main.appSettings['DialogLumensSCIENDOCalculateWeightofEvidence']['location'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateLandUseChange']['location'] \
+            = self.main.appSettings['DialogLumensSCIENDOSimulateWithScenario']['location'] \
+            = unicode(self.lineEditLandUseChangeModelingLocation.text())
+    
+    
+    def validForm(self, formName):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
+        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
+        
+        valid = True
+        
+        for key, val in self.main.appSettings[formName].iteritems():
+            if val == 0: # for values set specific to 0
+                continue
+            elif not val:
+                valid = False
+        
+        if not valid:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
     
     
     def handlerProcessLowEmissionDevelopmentAnalysis(self):
         """
         """
-        pass
+        self.setAppSetings()
+        
+        if self.checkBoxHistoricalBaselineProjection.isChecked():
+            formName = 'DialogLumensSCIENDOHistoricalBaselineProjection'
+            algName = 'modeler:projection_historical_baseline'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['QUESCDatabase'],
+                    self.main.appSettings[formName]['t1'],
+                    self.main.appSettings[formName]['t2'],
+                    self.main.appSettings[formName]['iteration'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxHistoricalBaselineAnnualProjection.isChecked():
+            formName = 'DialogLumensSCIENDOHistoricalBaselineAnnualProjection'
+            algName = 'r:historicalbaselineannualprojection'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['iteration'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxBuildScenario.isChecked():
+            formName = 'DialogLumensSCIENDOBuildScenario'
+            algName = 'r:abacususingabsolutearea'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['historicalBaselineCar'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessLandUseChangeModeling(self):
         """
         """
-        pass
+        if self.checkBoxCalculateTransitionMatrix.isChecked():
+            formName = 'DialogLumensSCIENDOCalculateTransitionMatrix'
+            algName = 'modeler:sciendo1_calculate_transition_matrix'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLandUseChangeModeling.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['factorsDir'],
+                    self.main.appSettings[formName]['landUseLookup'],
+                    self.main.appSettings[formName]['baseYear'],
+                    self.main.appSettings[formName]['location'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLandUseChangeModeling.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxCreateRasterCubeOfFactors.isChecked():
+            formName = 'DialogLumensSCIENDOCreateRasterCube'
+            algName = 'modeler:sciendo1_create_raster_cube'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLandUseChangeModeling.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['factorsDir'],
+                    self.main.appSettings[formName]['landUseLookup'],
+                    self.main.appSettings[formName]['baseYear'],
+                    self.main.appSettings[formName]['location'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLandUseChangeModeling.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxCalculateWeightOfEvidence.isChecked():
+            formName = 'DialogLumensSCIENDOCalculateWeightofEvidence'
+            algName = 'modeler:sciendo3_calculate_weight_of_evidence'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLandUseChangeModeling.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['factorsDir'],
+                    self.main.appSettings[formName]['landUseLookup'],
+                    self.main.appSettings[formName]['baseYear'],
+                    self.main.appSettings[formName]['location'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLandUseChangeModeling.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxSimulateLandUseChange.isChecked():
+            formName = 'DialogLumensSCIENDOSimulateLandUseChange'
+            algName = 'modeler:sciendo4_simulate_land_use_change'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLandUseChangeModeling.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['factorsDir'],
+                    self.main.appSettings[formName]['landUseLookup'],
+                    self.main.appSettings[formName]['baseYear'],
+                    self.main.appSettings[formName]['location'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLandUseChangeModeling.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxSimulateWithScenario.isChecked():
+            formName = 'DialogLumensSCIENDOSimulateWithScenario'
+            algName = 'modeler:sciendo5_simulate_with_scenario'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLandUseChangeModeling.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['factorsDir'],
+                    self.main.appSettings[formName]['landUseLookup'],
+                    self.main.appSettings[formName]['baseYear'],
+                    self.main.appSettings[formName]['location'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLandUseChangeModeling.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     

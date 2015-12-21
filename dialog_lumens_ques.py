@@ -1553,17 +1553,17 @@ class DialogLumensQUES(QtGui.QDialog):
         # 'Pre-QUES' tab fields
         
         
-        # 'QUES-C' Carbon Accounting tab fields
+        # 'QUES-C' Carbon Accounting groupbox fields
         self.main.appSettings['DialogLumensQUESCCarbonAccounting']['csvfile'] \
             = unicode(self.lineEditCACsvfile.text())
         self.main.appSettings['DialogLumensQUESCCarbonAccounting']['nodata'] \
             = self.spinBoxCANoDataValue.value()
         
-        # 'QUES-C' Peatland Carbon Accounting tab fields
+        # 'QUES-C' Peatland Carbon Accounting groupbox fields
         self.main.appSettings['DialogLumensQUESCPeatlandCarbonAccounting']['csvfile'] \
             = unicode(self.lineEditPCACsvfile.text())
         
-        # 'QUES-C' Summarize Multiple Period tab fields
+        # 'QUES-C' Summarize Multiple Period groupbox fields
         includePeat = 0
         
         if self.SMPCheckBox.isChecked():
@@ -1629,7 +1629,7 @@ class DialogLumensQUES(QtGui.QDialog):
         
         self.main.appSettings['DialogLumensQUESBAnalysis']['outputRecoveredHabitat'] = outputRecoveredHabitat
         
-        # 'QUES-H' Hydrological Response Unit Definition tab fields
+        # 'QUES-H' Hydrological Response Unit Definition sub tab fields
         self.main.appSettings['DialogLumensQUESHDominantHRU']['workingDir'] \
             = self.main.appSettings['DialogLumensQUESHDominantLUSSL']['workingDir'] \
             = self.main.appSettings['DialogLumensQUESHMultipleHRU']['workingDir'] \
@@ -1677,7 +1677,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.main.appSettings['DialogLumensQUESHMultipleHRU']['slopeThreshold'] \
             = self.spinBoxMultipleHRUSlopeThreshold.value()
         
-        # 'QUES-H' Watershed Model Evaluation tab fields
+        # 'QUES-H' Watershed Model Evaluation sub tab fields
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['workingDir'] = unicode(self.lineEditWatershedModelEvaluationWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['dateInitial'] = self.dateWatershedIndicatorsDateInitial.date().toString('dd/MM/yyyy')
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['dateFinal'] = self.dateWatershedModelEvaluationDateFinal.date().toString('dd/MM/yyyy')
@@ -1693,7 +1693,7 @@ class DialogLumensQUES(QtGui.QDialog):
         
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['outputWatershedModelEvaluation'] = outputWatershedModelEvaluation
         
-        # 'QUES-H' Watershed Indicators tab fields
+        # 'QUES-H' Watershed Indicators sub tab fields
         self.main.appSettings['DialogLumensQUESHWatershedIndicators']['SWATTXTINOUTDir'] = unicode(self.lineEditWatershedIndicatorsSWATTXTINOUTDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensQUESHWatershedIndicators']['dateInitial'] = self.dateWatershedIndicatorsDateInitial.date().toString('dd/MM/yyyy')
         self.main.appSettings['DialogLumensQUESHWatershedIndicators']['dateFinal'] = self.dateWatershedIndicatorsDateFinal.date().toString('dd/MM/yyyy')
@@ -2022,7 +2022,7 @@ class DialogLumensQUES(QtGui.QDialog):
                 outputFinalYearSubWatershedLevelIndicators = None
             
             outputs = general.runalg(
-                'modeler:ques-h_watershed_indicators',
+                algName,
                 self.main.appSettings[formName]['SWATTXTINOUTDir'],
                 self.main.appSettings[formName]['dateInitial'],
                 self.main.appSettings[formName]['dateFinal'],
