@@ -11,6 +11,65 @@ import resource
 class DialogLumensSCIENDO(QtGui.QDialog):
     """
     """
+    def loadSettings(self, tabName, fileName):
+        """
+        """
+        settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
+        settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True)
+        
+        dialogsToLoad = None
+        
+        if tabName == 'Low Emission Development Analysis':
+            dialogsToLoad = (
+                'DialogLumensSCIENDOHistoricalBaselineProjection',
+                'DialogLumensSCIENDOHistoricalBaselineAnnualProjection',
+                'DialogLumensSCIENDODriversAnalysis',
+                'DialogLumensSCIENDOBuildScenario',
+            )
+        elif tabName == 'Land Use Change Modeling':
+            dialogsToLoad = (
+                'DialogLumensSCIENDOCalculateTransitionMatrix',
+            )
+        
+        settings.beginGroup(tabName)
+        for dialog in dialogsToLoad:
+            settings.beginGroup(dialog)
+            for key in self.main.appSettings[dialog].keys():
+                print key, settings.value(key)
+            settings.endGroup()
+        settings.endGroup()
+    
+    
+    def saveSettings(self, tabName, fileName):
+        """
+        """
+        self.setAppSettings()
+        settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
+        settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True)
+        
+        dialogsToSave = None
+        
+        if tabName == 'Low Emission Development Analysis':
+            dialogsToSave = (
+                'DialogLumensSCIENDOHistoricalBaselineProjection',
+                'DialogLumensSCIENDOHistoricalBaselineAnnualProjection',
+                'DialogLumensSCIENDODriversAnalysis',
+                'DialogLumensSCIENDOBuildScenario',
+            )
+        elif tabName == 'Land Use Change Modeling':
+            dialogsToSave = (
+                'DialogLumensSCIENDOCalculateTransitionMatrix',
+            )
+        
+        settings.beginGroup(tabName)
+        for dialog in dialogsToSave:
+            settings.beginGroup(dialog)
+            for key, val in self.main.appSettings[dialog].iteritems():
+                settings.setValue(key, val)
+            settings.endGroup()
+        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -21,6 +80,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.dialogTitle = 'LUMENS SCIENDO'
         
         self.setupUi(self)
+        self.loadSettings('Low Emission Development Analysis', 'mysettings.ini')
         
         # 'Low Emission Development Analysis' tab checkboxes
         self.checkBoxHistoricalBaselineProjection.toggled.connect(self.toggleHistoricalBaselineProjection)
@@ -33,7 +93,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.buttonSelectHistoricalBaselineProjectionQUESCDatabase.clicked.connect(self.handlerSelectHistoricalBaselineProjectionQUESCDatabase)
         self.buttonSelectDriversAnalysisLandUseCoverChangeDrivers.clicked.connect(self.handlerSelectDriversAnalysisLandUseCoverChangeDrivers)
         self.buttonSelectBuildScenarioHistoricalBaselineCar.clicked.connect(self.handlerSelectBuildScenarioHistoricalBaselineCar)
-        self.buttonProcessLowEmissionDevelopmentAnalysis.clicked.connect(handlerProcessLowEmissionDevelopmentAnalysis)
+        self.buttonProcessLowEmissionDevelopmentAnalysis.clicked.connect(self.handlerProcessLowEmissionDevelopmentAnalysis)
         
         # 'Land Use Change Modeling' tab buttons
         self.buttonSelectLandUseChangeModelingFactorsDir.clicked.connect(self.handlerSelectLandUseChangeModelingFactorsDir)
@@ -408,6 +468,15 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         super(DialogLumensSCIENDO, self).showEvent(event)
     
     
+    def closeEvent(self, event):
+        """Called when the widget is closed
+        """
+        super(DialogLumensSCIENDO, self).closeEvent(event)
+        
+        self.saveSettings('Low Emission Development Analysis', 'mysettings.ini')
+        self.saveSettings('Land Use Change Modeling', 'mysettings.ini')
+    
+    
     #***********************************************************
     # 'Low Emission Development Analysis' tab QGroupBox toggle handlers
     #***********************************************************
@@ -520,7 +589,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     #***********************************************************
     # Process tabs
     #***********************************************************
-    def setAppSetings(self):
+    def setAppSettings(self):
         """
         """
         # 'Historical baseline projection' groupbox fields
@@ -599,7 +668,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     def handlerProcessLowEmissionDevelopmentAnalysis(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         if self.checkBoxHistoricalBaselineProjection.isChecked():
             formName = 'DialogLumensSCIENDOHistoricalBaselineProjection'
