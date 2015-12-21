@@ -27,6 +27,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectPreQUESPlanningUnit.clicked.connect(self.handlerSelectPreQUESPlanningUnit)
         self.buttonSelectPreQUESCsvPlanningUnit.clicked.connect(self.handlerSelectPreQUESCsvPlanningUnit)
         self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
+        self.buttonProcessPreQUES.clicked.connect(self.handlerProcessPreQUES)
         
         # 'QUES-C' tab checkboxes
         self.checkBoxCarbonAccounting.toggled.connect(self.toggleCarbonAccounting)
@@ -1188,7 +1189,16 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerSelectLandCoverRasterfile(self):
         """
         """
-        pass
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Raster File', QtCore.QDir.homePath(), 'Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+        
+        if file:
+            buttonSender = self.sender()
+            objectName = buttonSender.objectName()
+            period = objectName.split('_')[1]
+            
+            lineEditRasterfile = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_' + period)
+            lineEditRasterfile.setText(file)
     
     
     def handlerSelectPreQUESWorkingDir(self):
@@ -1552,6 +1562,31 @@ class DialogLumensQUES(QtGui.QDialog):
         """
         # 'Pre-QUES' tab fields
         
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] \
+            = unicode(self.lineEditPreQUESWorkingDir.text()).replace(os.path.sep, '/')
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['location'] \
+            = unicode(self.lineEditPreQUESLocation.text())
+        
+        lineEditLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T1')
+        lineEditLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T2')
+        spinBoxLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T1')
+        spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
+        
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t1'] \
+            = spinBoxLandCoverT1.value()
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t2'] \
+            = spinBoxLandCoverT2.value()
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT1'] \
+            = unicode(lineEditLandCoverT1.text())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT2'] \
+            = unicode(lineEditLandCoverT2.text())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] \
+            = unicode(self.lineEditPreQUESPlanningUnit.text())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] \
+            = unicode(self.lineEditLandCoverCsvLandUse.text())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvPlanningUnit'] \
+            = unicode(self.lineEditPreQUESCsvPlanningUnit.text())
+        
         
         # 'QUES-C' Carbon Accounting groupbox fields
         self.main.appSettings['DialogLumensQUESCCarbonAccounting']['csvfile'] \
@@ -1732,6 +1767,39 @@ class DialogLumensQUES(QtGui.QDialog):
             QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
         
         return valid
+    
+    
+    def handlerProcessPreQUES(self):
+        """
+        """
+        self.setAppSetings()
+        
+        formName = 'DialogLumensPreQUESLandcoverTrajectoriesAnalysis'
+        algName = 'modeler:pre-ques_trajectory'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessPreQUES.setDisabled(True)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['location'],
+                self.main.appSettings[formName]['t1'],
+                self.main.appSettings[formName]['t2'],
+                self.main.appSettings[formName]['landCoverT1'],
+                self.main.appSettings[formName]['landCoverT2'],
+                self.main.appSettings[formName]['planningUnit'],
+                self.main.appSettings[formName]['csvLandUse'],
+                self.main.appSettings[formName]['csvPlanningUnit'],
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessPreQUES.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessQUESC(self):
