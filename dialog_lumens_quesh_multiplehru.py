@@ -213,9 +213,9 @@ class DialogLumensQUESHMultipleHRU(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['slopeClassification'] = unicode(self.lineEditSlopeClassification.text())
         self.main.appSettings[type(self).__name__]['areaName'] = unicode(self.lineEditAreaName.text())
         self.main.appSettings[type(self).__name__]['period'] = self.spinBoxPeriod.value()
-        self.main.appSettings[type(self).__name__]['landUseThreshold'] = self.spinBoxLandUseThreshold.value() + 1
-        self.main.appSettings[type(self).__name__]['soilThreshold'] = self.spinBoxSoilThreshold.value() + 1
-        self.main.appSettings[type(self).__name__]['slopeThreshold'] = self.spinBoxSlopeThreshold.value() + 1
+        self.main.appSettings[type(self).__name__]['landUseThreshold'] = self.spinBoxLandUseThreshold.value()
+        self.main.appSettings[type(self).__name__]['soilThreshold'] = self.spinBoxSoilThreshold.value()
+        self.main.appSettings[type(self).__name__]['slopeThreshold'] = self.spinBoxSlopeThreshold.value()
     
     
     def handlerSelectWorkingDir(self):
@@ -335,9 +335,9 @@ class DialogLumensQUESHMultipleHRU(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['slopeClassification'],
                 self.main.appSettings[type(self).__name__]['areaName'],
                 self.main.appSettings[type(self).__name__]['period'],
-                self.main.appSettings[type(self).__name__]['landUseThreshold'] - 1,
-                self.main.appSettings[type(self).__name__]['soilThreshold'] - 1,
-                self.main.appSettings[type(self).__name__]['slopeThreshold'] - 1,
+                self.main.appSettings[type(self).__name__]['landUseThreshold'],
+                self.main.appSettings[type(self).__name__]['soilThreshold'],
+                self.main.appSettings[type(self).__name__]['slopeThreshold'],
             )
             
             """

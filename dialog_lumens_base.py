@@ -55,7 +55,9 @@ class DialogLumensBase(QtGui.QDialog):
         valid = True
         
         for key, val in self.main.appSettings[type(self).__name__].iteritems():
-            if not val:
+            if val == 0: # for values set specific to 0
+                continue
+            elif not val:
                 valid = False
         
         if not valid:

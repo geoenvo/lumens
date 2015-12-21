@@ -206,14 +206,12 @@ class DialogLumensQUESHWatershedModelEvaluation(DialogLumensBase):
             if outputWatershedModelEvaluation == '__UNSET__':
                 outputWatershedModelEvaluation = None
             
-            SWATModel = self.main.appSettings[type(self).__name__]['SWATModel'] - 1 # Either 1 or 0
-            
             outputs = general.runalg(
                 'modeler:ques-h_watershed_model_evaluation',
                 self.main.appSettings[type(self).__name__]['workingDir'],
                 self.main.appSettings[type(self).__name__]['period1'],
                 self.main.appSettings[type(self).__name__]['period2'],
-                SWATModel,
+                self.main.appSettings[type(self).__name__]['SWATModel'],
                 self.main.appSettings[type(self).__name__]['location'],
                 self.main.appSettings[type(self).__name__]['outletReachSubBasinID'],
                 self.main.appSettings[type(self).__name__]['observedDebitFile'],

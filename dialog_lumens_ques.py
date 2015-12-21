@@ -1717,36 +1717,326 @@ class DialogLumensQUES(QtGui.QDialog):
     def validForm(self, formName):
         """
         """
-        pass
+        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
+        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
+        
+        valid = True
+        
+        for key, val in self.main.appSettings[formName].iteritems():
+            if val == 0: # for values set specific to 0
+                continue
+            elif not val:
+                valid = False
+        
+        if not valid:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
     
     
     def handlerProcessQUESC(self):
         """
         """
         self.setAppSetings()
+        
+        if self.checkBoxCarbonAccounting.isChecked():
+            formName = 'DialogLumensQUESCCarbonAccounting'
+            algName = 'modeler:ques-c'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessQUESC.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['csvfile'],
+                    self.main.appSettings[formName]['nodata'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessQUESC.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxPeatlandCarbonAccounting.isChecked():
+            formName = 'DialogLumensQUESCPeatlandCarbonAccounting'
+            algName = 'modeler:ques-c_peat'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessQUESC.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['csvfile'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessQUESC.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        
+        if self.checkBoxSummarizeMultiplePeriod.isChecked():
+            formName = 'DialogLumensQUESCSummarizeMultiplePeriod'
+            algName = 'r:summarizemultipleperiod'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessQUESC.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['checkbox'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessQUESC.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessQUESB(self):
         """
         """
         self.setAppSetings()
+        
+        formName = 'DialogLumensQUESBAnalysis'
+        algName = 'modeler:ques-b'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessQUESB.setDisabled(True)
+            
+            outputTECIInitial = self.main.appSettings[formName]['outputTECIInitial']
+            outputTECIFinal = self.main.appSettings[formName]['outputTECIFinal']
+            outputHabitatLoss = self.main.appSettings[formName]['outputHabitatLoss']
+            outputDegradedHabitat = self.main.appSettings[formName]['outputDegradedHabitat']
+            outputHabitatGain = self.main.appSettings[formName]['outputHabitatGain']
+            outputRecoveredHabitat = self.main.appSettings[formName]['outputRecoveredHabitat']
+            
+            if outputTECIInitial == '__UNSET__':
+                outputTECIInitial = None
+            
+            if outputTECIFinal == '__UNSET__':
+                outputTECIFinal = None
+            
+            if outputHabitatLoss == '__UNSET__':
+                outputHabitatLoss = None
+            
+            if outputDegradedHabitat == '__UNSET__':
+                outputDegradedHabitat = None
+            
+            if outputHabitatGain == '__UNSET__':
+                outputHabitatGain = None
+            
+            if outputRecoveredHabitat == '__UNSET__':
+                outputRecoveredHabitat = None
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['csvLandCover'],
+                self.main.appSettings[formName]['samplingGridRes'],
+                self.main.appSettings[formName]['samplingWindowSize'],
+                self.main.appSettings[formName]['windowShape'],
+                self.main.appSettings[formName]['nodata'],
+                self.main.appSettings[formName]['csvClassDescriptors'],
+                self.main.appSettings[formName]['csvEdgeContrast'],
+                self.main.appSettings[formName]['csvZoneLookup'],
+                self.main.appSettings[formName]['refMapID'],
+                outputTECIInitial,
+                outputTECIFinal,
+                outputHabitatLoss,
+                outputDegradedHabitat,
+                outputHabitatGain,
+                outputRecoveredHabitat,
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessQUESB.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessQUESHHRUDefinition(self):
         """
         """
         self.setAppSetings()
+        
+        if self.checkBoxDominantHRU.isChecked():
+            formName = 'DialogLumensQUESHDominantHRU'
+            algName = 'modeler:ques-h_dhru'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessHRUDefinition.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['landUseMap'],
+                    self.main.appSettings[formName]['soilMap'],
+                    self.main.appSettings[formName]['slopeMap'],
+                    self.main.appSettings[formName]['subcatchmentMap'],
+                    self.main.appSettings[formName]['landUseClassification'],
+                    self.main.appSettings[formName]['soilClassification'],
+                    self.main.appSettings[formName]['slopeClassification'],
+                    self.main.appSettings[formName]['areaName'],
+                    self.main.appSettings[formName]['period'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessHRUDefinition.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxDominantLUSSL.isChecked():
+            formName = 'DialogLumensQUESHDominantLUSSL'
+            algName = 'modeler:ques-h_dlussl'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessHRUDefinition.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['landUseMap'],
+                    self.main.appSettings[formName]['soilMap'],
+                    self.main.appSettings[formName]['slopeMap'],
+                    self.main.appSettings[formName]['subcatchmentMap'],
+                    self.main.appSettings[formName]['landUseClassification'],
+                    self.main.appSettings[formName]['soilClassification'],
+                    self.main.appSettings[formName]['slopeClassification'],
+                    self.main.appSettings[formName]['areaName'],
+                    self.main.appSettings[formName]['period'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessHRUDefinition.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        if self.checkBoxMultipleHRU.isChecked():
+            formName = 'DialogLumensQUESHMultipleHRU'
+            algName = 'modeler:ques-h_mhru'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessHRUDefinition.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['workingDir'],
+                    self.main.appSettings[formName]['landUseMap'],
+                    self.main.appSettings[formName]['soilMap'],
+                    self.main.appSettings[formName]['slopeMap'],
+                    self.main.appSettings[formName]['subcatchmentMap'],
+                    self.main.appSettings[formName]['landUseClassification'],
+                    self.main.appSettings[formName]['soilClassification'],
+                    self.main.appSettings[formName]['slopeClassification'],
+                    self.main.appSettings[formName]['areaName'],
+                    self.main.appSettings[formName]['period'],
+                    self.main.appSettings[formName]['landUseThreshold'],
+                    self.main.appSettings[formName]['soilThreshold'],
+                    self.main.appSettings[formName]['slopeThreshold'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessHRUDefinition.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessQUESHWatershedModelEvaluation(self):
         """
         """
         self.setAppSetings()
+        
+        formName = 'DialogLumensQUESHWatershedModelEvaluation'
+        algName = 'modeler:ques-h_watershed_model_evaluation'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessWatershedModelEvaluation.setDisabled(True)
+            
+            outputWatershedModelEvaluation = self.main.appSettings[formName]['outputWatershedModelEvaluation']
+            
+            if outputWatershedModelEvaluation == '__UNSET__':
+                outputWatershedModelEvaluation = None
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[formName]['workingDir'],
+                self.main.appSettings[formName]['period1'],
+                self.main.appSettings[formName]['period2'],
+                self.main.appSettings[formName]['SWATModel'],
+                self.main.appSettings[formName]['location'],
+                self.main.appSettings[formName]['outletReachSubBasinID'],
+                self.main.appSettings[formName]['observedDebitFile'],
+                outputWatershedModelEvaluation,
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessWatershedModelEvaluation.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
     def handlerProcessQUESHWatershedIndicators(self):
         """
         """
         self.setAppSetings()
+        
+        formName = 'DialogLumensQUESHWatershedIndicators'
+        algName = 'modeler:ques-h_watershed_indicators'
+        
+        if self.validForm(formName):
+            logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            
+            self.buttonProcessWatershedIndicators.setDisabled(True)
+            
+            outputInitialYearSubWatershedLevelIndicators = self.main.appSettings[formName]['outputInitialYearSubWatershedLevelIndicators']
+            outputFinalYearSubWatershedLevelIndicators = self.main.appSettings[formName]['outputFinalYearSubWatershedLevelIndicators']
+            
+            if outputInitialYearSubWatershedLevelIndicators == '__UNSET__':
+                outputInitialYearSubWatershedLevelIndicators = None
+            
+            if outputFinalYearSubWatershedLevelIndicators == '__UNSET__':
+                outputFinalYearSubWatershedLevelIndicators = None
+            
+            outputs = general.runalg(
+                'modeler:ques-h_watershed_indicators',
+                self.main.appSettings[formName]['SWATTXTINOUTDir'],
+                self.main.appSettings[formName]['dateInitial'],
+                self.main.appSettings[formName]['dateFinal'],
+                self.main.appSettings[formName]['subWatershedPolygon'],
+                self.main.appSettings[formName]['location'],
+                self.main.appSettings[formName]['subWatershedOutput'],
+                outputInitialYearSubWatershedLevelIndicators,
+                outputFinalYearSubWatershedLevelIndicators,
+            )
+            
+            ##print outputs
+            
+            self.buttonProcessWatershedIndicators.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     

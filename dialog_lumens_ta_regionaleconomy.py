@@ -1848,7 +1848,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         valid = True
         
         for key, val in self.main.appSettings[formName].iteritems():
-            if not val:
+            if val == 0: # for values set specific to 0
+                continue
+            elif not val:
                 valid = False
         
         if not valid:

@@ -84,17 +84,6 @@ class DialogLumensQUESCCarbonAccounting(DialogLumensBase):
         self.main.appSettings[type(self).__name__]['nodata'] = self.spinBox.value()
     
     
-    def validDialogForm(self):
-        """Override function from parent class, 0 nodata value causes invalid form
-        """
-        valid = True
-        
-        if not self.main.appSettings[type(self).__name__]['csvfile']:
-            valid = False
-        
-        return valid
-    
-    
     def handlerLumensDialogSubmit(self):
         """
         """
