@@ -14,11 +14,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     def loadTemplateFiles(self):
         """List available ini template file inside the project folder
         """
-        settingsFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
-        if settingsFiles:
+        if templateFiles:
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.clear()
-            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItems(sorted(settingsFiles))
+            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItems(sorted(templateFiles))
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
             self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
         else:
@@ -29,11 +29,13 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     def loadTemplate(self, tabName, fileName):
         """Load the value saved in ini template file to the form widget
         """
-        settingsFilePath = os.path.join(self.settingsPath, fileName)
-        settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
+        templateFilePath = os.path.join(self.settingsPath, fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
         dialogsToLoad = None
+        
+        td = datetime.date.today()
         
         if tabName == 'Low Emission Development Analysis':
             dialogsToLoad = (
@@ -58,14 +60,24 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if workingDir and os.path.isdir(workingDir):
                 self.lineEditHistoricalBaselineProjectionWorkingDir.setText(workingDir)
+            else:
+                self.lineEditHistoricalBaselineProjectionWorkingDir.setText('')
             if QUESCDatabase and os.path.exists(QUESCDatabase):
                 self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(QUESCDatabase)
+            else:
+                self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText('')
             if t1:
                 self.spinBoxHistoricalBaselineProjectionT1.setValue(int(t1))
+            else:
+                self.spinBoxHistoricalBaselineProjectionT1.setValue(td.year)
             if t2:
                 self.spinBoxHistoricalBaselineProjectionT2.setValue(int(t2))
+            else:
+                self.spinBoxHistoricalBaselineProjectionT2.setValue(td.year)
             if iteration:
                 self.spinBoxHistoricalBaselineProjectionIteration.setValue(int(iteration))
+            else:
+                self.spinBoxHistoricalBaselineProjectionIteration.setValue(5)
             
             settings.endGroup()
             # /dialog
@@ -78,6 +90,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if iteration:
                 self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(int(iteration))
+            else:
+                self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(5)
             
             settings.endGroup()
             # /dialog
@@ -91,8 +105,12 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if landUseCoverChangeDrivers and os.path.exists(landUseCoverChangeDrivers):
                 self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText(landUseCoverChangeDrivers)
+            else:
+                self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText('')
             if landUseCoverChangeType:
                 self.lineEditDriversAnalysisLandUseCoverChangeType.setText(landUseCoverChangeType)
+            else:
+                self.lineEditDriversAnalysisLandUseCoverChangeType.setText('Land use change')
             
             settings.endGroup()
             # /dialog
@@ -105,6 +123,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if historicalBaselineCar and os.path.exists(historicalBaselineCar):
                 self.lineEditBuildScenarioHistoricalBaselineCar.setText(historicalBaselineCar)
+            else:
+                self.lineEditBuildScenarioHistoricalBaselineCar.setText('')
             
             settings.endGroup()
             # /dialog
@@ -130,12 +150,20 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if factorsDir and os.path.isdir(factorsDir):
                 self.lineEditLandUseChangeModelingFactorsDir.setText(factorsDir)
+            else:
+                self.lineEditLandUseChangeModelingFactorsDir.setText('')
             if landUseLookup and os.path.exists(landUseLookup):
                 self.lineEditLandUseChangeModelingLandUseLookup.setText(landUseLookup)
+            else:
+                self.lineEditLandUseChangeModelingLandUseLookup.setText('')
             if baseYear:
                 self.spinBoxLandUseChangeModelingBaseYear.setValue(int(baseYear))
+            else:
+                self.spinBoxLandUseChangeModelingBaseYear.setValue(td.year)
             if location:
                 self.lineEditLandUseChangeModelingLocation.setText(location)
+            else:
+                self.lineEditLandUseChangeModelingLocation.setText('location')
             
             settings.endGroup()
             # /dialog
@@ -157,8 +185,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         """Save form values according to their tab and dialog to a template file
         """
         self.setAppSettings()
-        settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
-        settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
+        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
         dialogsToSave = None
@@ -191,7 +219,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.main = parent
         self.dialogTitle = 'LUMENS SCIENDO'
         self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'])
-        self.currentTemplate = None
+        self.currentLowEmissionDevelopmentAnalysisTemplate = None
+        self.currentLandUseChangeModelingTemplate = None
         
         self.setupUi(self)
         
@@ -470,15 +499,23 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate.addLayout(self.layoutLowEmissionDevelopmentAnalysisTemplateInfo)
         self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate.addLayout(self.layoutLowEmissionDevelopmentAnalysisTemplate)
         
+        self.labelLoadedLowEmissionDevelopmentAnalysisTemplate = QtGui.QLabel()
+        self.labelLoadedLowEmissionDevelopmentAnalysisTemplate.setText('Loaded template:')
+        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.labelLoadedLowEmissionDevelopmentAnalysisTemplate, 0, 0)
+        
+        self.loadedLowEmissionDevelopmentAnalysisTemplate = QtGui.QLabel()
+        self.loadedLowEmissionDevelopmentAnalysisTemplate.setText('<None>')
+        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.loadedLowEmissionDevelopmentAnalysisTemplate, 0, 1)
+        
         self.labelLowEmissionDevelopmentAnalysisTemplate = QtGui.QLabel()
-        self.labelLowEmissionDevelopmentAnalysisTemplate.setText('File:')
-        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.labelLowEmissionDevelopmentAnalysisTemplate, 0, 0)
+        self.labelLowEmissionDevelopmentAnalysisTemplate.setText('Template name:')
+        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.labelLowEmissionDevelopmentAnalysisTemplate, 1, 0)
         
         self.comboBoxLowEmissionDevelopmentAnalysisTemplate = QtGui.QComboBox()
         self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
         self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
         self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItem('No template found')
-        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.comboBoxLowEmissionDevelopmentAnalysisTemplate, 0, 1)
+        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.comboBoxLowEmissionDevelopmentAnalysisTemplate, 1, 1)
         
         self.layoutButtonLowEmissionDevelopmentAnalysisTemplate = QtGui.QHBoxLayout()
         self.layoutButtonLowEmissionDevelopmentAnalysisTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
@@ -684,46 +721,73 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     #***********************************************************
     # 'Low Emission Development Analysis' tab QPushButton handlers
     #***********************************************************
-    def handlerLoadLowEmissionDevelopmentAnalysisTemplate(self):
+    def handlerLoadLowEmissionDevelopmentAnalysisTemplate(self, fileName=None):
         """
         """
-        settingsFile = self.comboBoxLowEmissionDevelopmentAnalysisTemplate.currentText()
+        templateFile = self.comboBoxLowEmissionDevelopmentAnalysisTemplate.currentText()
+        reply = None
         
-        reply = QtGui.QMessageBox.question(
-            self,
-            'Load Template',
-            'Do you want to load \'{0}\'?'.format(settingsFile),
-            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
-            QtGui.QMessageBox.No
-        )
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
             
-        if reply == QtGui.QMessageBox.Yes:
-            self.loadTemplate('Low Emission Development Analysis', settingsFile)
-            self.currentTemplate = settingsFile
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Low Emission Development Analysis', templateFile)
+            self.currentLowEmissionDevelopmentAnalysisTemplate = templateFile
+            self.loadedLowEmissionDevelopmentAnalysisTemplate.setText(templateFile)
+            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setCurrentIndex(self.comboBoxLowEmissionDevelopmentAnalysisTemplate.findText(templateFile))
             self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
     
     
-    def handlerSaveLowEmissionDevelopmentAnalysisTemplate(self):
+    def handlerSaveLowEmissionDevelopmentAnalysisTemplate(self, fileName=None):
         """
         """
-        settingsFile = self.currentTemplate
+        templateFile = self.currentLowEmissionDevelopmentAnalysisTemplate
+        
+        if fileName:
+            templateFile = fileName
         
         reply = QtGui.QMessageBox.question(
             self,
             'Save Template',
-            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(settingsFile),
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
             QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
             QtGui.QMessageBox.No
         )
             
         if reply == QtGui.QMessageBox.Yes:
-            self.saveTemplate('Low Emission Development Analysis', settingsFile)
+            self.saveTemplate('Low Emission Development Analysis', templateFile)
+            return True
+        else:
+            return False
     
     
     def handlerSaveAsLowEmissionDevelopmentAnalysisTemplate(self):
         """
         """
-        pass
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveLowEmissionDevelopmentAnalysisTemplate(fileName)
+            else:
+                self.saveTemplate('Low Emission Development Analysis', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadLowEmissionDevelopmentAnalysisTemplate(fileName)
     
     
     def handlerSelectHistoricalBaselineProjectionWorkingDir(self):
