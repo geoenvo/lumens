@@ -16,7 +16,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         """
         settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
         settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True)
+        settings.setFallbacksEnabled(True) # only use ini files
         
         dialogsToLoad = None
         
@@ -27,11 +27,108 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 'DialogLumensSCIENDODriversAnalysis',
                 'DialogLumensSCIENDOBuildScenario',
             )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Historical baseline projection' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensSCIENDOHistoricalBaselineProjection')
+            
+            workingDir = settings.value('workingDir')
+            QUESCDatabase = settings.value('QUESCDatabase')
+            t1 = settings.value('t1')
+            t2 = settings.value('t2')
+            iteration = settings.value('iteration')
+            
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditHistoricalBaselineProjectionWorkingDir.setText(workingDir)
+            if QUESCDatabase and os.path.exists(QUESCDatabase):
+                self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(QUESCDatabase)
+            if t1:
+                self.spinBoxHistoricalBaselineProjectionT1.setValue(int(t1))
+            if t2:
+                self.spinBoxHistoricalBaselineProjectionT2.setValue(int(t2))
+            if iteration:
+                self.spinBoxHistoricalBaselineProjectionIteration.setValue(int(iteration))
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'Historical baseline annual projection' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensSCIENDOHistoricalBaselineAnnualProjection')
+            
+            iteration = settings.value('iteration')
+            
+            if iteration:
+                self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(int(iteration))
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'Drivers analysis' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensSCIENDODriversAnalysis')
+            
+            landUseCoverChangeDrivers = settings.value('landUseCoverChangeDrivers')
+            landUseCoverChangeType = settings.value('landUseCoverChangeType')
+            
+            if landUseCoverChangeDrivers and os.path.exists(landUseCoverChangeDrivers):
+                self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText(landUseCoverChangeDrivers)
+            if landUseCoverChangeType:
+                self.lineEditDriversAnalysisLandUseCoverChangeType.setText(landUseCoverChangeType)
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'Build scenario' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensSCIENDOBuildScenario')
+            
+            historicalBaselineCar = settings.value('historicalBaselineCar')
+            
+            if historicalBaselineCar and os.path.exists(historicalBaselineCar):
+                self.lineEditBuildScenarioHistoricalBaselineCar.setText(historicalBaselineCar)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
         elif tabName == 'Land Use Change Modeling':
             dialogsToLoad = (
                 'DialogLumensSCIENDOCalculateTransitionMatrix',
             )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Land Use Change Modeling' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensSCIENDOCalculateTransitionMatrix')
+            
+            factorsDir = settings.value('factorsDir')
+            landUseLookup = settings.value('landUseLookup')
+            baseYear = settings.value('baseYear')
+            location = settings.value('location')
+            
+            if factorsDir and os.path.isdir(factorsDir):
+                self.lineEditLandUseChangeModelingFactorsDir.setText(factorsDir)
+            if landUseLookup and os.path.exists(landUseLookup):
+                self.lineEditLandUseChangeModelingLandUseLookup.setText(landUseLookup)
+            if baseYear:
+                self.spinBoxLandUseChangeModelingBaseYear.setValue(int(baseYear))
+            if location:
+                self.lineEditLandUseChangeModelingLocation.setText(location)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
         
+        print 'DEBUG'
         settings.beginGroup(tabName)
         for dialog in dialogsToLoad:
             settings.beginGroup(dialog)
@@ -42,12 +139,12 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def saveSettings(self, tabName, fileName):
-        """
+        """Save form values according to their tab and dialog
         """
         self.setAppSettings()
         settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
         settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True)
+        settings.setFallbacksEnabled(True) # only use ini files
         
         dialogsToSave = None
         
@@ -80,7 +177,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.dialogTitle = 'LUMENS SCIENDO'
         
         self.setupUi(self)
+        
+        print 'DEBUG'
         self.loadSettings('Low Emission Development Analysis', 'mysettings.ini')
+        self.loadSettings('Land Use Change Modeling', 'mysettings.ini')
         
         # 'Low Emission Development Analysis' tab checkboxes
         self.checkBoxHistoricalBaselineProjection.toggled.connect(self.toggleHistoricalBaselineProjection)
@@ -209,6 +309,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionIteration, 4, 0)
         
         self.spinBoxHistoricalBaselineProjectionIteration = QtGui.QSpinBox()
+        self.spinBoxHistoricalBaselineProjectionIteration.setRange(1, 9999)
         self.spinBoxHistoricalBaselineProjectionIteration.setValue(5)
         self.layoutHistoricalBaselineProjection.addWidget(self.spinBoxHistoricalBaselineProjectionIteration, 4, 1)
         self.labelHistoricalBaselineProjectionIteration.setBuddy(self.spinBoxHistoricalBaselineProjectionIteration) 
@@ -243,6 +344,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutHistoricalBaselineAnnualProjection.addWidget(self.labelHistoricalBaselineAnnualProjectionIteration, 0, 0)
         
         self.spinBoxHistoricalBaselineAnnualProjectionIteration = QtGui.QSpinBox()
+        self.spinBoxHistoricalBaselineAnnualProjectionIteration.setRange(1, 9999)
         self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(5)
         self.layoutHistoricalBaselineAnnualProjection.addWidget(self.spinBoxHistoricalBaselineAnnualProjectionIteration, 0, 1)
         self.labelHistoricalBaselineAnnualProjectionIteration.setBuddy(self.spinBoxHistoricalBaselineAnnualProjectionIteration)
@@ -287,10 +389,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.labelDriversAnalysislandUseCoverChangeType.setText('Land use/cover change type:')
         self.layoutDriversAnalysis.addWidget(self.labelDriversAnalysislandUseCoverChangeType, 1, 0)
         
-        self.lineEditDriversAnalysislandUseCoverChangeType = QtGui.QLineEdit()
-        self.lineEditDriversAnalysislandUseCoverChangeType.setText('Land use change')
-        self.layoutDriversAnalysis.addWidget(self.lineEditDriversAnalysislandUseCoverChangeType, 1, 1)
-        self.labelDriversAnalysislandUseCoverChangeType.setBuddy(self.lineEditDriversAnalysislandUseCoverChangeType)
+        self.lineEditDriversAnalysisLandUseCoverChangeType = QtGui.QLineEdit()
+        self.lineEditDriversAnalysisLandUseCoverChangeType.setText('Land use change')
+        self.layoutDriversAnalysis.addWidget(self.lineEditDriversAnalysisLandUseCoverChangeType, 1, 1)
+        self.labelDriversAnalysislandUseCoverChangeType.setBuddy(self.lineEditDriversAnalysisLandUseCoverChangeType)
         
         # 'Build scenario' GroupBox
         self.groupBoxBuildScenario = QtGui.QGroupBox('Build scenario')
@@ -473,6 +575,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         """
         super(DialogLumensSCIENDO, self).closeEvent(event)
         
+        print 'DEBUG'
         self.saveSettings('Low Emission Development Analysis', 'mysettings.ini')
         self.saveSettings('Land Use Change Modeling', 'mysettings.ini')
     
@@ -612,7 +715,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.main.appSettings['DialogLumensSCIENDODriversAnalysis']['landUseCoverChangeDrivers'] \
             = unicode(self.lineEditDriversAnalysisLandUseCoverChangeDrivers.text())
         self.main.appSettings['DialogLumensSCIENDODriversAnalysis']['landUseCoverChangeType'] \
-            = unicode(self.lineEditDriversAnalysislandUseCoverChangeType.text())
+            = unicode(self.lineEditDriversAnalysisLandUseCoverChangeType.text())
         
         # 'Build scenario' groupbox fields
         self.main.appSettings['DialogLumensSCIENDOBuildScenario']['historicalBaselineCar'] \
