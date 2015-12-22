@@ -77,7 +77,7 @@ class DialogLayerAttributeDualView(QtGui.QDialog):
         if self.vectorLayer.isModified():
             reply = QtGui.QMessageBox.question(
                 self,
-                'Save layer changes',
+                'Save Layer Changes',
                 'Do you want to save the changes made to layer {0}?'.format(self.vectorLayer.name()),
                 QtGui.QMessageBox.Save|QtGui.QMessageBox.No|QtGui.QMessageBox.Cancel,
                 QtGui.QMessageBox.Cancel

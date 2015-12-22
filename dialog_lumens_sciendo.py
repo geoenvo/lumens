@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, datetime
+import os, logging, datetime, glob
 ##from qgis.core import *
 ##from processing.tools import *
 from PyQt4 import QtCore, QtGui
@@ -11,10 +11,25 @@ import resource
 class DialogLumensSCIENDO(QtGui.QDialog):
     """
     """
-    def loadSettings(self, tabName, fileName):
+    def loadTemplateFiles(self):
+        """List available ini template file inside the project folder
         """
+        settingsFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        
+        if settingsFiles:
+            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.clear()
+            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItems(sorted(settingsFiles))
+            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+            self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+        else:
+            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+            self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+        
+    
+    def loadTemplate(self, tabName, fileName):
+        """Load the value saved in ini template file to the form widget
         """
-        settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
+        settingsFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(settingsFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
@@ -138,8 +153,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         settings.endGroup()
     
     
-    def saveSettings(self, tabName, fileName):
-        """Save form values according to their tab and dialog
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
         """
         self.setAppSettings()
         settingsFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
@@ -175,12 +190,15 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         
         self.main = parent
         self.dialogTitle = 'LUMENS SCIENDO'
+        self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'])
+        self.currentTemplate = None
         
         self.setupUi(self)
         
         print 'DEBUG'
-        self.loadSettings('Low Emission Development Analysis', 'mysettings.ini')
-        self.loadSettings('Land Use Change Modeling', 'mysettings.ini')
+        self.loadTemplateFiles()
+        ##self.loadTemplate('Low Emission Development Analysis', 'mysettings.ini')
+        ##self.loadTemplate('Land Use Change Modeling', 'mysettings.ini')
         
         # 'Low Emission Development Analysis' tab checkboxes
         self.checkBoxHistoricalBaselineProjection.toggled.connect(self.toggleHistoricalBaselineProjection)
@@ -194,6 +212,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.buttonSelectDriversAnalysisLandUseCoverChangeDrivers.clicked.connect(self.handlerSelectDriversAnalysisLandUseCoverChangeDrivers)
         self.buttonSelectBuildScenarioHistoricalBaselineCar.clicked.connect(self.handlerSelectBuildScenarioHistoricalBaselineCar)
         self.buttonProcessLowEmissionDevelopmentAnalysis.clicked.connect(self.handlerProcessLowEmissionDevelopmentAnalysis)
+        self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerLoadLowEmissionDevelopmentAnalysisTemplate)
+        self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerSaveLowEmissionDevelopmentAnalysisTemplate)
+        self.buttonSaveAsLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerSaveAsLowEmissionDevelopmentAnalysisTemplate)
         
         # 'Land Use Change Modeling' tab buttons
         self.buttonSelectLandUseChangeModelingFactorsDir.clicked.connect(self.handlerSelectLandUseChangeModelingFactorsDir)
@@ -217,7 +238,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
-        self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QVBoxLayout()
+        ###self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QVBoxLayout()
+        self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QGridLayout()
         self.layoutTabLandUseChangeModeling = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         self.layoutTabReport = QtGui.QVBoxLayout()
@@ -433,16 +455,56 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         # Process tab button
         self.layoutButtonLowEmissionDevelopmentAnalysis = QtGui.QHBoxLayout()
         self.buttonProcessLowEmissionDevelopmentAnalysis = QtGui.QPushButton()
+        self.buttonProcessLowEmissionDevelopmentAnalysis.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         self.buttonProcessLowEmissionDevelopmentAnalysis.setText('&Process')
         self.layoutButtonLowEmissionDevelopmentAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLowEmissionDevelopmentAnalysis.addWidget(self.buttonProcessLowEmissionDevelopmentAnalysis)
         
+        # Template GroupBox
+        self.groupBoxLowEmissionDevelopmentAnalysisTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLowEmissionDevelopmentAnalysisTemplate.setLayout(self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate)
+        self.layoutLowEmissionDevelopmentAnalysisTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutLowEmissionDevelopmentAnalysisTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate.addLayout(self.layoutLowEmissionDevelopmentAnalysisTemplateInfo)
+        self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate.addLayout(self.layoutLowEmissionDevelopmentAnalysisTemplate)
+        
+        self.labelLowEmissionDevelopmentAnalysisTemplate = QtGui.QLabel()
+        self.labelLowEmissionDevelopmentAnalysisTemplate.setText('File:')
+        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.labelLowEmissionDevelopmentAnalysisTemplate, 0, 0)
+        
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate = QtGui.QComboBox()
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItem('No template found')
+        self.layoutLowEmissionDevelopmentAnalysisTemplate.addWidget(self.comboBoxLowEmissionDevelopmentAnalysisTemplate, 0, 1)
+        
+        self.layoutButtonLowEmissionDevelopmentAnalysisTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonLowEmissionDevelopmentAnalysisTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadLowEmissionDevelopmentAnalysisTemplate = QtGui.QPushButton()
+        self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+        self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setText('Load')
+        self.buttonSaveLowEmissionDevelopmentAnalysisTemplate = QtGui.QPushButton()
+        self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+        self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setText('Save')
+        self.buttonSaveAsLowEmissionDevelopmentAnalysisTemplate = QtGui.QPushButton()
+        self.buttonSaveAsLowEmissionDevelopmentAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsLowEmissionDevelopmentAnalysisTemplate.setText('Save As')
+        self.layoutButtonLowEmissionDevelopmentAnalysisTemplate.addWidget(self.buttonLoadLowEmissionDevelopmentAnalysisTemplate)
+        self.layoutButtonLowEmissionDevelopmentAnalysisTemplate.addWidget(self.buttonSaveLowEmissionDevelopmentAnalysisTemplate)
+        self.layoutButtonLowEmissionDevelopmentAnalysisTemplate.addWidget(self.buttonSaveAsLowEmissionDevelopmentAnalysisTemplate)
+        self.layoutGroupBoxLowEmissionDevelopmentAnalysisTemplate.addLayout(self.layoutButtonLowEmissionDevelopmentAnalysisTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxHistoricalBaselineProjection)
-        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxHistoricalBaselineAnnualProjection)
-        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxDriversAnalysis)
-        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxBuildScenario)
-        self.layoutTabLowEmissionDevelopmentAnalysis.addLayout(self.layoutButtonLowEmissionDevelopmentAnalysis)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxHistoricalBaselineProjection, 0, 0)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxHistoricalBaselineAnnualProjection, 1, 0)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxDriversAnalysis, 2, 0)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxBuildScenario, 3, 0)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addLayout(self.layoutButtonLowEmissionDevelopmentAnalysis, 4, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxLowEmissionDevelopmentAnalysisTemplate, 0, 1, 4, 1)
         
         #***********************************************************
         # Setup 'Land Use Change Modeling' tab
@@ -576,8 +638,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         super(DialogLumensSCIENDO, self).closeEvent(event)
         
         print 'DEBUG'
-        self.saveSettings('Low Emission Development Analysis', 'mysettings.ini')
-        self.saveSettings('Land Use Change Modeling', 'mysettings.ini')
+        ##self.saveTemplate('Low Emission Development Analysis', 'mysettings.ini')
+        ##self.saveTemplate('Land Use Change Modeling', 'mysettings.ini')
     
     
     #***********************************************************
@@ -622,6 +684,48 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     #***********************************************************
     # 'Low Emission Development Analysis' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadLowEmissionDevelopmentAnalysisTemplate(self):
+        """
+        """
+        settingsFile = self.comboBoxLowEmissionDevelopmentAnalysisTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Load Template',
+            'Do you want to load \'{0}\'?'.format(settingsFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.loadTemplate('Low Emission Development Analysis', settingsFile)
+            self.currentTemplate = settingsFile
+            self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+    
+    
+    def handlerSaveLowEmissionDevelopmentAnalysisTemplate(self):
+        """
+        """
+        settingsFile = self.currentTemplate
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(settingsFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Low Emission Development Analysis', settingsFile)
+    
+    
+    def handlerSaveAsLowEmissionDevelopmentAnalysisTemplate(self):
+        """
+        """
+        pass
+    
+    
     def handlerSelectHistoricalBaselineProjectionWorkingDir(self):
         """
         """
