@@ -131,7 +131,7 @@ class MainWindow(QtGui.QMainWindow):
             'selectCarfileExt': '.car',
             'defaultExtent': QgsRectangle(95, -11, 140, 11), # Southeast Asia extent
             'defaultCRS': 4326, # EPSG 4326 - WGS 84
-            'folderPUR': 'PUR',
+            'folderPUR': 'PUR', # Used for template path
             'folderQUES': 'QUES',
             'folderTA': 'TA',
             'folderSCIENDO': 'SCIENDO',

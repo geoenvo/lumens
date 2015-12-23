@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, datetime
+import os, logging, datetime, glob
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
@@ -11,6 +11,243 @@ import resource
 class DialogLumensTAOpportunityCost(QtGui.QDialog):
     """
     """
+    def loadTemplateFiles(self):
+        """List available ini template file inside the project folder
+        """
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        
+        if templateFiles:
+            self.comboBoxAbacusOpportunityCostTemplate.clear()
+            self.comboBoxAbacusOpportunityCostTemplate.addItems(sorted(templateFiles))
+            self.comboBoxAbacusOpportunityCostTemplate.setEnabled(True)
+            self.buttonLoadAbacusOpportunityCostTemplate.setEnabled(True)
+            
+            self.comboBoxOpportunityCostCurveTemplate.clear()
+            self.comboBoxOpportunityCostCurveTemplate.addItems(sorted(templateFiles))
+            self.comboBoxOpportunityCostCurveTemplate.setEnabled(True)
+            self.buttonLoadOpportunityCostCurveTemplate.setEnabled(True)
+            
+            self.comboBoxOpportunityCostMapTemplate.clear()
+            self.comboBoxOpportunityCostMapTemplate.addItems(sorted(templateFiles))
+            self.comboBoxOpportunityCostMapTemplate.setEnabled(True)
+            self.buttonLoadOpportunityCostMapTemplate.setEnabled(True)
+        else:
+            self.comboBoxAbacusOpportunityCostTemplate.setDisabled(True)
+            self.buttonLoadAbacusOpportunityCostTemplate.setDisabled(True)
+            
+            self.comboBoxOpportunityCostCurveTemplate.setDisabled(True)
+            self.buttonLoadOpportunityCostCurveTemplate.setDisabled(True)
+            
+            self.comboBoxOpportunityCostMapTemplate.setDisabled(True)
+            self.buttonLoadOpportunityCostMapTemplate.setDisabled(True)
+        
+    
+    def loadTemplate(self, tabName, fileName):
+        """Load the value saved in ini template file to the form widget
+        """
+        templateFilePath = os.path.join(self.settingsPath, fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        
+        dialogsToLoad = None
+        
+        td = datetime.date.today()
+        
+        if tabName == 'Abacus Opportunity Cost':
+            dialogsToLoad = (
+                'DialogLumensTAAbacusOpportunityCostCurve',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Abacus opportunity cost' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTAAbacusOpportunityCostCurve')
+            
+            projectFile = settings.value('projectFile')
+            
+            if projectFile and os.path.isdir(projectFile):
+                self.lineEditAOCProjectFile.setText(projectFile)
+            else:
+                self.lineEditAOCProjectFile.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Opportunity Cost Curve':
+            dialogsToLoad = (
+                'DialogLumensTAOpportunityCostCurve',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Opportunity Cost Curve' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTAOpportunityCostCurve')
+            
+            period1 = settings.value('period1')
+            period2 = settings.value('period2')
+            workingDir = settings.value('workingDir')
+            QUESCDatabase = settings.value('QUESCDatabase')
+            csvNPVTable = settings.value('csvNPVTable')
+            costThreshold = settings.value('costThreshold')
+            outputOpportunityCostDatabase = settings.value('outputOpportunityCostDatabase')
+            outputOpportunityCostReport = settings.value('outputOpportunityCostReport')
+            
+            if period1:
+                self.spinBoxOCCPeriod1.setValue(int(period1))
+            else:
+                self.spinBoxOCCPeriod1.setValue(td.year)
+            if period2:
+                self.spinBoxOCCPeriod2.setValue(int(period2))
+            else:
+                self.spinBoxOCCPeriod2.setValue(td.year)
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditOCCWorkingDir.setText(workingDir)
+            else:
+                self.lineEditOCCWorkingDir.setText('')
+            if QUESCDatabase and os.path.exists(QUESCDatabase):
+                self.lineEditOCCQUESCDatabase.setText(QUESCDatabase)
+            else:
+                self.lineEditOCCQUESCDatabase.setText('')
+            if csvNPVTable and os.path.exists(csvNPVTable):
+                self.lineEditOCCCsvNPVTable.setText(csvNPVTable)
+            else:
+                self.lineEditOCCCsvNPVTable.setText('')
+            if costThreshold:
+                self.spinBoxOCCCostThreshold.setValue(int(costThreshold))
+            else:
+                self.spinBoxOCCCostThreshold.setValue(5)
+            if outputOpportunityCostDatabase:
+                self.lineEditOCCOutputOpportunityCostDatabase.setText(outputOpportunityCostDatabase)
+            else:
+                self.lineEditOCCOutputOpportunityCostDatabase.setText('')
+            if outputOpportunityCostReport:
+                self.lineEditOCCOutputOpportunityCostReport.setText(outputOpportunityCostReport)
+            else:
+                self.lineEditOCCOutputOpportunityCostReport.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Opportunity Cost Map':
+            dialogsToLoad = (
+                'DialogLumensTAOpportunityCostMap',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Opportunity Cost Map' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTAOpportunityCostMap')
+            
+            t1 = settings.value('t1')
+            t2 = settings.value('t2')
+            landUseT1 = settings.value('landUseT1')
+            landUseT2 = settings.value('landUseT2')
+            planningUnit = settings.value('planningUnit')
+            csvPlanningUnit = settings.value('csvPlanningUnit')
+            workingDir = settings.value('workingDir')
+            location = settings.value('location')
+            csvCarbon = settings.value('csvCarbon')
+            csvProfitability = settings.value('csvProfitability')
+            
+            if t1:
+                self.spinBoxOCMPeriod1.setValue(int(t1))
+            else:
+                self.spinBoxOCMPeriod1.setValue(td.year)
+            if t2:
+                self.spinBoxOCMPeriod2.setValue(int(t2))
+            else:
+                self.spinBoxOCMPeriod2.setValue(td.year)
+            if landUseT1 and os.path.exists(landUseT1):
+                self.lineEditOCMLandUseT1.setText(landUseT1)
+            else:
+                self.lineEditOCMLandUseT1.setText('')
+            if landUseT2 and os.path.exists(landUseT2):
+                self.lineEditOCMLandUseT2.setText(landUseT2)
+            else:
+                self.lineEditOCMLandUseT2.setText('')
+            if planningUnit and os.path.exists(planningUnit):
+                self.lineEditOCMPlanningUnit.setText(planningUnit)
+            else:
+                self.lineEditOCMPlanningUnit.setText('')
+            if csvPlanningUnit and os.path.exists(csvPlanningUnit):
+                self.lineEditOCMCsvPlanningUnit.setText(csvPlanningUnit)
+            else:
+                self.lineEditOCMCsvPlanningUnit.setText('')
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditOCMWorkingDir.setText(workingDir)
+            else:
+                self.lineEditOCMWorkingDir.setText('')
+            if location:
+                self.lineEditOCMLocation.setText(location)
+            else:
+                self.lineEditOCMLocation.setText('location')
+            if csvCarbon and os.path.exists(csvCarbon):
+                self.lineEditOCMCsvCarbon.setText(csvCarbon)
+            else:
+                self.lineEditOCMCsvCarbon.setText('')
+            if csvProfitability and os.path.exists(csvProfitability):
+                self.lineEditOCMCsvProfitability.setText(csvProfitability)
+            else:
+                self.lineEditOCMCsvProfitability.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        
+        """
+        print 'DEBUG'
+        settings.beginGroup(tabName)
+        for dialog in dialogsToLoad:
+            settings.beginGroup(dialog)
+            for key in self.main.appSettings[dialog].keys():
+                print key, settings.value(key)
+            settings.endGroup()
+        settings.endGroup()
+        """
+    
+    
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
+        """
+        self.setAppSettings()
+        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        
+        dialogsToSave = None
+        
+        if tabName == 'Abacus Opportunity Cost':
+            dialogsToSave = (
+                'DialogLumensTAAbacusOpportunityCostCurve',
+            )
+        elif tabName == 'Opportunity Cost Curve':
+            dialogsToSave = (
+                'DialogLumensTAOpportunityCostCurve',
+            )
+        elif tabName == 'Opportunity Cost Map':
+            dialogsToSave = (
+                'DialogLumensTAOpportunityCostMap',
+            )
+        
+        settings.beginGroup(tabName)
+        for dialog in dialogsToSave:
+            settings.beginGroup(dialog)
+            for key, val in self.main.appSettings[dialog].iteritems():
+                settings.setValue(key, val)
+            settings.endGroup()
+        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -18,6 +255,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         self.main = parent
         self.dialogTitle = 'LUMENS Trade-Off Analysis [Opportunity Cost]'
+        self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'])
+        self.currentAbacusOpportunityCostTemplate = None
+        self.currentOpportunityCostCurveTemplate = None
+        self.currentOpportunityCostMapTemplate = None
         
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLumensTAOpportunityCost init'
@@ -33,9 +274,14 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         self.setupUi(self)
         
+        self.loadTemplateFiles()
+        
         # 'Abacus Opportunity Cost' tab buttons
         self.buttonSelectAOCProjectFile.clicked.connect(self.handlerSelectAOCProjectFile)
         self.buttonProcessAbacusOpportunityCost.clicked.connect(self.handlerProcessAbacusOpportunityCost)
+        self.buttonLoadAbacusOpportunityCostTemplate.clicked.connect(self.handlerLoadAbacusOpportunityCostTemplate)
+        self.buttonSaveAbacusOpportunityCostTemplate.clicked.connect(self.handlerSaveAbacusOpportunityCostTemplate)
+        self.buttonSaveAsAbacusOpportunityCostTemplate.clicked.connect(self.handlerSaveAsAbacusOpportunityCostTemplate)
         
         # 'Opportunity Cost Curve' tab buttons
         self.buttonSelectOCCWorkingDir.clicked.connect(self.handlerSelectOCCWorkingDir)
@@ -44,16 +290,22 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.buttonSelectOCCOutputOpportunityCostDatabase.clicked.connect(self.handlerSelectOCCOutputOpportunityCostDatabase)
         self.buttonSelectOCCOutputOpportunityCostReport.clicked.connect(self.handlerSelectOCCOutputOpportunityCostReport)
         self.buttonProcessOpportunityCostCurve.clicked.connect(self.handlerProcessOpportunityCostCurve)
+        self.buttonLoadOpportunityCostCurveTemplate.clicked.connect(self.handlerLoadOpportunityCostCurveTemplate)
+        self.buttonSaveOpportunityCostCurveTemplate.clicked.connect(self.handlerSaveOpportunityCostCurveTemplate)
+        self.buttonSaveAsOpportunityCostCurveTemplate.clicked.connect(self.handlerSaveAsOpportunityCostCurveTemplate)
         
         # 'Opportunity Cost Map' tab buttons
         self.buttonSelectOCMLandUseT1.clicked.connect(self.handlerSelectOCMLandUseT1)
         self.buttonSelectOCMLandUseT2.clicked.connect(self.handlerSelectOCMLandUseT2)
-        self.buttonSelectPlanningUnit.clicked.connect(self.handlerSelectPlanningUnit)
-        self.buttonSelectCsvPlanningUnit.clicked.connect(self.handlerSelectCsvPlanningUnit)
+        self.buttonSelectOCMPlanningUnit.clicked.connect(self.handlerSelectOCMPlanningUnit)
+        self.buttonSelectOCMCsvPlanningUnit.clicked.connect(self.handlerSelectOCMCsvPlanningUnit)
         self.buttonSelectOCMWorkingDir.clicked.connect(self.handlerSelectOCMWorkingDir)
         self.buttonSelectOCMCsvCarbon.clicked.connect(self.handlerSelectOCMCsvCarbon)
         self.buttonSelectOCMCsvProfitability.clicked.connect(self.handlerSelectOCMCsvProfitability)
         self.buttonProcessOpportunityCostMap.clicked.connect(self.handlerProcessOpportunityCostMap)
+        self.buttonLoadOpportunityCostMapTemplate.clicked.connect(self.handlerLoadOpportunityCostMapTemplate)
+        self.buttonSaveOpportunityCostMapTemplate.clicked.connect(self.handlerSaveOpportunityCostMapTemplate)
+        self.buttonSaveAsOpportunityCostMapTemplate.clicked.connect(self.handlerSaveAsOpportunityCostMapTemplate)
         
     
     def setupUi(self, parent):
@@ -70,9 +322,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.tabWidget.addTab(self.tabOpportunityCostMap, 'Opportunity Cost Map')
         self.tabWidget.addTab(self.tabResult, 'Result')
         
-        self.layoutTabAbacusOpportunityCost = QtGui.QVBoxLayout()
-        self.layoutTabOpportunityCostCurve = QtGui.QVBoxLayout()
-        self.layoutTabOpportunityCostMap = QtGui.QVBoxLayout()
+        ##self.layoutTabAbacusOpportunityCost = QtGui.QVBoxLayout()
+        self.layoutTabAbacusOpportunityCost = QtGui.QGridLayout()
+        ##self.layoutTabOpportunityCostCurve = QtGui.QVBoxLayout()
+        self.layoutTabOpportunityCostCurve = QtGui.QGridLayout()
+        ##self.layoutTabOpportunityCostMap = QtGui.QVBoxLayout()
+        self.layoutTabOpportunityCostMap = QtGui.QGridLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         
         self.tabAbacusOpportunityCost.setLayout(self.layoutTabAbacusOpportunityCost)
@@ -118,8 +373,58 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutButtonAbacusOpportunityCost.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonAbacusOpportunityCost.addWidget(self.buttonProcessAbacusOpportunityCost)
         
-        self.layoutTabAbacusOpportunityCost.addWidget(self.groupBoxOther)
-        self.layoutTabAbacusOpportunityCost.addLayout(self.layoutButtonAbacusOpportunityCost)
+        # Template GroupBox
+        self.groupBoxAbacusOpportunityCostTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxAbacusOpportunityCostTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxAbacusOpportunityCostTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxAbacusOpportunityCostTemplate.setLayout(self.layoutGroupBoxAbacusOpportunityCostTemplate)
+        self.layoutAbacusOpportunityCostTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutAbacusOpportunityCostTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxAbacusOpportunityCostTemplate.addLayout(self.layoutAbacusOpportunityCostTemplateInfo)
+        self.layoutGroupBoxAbacusOpportunityCostTemplate.addLayout(self.layoutAbacusOpportunityCostTemplate)
+        
+        self.labelLoadedAbacusOpportunityCostTemplate = QtGui.QLabel()
+        self.labelLoadedAbacusOpportunityCostTemplate.setText('Loaded template:')
+        self.layoutAbacusOpportunityCostTemplate.addWidget(self.labelLoadedAbacusOpportunityCostTemplate, 0, 0)
+        
+        self.loadedAbacusOpportunityCostTemplate = QtGui.QLabel()
+        self.loadedAbacusOpportunityCostTemplate.setText('<None>')
+        self.layoutAbacusOpportunityCostTemplate.addWidget(self.loadedAbacusOpportunityCostTemplate, 0, 1)
+        
+        self.labelAbacusOpportunityCostTemplate = QtGui.QLabel()
+        self.labelAbacusOpportunityCostTemplate.setText('Template name:')
+        self.layoutAbacusOpportunityCostTemplate.addWidget(self.labelAbacusOpportunityCostTemplate, 1, 0)
+        
+        self.comboBoxAbacusOpportunityCostTemplate = QtGui.QComboBox()
+        self.comboBoxAbacusOpportunityCostTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxAbacusOpportunityCostTemplate.setDisabled(True)
+        self.comboBoxAbacusOpportunityCostTemplate.addItem('No template found')
+        self.layoutAbacusOpportunityCostTemplate.addWidget(self.comboBoxAbacusOpportunityCostTemplate, 1, 1)
+        
+        self.layoutButtonAbacusOpportunityCostTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonAbacusOpportunityCostTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadAbacusOpportunityCostTemplate = QtGui.QPushButton()
+        self.buttonLoadAbacusOpportunityCostTemplate.setDisabled(True)
+        self.buttonLoadAbacusOpportunityCostTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadAbacusOpportunityCostTemplate.setText('Load')
+        self.buttonSaveAbacusOpportunityCostTemplate = QtGui.QPushButton()
+        self.buttonSaveAbacusOpportunityCostTemplate.setDisabled(True)
+        self.buttonSaveAbacusOpportunityCostTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAbacusOpportunityCostTemplate.setText('Save')
+        self.buttonSaveAsAbacusOpportunityCostTemplate = QtGui.QPushButton()
+        self.buttonSaveAsAbacusOpportunityCostTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsAbacusOpportunityCostTemplate.setText('Save As')
+        self.layoutButtonAbacusOpportunityCostTemplate.addWidget(self.buttonLoadAbacusOpportunityCostTemplate)
+        self.layoutButtonAbacusOpportunityCostTemplate.addWidget(self.buttonSaveAbacusOpportunityCostTemplate)
+        self.layoutButtonAbacusOpportunityCostTemplate.addWidget(self.buttonSaveAsAbacusOpportunityCostTemplate)
+        self.layoutGroupBoxAbacusOpportunityCostTemplate.addLayout(self.layoutButtonAbacusOpportunityCostTemplate)
+        
+        # Place the GroupBoxes
+        self.layoutTabAbacusOpportunityCost.addWidget(self.groupBoxOther, 0, 0)
+        self.layoutTabAbacusOpportunityCost.addLayout(self.layoutButtonAbacusOpportunityCost, 1, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabAbacusOpportunityCost.addWidget(self.groupBoxAbacusOpportunityCostTemplate, 0, 1, 1, 1)
+        self.layoutTabAbacusOpportunityCost.setColumnStretch(0, 3)
+        self.layoutTabAbacusOpportunityCost.setColumnStretch(1, 1) # Smaller template column
         
         
         #***********************************************************
@@ -249,14 +554,64 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutButtonOpportunityCostCurve.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonOpportunityCostCurve.addWidget(self.buttonProcessOpportunityCostCurve)
         
+        # Template GroupBox
+        self.groupBoxOpportunityCostCurveTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxOpportunityCostCurveTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxOpportunityCostCurveTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxOpportunityCostCurveTemplate.setLayout(self.layoutGroupBoxOpportunityCostCurveTemplate)
+        self.layoutOpportunityCostCurveTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutOpportunityCostCurveTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxOpportunityCostCurveTemplate.addLayout(self.layoutOpportunityCostCurveTemplateInfo)
+        self.layoutGroupBoxOpportunityCostCurveTemplate.addLayout(self.layoutOpportunityCostCurveTemplate)
+        
+        self.labelLoadedOpportunityCostCurveTemplate = QtGui.QLabel()
+        self.labelLoadedOpportunityCostCurveTemplate.setText('Loaded template:')
+        self.layoutOpportunityCostCurveTemplate.addWidget(self.labelLoadedOpportunityCostCurveTemplate, 0, 0)
+        
+        self.loadedOpportunityCostCurveTemplate = QtGui.QLabel()
+        self.loadedOpportunityCostCurveTemplate.setText('<None>')
+        self.layoutOpportunityCostCurveTemplate.addWidget(self.loadedOpportunityCostCurveTemplate, 0, 1)
+        
+        self.labelOpportunityCostCurveTemplate = QtGui.QLabel()
+        self.labelOpportunityCostCurveTemplate.setText('Template name:')
+        self.layoutOpportunityCostCurveTemplate.addWidget(self.labelOpportunityCostCurveTemplate, 1, 0)
+        
+        self.comboBoxOpportunityCostCurveTemplate = QtGui.QComboBox()
+        self.comboBoxOpportunityCostCurveTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxOpportunityCostCurveTemplate.setDisabled(True)
+        self.comboBoxOpportunityCostCurveTemplate.addItem('No template found')
+        self.layoutOpportunityCostCurveTemplate.addWidget(self.comboBoxOpportunityCostCurveTemplate, 1, 1)
+        
+        self.layoutButtonOpportunityCostCurveTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonOpportunityCostCurveTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadOpportunityCostCurveTemplate = QtGui.QPushButton()
+        self.buttonLoadOpportunityCostCurveTemplate.setDisabled(True)
+        self.buttonLoadOpportunityCostCurveTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadOpportunityCostCurveTemplate.setText('Load')
+        self.buttonSaveOpportunityCostCurveTemplate = QtGui.QPushButton()
+        self.buttonSaveOpportunityCostCurveTemplate.setDisabled(True)
+        self.buttonSaveOpportunityCostCurveTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveOpportunityCostCurveTemplate.setText('Save')
+        self.buttonSaveAsOpportunityCostCurveTemplate = QtGui.QPushButton()
+        self.buttonSaveAsOpportunityCostCurveTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsOpportunityCostCurveTemplate.setText('Save As')
+        self.layoutButtonOpportunityCostCurveTemplate.addWidget(self.buttonLoadOpportunityCostCurveTemplate)
+        self.layoutButtonOpportunityCostCurveTemplate.addWidget(self.buttonSaveOpportunityCostCurveTemplate)
+        self.layoutButtonOpportunityCostCurveTemplate.addWidget(self.buttonSaveAsOpportunityCostCurveTemplate)
+        self.layoutGroupBoxOpportunityCostCurveTemplate.addLayout(self.layoutButtonOpportunityCostCurveTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCPeriod)
-        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCOther)
-        self.layoutTabOpportunityCostCurve.addLayout(self.layoutButtonOpportunityCostCurve)
+        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCPeriod, 0, 0)
+        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCOther, 1, 0)
+        self.layoutTabOpportunityCostCurve.addLayout(self.layoutButtonOpportunityCostCurve, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOpportunityCostCurveTemplate, 0, 1, 2, 1)
+        self.layoutTabOpportunityCostCurve.setColumnStretch(0, 3)
+        self.layoutTabOpportunityCostCurve.setColumnStretch(1, 1) # Smaller template column
+        
         ##self.layoutTabOpportunityCostCurve.insertStretch(2, 1)
         
-        self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCPeriod, 1)
-        self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCOther, 4)
+        ##self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCPeriod, 1)
+        ##self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCOther, 4)
         
         
         #***********************************************************
@@ -347,29 +702,29 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.labelPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutPlanningUnitInfo.addWidget(self.labelPlanningUnitInfo)
         
-        self.labelPlanningUnit = QtGui.QLabel()
-        self.labelPlanningUnit.setText('Planning unit map:')
-        self.layoutPlanningUnit.addWidget(self.labelPlanningUnit, 0, 0)
+        self.labelOCMPlanningUnit = QtGui.QLabel()
+        self.labelOCMPlanningUnit.setText('Planning unit map:')
+        self.layoutPlanningUnit.addWidget(self.labelOCMPlanningUnit, 0, 0)
         
-        self.lineEditPlanningUnit = QtGui.QLineEdit()
-        self.lineEditPlanningUnit.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditPlanningUnit, 0, 1)
+        self.lineEditOCMPlanningUnit = QtGui.QLineEdit()
+        self.lineEditOCMPlanningUnit.setReadOnly(True)
+        self.layoutPlanningUnit.addWidget(self.lineEditOCMPlanningUnit, 0, 1)
         
-        self.buttonSelectPlanningUnit = QtGui.QPushButton()
-        self.buttonSelectPlanningUnit.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectPlanningUnit, 0, 2)
+        self.buttonSelectOCMPlanningUnit = QtGui.QPushButton()
+        self.buttonSelectOCMPlanningUnit.setText('&Browse')
+        self.layoutPlanningUnit.addWidget(self.buttonSelectOCMPlanningUnit, 0, 2)
         
-        self.labelCsvPlanningUnit = QtGui.QLabel()
-        self.labelCsvPlanningUnit.setText('Planning unit lookup table:')
-        self.layoutPlanningUnit.addWidget(self.labelCsvPlanningUnit, 1, 0)
+        self.labelOCMCsvPlanningUnit = QtGui.QLabel()
+        self.labelOCMCsvPlanningUnit.setText('Planning unit lookup table:')
+        self.layoutPlanningUnit.addWidget(self.labelOCMCsvPlanningUnit, 1, 0)
         
-        self.lineEditCsvPlanningUnit = QtGui.QLineEdit()
-        self.lineEditCsvPlanningUnit.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditCsvPlanningUnit, 1, 1)
+        self.lineEditOCMCsvPlanningUnit = QtGui.QLineEdit()
+        self.lineEditOCMCsvPlanningUnit.setReadOnly(True)
+        self.layoutPlanningUnit.addWidget(self.lineEditOCMCsvPlanningUnit, 1, 1)
         
-        self.buttonSelectCsvPlanningUnit = QtGui.QPushButton()
-        self.buttonSelectCsvPlanningUnit.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectCsvPlanningUnit, 1, 2)
+        self.buttonSelectOCMCsvPlanningUnit = QtGui.QPushButton()
+        self.buttonSelectOCMCsvPlanningUnit.setText('&Browse')
+        self.layoutPlanningUnit.addWidget(self.buttonSelectOCMCsvPlanningUnit, 1, 2)
         
         # 'Other' GroupBox
         self.groupBoxOCMOther = QtGui.QGroupBox('Other')
@@ -437,12 +792,61 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutButtonOpportunityCostMap.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonOpportunityCostMap.addWidget(self.buttonProcessOpportunityCostMap)
         
+        # Template GroupBox
+        self.groupBoxOpportunityCostMapTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxOpportunityCostMapTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxOpportunityCostMapTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxOpportunityCostMapTemplate.setLayout(self.layoutGroupBoxOpportunityCostMapTemplate)
+        self.layoutOpportunityCostMapTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutOpportunityCostMapTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxOpportunityCostMapTemplate.addLayout(self.layoutOpportunityCostMapTemplateInfo)
+        self.layoutGroupBoxOpportunityCostMapTemplate.addLayout(self.layoutOpportunityCostMapTemplate)
+        
+        self.labelLoadedOpportunityCostMapTemplate = QtGui.QLabel()
+        self.labelLoadedOpportunityCostMapTemplate.setText('Loaded template:')
+        self.layoutOpportunityCostMapTemplate.addWidget(self.labelLoadedOpportunityCostMapTemplate, 0, 0)
+        
+        self.loadedOpportunityCostMapTemplate = QtGui.QLabel()
+        self.loadedOpportunityCostMapTemplate.setText('<None>')
+        self.layoutOpportunityCostMapTemplate.addWidget(self.loadedOpportunityCostMapTemplate, 0, 1)
+        
+        self.labelOpportunityCostMapTemplate = QtGui.QLabel()
+        self.labelOpportunityCostMapTemplate.setText('Template name:')
+        self.layoutOpportunityCostMapTemplate.addWidget(self.labelOpportunityCostMapTemplate, 1, 0)
+        
+        self.comboBoxOpportunityCostMapTemplate = QtGui.QComboBox()
+        self.comboBoxOpportunityCostMapTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxOpportunityCostMapTemplate.setDisabled(True)
+        self.comboBoxOpportunityCostMapTemplate.addItem('No template found')
+        self.layoutOpportunityCostMapTemplate.addWidget(self.comboBoxOpportunityCostMapTemplate, 1, 1)
+        
+        self.layoutButtonOpportunityCostMapTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonOpportunityCostMapTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadOpportunityCostMapTemplate = QtGui.QPushButton()
+        self.buttonLoadOpportunityCostMapTemplate.setDisabled(True)
+        self.buttonLoadOpportunityCostMapTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadOpportunityCostMapTemplate.setText('Load')
+        self.buttonSaveOpportunityCostMapTemplate = QtGui.QPushButton()
+        self.buttonSaveOpportunityCostMapTemplate.setDisabled(True)
+        self.buttonSaveOpportunityCostMapTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveOpportunityCostMapTemplate.setText('Save')
+        self.buttonSaveAsOpportunityCostMapTemplate = QtGui.QPushButton()
+        self.buttonSaveAsOpportunityCostMapTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsOpportunityCostMapTemplate.setText('Save As')
+        self.layoutButtonOpportunityCostMapTemplate.addWidget(self.buttonLoadOpportunityCostMapTemplate)
+        self.layoutButtonOpportunityCostMapTemplate.addWidget(self.buttonSaveOpportunityCostMapTemplate)
+        self.layoutButtonOpportunityCostMapTemplate.addWidget(self.buttonSaveAsOpportunityCostMapTemplate)
+        self.layoutGroupBoxOpportunityCostMapTemplate.addLayout(self.layoutButtonOpportunityCostMapTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxOCMPeriod)
-        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxLandUseMap)
-        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxPlanningUnit)
-        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxOCMOther)
-        self.layoutTabOpportunityCostMap.addLayout(self.layoutButtonOpportunityCostMap)
+        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxOCMPeriod, 0, 0)
+        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxLandUseMap, 1, 0)
+        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxPlanningUnit, 2, 0)
+        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxOCMOther, 3, 0)
+        self.layoutTabOpportunityCostMap.addLayout(self.layoutButtonOpportunityCostMap, 4, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabOpportunityCostMap.addWidget(self.groupBoxOpportunityCostMapTemplate, 0, 1, 4, 1)
+        self.layoutTabOpportunityCostMap.setColumnStretch(0, 3)
+        self.layoutTabOpportunityCostMap.setColumnStretch(1, 1) # Smaller template column
         
         
         #***********************************************************
@@ -462,9 +866,84 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         super(DialogLumensTAOpportunityCost, self).showEvent(event)
     
     
+    def closeEvent(self, event):
+        """Called when the widget is closed
+        """
+        super(DialogLumensTAOpportunityCost, self).closeEvent(event)
+    
+    
     #***********************************************************
     # 'Abacus Opportunity Cost' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadAbacusOpportunityCostTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxAbacusOpportunityCostTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Abacus Opportunity Cost', templateFile)
+            self.currentAbacusOpportunityCostTemplate = templateFile
+            self.loadedAbacusOpportunityCostTemplate.setText(templateFile)
+            self.comboBoxAbacusOpportunityCostTemplate.setCurrentIndex(self.comboBoxAbacusOpportunityCostTemplate.findText(templateFile))
+            self.buttonSaveAbacusOpportunityCostTemplate.setEnabled(True)
+    
+    
+    def handlerSaveAbacusOpportunityCostTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentAbacusOpportunityCostTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Abacus Opportunity Cost', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsAbacusOpportunityCostTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveAbacusOpportunityCostTemplate(fileName)
+            else:
+                self.saveTemplate('Abacus Opportunity Cost', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadAbacusOpportunityCostTemplate(fileName)
+    
+    
     def handlerSelectAOCProjectFile(self):
         """
         """
@@ -479,6 +958,75 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     #***********************************************************
     # 'Opportunity Cost Curve' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadOpportunityCostCurveTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxOpportunityCostCurveTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Opportunity Cost Curve', templateFile)
+            self.currentOpportunityCostCurveTemplate = templateFile
+            self.loadedOpportunityCostCurveTemplate.setText(templateFile)
+            self.comboBoxOpportunityCostCurveTemplate.setCurrentIndex(self.comboBoxOpportunityCostCurveTemplate.findText(templateFile))
+            self.buttonSaveOpportunityCostCurveTemplate.setEnabled(True)
+    
+    
+    def handlerSaveOpportunityCostCurveTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentOpportunityCostCurveTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Opportunity Cost Curve', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsOpportunityCostCurveTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveOpportunityCostCurveTemplate(fileName)
+            else:
+                self.saveTemplate('Opportunity Cost Curve', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadOpportunityCostCurveTemplate(fileName)
+    
+    
     def handlerSelectOCCWorkingDir(self):
         """
         """
@@ -536,6 +1084,75 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     #***********************************************************
     # 'Opportunity Cost Map' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadOpportunityCostMapTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxOpportunityCostMapTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Opportunity Cost Map', templateFile)
+            self.currentOpportunityCostMapTemplate = templateFile
+            self.loadedOpportunityCostMapTemplate.setText(templateFile)
+            self.comboBoxOpportunityCostMapTemplate.setCurrentIndex(self.comboBoxOpportunityCostMapTemplate.findText(templateFile))
+            self.buttonSaveOpportunityCostMapTemplate.setEnabled(True)
+    
+    
+    def handlerSaveOpportunityCostMapTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentOpportunityCostMapTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Opportunity Cost Map', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsOpportunityCostMapTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveOpportunityCostMapTemplate(fileName)
+            else:
+                self.saveTemplate('Opportunity Cost Map', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadOpportunityCostMapTemplate(fileName)
+    
+    
     def handlerSelectOCMWorkingDir(self):
         """
         """
@@ -568,25 +1185,25 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
-    def handlerSelectPlanningUnit(self):
+    def handlerSelectOCMPlanningUnit(self):
         """
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Planning Unit Map', QtCore.QDir.homePath(), 'Planning Unit Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
         
         if file:
-            self.lineEditPlanningUnit.setText(file)
+            self.lineEditOCMPlanningUnit.setText(file)
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
-    def handlerSelectCsvPlanningUnit(self):
+    def handlerSelectOCMCsvPlanningUnit(self):
         """
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Planning Unit Lookup Table', QtCore.QDir.homePath(), 'Planning Unit Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
         
         if file:
-            self.lineEditCsvPlanningUnit.setText(file)
+            self.lineEditOCMCsvPlanningUnit.setText(file)
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
@@ -642,8 +1259,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['workingDir'] = unicode(self.lineEditOCMWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['landUseT1'] = unicode(self.lineEditOCMLandUseT1.text())
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['landUseT2'] = unicode(self.lineEditOCMLandUseT2.text())
-        self.main.appSettings['DialogLumensTAOpportunityCostMap']['planningUnit'] = unicode(self.lineEditPlanningUnit.text())
-        self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvPlanningUnit'] = unicode(self.lineEditCsvPlanningUnit.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['planningUnit'] = unicode(self.lineEditOCMPlanningUnit.text())
+        self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvPlanningUnit'] = unicode(self.lineEditOCMCsvPlanningUnit.text())
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvCarbon'] = unicode(self.lineEditOCMCsvCarbon.text())
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvProfitability'] = unicode(self.lineEditOCMCsvProfitability.text())
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['location'] = unicode(self.lineEditOCMLocation.text())

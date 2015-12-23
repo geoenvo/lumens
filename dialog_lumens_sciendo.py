@@ -232,6 +232,18 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.currentLowEmissionDevelopmentAnalysisTemplate = None
         self.currentLandUseChangeModelingTemplate = None
         
+        if self.main.appSettings['debug']:
+            print 'DEBUG: DialogLumensSCIENDO init'
+            self.logger = logging.getLogger(type(self).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.setLevel(logging.DEBUG)
+        
         self.setupUi(self)
         
         self.loadTemplateFiles()
