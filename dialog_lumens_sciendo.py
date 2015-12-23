@@ -21,9 +21,17 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItems(sorted(templateFiles))
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
             self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+            
+            self.comboBoxLandUseChangeModelingTemplate.clear()
+            self.comboBoxLandUseChangeModelingTemplate.addItems(sorted(templateFiles))
+            self.comboBoxLandUseChangeModelingTemplate.setEnabled(True)
+            self.buttonLoadLandUseChangeModelingTemplate.setEnabled(True)
         else:
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
             self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+            
+            self.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
+            self.buttonLoadLandUseChangeModelingTemplate.setDisabled(True)
         
     
     def loadTemplate(self, tabName, fileName):
@@ -171,6 +179,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             settings.endGroup()
             # /tab
         
+        """
         print 'DEBUG'
         settings.beginGroup(tabName)
         for dialog in dialogsToLoad:
@@ -179,6 +188,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 print key, settings.value(key)
             settings.endGroup()
         settings.endGroup()
+        """
     
     
     def saveTemplate(self, tabName, fileName):
@@ -224,10 +234,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         
         self.setupUi(self)
         
-        print 'DEBUG'
         self.loadTemplateFiles()
-        ##self.loadTemplate('Low Emission Development Analysis', 'mysettings.ini')
-        ##self.loadTemplate('Land Use Change Modeling', 'mysettings.ini')
         
         # 'Low Emission Development Analysis' tab checkboxes
         self.checkBoxHistoricalBaselineProjection.toggled.connect(self.toggleHistoricalBaselineProjection)
@@ -249,6 +256,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.buttonSelectLandUseChangeModelingFactorsDir.clicked.connect(self.handlerSelectLandUseChangeModelingFactorsDir)
         self.buttonSelectLandUseChangeModelingLandUseLookup.clicked.connect(self.handlerSelectLandUseChangeModelingLandUseLookup)
         self.buttonProcessLandUseChangeModeling.clicked.connect(self.handlerProcessLandUseChangeModeling)
+        self.buttonLoadLandUseChangeModelingTemplate.clicked.connect(self.handlerLoadLandUseChangeModelingTemplate)
+        self.buttonSaveLandUseChangeModelingTemplate.clicked.connect(self.handlerSaveLandUseChangeModelingTemplate)
+        self.buttonSaveAsLandUseChangeModelingTemplate.clicked.connect(self.handlerSaveAsLandUseChangeModelingTemplate)
     
     
     def setupUi(self, parent):
@@ -269,7 +279,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         
         ###self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QVBoxLayout()
         self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QGridLayout()
-        self.layoutTabLandUseChangeModeling = QtGui.QVBoxLayout()
+        ##self.layoutTabLandUseChangeModeling = QtGui.QVBoxLayout()
+        self.layoutTabLandUseChangeModeling = QtGui.QGridLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
@@ -542,6 +553,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxBuildScenario, 3, 0)
         self.layoutTabLowEmissionDevelopmentAnalysis.addLayout(self.layoutButtonLowEmissionDevelopmentAnalysis, 4, 0, 1, 2, QtCore.Qt.AlignRight)
         self.layoutTabLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxLowEmissionDevelopmentAnalysisTemplate, 0, 1, 4, 1)
+        self.layoutTabLowEmissionDevelopmentAnalysis.setColumnStretch(0, 3)
+        self.layoutTabLowEmissionDevelopmentAnalysis.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'Land Use Change Modeling' tab
@@ -636,10 +649,59 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutButtonLandUseChangeModeling.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLandUseChangeModeling.addWidget(self.buttonProcessLandUseChangeModeling)
         
+        # Template GroupBox
+        self.groupBoxLandUseChangeModelingTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxLandUseChangeModelingTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLandUseChangeModelingTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLandUseChangeModelingTemplate.setLayout(self.layoutGroupBoxLandUseChangeModelingTemplate)
+        self.layoutLandUseChangeModelingTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutLandUseChangeModelingTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxLandUseChangeModelingTemplate.addLayout(self.layoutLandUseChangeModelingTemplateInfo)
+        self.layoutGroupBoxLandUseChangeModelingTemplate.addLayout(self.layoutLandUseChangeModelingTemplate)
+        
+        self.labelLoadedLandUseChangeModelingTemplate = QtGui.QLabel()
+        self.labelLoadedLandUseChangeModelingTemplate.setText('Loaded template:')
+        self.layoutLandUseChangeModelingTemplate.addWidget(self.labelLoadedLandUseChangeModelingTemplate, 0, 0)
+        
+        self.loadedLandUseChangeModelingTemplate = QtGui.QLabel()
+        self.loadedLandUseChangeModelingTemplate.setText('<None>')
+        self.layoutLandUseChangeModelingTemplate.addWidget(self.loadedLandUseChangeModelingTemplate, 0, 1)
+        
+        self.labelLandUseChangeModelingTemplate = QtGui.QLabel()
+        self.labelLandUseChangeModelingTemplate.setText('Template name:')
+        self.layoutLandUseChangeModelingTemplate.addWidget(self.labelLandUseChangeModelingTemplate, 1, 0)
+        
+        self.comboBoxLandUseChangeModelingTemplate = QtGui.QComboBox()
+        self.comboBoxLandUseChangeModelingTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
+        self.comboBoxLandUseChangeModelingTemplate.addItem('No template found')
+        self.layoutLandUseChangeModelingTemplate.addWidget(self.comboBoxLandUseChangeModelingTemplate, 1, 1)
+        
+        self.layoutButtonLandUseChangeModelingTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonLandUseChangeModelingTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadLandUseChangeModelingTemplate = QtGui.QPushButton()
+        self.buttonLoadLandUseChangeModelingTemplate.setDisabled(True)
+        self.buttonLoadLandUseChangeModelingTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadLandUseChangeModelingTemplate.setText('Load')
+        self.buttonSaveLandUseChangeModelingTemplate = QtGui.QPushButton()
+        self.buttonSaveLandUseChangeModelingTemplate.setDisabled(True)
+        self.buttonSaveLandUseChangeModelingTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveLandUseChangeModelingTemplate.setText('Save')
+        self.buttonSaveAsLandUseChangeModelingTemplate = QtGui.QPushButton()
+        self.buttonSaveAsLandUseChangeModelingTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsLandUseChangeModelingTemplate.setText('Save As')
+        self.layoutButtonLandUseChangeModelingTemplate.addWidget(self.buttonLoadLandUseChangeModelingTemplate)
+        self.layoutButtonLandUseChangeModelingTemplate.addWidget(self.buttonSaveLandUseChangeModelingTemplate)
+        self.layoutButtonLandUseChangeModelingTemplate.addWidget(self.buttonSaveAsLandUseChangeModelingTemplate)
+        self.layoutGroupBoxLandUseChangeModelingTemplate.addLayout(self.layoutButtonLandUseChangeModelingTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabLandUseChangeModeling.addWidget(self.groupBoxLandUseChangeModelingFunctions)
-        self.layoutTabLandUseChangeModeling.addWidget(self.groupBoxLandUseChangeModelingParameters)
-        self.layoutTabLandUseChangeModeling.addLayout(self.layoutButtonLandUseChangeModeling)
+        self.layoutTabLandUseChangeModeling.addWidget(self.groupBoxLandUseChangeModelingFunctions, 0, 0)
+        self.layoutTabLandUseChangeModeling.addWidget(self.groupBoxLandUseChangeModelingParameters, 1, 0)
+        self.layoutTabLandUseChangeModeling.addLayout(self.layoutButtonLandUseChangeModeling, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabLandUseChangeModeling.addWidget(self.groupBoxLandUseChangeModelingTemplate, 0, 1, 2, 1)
+        self.layoutTabLandUseChangeModeling.setColumnStretch(0, 3)
+        self.layoutTabLandUseChangeModeling.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'Result' tab
@@ -673,10 +735,6 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         """Called when the widget is closed
         """
         super(DialogLumensSCIENDO, self).closeEvent(event)
-        
-        print 'DEBUG'
-        ##self.saveTemplate('Low Emission Development Analysis', 'mysettings.ini')
-        ##self.saveTemplate('Land Use Change Modeling', 'mysettings.ini')
     
     
     #***********************************************************
@@ -836,6 +894,75 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     #***********************************************************
     # 'Land Use Change Modeling' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadLandUseChangeModelingTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxLandUseChangeModelingTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Land Use Change Modeling', templateFile)
+            self.currentLandUseChangeModelingTemplate = templateFile
+            self.loadedLandUseChangeModelingTemplate.setText(templateFile)
+            self.comboBoxLandUseChangeModelingTemplate.setCurrentIndex(self.comboBoxLandUseChangeModelingTemplate.findText(templateFile))
+            self.buttonSaveLandUseChangeModelingTemplate.setEnabled(True)
+    
+    
+    def handlerSaveLandUseChangeModelingTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentLandUseChangeModelingTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Land Use Change Modeling', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsLandUseChangeModelingTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveLandUseChangeModelingTemplate(fileName)
+            else:
+                self.saveTemplate('Land Use Change Modeling', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadLandUseChangeModelingTemplate(fileName)
+    
+    
     def handlerSelectLandUseChangeModelingFactorsDir(self):
         """
         """
