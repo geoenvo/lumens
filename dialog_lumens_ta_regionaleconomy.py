@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, datetime
+import os, logging, datetime, glob
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
@@ -11,6 +11,512 @@ import resource
 class DialogLumensTARegionalEconomy(QtGui.QDialog):
     """
     """
+    def loadTemplateFiles(self):
+        """List available ini template file inside the project folder
+        """
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        
+        if templateFiles:
+            self.comboBoxDescriptiveAnalysisTemplate.clear()
+            self.comboBoxDescriptiveAnalysisTemplate.addItems(sorted(templateFiles))
+            self.comboBoxDescriptiveAnalysisTemplate.setEnabled(True)
+            self.buttonLoadDescriptiveAnalysisTemplate.setEnabled(True)
+            
+            self.comboBoxRegionalEconomicScenarioImpactTemplate.clear()
+            self.comboBoxRegionalEconomicScenarioImpactTemplate.addItems(sorted(templateFiles))
+            self.comboBoxRegionalEconomicScenarioImpactTemplate.setEnabled(True)
+            self.buttonLoadRegionalEconomicScenarioImpactTemplate.setEnabled(True)
+            
+            self.comboBoxLandRequirementAnalysisTemplate.clear()
+            self.comboBoxLandRequirementAnalysisTemplate.addItems(sorted(templateFiles))
+            self.comboBoxLandRequirementAnalysisTemplate.setEnabled(True)
+            self.buttonLoadLandRequirementAnalysisTemplate.setEnabled(True)
+            
+            self.comboBoxLandUseChangeImpactTemplate.clear()
+            self.comboBoxLandUseChangeImpactTemplate.addItems(sorted(templateFiles))
+            self.comboBoxLandUseChangeImpactTemplate.setEnabled(True)
+            self.buttonLoadLandUseChangeImpactTemplate.setEnabled(True)
+        else:
+            self.comboBoxDescriptiveAnalysisTemplate.setDisabled(True)
+            self.buttonLoadDescriptiveAnalysisTemplate.setDisabled(True)
+            
+            self.comboBoxRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+            self.buttonLoadRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+            
+            self.comboBoxLandRequirementAnalysisTemplate.setDisabled(True)
+            self.buttonLoadLandRequirementAnalysisTemplate.setDisabled(True)
+            
+            self.comboBoxLandUseChangeImpactTemplate.setDisabled(True)
+            self.buttonLoadLandUseChangeImpactTemplate.setDisabled(True)
+        
+    
+    def loadTemplate(self, tabName, fileName):
+        """Load the value saved in ini template file to the form widget
+        """
+        templateFilePath = os.path.join(self.settingsPath, fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        
+        dialogsToLoad = None
+        
+        td = datetime.date.today()
+        
+        if tabName == 'Descriptive Analysis of Regional Economy':
+            dialogsToLoad = (
+                'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis',
+                'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Single period' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTARegionalEconomySingleIODescriptiveAnalysis')
+            
+            period = settings.value('period')
+            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            valueAddedMatrix = settings.value('valueAddedMatrix')
+            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            labourRequirement = settings.value('labourRequirement')
+            
+            if period:
+                self.spinBoxSinglePeriod.setValue(int(period))
+            else:
+                self.spinBoxSinglePeriod.setValue(td.year)
+            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                self.lineEditSingleIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+            else:
+                self.lineEditSingleIntermediateConsumptionMatrix.setText('')
+            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                self.lineEditSingleValueAddedMatrix.setText(valueAddedMatrix)
+            else:
+                self.lineEditSingleValueAddedMatrix.setText('')
+            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                self.lineEditSingleFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+            else:
+                self.lineEditSingleFinalConsumptionMatrix.setText('')
+            if labourRequirement and os.path.exists(labourRequirement):
+                self.lineEditSingleLabourRequirement.setText(labourRequirement)
+            else:
+                self.lineEditSingleLabourRequirement.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'Multiple period' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis')
+            
+            period2 = settings.value('period2')
+            intermediateConsumptionMatrixP2 = settings.value('intermediateConsumptionMatrixP2')
+            valueAddedMatrixP2 = settings.value('valueAddedMatrixP2')
+            finalConsumptionMatrixP2 = settings.value('finalConsumptionMatrixP2')
+            labourRequirementP2 = settings.value('labourRequirementP2')
+            workingDir = settings.value('workingDir')
+            valueAddedComponent = settings.value('valueAddedComponent')
+            finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            listOfEconomicSector = settings.value('listOfEconomicSector')
+            financialUnit = settings.value('financialUnit')
+            areaName = settings.value('areaName')
+            
+            if period2:
+                self.spinBoxMultiplePeriod.setValue(int(period2))
+            else:
+                self.spinBoxMultiplePeriod.setValue(td.year)
+            if intermediateConsumptionMatrixP2 and os.path.exists(intermediateConsumptionMatrixP2):
+                self.lineEditMultipleIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrixP2)
+            else:
+                self.lineEditMultipleIntermediateConsumptionMatrix.setText('')
+            if valueAddedMatrixP2 and os.path.exists(valueAddedMatrixP2):
+                self.lineEditMultipleValueAddedMatrix.setText(valueAddedMatrixP2)
+            else:
+                self.lineEditMultipleValueAddedMatrix.setText('')
+            if finalConsumptionMatrixP2 and os.path.exists(finalConsumptionMatrixP2):
+                self.lineEditMultipleFinalConsumptionMatrix.setText(finalConsumptionMatrixP2)
+            else:
+                self.lineEditMultipleFinalConsumptionMatrix.setText('')
+            if labourRequirementP2 and os.path.exists(labourRequirementP2):
+                self.lineEditMultipleLabourRequirement.setText(labourRequirementP2)
+            else:
+                self.lineEditMultipleLabourRequirement.setText('')
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditOtherWorkingDir.setText(workingDir)
+            else:
+                self.lineEditOtherWorkingDir.setText('')
+            if valueAddedComponent and os.path.exists(valueAddedComponent):
+                self.lineEditOtherValueAddedComponent.setText(valueAddedComponent)
+            else:
+                self.lineEditOtherValueAddedComponent.setText('')
+            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                self.lineEditOtherFinalConsumptionComponent.setText(finalConsumptionComponent)
+            else:
+                self.lineEditOtherFinalConsumptionComponent.setText('')
+            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                self.lineEditOtherListOfEconomicSector.setText(listOfEconomicSector)
+            else:
+                self.lineEditOtherListOfEconomicSector.setText('')
+            if financialUnit:
+                self.lineEditOtherFinancialUnit.setText(financialUnit)
+            else:
+                self.lineEditOtherFinancialUnit.setText('')
+            if areaName:
+                self.lineEditOtherAreaName.setText(areaName)
+            else:
+                self.lineEditOtherAreaName.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Regional Economic Scenario Impact':
+            dialogsToLoad = (
+                'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis',
+                'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Final Demand Scenario' widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis')
+            
+            finalDemandChangeScenario = settings.value('finalDemandChangeScenario')
+            workingDir = settings.value('workingDir')
+            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            valueAddedMatrix = settings.value('valueAddedMatrix')
+            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            valueAddedComponent = settings.value('valueAddedComponent')
+            finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            listOfEconomicSector = settings.value('listOfEconomicSector')
+            landDistributionMatrix = settings.value('landDistributionMatrix')
+            landRequirementCoefficientMatrix = settings.value('landRequirementCoefficientMatrix')
+            landCoverComponent = settings.value('landCoverComponent')
+            labourRequirement = settings.value('labourRequirement')
+            financialUnit = settings.value('financialUnit')
+            areaName = settings.value('areaName')
+            period = settings.value('period')
+            
+            if finalDemandChangeScenario and os.path.exists(finalDemandChangeScenario):
+                self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText(finalDemandChangeScenario)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('')
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(workingDir)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText('')
+            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText('')
+            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText(valueAddedMatrix)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText('')
+            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText('')
+            if valueAddedComponent and os.path.exists(valueAddedComponent):
+                self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText(valueAddedComponent)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText('')
+            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText(finalConsumptionComponent)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText('')
+            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText(listOfEconomicSector)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText('')
+            
+            if landDistributionMatrix and os.path.exists(landDistributionMatrix):
+                self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText(landDistributionMatrix)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText('')
+            if landRequirementCoefficientMatrix and os.path.exists(landRequirementCoefficientMatrix):
+                self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText(landRequirementCoefficientMatrix)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText('')
+            if landCoverComponent and os.path.exists(landCoverComponent):
+                self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText(landCoverComponent)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText('')
+            if labourRequirement and os.path.exists(labourRequirement):
+                self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText(labourRequirement)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText('')
+            if financialUnit:
+                self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText(financialUnit)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText('')
+            if areaName:
+                self.lineEditRegionalEconomicScenarioImpactAreaName.setText(areaName)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactAreaName.setText('')
+            if period:
+                self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(int(period))
+            else:
+                self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(td.year)
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'GDP Scenario' widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis')
+            
+            gdpChangeScenario = settings.value('gdpChangeScenario')
+            
+            if gdpChangeScenario and os.path.exists(gdpChangeScenario):
+                self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText(gdpChangeScenario)
+            else:
+                self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Land Requirement Analysis':
+            dialogsToLoad = (
+                'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Land Requirement Analysis' widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis')
+            
+            workingDir = settings.value('workingDir')
+            landCoverMap = settings.value('landCoverMap')
+            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            valueAddedMatrix = settings.value('valueAddedMatrix')
+            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            valueAddedComponent = settings.value('valueAddedComponent')
+            finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            listOfEconomicSector = settings.value('listOfEconomicSector')
+            landDistributionMatrix = settings.value('landDistributionMatrix')
+            landCoverComponent = settings.value('landCoverComponent')
+            labourRequirement = settings.value('labourRequirement')
+            financialUnit = settings.value('financialUnit')
+            areaName = settings.value('areaName')
+            period = settings.value('period')
+            
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditLandRequirementAnalysisWorkingDir.setText(workingDir)
+            else:
+                self.lineEditLandRequirementAnalysisWorkingDir.setText('')
+            if landCoverMap and os.path.exists(landCoverMap):
+                self.lineEditLandRequirementAnalysisLandCoverMap.setText(landCoverMap)
+            else:
+                self.lineEditLandRequirementAnalysisLandCoverMap.setText('')
+            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+            else:
+                self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText('')
+            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                self.lineEditLandRequirementAnalysisValueAddedMatrix.setText(valueAddedMatrix)
+            else:
+                self.lineEditLandRequirementAnalysisValueAddedMatrix.setText('')
+            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+            else:
+                self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText('')
+            if valueAddedComponent and os.path.exists(valueAddedComponent):
+                self.lineEditLandRequirementAnalysisValueAddedComponent.setText(valueAddedComponent)
+            else:
+                self.lineEditLandRequirementAnalysisValueAddedComponent.setText('')
+            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText(finalConsumptionComponent)
+            else:
+                self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText('')
+            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                self.lineEditLandRequirementAnalysisListOfEconomicSector.setText(listOfEconomicSector)
+            else:
+                self.lineEditLandRequirementAnalysisListOfEconomicSector.setText('')
+            if landDistributionMatrix and os.path.exists(landDistributionMatrix):
+                self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText(landDistributionMatrix)
+            else:
+                self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText('')
+            if landCoverComponent and os.path.exists(landCoverComponent):
+                self.lineEditLandRequirementAnalysisLandCoverComponent.setText(landCoverComponent)
+            else:
+                self.lineEditLandRequirementAnalysisLandCoverComponent.setText('')
+            if labourRequirement and os.path.exists(labourRequirement):
+                self.lineEditLandRequirementAnalysisLabourRequirement.setText(labourRequirement)
+            else:
+                self.lineEditLandRequirementAnalysisLabourRequirement.setText('')
+            if financialUnit:
+                self.lineEditLandRequirementAnalysisFinancialUnit.setText(financialUnit)
+            else:
+                self.lineEditLandRequirementAnalysisFinancialUnit.setText('')
+            if areaName:
+                self.lineEditLandRequirementAnalysisAreaName.setText(areaName)
+            else:
+                self.lineEditLandRequirementAnalysisAreaName.setText('')
+            if period:
+                self.spinBoxLandRequirementAnalysisPeriod.setValue(int(period))
+            else:
+                self.spinBoxLandRequirementAnalysisPeriod.setValue(td.year)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Land Use Change Impact':
+            dialogsToLoad = (
+                'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Land Use Change Impact' widgets
+            # start dialog
+            settings.beginGroup('DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis')
+            
+            workingDir = settings.value('workingDir')
+            landCoverMapP1 = settings.value('landCoverMapP1')
+            landCoverMapP2 = settings.value('landCoverMapP2')
+            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            valueAddedMatrix = settings.value('valueAddedMatrix')
+            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            valueAddedComponent = settings.value('valueAddedComponent')
+            finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            listOfEconomicSector = settings.value('listOfEconomicSector')
+            landDistributionMatrix = settings.value('landDistributionMatrix')
+            landRequirementCoefficientMatrix = settings.value('landRequirementCoefficientMatrix')
+            landCoverComponent = settings.value('landCoverComponent')
+            labourRequirement = settings.value('labourRequirement')
+            financialUnit = settings.value('financialUnit')
+            areaName = settings.value('areaName')
+            period = settings.value('period')
+            
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditLandUseChangeImpactWorkingDir.setText(workingDir)
+            else:
+                self.lineEditLandUseChangeImpactWorkingDir.setText('')
+            if landCoverMapP1 and os.path.exists(landCoverMapP1):
+                self.lineEditLandUseChangeImpactLandCoverMapP1.setText(landCoverMapP1)
+            else:
+                self.lineEditLandUseChangeImpactLandCoverMapP1.setText('')
+            if landCoverMapP2 and os.path.exists(landCoverMapP2):
+                self.lineEditLandUseChangeImpactLandCoverMapP2.setText(landCoverMapP2)
+            else:
+                self.lineEditLandUseChangeImpactLandCoverMapP2.setText('')
+            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+            else:
+                self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText('')
+            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                self.lineEditLandUseChangeImpactValueAddedMatrix.setText(valueAddedMatrix)
+            else:
+                self.lineEditLandUseChangeImpactValueAddedMatrix.setText('')
+            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+            else:
+                self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText('')
+            if valueAddedComponent and os.path.exists(valueAddedComponent):
+                self.lineEditLandUseChangeImpactValueAddedComponent.setText(valueAddedComponent)
+            else:
+                self.lineEditLandUseChangeImpactValueAddedComponent.setText('')
+            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText(finalConsumptionComponent)
+            else:
+                self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText('')
+            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                self.lineEditLandUseChangeImpactListOfEconomicSector.setText(listOfEconomicSector)
+            else:
+                self.lineEditLandUseChangeImpactListOfEconomicSector.setText('')
+            if landDistributionMatrix and os.path.exists(landDistributionMatrix):
+                self.lineEditLandUseChangeImpactLandDistributionMatrix.setText(landDistributionMatrix)
+            else:
+                self.lineEditLandUseChangeImpactLandDistributionMatrix.setText('')
+            if landRequirementCoefficientMatrix and os.path.exists(landRequirementCoefficientMatrix):
+                self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText(landRequirementCoefficientMatrix)
+            else:
+                self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText('')
+            if landCoverComponent and os.path.exists(landCoverComponent):
+                self.lineEditLandUseChangeImpactLandCoverComponent.setText(landCoverComponent)
+            else:
+                self.lineEditLandUseChangeImpactLandCoverComponent.setText('')
+            if labourRequirement and os.path.exists(labourRequirement):
+                self.lineEditLandUseChangeImpactLabourRequirement.setText(labourRequirement)
+            else:
+                self.lineEditLandUseChangeImpactLabourRequirement.setText('')
+            if financialUnit:
+                self.lineEditLandUseChangeImpactFinancialUnit.setText(financialUnit)
+            else:
+                self.lineEditLandUseChangeImpactFinancialUnit.setText('')
+            if areaName:
+                self.lineEditLandUseChangeImpactAreaName.setText(areaName)
+            else:
+                self.lineEditLandUseChangeImpactAreaName.setText('')
+            if period:
+                self.spinBoxLandUseChangeImpactPeriod.setValue(int(period))
+            else:
+                self.spinBoxLandUseChangeImpactPeriod.setValue(td.year)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        
+        """
+        print 'DEBUG'
+        settings.beginGroup(tabName)
+        for dialog in dialogsToLoad:
+            settings.beginGroup(dialog)
+            for key in self.main.appSettings[dialog].keys():
+                print key, settings.value(key)
+            settings.endGroup()
+        settings.endGroup()
+        """
+    
+    
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
+        """
+        self.setAppSettings()
+        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'], fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        
+        dialogsToSave = None
+        
+        if tabName == 'Descriptive Analysis of Regional Economy':
+            dialogsToSave = (
+                'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis',
+                'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis',
+            )
+        elif tabName == 'Regional Economic Scenario Impact':
+            dialogsToSave = (
+                'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis',
+                'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis',
+            )
+        elif tabName == 'Land Requirement Analysis':
+            dialogsToSave = (
+                'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis',
+            )
+        elif tabName == 'Land Use Change Impact':
+            dialogsToSave = (
+                'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis',
+            )
+        
+        settings.beginGroup(tabName)
+        for dialog in dialogsToSave:
+            settings.beginGroup(dialog)
+            for key, val in self.main.appSettings[dialog].iteritems():
+                settings.setValue(key, val)
+            settings.endGroup()
+        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -18,6 +524,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         self.main = parent
         self.dialogTitle = 'LUMENS Trade-Off Analysis [Regional Economy]'
+        self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'])
+        self.currentDescriptiveAnalysisTemplate = None
+        self.currentRegionalEconomicScenarioImpactTemplate = None
+        self.currentLandRequirementAnalysisTemplate = None
+        self.currentLandUseChangeImpactTemplate = None
         
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLumensTARegionalEconomy init'
@@ -32,6 +543,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.logger.setLevel(logging.DEBUG)
         
         self.setupUi(self)
+        
+        self.loadTemplateFiles()
         
         # 'Descriptive Analysis of Regional Economy' tab checkbox
         self.checkBoxMultiplePeriod.toggled.connect(self.toggleMultiplePeriod)
@@ -50,6 +563,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectOtherFinalConsumptionComponent.clicked.connect(self.handlerSelectOtherFinalConsumptionComponent)
         self.buttonSelectOtherListOfEconomicSector.clicked.connect(self.handlerSelectOtherListOfEconomicSector)
         self.buttonProcessDescriptiveAnalysis.clicked.connect(self.handlerProcessDescriptiveAnalysis)
+        self.buttonLoadDescriptiveAnalysisTemplate.clicked.connect(self.handlerLoadDescriptiveAnalysisTemplate)
+        self.buttonSaveDescriptiveAnalysisTemplate.clicked.connect(self.handlerSaveDescriptiveAnalysisTemplate)
+        self.buttonSaveAsDescriptiveAnalysisTemplate.clicked.connect(self.handlerSaveAsDescriptiveAnalysisTemplate)
         
         # 'Regional Economic Scenario Impact' tab checkboxes
         self.checkBoxRegionalEconomicScenarioImpactFinalDemand.toggled.connect(lambda:self.toggleRegionalEconomicScenarioImpactType(self.checkBoxRegionalEconomicScenarioImpactFinalDemand))
@@ -70,6 +586,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandCoverComponent)
         self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLabourRequirement)
         self.buttonProcessRegionalEconomicScenarioImpact.clicked.connect(self.handlerProcessRegionalEconomicScenarioImpact)
+        self.buttonLoadRegionalEconomicScenarioImpactTemplate.clicked.connect(self.handlerLoadRegionalEconomicScenarioImpactTemplate)
+        self.buttonSaveRegionalEconomicScenarioImpactTemplate.clicked.connect(self.handlerSaveRegionalEconomicScenarioImpactTemplate)
+        self.buttonSaveAsRegionalEconomicScenarioImpactTemplate.clicked.connect(self.handlerSaveAsRegionalEconomicScenarioImpactTemplate)
         
         # 'Land Requirement Analysis' tab buttons
         self.buttonSelectLandRequirementAnalysisWorkingDir.clicked.connect(self.handlerSelectLandRequirementAnalysisWorkingDir)
@@ -84,6 +603,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectLandRequirementAnalysisLandCoverComponent.clicked.connect(self.handlerSelectLandRequirementAnalysisLandCoverComponent)
         self.buttonSelectLandRequirementAnalysisLabourRequirement.clicked.connect(self.handlerSelectLandRequirementAnalysisLabourRequirement)
         self.buttonProcessLandRequirementAnalysis.clicked.connect(self.handlerProcessLandRequirementAnalysis)
+        self.buttonLoadLandRequirementAnalysisTemplate.clicked.connect(self.handlerLoadLandRequirementAnalysisTemplate)
+        self.buttonSaveLandRequirementAnalysisTemplate.clicked.connect(self.handlerSaveLandRequirementAnalysisTemplate)
+        self.buttonSaveAsLandRequirementAnalysisTemplate.clicked.connect(self.handlerSaveAsLandRequirementAnalysisTemplate)
         
         # 'Land Use Change Impact' tab buttons
         self.buttonSelectLandUseChangeImpactWorkingDir.clicked.connect(self.handlerSelectLandUseChangeImpactWorkingDir)
@@ -100,6 +622,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectLandUseChangeImpactLandCoverComponent.clicked.connect(self.handlerSelectLandUseChangeImpactLandCoverComponent)
         self.buttonSelectLandUseChangeImpactLabourRequirement.clicked.connect(self.handlerSelectLandUseChangeImpactLabourRequirement)
         self.buttonProcessLandUseChangeImpact.clicked.connect(self.handlerProcessLandUseChangeImpact)
+        self.buttonLoadLandUseChangeImpactTemplate.clicked.connect(self.handlerLoadLandUseChangeImpactTemplate)
+        self.buttonSaveLandUseChangeImpactTemplate.clicked.connect(self.handlerSaveLandUseChangeImpactTemplate)
+        self.buttonSaveAsLandUseChangeImpactTemplate.clicked.connect(self.handlerSaveAsLandUseChangeImpactTemplate)
         
     
     def setupUi(self, parent):
@@ -122,10 +647,14 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
-        self.layoutTabDescriptiveAnalysis = QtGui.QVBoxLayout()
-        self.layoutTabRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
-        self.layoutTabLandRequirementAnalysis = QtGui.QVBoxLayout()
-        self.layoutTabLandUseChangeImpact = QtGui.QVBoxLayout()
+        ##self.layoutTabDescriptiveAnalysis = QtGui.QVBoxLayout()
+        self.layoutTabDescriptiveAnalysis = QtGui.QGridLayout()
+        ##self.layoutTabRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
+        self.layoutTabRegionalEconomicScenarioImpact = QtGui.QGridLayout()
+        ##self.layoutTabLandRequirementAnalysis = QtGui.QVBoxLayout()
+        self.layoutTabLandRequirementAnalysis = QtGui.QGridLayout()
+        ##self.layoutTabLandUseChangeImpact = QtGui.QVBoxLayout()
+        self.layoutTabLandUseChangeImpact = QtGui.QGridLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
@@ -144,7 +673,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         # Setup 'Descriptive Analysis of Regional Economy' tab
         #***********************************************************
         # Use QScrollArea
-        self.layoutContentDescriptiveAnalysis = QtGui.QVBoxLayout()
+        ##self.layoutContentDescriptiveAnalysis = QtGui.QVBoxLayout()
+        self.layoutContentDescriptiveAnalysis = QtGui.QGridLayout()
         self.contentDescriptiveAnalysis = QtGui.QWidget()
         self.contentDescriptiveAnalysis.setLayout(self.layoutContentDescriptiveAnalysis)
         self.scrollDescriptiveAnalysis = QtGui.QScrollArea()
@@ -395,17 +925,67 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutButtonDescriptiveAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonDescriptiveAnalysis.addWidget(self.buttonProcessDescriptiveAnalysis)
         
+        # Template GroupBox
+        self.groupBoxDescriptiveAnalysisTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxDescriptiveAnalysisTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxDescriptiveAnalysisTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxDescriptiveAnalysisTemplate.setLayout(self.layoutGroupBoxDescriptiveAnalysisTemplate)
+        self.layoutDescriptiveAnalysisTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutDescriptiveAnalysisTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxDescriptiveAnalysisTemplate.addLayout(self.layoutDescriptiveAnalysisTemplateInfo)
+        self.layoutGroupBoxDescriptiveAnalysisTemplate.addLayout(self.layoutDescriptiveAnalysisTemplate)
+        
+        self.labelLoadedDescriptiveAnalysisTemplate = QtGui.QLabel()
+        self.labelLoadedDescriptiveAnalysisTemplate.setText('Loaded template:')
+        self.layoutDescriptiveAnalysisTemplate.addWidget(self.labelLoadedDescriptiveAnalysisTemplate, 0, 0)
+        
+        self.loadedDescriptiveAnalysisTemplate = QtGui.QLabel()
+        self.loadedDescriptiveAnalysisTemplate.setText('<None>')
+        self.layoutDescriptiveAnalysisTemplate.addWidget(self.loadedDescriptiveAnalysisTemplate, 0, 1)
+        
+        self.labelDescriptiveAnalysisTemplate = QtGui.QLabel()
+        self.labelDescriptiveAnalysisTemplate.setText('Template name:')
+        self.layoutDescriptiveAnalysisTemplate.addWidget(self.labelDescriptiveAnalysisTemplate, 1, 0)
+        
+        self.comboBoxDescriptiveAnalysisTemplate = QtGui.QComboBox()
+        self.comboBoxDescriptiveAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxDescriptiveAnalysisTemplate.setDisabled(True)
+        self.comboBoxDescriptiveAnalysisTemplate.addItem('No template found')
+        self.layoutDescriptiveAnalysisTemplate.addWidget(self.comboBoxDescriptiveAnalysisTemplate, 1, 1)
+        
+        self.layoutButtonDescriptiveAnalysisTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonDescriptiveAnalysisTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadDescriptiveAnalysisTemplate = QtGui.QPushButton()
+        self.buttonLoadDescriptiveAnalysisTemplate.setDisabled(True)
+        self.buttonLoadDescriptiveAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadDescriptiveAnalysisTemplate.setText('Load')
+        self.buttonSaveDescriptiveAnalysisTemplate = QtGui.QPushButton()
+        self.buttonSaveDescriptiveAnalysisTemplate.setDisabled(True)
+        self.buttonSaveDescriptiveAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveDescriptiveAnalysisTemplate.setText('Save')
+        self.buttonSaveAsDescriptiveAnalysisTemplate = QtGui.QPushButton()
+        self.buttonSaveAsDescriptiveAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsDescriptiveAnalysisTemplate.setText('Save As')
+        self.layoutButtonDescriptiveAnalysisTemplate.addWidget(self.buttonLoadDescriptiveAnalysisTemplate)
+        self.layoutButtonDescriptiveAnalysisTemplate.addWidget(self.buttonSaveDescriptiveAnalysisTemplate)
+        self.layoutButtonDescriptiveAnalysisTemplate.addWidget(self.buttonSaveAsDescriptiveAnalysisTemplate)
+        self.layoutGroupBoxDescriptiveAnalysisTemplate.addLayout(self.layoutButtonDescriptiveAnalysisTemplate)
+        
         # Place the GroupBoxes
-        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxSinglePeriod)
-        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxMultiplePeriod)
-        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxOther)
-        self.layoutContentDescriptiveAnalysis.addLayout(self.layoutButtonDescriptiveAnalysis)
+        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxSinglePeriod, 0, 0)
+        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxMultiplePeriod, 1, 0)
+        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxOther, 2, 0)
+        self.layoutContentDescriptiveAnalysis.addLayout(self.layoutButtonDescriptiveAnalysis, 3, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutContentDescriptiveAnalysis.addWidget(self.groupBoxDescriptiveAnalysisTemplate, 0, 1, 3, 1)
+        self.layoutContentDescriptiveAnalysis.setColumnStretch(0, 3)
+        self.layoutContentDescriptiveAnalysis.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'Regional Economic Scenario Impact' tab
         #***********************************************************
         # Use QScrollArea
-        self.layoutContentRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
+        ##self.layoutContentRegionalEconomicScenarioImpact = QtGui.QVBoxLayout()
+        self.layoutContentRegionalEconomicScenarioImpact = QtGui.QGridLayout()
         self.contentRegionalEconomicScenarioImpact = QtGui.QWidget()
         self.contentRegionalEconomicScenarioImpact.setLayout(self.layoutContentRegionalEconomicScenarioImpact)
         self.scrollRegionalEconomicScenarioImpact = QtGui.QScrollArea()
@@ -643,16 +1223,66 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutButtonRegionalEconomicScenarioImpact.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonRegionalEconomicScenarioImpact.addWidget(self.buttonProcessRegionalEconomicScenarioImpact)
         
+        # Template GroupBox
+        self.groupBoxRegionalEconomicScenarioImpactTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxRegionalEconomicScenarioImpactTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxRegionalEconomicScenarioImpactTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxRegionalEconomicScenarioImpactTemplate.setLayout(self.layoutGroupBoxRegionalEconomicScenarioImpactTemplate)
+        self.layoutRegionalEconomicScenarioImpactTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutRegionalEconomicScenarioImpactTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxRegionalEconomicScenarioImpactTemplate.addLayout(self.layoutRegionalEconomicScenarioImpactTemplateInfo)
+        self.layoutGroupBoxRegionalEconomicScenarioImpactTemplate.addLayout(self.layoutRegionalEconomicScenarioImpactTemplate)
+        
+        self.labelLoadedRegionalEconomicScenarioImpactTemplate = QtGui.QLabel()
+        self.labelLoadedRegionalEconomicScenarioImpactTemplate.setText('Loaded template:')
+        self.layoutRegionalEconomicScenarioImpactTemplate.addWidget(self.labelLoadedRegionalEconomicScenarioImpactTemplate, 0, 0)
+        
+        self.loadedRegionalEconomicScenarioImpactTemplate = QtGui.QLabel()
+        self.loadedRegionalEconomicScenarioImpactTemplate.setText('<None>')
+        self.layoutRegionalEconomicScenarioImpactTemplate.addWidget(self.loadedRegionalEconomicScenarioImpactTemplate, 0, 1)
+        
+        self.labelRegionalEconomicScenarioImpactTemplate = QtGui.QLabel()
+        self.labelRegionalEconomicScenarioImpactTemplate.setText('Template name:')
+        self.layoutRegionalEconomicScenarioImpactTemplate.addWidget(self.labelRegionalEconomicScenarioImpactTemplate, 1, 0)
+        
+        self.comboBoxRegionalEconomicScenarioImpactTemplate = QtGui.QComboBox()
+        self.comboBoxRegionalEconomicScenarioImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+        self.comboBoxRegionalEconomicScenarioImpactTemplate.addItem('No template found')
+        self.layoutRegionalEconomicScenarioImpactTemplate.addWidget(self.comboBoxRegionalEconomicScenarioImpactTemplate, 1, 1)
+        
+        self.layoutButtonRegionalEconomicScenarioImpactTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonRegionalEconomicScenarioImpactTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadRegionalEconomicScenarioImpactTemplate = QtGui.QPushButton()
+        self.buttonLoadRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+        self.buttonLoadRegionalEconomicScenarioImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadRegionalEconomicScenarioImpactTemplate.setText('Load')
+        self.buttonSaveRegionalEconomicScenarioImpactTemplate = QtGui.QPushButton()
+        self.buttonSaveRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+        self.buttonSaveRegionalEconomicScenarioImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveRegionalEconomicScenarioImpactTemplate.setText('Save')
+        self.buttonSaveAsRegionalEconomicScenarioImpactTemplate = QtGui.QPushButton()
+        self.buttonSaveAsRegionalEconomicScenarioImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsRegionalEconomicScenarioImpactTemplate.setText('Save As')
+        self.layoutButtonRegionalEconomicScenarioImpactTemplate.addWidget(self.buttonLoadRegionalEconomicScenarioImpactTemplate)
+        self.layoutButtonRegionalEconomicScenarioImpactTemplate.addWidget(self.buttonSaveRegionalEconomicScenarioImpactTemplate)
+        self.layoutButtonRegionalEconomicScenarioImpactTemplate.addWidget(self.buttonSaveAsRegionalEconomicScenarioImpactTemplate)
+        self.layoutGroupBoxRegionalEconomicScenarioImpactTemplate.addLayout(self.layoutButtonRegionalEconomicScenarioImpactTemplate)
+        
         # Place the GroupBoxes
-        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
-        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactParameters)
-        self.layoutContentRegionalEconomicScenarioImpact.addLayout(self.layoutButtonRegionalEconomicScenarioImpact)
+        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactType, 0, 0)
+        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactParameters, 1, 0)
+        self.layoutContentRegionalEconomicScenarioImpact.addLayout(self.layoutButtonRegionalEconomicScenarioImpact, 2, 0, 1, 2)
+        self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactTemplate, 0, 1, 2, 1)
+        self.layoutContentRegionalEconomicScenarioImpact.setColumnStretch(0, 3)
+        self.layoutContentRegionalEconomicScenarioImpact.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'Land Requirement Analysis' tab
         #***********************************************************
         # Use QScrollArea
-        self.layoutContentLandRequirementAnalysis = QtGui.QVBoxLayout()
+        ##self.layoutContentLandRequirementAnalysis = QtGui.QVBoxLayout()
+        self.layoutContentLandRequirementAnalysis = QtGui.QGridLayout()
         self.contentLandRequirementAnalysis = QtGui.QWidget()
         self.contentLandRequirementAnalysis.setLayout(self.layoutContentLandRequirementAnalysis)
         self.scrollLandRequirementAnalysis = QtGui.QScrollArea()
@@ -842,15 +1472,65 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutButtonLandRequirementAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLandRequirementAnalysis.addWidget(self.buttonProcessLandRequirementAnalysis)
         
+        # Template GroupBox
+        self.groupBoxLandRequirementAnalysisTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxLandRequirementAnalysisTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLandRequirementAnalysisTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLandRequirementAnalysisTemplate.setLayout(self.layoutGroupBoxLandRequirementAnalysisTemplate)
+        self.layoutLandRequirementAnalysisTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutLandRequirementAnalysisTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxLandRequirementAnalysisTemplate.addLayout(self.layoutLandRequirementAnalysisTemplateInfo)
+        self.layoutGroupBoxLandRequirementAnalysisTemplate.addLayout(self.layoutLandRequirementAnalysisTemplate)
+        
+        self.labelLoadedLandRequirementAnalysisTemplate = QtGui.QLabel()
+        self.labelLoadedLandRequirementAnalysisTemplate.setText('Loaded template:')
+        self.layoutLandRequirementAnalysisTemplate.addWidget(self.labelLoadedLandRequirementAnalysisTemplate, 0, 0)
+        
+        self.loadedLandRequirementAnalysisTemplate = QtGui.QLabel()
+        self.loadedLandRequirementAnalysisTemplate.setText('<None>')
+        self.layoutLandRequirementAnalysisTemplate.addWidget(self.loadedLandRequirementAnalysisTemplate, 0, 1)
+        
+        self.labelLandRequirementAnalysisTemplate = QtGui.QLabel()
+        self.labelLandRequirementAnalysisTemplate.setText('Template name:')
+        self.layoutLandRequirementAnalysisTemplate.addWidget(self.labelLandRequirementAnalysisTemplate, 1, 0)
+        
+        self.comboBoxLandRequirementAnalysisTemplate = QtGui.QComboBox()
+        self.comboBoxLandRequirementAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxLandRequirementAnalysisTemplate.setDisabled(True)
+        self.comboBoxLandRequirementAnalysisTemplate.addItem('No template found')
+        self.layoutLandRequirementAnalysisTemplate.addWidget(self.comboBoxLandRequirementAnalysisTemplate, 1, 1)
+        
+        self.layoutButtonLandRequirementAnalysisTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonLandRequirementAnalysisTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadLandRequirementAnalysisTemplate = QtGui.QPushButton()
+        self.buttonLoadLandRequirementAnalysisTemplate.setDisabled(True)
+        self.buttonLoadLandRequirementAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadLandRequirementAnalysisTemplate.setText('Load')
+        self.buttonSaveLandRequirementAnalysisTemplate = QtGui.QPushButton()
+        self.buttonSaveLandRequirementAnalysisTemplate.setDisabled(True)
+        self.buttonSaveLandRequirementAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveLandRequirementAnalysisTemplate.setText('Save')
+        self.buttonSaveAsLandRequirementAnalysisTemplate = QtGui.QPushButton()
+        self.buttonSaveAsLandRequirementAnalysisTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsLandRequirementAnalysisTemplate.setText('Save As')
+        self.layoutButtonLandRequirementAnalysisTemplate.addWidget(self.buttonLoadLandRequirementAnalysisTemplate)
+        self.layoutButtonLandRequirementAnalysisTemplate.addWidget(self.buttonSaveLandRequirementAnalysisTemplate)
+        self.layoutButtonLandRequirementAnalysisTemplate.addWidget(self.buttonSaveAsLandRequirementAnalysisTemplate)
+        self.layoutGroupBoxLandRequirementAnalysisTemplate.addLayout(self.layoutButtonLandRequirementAnalysisTemplate)
+        
         # Place the GroupBoxes
-        self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisParameters)
-        self.layoutContentLandRequirementAnalysis.addLayout(self.layoutButtonLandRequirementAnalysis)
+        self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisParameters, 0, 0)
+        self.layoutContentLandRequirementAnalysis.addLayout(self.layoutButtonLandRequirementAnalysis, 1, 0)
+        self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisTemplate, 0, 1, 1, 1)
+        self.layoutContentLandRequirementAnalysis.setColumnStretch(0, 3)
+        self.layoutContentLandRequirementAnalysis.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'Land Use Change Impact' tab
         #***********************************************************
         # Use QScrollArea
-        self.layoutContentLandUseChangeImpact = QtGui.QVBoxLayout()
+        ##self.layoutContentLandUseChangeImpact = QtGui.QVBoxLayout()
+        self.layoutContentLandUseChangeImpact = QtGui.QGridLayout()
         self.contentLandUseChangeImpact = QtGui.QWidget()
         self.contentLandUseChangeImpact.setLayout(self.layoutContentLandUseChangeImpact)
         self.scrollLandUseChangeImpact = QtGui.QScrollArea()
@@ -1063,9 +1743,58 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutButtonLandUseChangeImpact.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLandUseChangeImpact.addWidget(self.buttonProcessLandUseChangeImpact)
         
+        # Template GroupBox
+        self.groupBoxLandUseChangeImpactTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxLandUseChangeImpactTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLandUseChangeImpactTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLandUseChangeImpactTemplate.setLayout(self.layoutGroupBoxLandUseChangeImpactTemplate)
+        self.layoutLandUseChangeImpactTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutLandUseChangeImpactTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxLandUseChangeImpactTemplate.addLayout(self.layoutLandUseChangeImpactTemplateInfo)
+        self.layoutGroupBoxLandUseChangeImpactTemplate.addLayout(self.layoutLandUseChangeImpactTemplate)
+        
+        self.labelLoadedLandUseChangeImpactTemplate = QtGui.QLabel()
+        self.labelLoadedLandUseChangeImpactTemplate.setText('Loaded template:')
+        self.layoutLandUseChangeImpactTemplate.addWidget(self.labelLoadedLandUseChangeImpactTemplate, 0, 0)
+        
+        self.loadedLandUseChangeImpactTemplate = QtGui.QLabel()
+        self.loadedLandUseChangeImpactTemplate.setText('<None>')
+        self.layoutLandUseChangeImpactTemplate.addWidget(self.loadedLandUseChangeImpactTemplate, 0, 1)
+        
+        self.labelLandUseChangeImpactTemplate = QtGui.QLabel()
+        self.labelLandUseChangeImpactTemplate.setText('Template name:')
+        self.layoutLandUseChangeImpactTemplate.addWidget(self.labelLandUseChangeImpactTemplate, 1, 0)
+        
+        self.comboBoxLandUseChangeImpactTemplate = QtGui.QComboBox()
+        self.comboBoxLandUseChangeImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxLandUseChangeImpactTemplate.setDisabled(True)
+        self.comboBoxLandUseChangeImpactTemplate.addItem('No template found')
+        self.layoutLandUseChangeImpactTemplate.addWidget(self.comboBoxLandUseChangeImpactTemplate, 1, 1)
+        
+        self.layoutButtonLandUseChangeImpactTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonLandUseChangeImpactTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadLandUseChangeImpactTemplate = QtGui.QPushButton()
+        self.buttonLoadLandUseChangeImpactTemplate.setDisabled(True)
+        self.buttonLoadLandUseChangeImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadLandUseChangeImpactTemplate.setText('Load')
+        self.buttonSaveLandUseChangeImpactTemplate = QtGui.QPushButton()
+        self.buttonSaveLandUseChangeImpactTemplate.setDisabled(True)
+        self.buttonSaveLandUseChangeImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveLandUseChangeImpactTemplate.setText('Save')
+        self.buttonSaveAsLandUseChangeImpactTemplate = QtGui.QPushButton()
+        self.buttonSaveAsLandUseChangeImpactTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsLandUseChangeImpactTemplate.setText('Save As')
+        self.layoutButtonLandUseChangeImpactTemplate.addWidget(self.buttonLoadLandUseChangeImpactTemplate)
+        self.layoutButtonLandUseChangeImpactTemplate.addWidget(self.buttonSaveLandUseChangeImpactTemplate)
+        self.layoutButtonLandUseChangeImpactTemplate.addWidget(self.buttonSaveAsLandUseChangeImpactTemplate)
+        self.layoutGroupBoxLandUseChangeImpactTemplate.addLayout(self.layoutButtonLandUseChangeImpactTemplate)
+        
         # Place the GroupBoxes
-        self.layoutContentLandUseChangeImpact.addWidget(self.groupBoxLandUseChangeImpactParameters)
-        self.layoutContentLandUseChangeImpact.addLayout(self.layoutButtonLandUseChangeImpact)
+        self.layoutContentLandUseChangeImpact.addWidget(self.groupBoxLandUseChangeImpactParameters, 0, 0)
+        self.layoutContentLandUseChangeImpact.addLayout(self.layoutButtonLandUseChangeImpact, 1, 0)
+        self.layoutContentLandUseChangeImpact.addWidget(self.groupBoxLandUseChangeImpactTemplate, 0, 1, 1, 1)
+        self.layoutContentLandUseChangeImpact.setColumnStretch(0, 3)
+        self.layoutContentLandUseChangeImpact.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'Result' tab
@@ -1084,7 +1813,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(700, 600)
+        self.setMinimumSize(800, 600)
         self.resize(parent.sizeHint())
     
     
@@ -1092,6 +1821,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         """Called when the widget is shown
         """
         super(DialogLumensTARegionalEconomy, self).showEvent(event)
+    
+    
+    def closeEvent(self, event):
+        """Called when the widget is closed
+        """
+        super(DialogLumensTARegionalEconomy, self).closeEvent(event)
     
     
     def toggleMultiplePeriod(self, checked):
@@ -1129,6 +1864,75 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     #***********************************************************
     # 'Descriptive Analysis of Regional Economy' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadDescriptiveAnalysisTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxDescriptiveAnalysisTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Descriptive Analysis of Regional Economy', templateFile)
+            self.currentDescriptiveAnalysisTemplate = templateFile
+            self.loadedDescriptiveAnalysisTemplate.setText(templateFile)
+            self.comboBoxDescriptiveAnalysisTemplate.setCurrentIndex(self.comboBoxDescriptiveAnalysisTemplate.findText(templateFile))
+            self.buttonSaveDescriptiveAnalysisTemplate.setEnabled(True)
+    
+    
+    def handlerSaveDescriptiveAnalysisTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentDescriptiveAnalysisTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Descriptive Analysis of Regional Economy', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsDescriptiveAnalysisTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveDescriptiveAnalysisTemplate(fileName)
+            else:
+                self.saveTemplate('Descriptive Analysis of Regional Economy', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadDescriptiveAnalysisTemplate(fileName)
+    
+    
     def handlerSelectSingleIntermediateConsumptionMatrix(self):
         """
         """
@@ -1263,6 +2067,75 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     #***********************************************************
     # 'Regional Economic Impact Scenario' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadRegionalEconomicScenarioImpactTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxRegionalEconomicScenarioImpactTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Regional Economic Scenario Impact', templateFile)
+            self.currentRegionalEconomicScenarioImpactTemplate = templateFile
+            self.loadedRegionalEconomicScenarioImpactTemplate.setText(templateFile)
+            self.comboBoxRegionalEconomicScenarioImpactTemplate.setCurrentIndex(self.comboBoxRegionalEconomicScenarioImpactTemplate.findText(templateFile))
+            self.buttonSaveRegionalEconomicScenarioImpactTemplate.setEnabled(True)
+    
+    
+    def handlerSaveRegionalEconomicScenarioImpactTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentRegionalEconomicScenarioImpactTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Regional Economic Scenario Impact', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsRegionalEconomicScenarioImpactTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveRegionalEconomicScenarioImpactTemplate(fileName)
+            else:
+                self.saveTemplate('Regional Economic Scenario Impact', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadRegionalEconomicScenarioImpactTemplate(fileName)
+    
+    
     def handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario(self):
         """
         """
@@ -1409,6 +2282,75 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     #***********************************************************
     # 'Land Requirement Analysis' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadLandRequirementAnalysisTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxLandRequirementAnalysisTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Land Requirement Analysis', templateFile)
+            self.currentLandRequirementAnalysisTemplate = templateFile
+            self.loadedLandRequirementAnalysisTemplate.setText(templateFile)
+            self.comboBoxLandRequirementAnalysisTemplate.setCurrentIndex(self.comboBoxLandRequirementAnalysisTemplate.findText(templateFile))
+            self.buttonSaveLandRequirementAnalysisTemplate.setEnabled(True)
+    
+    
+    def handlerSaveLandRequirementAnalysisTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentLandRequirementAnalysisTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Land Requirement Analysis', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsLandRequirementAnalysisTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveLandRequirementAnalysisTemplate(fileName)
+            else:
+                self.saveTemplate('Land Requirement Analysis', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadLandRequirementAnalysisTemplate(fileName)
+    
+    
     def handlerSelectLandRequirementAnalysisWorkingDir(self):
         """
         """
@@ -1533,6 +2475,75 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     #***********************************************************
     # 'Land Use Change Impact' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadLandUseChangeImpactTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxLandUseChangeImpactTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Land Use Change Impact', templateFile)
+            self.currentLandUseChangeImpactTemplate = templateFile
+            self.loadedLandUseChangeImpactTemplate.setText(templateFile)
+            self.comboBoxLandUseChangeImpactTemplate.setCurrentIndex(self.comboBoxLandUseChangeImpactTemplate.findText(templateFile))
+            self.buttonSaveLandUseChangeImpactTemplate.setEnabled(True)
+    
+    
+    def handlerSaveLandUseChangeImpactTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentLandUseChangeImpactTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Land Use Change Impact', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsLandUseChangeImpactTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveLandUseChangeImpactTemplate(fileName)
+            else:
+                self.saveTemplate('Land Use Change Impact', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadLandUseChangeImpactTemplate(fileName)
+    
+    
     def handlerSelectLandUseChangeImpactWorkingDir(self):
         """
         """
