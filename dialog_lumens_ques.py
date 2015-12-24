@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, datetime
+import os, logging, datetime, glob
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
@@ -11,16 +11,505 @@ import resource
 class DialogLumensQUES(QtGui.QDialog):
     """
     """
+    def loadTemplateFiles(self):
+        """List available ini template file inside the project folder
+        """
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        
+        if templateFiles:
+            self.comboBoxQUESCTemplate.clear()
+            self.comboBoxQUESCTemplate.addItems(sorted(templateFiles))
+            self.comboBoxQUESCTemplate.setEnabled(True)
+            self.buttonLoadQUESCTemplate.setEnabled(True)
+            
+            self.comboBoxQUESBTemplate.clear()
+            self.comboBoxQUESBTemplate.addItems(sorted(templateFiles))
+            self.comboBoxQUESBTemplate.setEnabled(True)
+            self.buttonLoadQUESBTemplate.setEnabled(True)
+            
+            self.comboBoxHRUDefinitionTemplate.clear()
+            self.comboBoxHRUDefinitionTemplate.addItems(sorted(templateFiles))
+            self.comboBoxHRUDefinitionTemplate.setEnabled(True)
+            self.buttonLoadHRUDefinitionTemplate.setEnabled(True)
+            
+            self.comboBoxWatershedModelEvaluationTemplate.clear()
+            self.comboBoxWatershedModelEvaluationTemplate.addItems(sorted(templateFiles))
+            self.comboBoxWatershedModelEvaluationTemplate.setEnabled(True)
+            self.buttonLoadWatershedModelEvaluationTemplate.setEnabled(True)
+            
+            self.comboBoxWatershedIndicatorsTemplate.clear()
+            self.comboBoxWatershedIndicatorsTemplate.addItems(sorted(templateFiles))
+            self.comboBoxWatershedIndicatorsTemplate.setEnabled(True)
+            self.buttonLoadWatershedIndicatorsTemplate.setEnabled(True)
+        else:
+            self.comboBoxQUESCTemplate.setDisabled(True)
+            self.buttonLoadQUESCTemplate.setDisabled(True)
+            
+            self.comboBoxQUESBTemplate.setDisabled(True)
+            self.buttonLoadQUESBTemplate.setDisabled(True)
+            
+            self.comboBoxHRUDefinitionTemplate.setDisabled(True)
+            self.buttonLoadHRUDefinitionTemplate.setDisabled(True)
+            
+            self.comboBoxWatershedModelEvaluationTemplate.setDisabled(True)
+            self.buttonLoadWatershedModelEvaluationTemplate.setDisabled(True)
+            
+            self.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
+            self.buttonLoadWatershedIndicatorsTemplate.setDisabled(True)
+        
+    
+    def loadTemplate(self, tabName, fileName):
+        """Load the value saved in ini template file to the form widget
+        """
+        templateFilePath = os.path.join(self.settingsPath, fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        
+        dialogsToLoad = None
+        
+        td = datetime.date.today()
+        
+        if tabName == 'QUES-C':
+            dialogsToLoad = (
+                'DialogLumensQUESCCarbonAccounting',
+                'DialogLumensQUESCPeatlandCarbonAccounting',
+                'DialogLumensQUESCSummarizeMultiplePeriod',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Carbon accounting' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESCCarbonAccounting')
+            
+            csvfile = settings.value('csvfile')
+            nodata = settings.value('nodata')
+            
+            if csvfile and os.path.exists(csvfile):
+                self.lineEditCACsvfile.setText(csvfile)
+            else:
+                self.lineEditCACsvfile.setText('')
+            if nodata:
+                self.spinBoxCANoDataValue.setValue(int(nodata))
+            else:
+                self.spinBoxCANoDataValue.setValue(0)
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'Peatland carbon accounting' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESCPeatlandCarbonAccounting')
+            
+            csvfile = settings.value('csvfile')
+            
+            if csvfile and os.path.exists(csvfile):
+                self.lineEditPCACsvfile.setText(csvfile)
+            else:
+                self.lineEditPCACsvfile.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            # 'Summarize multiple period' groupbox widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESCSummarizeMultiplePeriod')
+            
+            checkbox = settings.value('checkbox')
+            
+            if csvfile == 'true':
+                self.checkBoxSummarizeMultiplePeriod.setChecked(True)
+            else:
+                self.checkBoxSummarizeMultiplePeriod.setChecked(False)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'QUES-B':
+            dialogsToLoad = (
+                'DialogLumensQUESBAnalysis',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'QUES-B' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESBAnalysis')
+            
+            csvLandCover = settings.value('csvLandCover')
+            samplingGridRes = settings.value('samplingGridRes')
+            samplingWindowSize = settings.value('samplingWindowSize')
+            windowShape = settings.value('windowShape')
+            nodata = settings.value('nodata')
+            csvClassDescriptors = settings.value('csvClassDescriptors')
+            csvEdgeContrast = settings.value('csvEdgeContrast')
+            csvZoneLookup = settings.value('csvZoneLookup')
+            refMapID = settings.value('refMapID')
+            outputTECIInitial = settings.value('outputTECIInitial')
+            outputTECIFinal = settings.value('outputTECIFinal')
+            outputHabitatLoss = settings.value('outputHabitatLoss')
+            outputDegradedHabitat = settings.value('outputDegradedHabitat')
+            outputHabitatGain = settings.value('outputHabitatGain')
+            outputRecoveredHabitat = settings.value('outputRecoveredHabitat')
+            
+            if csvLandCover and os.path.exists(csvLandCover):
+                self.lineEditQUESBCsvLandCover.setText(csvLandCover)
+            else:
+                self.lineEditQUESBCsvLandCover.setText('')
+            if samplingGridRes:
+                self.spinBoxQUESBSamplingGridRes.setValue(int(samplingGridRes))
+            else:
+                self.spinBoxQUESBSamplingGridRes.setValue(9999)
+            if samplingWindowSize:
+                self.spinBoxQUESBSamplingWindowSize.setValue(int(samplingWindowSize))
+            else:
+                self.spinBoxQUESBSamplingWindowSize.setValue(1000)
+            if windowShape:
+                self.spinBoxQUESBWindowShape.setValue(int(windowShape))
+            else:
+                self.spinBoxQUESBWindowShape.setValue(1000)
+            if nodata:
+                self.spinBoxQUESBNodata.setValue(int(nodata))
+            else:
+                self.spinBoxQUESBNodata.setValue(0)
+            if csvClassDescriptors and os.path.exists(csvClassDescriptors):
+                self.lineEditQUESBCsvClassDescriptors.setText(csvClassDescriptors)
+            else:
+                self.lineEditQUESBCsvClassDescriptors.setText('')
+            if csvEdgeContrast and os.path.exists(csvEdgeContrast):
+                self.lineEditQUESBCsvEdgeContrast.setText(csvEdgeContrast)
+            else:
+                self.lineEditQUESBCsvEdgeContrast.setText('')
+            if csvZoneLookup and os.path.exists(csvZoneLookup):
+                self.lineEditQUESBCsvZoneLookup.setText(csvZoneLookup)
+            else:
+                self.lineEditQUESBCsvZoneLookup.setText('')
+            if refMapID:
+                self.comboBoxQUESBRefMapID.setCurrentIndex(self.comboBoxQUESBRefMapID.findData(int(refMapID)))
+            if outputTECIInitial:
+                self.lineEditQUESBOutputTECIInitial.setText(outputTECIInitial)
+            else:
+                self.lineEditQUESBOutputTECIInitial.setText('')
+            if outputTECIFinal:
+                self.lineEditQUESBOutputTECIFinal.setText(outputTECIFinal)
+            else:
+                self.lineEditQUESBOutputTECIFinal.setText('')
+            if outputHabitatLoss:
+                self.lineEditQUESBOutputHabitatLoss.setText(outputHabitatLoss)
+            else:
+                self.lineEditQUESBOutputHabitatLoss.setText('')
+            if outputDegradedHabitat:
+                self.lineEditQUESBOutputDegradedHabitat.setText(outputDegradedHabitat)
+            else:
+                self.lineEditQUESBOutputDegradedHabitat.setText('')
+            if outputHabitatGain:
+                self.lineEditQUESBOutputHabitatGain.setText(outputHabitatGain)
+            else:
+                self.lineEditQUESBOutputHabitatGain.setText('')
+            if outputRecoveredHabitat:
+                self.lineEditQUESBOutputRecoveredHabitat.setText(outputRecoveredHabitat)
+            else:
+                self.lineEditQUESBOutputRecoveredHabitat.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Hydrological Response Unit Definition':
+            dialogsToLoad = (
+                'DialogLumensQUESHDominantHRU',
+                'DialogLumensQUESHDominantLUSSL',
+                'DialogLumensQUESHMultipleHRU',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Hydrological Response Unit Definition' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESHDominantHRU')
+            
+            workingDir = settings.value('workingDir')
+            landUseMap = settings.value('landUseMap')
+            soilMap = settings.value('soilMap')
+            slopeMap = settings.value('slopeMap')
+            subcatchmentMap = settings.value('subcatchmentMap')
+            landUseClassification = settings.value('landUseClassification')
+            soilClassification = settings.value('soilClassification')
+            slopeClassification = settings.value('slopeClassification')
+            areaName = settings.value('areaName')
+            period = settings.value('period')
+            
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditHRUWorkingDir.setText(workingDir)
+            else:
+                self.lineEditHRUWorkingDir.setText('')
+            if landUseMap and os.path.exists(landUseMap):
+                self.lineEditHRULandUseMap.setText(landUseMap)
+            else:
+                self.lineEditHRULandUseMap.setText('')
+            if soilMap and os.path.exists(soilMap):
+                self.lineEditHRUSoilMap.setText(soilMap)
+            else:
+                self.lineEditHRUSoilMap.setText('')
+            if subcatchmentMap and os.path.exists(subcatchmentMap):
+                self.lineEditHRUSubcatchmentMap.setText(subcatchmentMap)
+            else:
+                self.lineEditHRUSubcatchmentMap.setText('')
+            if landUseClassification and os.path.exists(landUseClassification):
+                self.lineEditHRULandUseClassification.setText(landUseClassification)
+            else:
+                self.lineEditHRULandUseClassification.setText('')
+            if soilClassification and os.path.exists(soilClassification):
+                self.lineEditHRUSoilClassification.setText(soilClassification)
+            else:
+                self.lineEditHRUSoilClassification.setText('')
+            if slopeClassification and os.path.exists(slopeClassification):
+                self.lineEditHRUSlopeClassification.setText(slopeClassification)
+            else:
+                self.lineEditHRUSlopeClassification.setText('')
+            if areaName:
+                self.lineEditHRUAreaName.setText(areaName)
+            else:
+                self.lineEditHRUAreaName.setText('')
+            if period:
+                self.spinBoxHRUPeriod.setValue(int(period))
+            else:
+                self.spinBoxHRUPeriod.setValue(td.year)
+            
+            settings.endGroup()
+            # /dialog
+            
+            # start dialog
+            settings.beginGroup('DialogLumensQUESHMultipleHRU')
+            
+            landUseThreshold = settings.value('landUseThreshold')
+            soilThreshold = settings.value('soilThreshold')
+            slopeThreshold = settings.value('slopeThreshold')
+            
+            if landUseThreshold:
+                self.spinBoxMultipleHRULandUseThreshold.setValue(int(landUseThreshold))
+            else:
+                self.spinBoxMultipleHRULandUseThreshold.setValue(0)
+            if soilThreshold:
+                self.spinBoxMultipleHRUSoilThreshold.setValue(int(soilThreshold))
+            else:
+                self.spinBoxMultipleHRUSoilThreshold.setValue(0)
+            if slopeThreshold:
+                self.spinBoxMultipleHRUSlopeThreshold.setValue(int(slopeThreshold))
+            else:
+                self.spinBoxMultipleHRUSlopeThreshold.setValue(0)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Watershed Model Evaluation':
+            dialogsToLoad = (
+                'DialogLumensQUESHWatershedModelEvaluation',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Watershed Model Evaluation' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESHWatershedModelEvaluation')
+            
+            workingDir = settings.value('workingDir')
+            dateInitial = settings.value('dateInitial')
+            dateFinal = settings.value('dateFinal')
+            SWATModel = settings.value('SWATModel')
+            location = settings.value('location')
+            outletReachSubBasinID = settings.value('outletReachSubBasinID')
+            observedDebitFile = settings.value('observedDebitFile')
+            outputWatershedModelEvaluation = settings.value('outputWatershedModelEvaluation')
+            
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditWatershedModelEvaluationWorkingDir.setText(workingDir)
+            else:
+                self.lineEditWatershedModelEvaluationWorkingDir.setText('')
+            if dateInitial:
+                self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
+            else:
+                self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.currentDate())
+            if dateFinal:
+                self.dateWatershedModelEvaluationDateFinal.setDate(QtCore.QDate.fromString(dateFinal), 'dd/MM/yyyy')
+            else:
+                self.dateWatershedModelEvaluationDateFinal.setDate(QtCore.QDate.currentDate())
+            if SWATModel:
+                self.comboBoxWatershedModelEvaluationSWATModel.setCurrentIndex(self.comboBoxWatershedModelEvaluationSWATModel.findData(int(SWATModel)))
+            if location:
+                self.lineEditWatershedModelEvaluationLocation.setText(location)
+            else:
+                self.lineEditWatershedModelEvaluationLocation.setText('')
+            if outletReachSubBasinID:
+                self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(int(outletReachSubBasinID))
+            else:
+                self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(10)
+            if observedDebitFile and os.path.exists(observedDebitFile):
+                self.lineEditWatershedModelEvaluationObservedDebitFile.setText(observedDebitFile)
+            else:
+                self.lineEditWatershedModelEvaluationObservedDebitFile.setText('')
+            if outputWatershedModelEvaluation:
+                self.lineEditOutputWatershedModelEvaluation.setText(outputWatershedModelEvaluation)
+            else:
+                self.lineEditOutputWatershedModelEvaluation.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'Watershed Indicators':
+            dialogsToLoad = (
+                'DialogLumensQUESHWatershedIndicators',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Watershed Model Evaluation' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensQUESHWatershedIndicators')
+            
+            SWATTXTINOUTDir = settings.value('SWATTXTINOUTDir')
+            dateInitial = settings.value('dateInitial')
+            dateFinal = settings.value('dateFinal')
+            subWatershedPolygon = settings.value('subWatershedPolygon')
+            location = settings.value('location')
+            subWatershedOutput = settings.value('subWatershedOutput')
+            outputInitialYearSubWatershedLevelIndicators = settings.value('outputInitialYearSubWatershedLevelIndicators')
+            outputFinalYearSubWatershedLevelIndicators = settings.value('outputFinalYearSubWatershedLevelIndicators')
+            
+            if SWATTXTINOUTDir and os.path.isdir(SWATTXTINOUTDir):
+                self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText(SWATTXTINOUTDir)
+            else:
+                self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText('')
+            if dateInitial:
+                self.dateWatershedIndicatorsDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
+            else:
+                self.dateWatershedIndicatorsDateInitial.setDate(QtCore.QDate.currentDate())
+            if dateFinal:
+                self.dateWatershedIndicatorsDateFinal.setDate(QtCore.QDate.fromString(dateFinal), 'dd/MM/yyyy')
+            else:
+                self.dateWatershedIndicatorsDateFinal.setDate(QtCore.QDate.currentDate())
+            if subWatershedPolygon and os.path.exists(subWatershedPolygon):
+                self.lineEditWatershedIndicatorsSubWatershedPolygon.setText(subWatershedPolygon)
+            else:
+                self.lineEditWatershedIndicatorsSubWatershedPolygon.setText('')
+            if location:
+                self.lineEditWatershedIndicatorsLocation.setText(location)
+            else:
+                self.lineEditWatershedIndicatorsLocation.setText('')
+            if subWatershedOutput:
+                self.spinBoxWatershedIndicatorsSubWatershedOutputsetValue(int(subWatershedOutput))
+            else:
+                self.spinBoxWatershedIndicatorsSubWatershedOutputsetValue.setValue(10)
+            if outputInitialYearSubWatershedLevelIndicators:
+                self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText(outputInitialYearSubWatershedLevelIndicators)
+            else:
+                self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText('')
+            if outputFinalYearSubWatershedLevelIndicators:
+                self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText(outputFinalYearSubWatershedLevelIndicators)
+            else:
+                self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText('')
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        
+        """
+        print 'DEBUG'
+        settings.beginGroup(tabName)
+        for dialog in dialogsToLoad:
+            settings.beginGroup(dialog)
+            for key in self.main.appSettings[dialog].keys():
+                print key, settings.value(key)
+            settings.endGroup()
+        settings.endGroup()
+        """
+    
+    
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
+        """
+        self.setAppSettings()
+        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'], fileName)
+        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        
+        dialogsToSave = None
+        
+        if tabName == 'QUES-C':
+            dialogsToSave = (
+                'DialogLumensQUESCCarbonAccounting',
+                'DialogLumensQUESCPeatlandCarbonAccounting',
+                'DialogLumensQUESCSummarizeMultiplePeriod',
+            )
+        elif tabName == 'QUES-B':
+            dialogsToSave = (
+                'DialogLumensQUESBAnalysis',
+            )
+        elif tabName == 'Hydrological Response Unit Definition':
+            dialogsToSave = (
+                'DialogLumensQUESHDominantHRU',
+                'DialogLumensQUESHDominantLUSSL',
+                'DialogLumensQUESHMultipleHRU',
+            )
+        elif tabName == 'Watershed Model Evaluation':
+            dialogsToSave = (
+                'DialogLumensQUESHWatershedModelEvaluation',
+            )
+        elif tabName == 'Watershed Indicators':
+            dialogsToSave = (
+                'DialogLumensQUESHWatershedIndicators',
+            )
+        
+        settings.beginGroup(tabName)
+        for dialog in dialogsToSave:
+            settings.beginGroup(dialog)
+            for key, val in self.main.appSettings[dialog].iteritems():
+                settings.setValue(key, val)
+            settings.endGroup()
+        settings.endGroup()
     
     
     def __init__(self, parent):
         super(DialogLumensQUES, self).__init__(parent)
-        print 'DEBUG: DialogLumensQUES init'
         
         self.main = parent
         self.dialogTitle = 'LUMENS Quantification Environmental Services'
+        self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderQUES'])
+        self.currentQUESCTemplate = None
+        self.currentQUESBTemplate = None
+        self.currentHRUDefinitionTemplate = None
+        self.currentWatershedModelEvaluationTemplate = None
+        self.currentWatershedIndicatorsTemplate = None
+        
+        if self.main.appSettings['debug']:
+            print 'DEBUG: DialogLumensQUES init'
+            self.logger = logging.getLogger(type(self).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.setLevel(logging.DEBUG)
         
         self.setupUi(self)
+        
+        self.loadTemplateFiles()
         
         # 'Pre-QUES' tab buttons
         self.buttonSelectPreQUESWorkingDir.clicked.connect(self.handlerSelectPreQUESWorkingDir)
@@ -38,6 +527,9 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectCACsvfile.clicked.connect(self.handlerSelectCACsvfile)
         self.buttonSelectPCACsvfile.clicked.connect(self.handlerSelectPCACsvfile)
         self.buttonProcessQUESC.clicked.connect(self.handlerProcessQUESC)
+        self.buttonLoadQUESCTemplate.clicked.connect(self.handlerLoadQUESCTemplate)
+        self.buttonSaveQUESCTemplate.clicked.connect(self.handlerSaveQUESCTemplate)
+        self.buttonSaveAsQUESCTemplate.clicked.connect(self.handlerSaveAsQUESCTemplate)
         
         # 'QUES-B' tab buttons
         self.buttonSelectQUESBCsvLandCover.clicked.connect(self.handlerSelectQUESBCsvLandCover)
@@ -51,6 +543,9 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectQUESBOutputHabitatGain.clicked.connect(self.handlerSelectQUESBOutputHabitatGain)
         self.buttonSelectQUESBOutputRecoveredHabitat.clicked.connect(self.handlerSelectQUESBOutputRecoveredHabitat)
         self.buttonProcessQUESB.clicked.connect(self.handlerProcessQUESB)
+        self.buttonLoadQUESBTemplate.clicked.connect(self.handlerLoadQUESBTemplate)
+        self.buttonSaveQUESBTemplate.clicked.connect(self.handlerSaveQUESBTemplate)
+        self.buttonSaveAsQUESBTemplate.clicked.connect(self.handlerSaveAsQUESBTemplate)
         
         # 'QUES-H' tab checkboxes
         self.checkBoxMultipleHRU.toggled.connect(self.toggleMultipleHRU)
@@ -65,12 +560,18 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectHRUSoilClassification.clicked.connect(self.handlerSelectHRUSoilClassification)
         self.buttonSelectHRUSlopeClassification.clicked.connect(self.handlerSelectHRUSlopeClassification)
         self.buttonProcessHRUDefinition.clicked.connect(self.handlerProcessQUESHHRUDefinition)
+        self.buttonLoadHRUDefinitionTemplate.clicked.connect(self.handlerLoadHRUDefinitionTemplate)
+        self.buttonSaveHRUDefinitionTemplate.clicked.connect(self.handlerSaveHRUDefinitionTemplate)
+        self.buttonSaveAsHRUDefinitionTemplate.clicked.connect(self.handlerSaveAsHRUDefinitionTemplate)
         
         # 'QUES-H' Watershed Model Evaluation tab buttons
         self.buttonSelectWatershedModelEvaluationWorkingDir.clicked.connect(self.handlerSelectWatershedModelEvaluationWorkingDir)
         self.buttonSelectWatershedModelEvaluationObservedDebitFile.clicked.connect(self.handlerSelectWatershedModelEvaluationObservedDebitFile)
         self.buttonSelectOutputWatershedModelEvaluation.clicked.connect(self.handlerSelectOutputWatershedModelEvaluation)
         self.buttonProcessWatershedModelEvaluation.clicked.connect(self.handlerProcessQUESHWatershedModelEvaluation)
+        self.buttonLoadWatershedModelEvaluationTemplate.clicked.connect(self.handlerLoadWatershedModelEvaluationTemplate)
+        self.buttonSaveWatershedModelEvaluationTemplate.clicked.connect(self.handlerSaveWatershedModelEvaluationTemplate)
+        self.buttonSaveAsWatershedModelEvaluationTemplate.clicked.connect(self.handlerSaveAsWatershedModelEvaluationTemplate)
         
         # 'QUES-H' Watershed Indicators tab buttons
         self.buttonSelectWatershedIndicatorsSWATTXTINOUTDir.clicked.connect(self.handlerSelectWatershedIndicatorsSWATTXTINOUTDir)
@@ -78,6 +579,9 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.clicked.connect(self.handlerSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators)
         self.buttonSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.clicked.connect(self.handlerSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators)
         self.buttonProcessWatershedIndicators.clicked.connect(self.handlerProcessQUESHWatershedIndicators)
+        self.buttonLoadWatershedIndicatorsTemplate.clicked.connect(self.handlerLoadWatershedIndicatorsTemplate)
+        self.buttonSaveWatershedIndicatorsTemplate.clicked.connect(self.handlerSaveWatershedIndicatorsTemplate)
+        self.buttonSaveAsWatershedIndicatorsTemplate.clicked.connect(self.handlerSaveAsWatershedIndicatorsTemplate)
         
     
     def setupUi(self, parent):
@@ -99,8 +603,10 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWidget.addTab(self.tabResult, 'Result')
         
         self.layoutTabPreQUES = QtGui.QVBoxLayout()
-        self.layoutTabQUESC = QtGui.QVBoxLayout()
-        self.layoutTabQUESB = QtGui.QVBoxLayout()
+        ##self.layoutTabQUESC = QtGui.QVBoxLayout()
+        self.layoutTabQUESC = QtGui.QGridLayout()
+        ##self.layoutTabQUESB = QtGui.QVBoxLayout()
+        self.layoutTabQUESB = QtGui.QGridLayout()
         self.layoutTabQUESH = QtGui.QVBoxLayout()
         self.layoutTabReclassification = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
@@ -353,11 +859,60 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonQUESC.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonQUESC.addWidget(self.buttonProcessQUESC)
         
+        # Template GroupBox
+        self.groupBoxQUESCTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxQUESCTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxQUESCTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxQUESCTemplate.setLayout(self.layoutGroupBoxQUESCTemplate)
+        self.layoutQUESCTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutQUESCTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxQUESCTemplate.addLayout(self.layoutQUESCTemplateInfo)
+        self.layoutGroupBoxQUESCTemplate.addLayout(self.layoutQUESCTemplate)
+        
+        self.labelLoadedQUESCTemplate = QtGui.QLabel()
+        self.labelLoadedQUESCTemplate.setText('Loaded template:')
+        self.layoutQUESCTemplate.addWidget(self.labelLoadedQUESCTemplate, 0, 0)
+        
+        self.loadedQUESCTemplate = QtGui.QLabel()
+        self.loadedQUESCTemplate.setText('<None>')
+        self.layoutQUESCTemplate.addWidget(self.loadedQUESCTemplate, 0, 1)
+        
+        self.labelQUESCTemplate = QtGui.QLabel()
+        self.labelQUESCTemplate.setText('Template name:')
+        self.layoutQUESCTemplate.addWidget(self.labelQUESCTemplate, 1, 0)
+        
+        self.comboBoxQUESCTemplate = QtGui.QComboBox()
+        self.comboBoxQUESCTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxQUESCTemplate.setDisabled(True)
+        self.comboBoxQUESCTemplate.addItem('No template found')
+        self.layoutQUESCTemplate.addWidget(self.comboBoxQUESCTemplate, 1, 1)
+        
+        self.layoutButtonQUESCTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonQUESCTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadQUESCTemplate = QtGui.QPushButton()
+        self.buttonLoadQUESCTemplate.setDisabled(True)
+        self.buttonLoadQUESCTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadQUESCTemplate.setText('Load')
+        self.buttonSaveQUESCTemplate = QtGui.QPushButton()
+        self.buttonSaveQUESCTemplate.setDisabled(True)
+        self.buttonSaveQUESCTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveQUESCTemplate.setText('Save')
+        self.buttonSaveAsQUESCTemplate = QtGui.QPushButton()
+        self.buttonSaveAsQUESCTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsQUESCTemplate.setText('Save As')
+        self.layoutButtonQUESCTemplate.addWidget(self.buttonLoadQUESCTemplate)
+        self.layoutButtonQUESCTemplate.addWidget(self.buttonSaveQUESCTemplate)
+        self.layoutButtonQUESCTemplate.addWidget(self.buttonSaveAsQUESCTemplate)
+        self.layoutGroupBoxQUESCTemplate.addLayout(self.layoutButtonQUESCTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabQUESC.addWidget(self.groupBoxCarbonAccounting)
-        self.layoutTabQUESC.addWidget(self.groupBoxPeatlandCarbonAccounting)
-        self.layoutTabQUESC.addWidget(self.groupBoxSummarizeMultiplePeriod)
-        self.layoutTabQUESC.addLayout(self.layoutButtonQUESC)
+        self.layoutTabQUESC.addWidget(self.groupBoxCarbonAccounting, 0, 0)
+        self.layoutTabQUESC.addWidget(self.groupBoxPeatlandCarbonAccounting, 1, 0)
+        self.layoutTabQUESC.addWidget(self.groupBoxSummarizeMultiplePeriod, 2, 0)
+        self.layoutTabQUESC.addLayout(self.layoutButtonQUESC, 3, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabQUESC.addWidget(self.groupBoxQUESCTemplate, 0, 1, 3, 1)
+        self.layoutTabQUESC.setColumnStretch(0, 3)
+        self.layoutTabQUESC.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'QUES-B' tab
@@ -573,10 +1128,59 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonQUESB.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonQUESB.addWidget(self.buttonProcessQUESB)
         
+        # Template GroupBox
+        self.groupBoxQUESBTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxQUESBTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxQUESBTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxQUESBTemplate.setLayout(self.layoutGroupBoxQUESBTemplate)
+        self.layoutQUESBTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutQUESBTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxQUESBTemplate.addLayout(self.layoutQUESBTemplateInfo)
+        self.layoutGroupBoxQUESBTemplate.addLayout(self.layoutQUESBTemplate)
+        
+        self.labelLoadedQUESBTemplate = QtGui.QLabel()
+        self.labelLoadedQUESBTemplate.setText('Loaded template:')
+        self.layoutQUESBTemplate.addWidget(self.labelLoadedQUESBTemplate, 0, 0)
+        
+        self.loadedQUESBTemplate = QtGui.QLabel()
+        self.loadedQUESBTemplate.setText('<None>')
+        self.layoutQUESBTemplate.addWidget(self.loadedQUESBTemplate, 0, 1)
+        
+        self.labelQUESBTemplate = QtGui.QLabel()
+        self.labelQUESBTemplate.setText('Template name:')
+        self.layoutQUESBTemplate.addWidget(self.labelQUESBTemplate, 1, 0)
+        
+        self.comboBoxQUESBTemplate = QtGui.QComboBox()
+        self.comboBoxQUESBTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxQUESBTemplate.setDisabled(True)
+        self.comboBoxQUESBTemplate.addItem('No template found')
+        self.layoutQUESBTemplate.addWidget(self.comboBoxQUESBTemplate, 1, 1)
+        
+        self.layoutButtonQUESBTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonQUESBTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadQUESBTemplate = QtGui.QPushButton()
+        self.buttonLoadQUESBTemplate.setDisabled(True)
+        self.buttonLoadQUESBTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadQUESBTemplate.setText('Load')
+        self.buttonSaveQUESBTemplate = QtGui.QPushButton()
+        self.buttonSaveQUESBTemplate.setDisabled(True)
+        self.buttonSaveQUESBTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveQUESBTemplate.setText('Save')
+        self.buttonSaveAsQUESBTemplate = QtGui.QPushButton()
+        self.buttonSaveAsQUESBTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsQUESBTemplate.setText('Save As')
+        self.layoutButtonQUESBTemplate.addWidget(self.buttonLoadQUESBTemplate)
+        self.layoutButtonQUESBTemplate.addWidget(self.buttonSaveQUESBTemplate)
+        self.layoutButtonQUESBTemplate.addWidget(self.buttonSaveAsQUESBTemplate)
+        self.layoutGroupBoxQUESBTemplate.addLayout(self.layoutButtonQUESBTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabQUESB.addWidget(self.groupBoxQUESBParameters)
-        self.layoutTabQUESB.addWidget(self.groupBoxQUESBOutput)
-        self.layoutTabQUESB.addLayout(self.layoutButtonQUESB)
+        self.layoutTabQUESB.addWidget(self.groupBoxQUESBParameters, 0, 0)
+        self.layoutTabQUESB.addWidget(self.groupBoxQUESBOutput, 1, 0)
+        self.layoutTabQUESB.addLayout(self.layoutButtonQUESB, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabQUESB.addWidget(self.groupBoxQUESBTemplate, 0, 1, 2, 1)
+        self.layoutTabQUESB.setColumnStretch(0, 3)
+        self.layoutTabQUESB.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'QUES-H' tab
@@ -596,9 +1200,12 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutTabQUESH.addWidget(self.tabWidgetQUESH)
         
         self.layoutTabWatershedDelineation = QtGui.QVBoxLayout()
-        self.layoutTabHRUDefinition = QtGui.QVBoxLayout()
-        self.layoutTabWatershedModelEvaluation = QtGui.QVBoxLayout()
-        self.layoutTabWatershedIndicators = QtGui.QVBoxLayout()
+        ##self.layoutTabHRUDefinition = QtGui.QVBoxLayout()
+        self.layoutTabHRUDefinition = QtGui.QGridLayout()
+        ##self.layoutTabWatershedModelEvaluation = QtGui.QVBoxLayout()
+        self.layoutTabWatershedModelEvaluation = QtGui.QGridLayout()
+        ##self.layoutTabWatershedIndicators = QtGui.QVBoxLayout()
+        self.layoutTabWatershedIndicators = QtGui.QGridLayout()
         
         self.tabWatershedDelineation.setLayout(self.layoutTabWatershedDelineation)
         self.tabHRUDefinition.setLayout(self.layoutTabHRUDefinition)
@@ -809,10 +1416,59 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonHRUDefinition.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonHRUDefinition.addWidget(self.buttonProcessHRUDefinition)
         
+        # Template GroupBox
+        self.groupBoxHRUDefinitionTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxHRUDefinitionTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxHRUDefinitionTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxHRUDefinitionTemplate.setLayout(self.layoutGroupBoxHRUDefinitionTemplate)
+        self.layoutHRUDefinitionTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutHRUDefinitionTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxHRUDefinitionTemplate.addLayout(self.layoutHRUDefinitionTemplateInfo)
+        self.layoutGroupBoxHRUDefinitionTemplate.addLayout(self.layoutHRUDefinitionTemplate)
+        
+        self.labelLoadedHRUDefinitionTemplate = QtGui.QLabel()
+        self.labelLoadedHRUDefinitionTemplate.setText('Loaded template:')
+        self.layoutHRUDefinitionTemplate.addWidget(self.labelLoadedHRUDefinitionTemplate, 0, 0)
+        
+        self.loadedHRUDefinitionTemplate = QtGui.QLabel()
+        self.loadedHRUDefinitionTemplate.setText('<None>')
+        self.layoutHRUDefinitionTemplate.addWidget(self.loadedHRUDefinitionTemplate, 0, 1)
+        
+        self.labelHRUDefinitionTemplate = QtGui.QLabel()
+        self.labelHRUDefinitionTemplate.setText('Template name:')
+        self.layoutHRUDefinitionTemplate.addWidget(self.labelHRUDefinitionTemplate, 1, 0)
+        
+        self.comboBoxHRUDefinitionTemplate = QtGui.QComboBox()
+        self.comboBoxHRUDefinitionTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxHRUDefinitionTemplate.setDisabled(True)
+        self.comboBoxHRUDefinitionTemplate.addItem('No template found')
+        self.layoutHRUDefinitionTemplate.addWidget(self.comboBoxHRUDefinitionTemplate, 1, 1)
+        
+        self.layoutButtonHRUDefinitionTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonHRUDefinitionTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadHRUDefinitionTemplate = QtGui.QPushButton()
+        self.buttonLoadHRUDefinitionTemplate.setDisabled(True)
+        self.buttonLoadHRUDefinitionTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadHRUDefinitionTemplate.setText('Load')
+        self.buttonSaveHRUDefinitionTemplate = QtGui.QPushButton()
+        self.buttonSaveHRUDefinitionTemplate.setDisabled(True)
+        self.buttonSaveHRUDefinitionTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveHRUDefinitionTemplate.setText('Save')
+        self.buttonSaveAsHRUDefinitionTemplate = QtGui.QPushButton()
+        self.buttonSaveAsHRUDefinitionTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsHRUDefinitionTemplate.setText('Save As')
+        self.layoutButtonHRUDefinitionTemplate.addWidget(self.buttonLoadHRUDefinitionTemplate)
+        self.layoutButtonHRUDefinitionTemplate.addWidget(self.buttonSaveHRUDefinitionTemplate)
+        self.layoutButtonHRUDefinitionTemplate.addWidget(self.buttonSaveAsHRUDefinitionTemplate)
+        self.layoutGroupBoxHRUDefinitionTemplate.addLayout(self.layoutButtonHRUDefinitionTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabHRUDefinition.addWidget(self.groupBoxHRUFunctions)
-        self.layoutTabHRUDefinition.addWidget(self.groupBoxHRUParameters)
-        self.layoutTabHRUDefinition.addLayout(self.layoutButtonHRUDefinition)
+        self.layoutTabHRUDefinition.addWidget(self.groupBoxHRUFunctions, 0, 0)
+        self.layoutTabHRUDefinition.addWidget(self.groupBoxHRUParameters, 1, 0)
+        self.layoutTabHRUDefinition.addLayout(self.layoutButtonHRUDefinition, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabHRUDefinition.addWidget(self.groupBoxHRUDefinitionTemplate, 0, 1, 2, 1)
+        self.layoutTabHRUDefinition.setColumnStretch(0, 3)
+        self.layoutTabHRUDefinition.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # 'Watershed Model Evaluation' sub tab
@@ -942,10 +1598,59 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonWatershedModelEvaluation.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonWatershedModelEvaluation.addWidget(self.buttonProcessWatershedModelEvaluation)
         
+        # Template GroupBox
+        self.groupBoxWatershedModelEvaluationTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxWatershedModelEvaluationTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxWatershedModelEvaluationTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxWatershedModelEvaluationTemplate.setLayout(self.layoutGroupBoxWatershedModelEvaluationTemplate)
+        self.layoutWatershedModelEvaluationTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutWatershedModelEvaluationTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxWatershedModelEvaluationTemplate.addLayout(self.layoutWatershedModelEvaluationTemplateInfo)
+        self.layoutGroupBoxWatershedModelEvaluationTemplate.addLayout(self.layoutWatershedModelEvaluationTemplate)
+        
+        self.labelLoadedWatershedModelEvaluationTemplate = QtGui.QLabel()
+        self.labelLoadedWatershedModelEvaluationTemplate.setText('Loaded template:')
+        self.layoutWatershedModelEvaluationTemplate.addWidget(self.labelLoadedWatershedModelEvaluationTemplate, 0, 0)
+        
+        self.loadedWatershedModelEvaluationTemplate = QtGui.QLabel()
+        self.loadedWatershedModelEvaluationTemplate.setText('<None>')
+        self.layoutWatershedModelEvaluationTemplate.addWidget(self.loadedWatershedModelEvaluationTemplate, 0, 1)
+        
+        self.labelWatershedModelEvaluationTemplate = QtGui.QLabel()
+        self.labelWatershedModelEvaluationTemplate.setText('Template name:')
+        self.layoutWatershedModelEvaluationTemplate.addWidget(self.labelWatershedModelEvaluationTemplate, 1, 0)
+        
+        self.comboBoxWatershedModelEvaluationTemplate = QtGui.QComboBox()
+        self.comboBoxWatershedModelEvaluationTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxWatershedModelEvaluationTemplate.setDisabled(True)
+        self.comboBoxWatershedModelEvaluationTemplate.addItem('No template found')
+        self.layoutWatershedModelEvaluationTemplate.addWidget(self.comboBoxWatershedModelEvaluationTemplate, 1, 1)
+        
+        self.layoutButtonWatershedModelEvaluationTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonWatershedModelEvaluationTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadWatershedModelEvaluationTemplate = QtGui.QPushButton()
+        self.buttonLoadWatershedModelEvaluationTemplate.setDisabled(True)
+        self.buttonLoadWatershedModelEvaluationTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadWatershedModelEvaluationTemplate.setText('Load')
+        self.buttonSaveWatershedModelEvaluationTemplate = QtGui.QPushButton()
+        self.buttonSaveWatershedModelEvaluationTemplate.setDisabled(True)
+        self.buttonSaveWatershedModelEvaluationTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveWatershedModelEvaluationTemplate.setText('Save')
+        self.buttonSaveAsWatershedModelEvaluationTemplate = QtGui.QPushButton()
+        self.buttonSaveAsWatershedModelEvaluationTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsWatershedModelEvaluationTemplate.setText('Save As')
+        self.layoutButtonWatershedModelEvaluationTemplate.addWidget(self.buttonLoadWatershedModelEvaluationTemplate)
+        self.layoutButtonWatershedModelEvaluationTemplate.addWidget(self.buttonSaveWatershedModelEvaluationTemplate)
+        self.layoutButtonWatershedModelEvaluationTemplate.addWidget(self.buttonSaveAsWatershedModelEvaluationTemplate)
+        self.layoutGroupBoxWatershedModelEvaluationTemplate.addLayout(self.layoutButtonWatershedModelEvaluationTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationParameters)
-        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationOutput)
-        self.layoutTabWatershedModelEvaluation.addLayout(self.layoutButtonWatershedModelEvaluation)
+        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationParameters, 0, 0)
+        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationOutput, 1, 0)
+        self.layoutTabWatershedModelEvaluation.addLayout(self.layoutButtonWatershedModelEvaluation, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabWatershedModelEvaluation.addWidget(self.groupBoxWatershedModelEvaluationTemplate, 0, 1, 2, 1)
+        self.layoutTabWatershedModelEvaluation.setColumnStretch(0, 3)
+        self.layoutTabWatershedModelEvaluation.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # 'Watershed Indicators' sub tab
@@ -1070,10 +1775,59 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonWatershedIndicators.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonWatershedIndicators.addWidget(self.buttonProcessWatershedIndicators)
         
+        # Template GroupBox
+        self.groupBoxWatershedIndicatorsTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxWatershedIndicatorsTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxWatershedIndicatorsTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxWatershedIndicatorsTemplate.setLayout(self.layoutGroupBoxWatershedIndicatorsTemplate)
+        self.layoutWatershedIndicatorsTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutWatershedIndicatorsTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxWatershedIndicatorsTemplate.addLayout(self.layoutWatershedIndicatorsTemplateInfo)
+        self.layoutGroupBoxWatershedIndicatorsTemplate.addLayout(self.layoutWatershedIndicatorsTemplate)
+        
+        self.labelLoadedWatershedIndicatorsTemplate = QtGui.QLabel()
+        self.labelLoadedWatershedIndicatorsTemplate.setText('Loaded template:')
+        self.layoutWatershedIndicatorsTemplate.addWidget(self.labelLoadedWatershedIndicatorsTemplate, 0, 0)
+        
+        self.loadedWatershedIndicatorsTemplate = QtGui.QLabel()
+        self.loadedWatershedIndicatorsTemplate.setText('<None>')
+        self.layoutWatershedIndicatorsTemplate.addWidget(self.loadedWatershedIndicatorsTemplate, 0, 1)
+        
+        self.labelWatershedIndicatorsTemplate = QtGui.QLabel()
+        self.labelWatershedIndicatorsTemplate.setText('Template name:')
+        self.layoutWatershedIndicatorsTemplate.addWidget(self.labelWatershedIndicatorsTemplate, 1, 0)
+        
+        self.comboBoxWatershedIndicatorsTemplate = QtGui.QComboBox()
+        self.comboBoxWatershedIndicatorsTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
+        self.comboBoxWatershedIndicatorsTemplate.addItem('No template found')
+        self.layoutWatershedIndicatorsTemplate.addWidget(self.comboBoxWatershedIndicatorsTemplate, 1, 1)
+        
+        self.layoutButtonWatershedIndicatorsTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonWatershedIndicatorsTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadWatershedIndicatorsTemplate = QtGui.QPushButton()
+        self.buttonLoadWatershedIndicatorsTemplate.setDisabled(True)
+        self.buttonLoadWatershedIndicatorsTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadWatershedIndicatorsTemplate.setText('Load')
+        self.buttonSaveWatershedIndicatorsTemplate = QtGui.QPushButton()
+        self.buttonSaveWatershedIndicatorsTemplate.setDisabled(True)
+        self.buttonSaveWatershedIndicatorsTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveWatershedIndicatorsTemplate.setText('Save')
+        self.buttonSaveAsWatershedIndicatorsTemplate = QtGui.QPushButton()
+        self.buttonSaveAsWatershedIndicatorsTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsWatershedIndicatorsTemplate.setText('Save As')
+        self.layoutButtonWatershedIndicatorsTemplate.addWidget(self.buttonLoadWatershedIndicatorsTemplate)
+        self.layoutButtonWatershedIndicatorsTemplate.addWidget(self.buttonSaveWatershedIndicatorsTemplate)
+        self.layoutButtonWatershedIndicatorsTemplate.addWidget(self.buttonSaveAsWatershedIndicatorsTemplate)
+        self.layoutGroupBoxWatershedIndicatorsTemplate.addLayout(self.layoutButtonWatershedIndicatorsTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsParameters)
-        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsOutput)
-        self.layoutTabWatershedIndicators.addLayout(self.layoutButtonWatershedIndicators)
+        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsParameters, 0, 0)
+        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsOutput, 1, 0)
+        self.layoutTabWatershedIndicators.addLayout(self.layoutButtonWatershedIndicators, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabWatershedIndicators.addWidget(self.groupBoxWatershedIndicatorsTemplate, 0, 1, 2, 1)
+        self.layoutTabWatershedIndicators.setColumnStretch(0, 3)
+        self.layoutTabWatershedIndicators.setColumnStretch(1, 1) # Smaller template column
         
         
         #***********************************************************
@@ -1098,6 +1852,12 @@ class DialogLumensQUES(QtGui.QDialog):
         """Called when the widget is shown
         """
         super(DialogLumensQUES, self).showEvent(event)
+    
+    
+    def closeEvent(self, event):
+        """Called when the widget is closed
+        """
+        super(DialogLumensQUES, self).closeEvent(event)
     
     
     #***********************************************************
@@ -1247,6 +2007,75 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # 'QUES-C' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadQUESCTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxQUESCTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('QUES-C', templateFile)
+            self.currentQUESCTemplate = templateFile
+            self.loadedQUESCTemplate.setText(templateFile)
+            self.comboBoxQUESCTemplate.setCurrentIndex(self.comboBoxQUESCTemplate.findText(templateFile))
+            self.buttonSaveQUESCTemplate.setEnabled(True)
+    
+    
+    def handlerSaveQUESCTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentQUESCTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('QUES-C', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsQUESCTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveQUESCTemplate(fileName)
+            else:
+                self.saveTemplate('QUES-C', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadQUESCTemplate(fileName)
+    
+    
     def handlerSelectCACsvfile(self):
         """
         """
@@ -1272,6 +2101,75 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # 'QUES-B' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadQUESBTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxQUESBTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('QUES-B', templateFile)
+            self.currentQUESBTemplate = templateFile
+            self.loadedQUESBTemplate.setText(templateFile)
+            self.comboBoxQUESBTemplate.setCurrentIndex(self.comboBoxQUESBTemplate.findText(templateFile))
+            self.buttonSaveQUESBTemplate.setEnabled(True)
+    
+    
+    def handlerSaveQUESBTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentQUESBTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('QUES-B', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsQUESBTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveQUESBTemplate(fileName)
+            else:
+                self.saveTemplate('QUES-B', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadQUESBTemplate(fileName)
+    
+    
     def handlerSelectQUESBCsvLandCover(self):
         """
         """
@@ -1386,6 +2284,75 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # 'QUES-H' Hydrological Response Unit Definition tab QPushButton handlers
     #***********************************************************
+    def handlerLoadHRUDefinitionTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxHRUDefinitionTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Hydrological Response Unit Definition', templateFile)
+            self.currentHRUDefinitionTemplate = templateFile
+            self.loadedHRUDefinitionTemplate.setText(templateFile)
+            self.comboBoxHRUDefinitionTemplate.setCurrentIndex(self.comboBoxHRUDefinitionTemplate.findText(templateFile))
+            self.buttonSaveHRUDefinitionTemplate.setEnabled(True)
+    
+    
+    def handlerSaveHRUDefinitionTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentHRUDefinitionTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Hydrological Response Unit Definition', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsHRUDefinitionTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveHRUDefinitionTemplate(fileName)
+            else:
+                self.saveTemplate('Hydrological Response Unit Definition', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadHRUDefinitionTemplate(fileName)
+    
+    
     def handlerSelectHRUWorkingDir(self):
         """
         """
@@ -1476,6 +2443,75 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # 'QUES-H' Watershed Model Evaluation tab QPushButton handlers
     #***********************************************************
+    def handlerLoadWatershedModelEvaluationTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxWatershedModelEvaluationTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Watershed Model Evaluation', templateFile)
+            self.currentWatershedModelEvaluationTemplate = templateFile
+            self.loadedWatershedModelEvaluationTemplate.setText(templateFile)
+            self.comboBoxWatershedModelEvaluationTemplate.setCurrentIndex(self.comboBoxWatershedModelEvaluationTemplate.findText(templateFile))
+            self.buttonSaveWatershedModelEvaluationTemplate.setEnabled(True)
+    
+    
+    def handlerSaveWatershedModelEvaluationTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentWatershedModelEvaluationTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Watershed Model Evaluation', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsWatershedModelEvaluationTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveWatershedModelEvaluationTemplate(fileName)
+            else:
+                self.saveTemplate('Watershed Model Evaluation', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadWatershedModelEvaluationTemplate(fileName)
+    
+    
     def handlerSelectWatershedModelEvaluationWorkingDir(self):
         """
         """
@@ -1511,6 +2547,75 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # 'QUES-H' Watershed Indicators tab QPushButton handlers
     #***********************************************************
+    def handlerLoadWatershedIndicatorsTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxWatershedIndicatorsTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Watershed Indicators', templateFile)
+            self.currentWatershedIndicatorsTemplate = templateFile
+            self.loadedWatershedIndicatorsTemplate.setText(templateFile)
+            self.comboBoxWatershedIndicatorsTemplate.setCurrentIndex(self.comboBoxWatershedIndicatorsTemplate.findText(templateFile))
+            self.buttonSaveWatershedIndicatorsTemplate.setEnabled(True)
+    
+    
+    def handlerSaveWatershedIndicatorsTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentWatershedIndicatorsTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Watershed Indicators', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsWatershedIndicatorsTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSaveWatershedIndicatorsTemplate(fileName)
+            else:
+                self.saveTemplate('Watershed Indicators', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadWatershedIndicatorsTemplate(fileName)
+    
+    
     def handlerSelectWatershedIndicatorsSWATTXTINOUTDir(self):
         """
         """
@@ -1557,7 +2662,7 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # Process tabs
     #***********************************************************
-    def setAppSetings(self):
+    def setAppSettings(self):
         """
         """
         # 'Pre-QUES' tab fields
@@ -1772,7 +2877,7 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerProcessPreQUES(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensPreQUESLandcoverTrajectoriesAnalysis'
         algName = 'modeler:pre-ques_trajectory'
@@ -1805,7 +2910,7 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerProcessQUESC(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         if self.checkBoxCarbonAccounting.isChecked():
             formName = 'DialogLumensQUESCCarbonAccounting'
@@ -1873,7 +2978,7 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerProcessQUESB(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensQUESBAnalysis'
         algName = 'modeler:ques-b'
@@ -1937,7 +3042,7 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerProcessQUESHHRUDefinition(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         if self.checkBoxDominantHRU.isChecked():
             formName = 'DialogLumensQUESHDominantHRU'
@@ -2033,7 +3138,7 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerProcessQUESHWatershedModelEvaluation(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensQUESHWatershedModelEvaluation'
         algName = 'modeler:ques-h_watershed_model_evaluation'
@@ -2070,7 +3175,7 @@ class DialogLumensQUES(QtGui.QDialog):
     def handlerProcessQUESHWatershedIndicators(self):
         """
         """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensQUESHWatershedIndicators'
         algName = 'modeler:ques-h_watershed_indicators'
