@@ -17,6 +17,11 @@ class DialogLumensQUES(QtGui.QDialog):
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
         if templateFiles:
+            self.comboBoxPreQUESTemplate.clear()
+            self.comboBoxPreQUESTemplate.addItems(sorted(templateFiles))
+            self.comboBoxPreQUESTemplate.setEnabled(True)
+            self.buttonLoadPreQUESTemplate.setEnabled(True)
+            
             self.comboBoxQUESCTemplate.clear()
             self.comboBoxQUESCTemplate.addItems(sorted(templateFiles))
             self.comboBoxQUESCTemplate.setEnabled(True)
@@ -42,6 +47,9 @@ class DialogLumensQUES(QtGui.QDialog):
             self.comboBoxWatershedIndicatorsTemplate.setEnabled(True)
             self.buttonLoadWatershedIndicatorsTemplate.setEnabled(True)
         else:
+            self.comboBoxPreQUESTemplate.setDisabled(True)
+            self.buttonLoadPreQUESTemplate.setDisabled(True)
+            
             self.comboBoxQUESCTemplate.setDisabled(True)
             self.buttonLoadQUESCTemplate.setDisabled(True)
             
@@ -69,7 +77,76 @@ class DialogLumensQUES(QtGui.QDialog):
         
         td = datetime.date.today()
         
-        if tabName == 'QUES-C':
+        if tabName == 'Pre-QUES':
+            dialogsToLoad = (
+                'DialogLumensPreQUESLandcoverTrajectoriesAnalysis',
+            )
+            
+            # start tab
+            settings.beginGroup(tabName)
+            
+            # 'Pre-QUES' tab widgets
+            # start dialog
+            settings.beginGroup('DialogLumensPreQUESLandcoverTrajectoriesAnalysis')
+            
+            workingDir = settings.value('workingDir')
+            location = settings.value('location')
+            planningUnit = settings.value('planningUnit')
+            csvPlanningUnit = settings.value('csvPlanningUnit')
+            csvLandUse = settings.value('csvLandUse')
+            landCoverT1 = settings.value('landCoverT1')
+            t1 = settings.value('t1')
+            landCoverT2 = settings.value('landCoverT2')
+            t2 = settings.value('t2')
+            
+            lineEditLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T1')
+            spinBoxLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T1')
+            lineEditLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T2')
+            spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
+            
+            if workingDir and os.path.isdir(workingDir):
+                self.lineEditPreQUESWorkingDir.setText(workingDir)
+            else:
+                self.lineEditPreQUESWorkingDir.setText('')
+            if location:
+                self.lineEditPreQUESLocation.setText(location)
+            else:
+                self.lineEditPreQUESLocation.setText('location')
+            if planningUnit and os.path.exists(planningUnit):
+                self.lineEditPreQUESPlanningUnit.setText(planningUnit)
+            else:
+                self.lineEditPreQUESPlanningUnit.setText('')
+            if csvPlanningUnit and os.path.exists(csvPlanningUnit):
+                self.lineEditPreQUESCsvPlanningUnit.setText(csvPlanningUnit)
+            else:
+                self.lineEditPreQUESCsvPlanningUnit.setText('')
+            if csvLandUse and os.path.exists(csvLandUse):
+                self.lineEditLandCoverCsvLandUse.setText(csvLandUse)
+            else:
+                self.lineEditLandCoverCsvLandUse.setText('')
+            if landCoverT1 and os.path.exists(landCoverT1):
+                lineEditLandCoverT1.setText(landCoverT1)
+            else:
+                self.lineEditLandCoverT1.setText('')
+            if t1:
+                spinBoxLandCoverT1.setValue(int(t1))
+            else:
+                self.spinBoxLandCoverT1.setValue(td.year)
+            if landCoverT2 and os.path.exists(landCoverT2):
+                lineEditLandCoverT2.setText(landCoverT2)
+            else:
+                self.lineEditLandCoverT2.setText('')
+            if t2:
+                spinBoxLandCoverT2.setValue(int(t2))
+            else:
+                self.spinBoxLandCoverT2.setValue(td.year)
+            
+            settings.endGroup()
+            # /dialog
+            
+            settings.endGroup()
+            # /tab
+        elif tabName == 'QUES-C':
             dialogsToLoad = (
                 'DialogLumensQUESCCarbonAccounting',
                 'DialogLumensQUESCPeatlandCarbonAccounting',
@@ -449,7 +526,11 @@ class DialogLumensQUES(QtGui.QDialog):
         
         dialogsToSave = None
         
-        if tabName == 'QUES-C':
+        if tabName == 'Pre-QUES':
+            dialogsToSave = (
+                'DialogLumensPreQUESLandcoverTrajectoriesAnalysis',
+            )
+        elif tabName == 'QUES-C':
             dialogsToSave = (
                 'DialogLumensQUESCCarbonAccounting',
                 'DialogLumensQUESCPeatlandCarbonAccounting',
@@ -489,6 +570,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.main = parent
         self.dialogTitle = 'LUMENS Quantification Environmental Services'
         self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderQUES'])
+        self.currentPreQUESTemplate = None
         self.currentQUESCTemplate = None
         self.currentQUESBTemplate = None
         self.currentHRUDefinitionTemplate = None
@@ -517,6 +599,9 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectPreQUESCsvPlanningUnit.clicked.connect(self.handlerSelectPreQUESCsvPlanningUnit)
         self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
         self.buttonProcessPreQUES.clicked.connect(self.handlerProcessPreQUES)
+        self.buttonLoadPreQUESTemplate.clicked.connect(self.handlerLoadPreQUESTemplate)
+        self.buttonSavePreQUESTemplate.clicked.connect(self.handlerSavePreQUESTemplate)
+        self.buttonSaveAsPreQUESTemplate.clicked.connect(self.handlerSaveAsPreQUESTemplate)
         
         # 'QUES-C' tab checkboxes
         self.checkBoxCarbonAccounting.toggled.connect(self.toggleCarbonAccounting)
@@ -602,7 +687,8 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWidget.addTab(self.tabReclassification, 'Reclassification')
         self.tabWidget.addTab(self.tabResult, 'Result')
         
-        self.layoutTabPreQUES = QtGui.QVBoxLayout()
+        ##self.layoutTabPreQUES = QtGui.QVBoxLayout()
+        self.layoutTabPreQUES = QtGui.QGridLayout()
         ##self.layoutTabQUESC = QtGui.QVBoxLayout()
         self.layoutTabQUESC = QtGui.QGridLayout()
         ##self.layoutTabQUESB = QtGui.QVBoxLayout()
@@ -728,10 +814,59 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutButtonPreQUES.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonPreQUES.addWidget(self.buttonProcessPreQUES)
         
+        # Template GroupBox
+        self.groupBoxPreQUESTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxPreQUESTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxPreQUESTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxPreQUESTemplate.setLayout(self.layoutGroupBoxPreQUESTemplate)
+        self.layoutPreQUESTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutPreQUESTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxPreQUESTemplate.addLayout(self.layoutPreQUESTemplateInfo)
+        self.layoutGroupBoxPreQUESTemplate.addLayout(self.layoutPreQUESTemplate)
+        
+        self.labelLoadedPreQUESTemplate = QtGui.QLabel()
+        self.labelLoadedPreQUESTemplate.setText('Loaded template:')
+        self.layoutPreQUESTemplate.addWidget(self.labelLoadedPreQUESTemplate, 0, 0)
+        
+        self.loadedPreQUESTemplate = QtGui.QLabel()
+        self.loadedPreQUESTemplate.setText('<None>')
+        self.layoutPreQUESTemplate.addWidget(self.loadedPreQUESTemplate, 0, 1)
+        
+        self.labelPreQUESTemplate = QtGui.QLabel()
+        self.labelPreQUESTemplate.setText('Template name:')
+        self.layoutPreQUESTemplate.addWidget(self.labelPreQUESTemplate, 1, 0)
+        
+        self.comboBoxPreQUESTemplate = QtGui.QComboBox()
+        self.comboBoxPreQUESTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxPreQUESTemplate.setDisabled(True)
+        self.comboBoxPreQUESTemplate.addItem('No template found')
+        self.layoutPreQUESTemplate.addWidget(self.comboBoxPreQUESTemplate, 1, 1)
+        
+        self.layoutButtonPreQUESTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonPreQUESTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadPreQUESTemplate = QtGui.QPushButton()
+        self.buttonLoadPreQUESTemplate.setDisabled(True)
+        self.buttonLoadPreQUESTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadPreQUESTemplate.setText('Load')
+        self.buttonSavePreQUESTemplate = QtGui.QPushButton()
+        self.buttonSavePreQUESTemplate.setDisabled(True)
+        self.buttonSavePreQUESTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSavePreQUESTemplate.setText('Save')
+        self.buttonSaveAsPreQUESTemplate = QtGui.QPushButton()
+        self.buttonSaveAsPreQUESTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsPreQUESTemplate.setText('Save As')
+        self.layoutButtonPreQUESTemplate.addWidget(self.buttonLoadPreQUESTemplate)
+        self.layoutButtonPreQUESTemplate.addWidget(self.buttonSavePreQUESTemplate)
+        self.layoutButtonPreQUESTemplate.addWidget(self.buttonSaveAsPreQUESTemplate)
+        self.layoutGroupBoxPreQUESTemplate.addLayout(self.layoutButtonPreQUESTemplate)
+        
         # Place the GroupBoxes
-        self.layoutTabPreQUES.addWidget(self.groupBoxPlanningUnit)
-        self.layoutTabPreQUES.addWidget(self.groupBoxLandCover)
-        self.layoutTabPreQUES.addLayout(self.layoutButtonPreQUES)
+        self.layoutTabPreQUES.addWidget(self.groupBoxPlanningUnit, 0, 0)
+        self.layoutTabPreQUES.addWidget(self.groupBoxLandCover, 1, 0)
+        self.layoutTabPreQUES.addLayout(self.layoutButtonPreQUES, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabPreQUES.addWidget(self.groupBoxPreQUESTemplate, 0, 1, 2, 1)
+        self.layoutTabPreQUES.setColumnStretch(0, 3)
+        self.layoutTabPreQUES.setColumnStretch(1, 1) # Smaller template column
         
         #***********************************************************
         # Setup 'QUES-C' tab
@@ -1915,6 +2050,75 @@ class DialogLumensQUES(QtGui.QDialog):
     #***********************************************************
     # 'Pre-QUES' tab QPushButton handlers
     #***********************************************************
+    def handlerLoadPreQUESTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxPreQUESTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Pre-QUES', templateFile)
+            self.currentPreQUESTemplate = templateFile
+            self.loadedPreQUESTemplate.setText(templateFile)
+            self.comboBoxPreQUESTemplate.setCurrentIndex(self.comboBoxPreQUESTemplate.findText(templateFile))
+            self.buttonSavePreQUESTemplate.setEnabled(True)
+    
+    
+    def handlerSavePreQUESTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentPreQUESTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Pre-QUES', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsPreQUESTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSavePreQUESTemplate(fileName)
+            else:
+                self.saveTemplate('Pre-QUES', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadPreQUESTemplate(fileName)
+    
+    
     def addLandCoverRow(self, period):
         """
         """
