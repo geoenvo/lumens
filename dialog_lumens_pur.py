@@ -12,11 +12,24 @@ import resource
 class DialogLumensPUR(QtGui.QDialog):
     """
     """
+    def loadTemplateFiles(self):
+        """List available ini template file inside the project folder
+        """
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        
+        if templateFiles:
+            self.comboBoxPURTemplate.clear()
+            self.comboBoxPURTemplate.addItems(sorted(templateFiles))
+            self.comboBoxPURTemplate.setEnabled(True)
+            self.buttonLoadPURTemplate.setEnabled(True)
+        else:
+            self.comboBoxPURTemplate.setDisabled(True)
+            self.buttonLoadPURTemplate.setDisabled(True)
+    
+    
     def loadTemplate(self, tabName, fileName):
         """Load the value saved in ini template file to the form widget
         """
-        print 'DEBUG loadTemplate'
-        
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
@@ -42,12 +55,6 @@ class DialogLumensPUR(QtGui.QDialog):
             referenceMapping = settings.value('referenceMapping')
             planningUnits = settings.value('planningUnits')
             
-            #lineEditLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T1')
-            #spinBoxLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T1')
-            #lineEditLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T2')
-            #spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
-            
-            
             if shapefile and os.path.exists(shapefile):
                 if shapefileAttr:
                     self.handlerSelectShapefile(shapefile, shapefileAttr)
@@ -61,15 +68,9 @@ class DialogLumensPUR(QtGui.QDialog):
                 self.lineEditDataTitle.setText('')
             if referenceClasses:
                 self.updateReferenceClasses(referenceClasses)
-                print 'DEBUG'
-                print self.referenceClasses
             if referenceMapping:
-                print 'DEBUG referenceMapping'
-                print referenceMapping
                 self.updateReferenceMapping(referenceMapping)
             if planningUnits:
-                print 'DEBUG planningUnits'
-                print planningUnits
                 self.updatePlanningUnits(planningUnits)
             
             settings.endGroup()
@@ -93,7 +94,6 @@ class DialogLumensPUR(QtGui.QDialog):
     def saveTemplate(self, tabName, fileName):
         """Save form values according to their tab and dialog to a template file
         """
-        print 'DEBUG saveTemplate'
         self.setAppSettings()
         templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderPUR'], fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
@@ -117,7 +117,6 @@ class DialogLumensPUR(QtGui.QDialog):
     
     def __init__(self, parent):
         super(DialogLumensPUR, self).__init__(parent)
-        print 'DEBUG: DialogLumensPUR init'
         
         self.main = parent
         self.dialogTitle = 'LUMENS Planning Unit Reconciliation'
@@ -148,8 +147,12 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setupUi(self)
         
+        self.loadTemplateFiles()
+        
         self.buttonProcessSetup.clicked.connect(self.handlerProcessSetup)
-        self.buttonLoadTemplate.clicked.connect(self.handlerLoadTemplate)
+        self.buttonLoadPURTemplate.clicked.connect(self.handlerLoadPURTemplate)
+        self.buttonSavePURTemplate.clicked.connect(self.handlerSavePURTemplate)
+        self.buttonSaveAsPURTemplate.clicked.connect(self.handlerSaveAsPURTemplate)
         # 'Setup reference' buttons
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
         self.buttonEditReferenceClasses.clicked.connect(self.handlerEditReferenceClasses)
@@ -157,9 +160,6 @@ class DialogLumensPUR(QtGui.QDialog):
         # 'Setup planning unit' buttons
         self.buttonAddPlanningUnitRow.clicked.connect(self.handlerButtonAddPlanningUnitRow)
         self.buttonClearAllPlanningUnits.clicked.connect(self.handlerButtonClearAllPlanningUnits)
-        
-        print 'DEBUG loadTemplate'
-        self.loadTemplate('Setup', 'PUR.ini')
     
     
     def setupUi(self, parent):
@@ -174,7 +174,8 @@ class DialogLumensPUR(QtGui.QDialog):
         self.tabWidget.addTab(self.tabReconcile, 'Reconcile')
         self.tabWidget.addTab(self.tabResult, 'Result')
         
-        self.layoutTabSetup = QtGui.QVBoxLayout()
+        ##self.layoutTabSetup = QtGui.QVBoxLayout()
+        self.layoutTabSetup = QtGui.QGridLayout()
         self.layoutTabReconcile = QtGui.QVBoxLayout()
         self.layoutTabResult = QtGui.QVBoxLayout()
         
@@ -303,14 +304,59 @@ class DialogLumensPUR(QtGui.QDialog):
         self.layoutButtonSetup.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonSetup.addWidget(self.buttonProcessSetup)
         
-        print 'DEBUG'
-        self.buttonLoadTemplate = QtGui.QPushButton()
-        self.buttonLoadTemplate.setText('&Load Template')
-        self.layoutButtonSetup.addWidget(self.buttonLoadTemplate)
+        # Template GroupBox
+        self.groupBoxPURTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxPURTemplate = QtGui.QVBoxLayout()
+        self.layoutGroupBoxPURTemplate.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxPURTemplate.setLayout(self.layoutGroupBoxPURTemplate)
+        self.layoutPURTemplateInfo = QtGui.QVBoxLayout()
+        self.layoutPURTemplate = QtGui.QGridLayout()
+        self.layoutGroupBoxPURTemplate.addLayout(self.layoutPURTemplateInfo)
+        self.layoutGroupBoxPURTemplate.addLayout(self.layoutPURTemplate)
         
-        self.layoutTabSetup.addWidget(self.groupBoxSetupReference)
-        self.layoutTabSetup.addWidget(self.groupBoxSetupPlanningUnit)
-        self.layoutTabSetup.addLayout(self.layoutButtonSetup)
+        self.labelLoadedPURTemplate = QtGui.QLabel()
+        self.labelLoadedPURTemplate.setText('Loaded template:')
+        self.layoutPURTemplate.addWidget(self.labelLoadedPURTemplate, 0, 0)
+        
+        self.loadedPURTemplate = QtGui.QLabel()
+        self.loadedPURTemplate.setText('<None>')
+        self.layoutPURTemplate.addWidget(self.loadedPURTemplate, 0, 1)
+        
+        self.labelPURTemplate = QtGui.QLabel()
+        self.labelPURTemplate.setText('Template name:')
+        self.layoutPURTemplate.addWidget(self.labelPURTemplate, 1, 0)
+        
+        self.comboBoxPURTemplate = QtGui.QComboBox()
+        self.comboBoxPURTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxPURTemplate.setDisabled(True)
+        self.comboBoxPURTemplate.addItem('No template found')
+        self.layoutPURTemplate.addWidget(self.comboBoxPURTemplate, 1, 1)
+        
+        self.layoutButtonPURTemplate = QtGui.QHBoxLayout()
+        self.layoutButtonPURTemplate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTop)
+        self.buttonLoadPURTemplate = QtGui.QPushButton()
+        self.buttonLoadPURTemplate.setDisabled(True)
+        self.buttonLoadPURTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonLoadPURTemplate.setText('Load')
+        self.buttonSavePURTemplate = QtGui.QPushButton()
+        self.buttonSavePURTemplate.setDisabled(True)
+        self.buttonSavePURTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSavePURTemplate.setText('Save')
+        self.buttonSaveAsPURTemplate = QtGui.QPushButton()
+        self.buttonSaveAsPURTemplate.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.buttonSaveAsPURTemplate.setText('Save As')
+        self.layoutButtonPURTemplate.addWidget(self.buttonLoadPURTemplate)
+        self.layoutButtonPURTemplate.addWidget(self.buttonSavePURTemplate)
+        self.layoutButtonPURTemplate.addWidget(self.buttonSaveAsPURTemplate)
+        self.layoutGroupBoxPURTemplate.addLayout(self.layoutButtonPURTemplate)
+        
+        # Place the GroupBoxes
+        self.layoutTabSetup.addWidget(self.groupBoxSetupReference, 0, 0)
+        self.layoutTabSetup.addWidget(self.groupBoxSetupPlanningUnit, 1, 0)
+        self.layoutTabSetup.addLayout(self.layoutButtonSetup, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabSetup.addWidget(self.groupBoxPURTemplate, 0, 1, 2, 1)
+        self.layoutTabSetup.setColumnStretch(0, 3)
+        self.layoutTabSetup.setColumnStretch(1, 1) # Smaller template column
         
         self.tabSetup.setLayout(self.layoutTabSetup)
         
@@ -326,16 +372,13 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(700, 480)
+        self.setMinimumSize(1024, 600)
         self.resize(parent.sizeHint())
     
     
     def populateTableReferenceMapping(self, shapefileAttribute):
         """Populate the reference mapping table from the selected shapefile attribute
         """
-        print 'DEBUG populateTableReferenceMapping'
-        print shapefileAttribute
-        
         # Need to check if shapefileAttribute is set (can be empty when updating comboBoxShapefileAttribute)
         if not shapefileAttribute:
             return
@@ -358,9 +401,6 @@ class DialogLumensPUR(QtGui.QDialog):
             # Clear the table first
             self.tableReferenceMapping.setRowCount(0)
             self.tableReferenceMapping.setRowCount(len(attributeValues))
-            
-            print 'DEBUG attributeValues'
-            print attributeValues
             
             row = 0
             for attributeValue in sorted(attributeValues):
@@ -419,8 +459,6 @@ class DialogLumensPUR(QtGui.QDialog):
     def addPlanningUnitRow(self, shapefile=None, shapefileAttr=None, planningUnitTitle=None, referenceClassID=None, planningUnitType=None):
         """Add a planning unit table row
         """
-        print 'DEBUG addPlanningUnitRow'
-        
         self.tablePlanningUnitRowCount = self.tablePlanningUnitRowCount + 1
         
         layoutRow = QtGui.QHBoxLayout()
@@ -554,8 +592,201 @@ class DialogLumensPUR(QtGui.QDialog):
         
         for planningUnit in planningUnits:
             self.addPlanningUnitRow(planningUnit['shapefile'], planningUnit['shapefileAttr'], planningUnit['planningUnitTitle'], planningUnit['referenceClassID'], planningUnit['planningUnitType'])
+        
+    
+    #***********************************************************
+    # 'Setup' tab QPushButton handlers
+    #***********************************************************
+    def handlerLoadPURTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.comboBoxPURTemplate.currentText()
+        reply = None
+        
+        if fileName:
+            templateFile = fileName
+        else:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Template',
+                'Do you want to load \'{0}\'?'.format(templateFile),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+        if reply == QtGui.QMessageBox.Yes or fileName:
+            self.loadTemplate('Setup', templateFile)
+            self.currentPURTemplate = templateFile
+            self.loadedPURTemplate.setText(templateFile)
+            self.comboBoxPURTemplate.setCurrentIndex(self.comboBoxPURTemplate.findText(templateFile))
+            self.buttonSavePURTemplate.setEnabled(True)
     
     
+    def handlerSavePURTemplate(self, fileName=None):
+        """
+        """
+        templateFile = self.currentPURTemplate
+        
+        if fileName:
+            templateFile = fileName
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Save Template',
+            'Do you want save \'{0}\'?\nThis action will overwrite the template file.'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+            
+        if reply == QtGui.QMessageBox.Yes:
+            self.saveTemplate('Setup', templateFile)
+            return True
+        else:
+            return False
+    
+    
+    def handlerSaveAsPURTemplate(self):
+        """
+        """
+        fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
+        fileSaved = False
+        
+        if ok:
+            fileName = fileName + '.ini'
+            if os.path.exists(os.path.join(self.settingsPath, fileName)):
+                fileSaved = self.handlerSavePURTemplate(fileName)
+            else:
+                self.saveTemplate('Setup', fileName)
+                fileSaved = True
+            
+            self.loadTemplateFiles()
+            
+            # Load the newly saved template file
+            if fileSaved:
+                self.handlerLoadPURTemplate(fileName)
+    
+    
+    def handlerButtonAddPlanningUnitRow(self):
+        """
+        """
+        self.addPlanningUnitRow()
+    
+    
+    def handlerButtonClearAllPlanningUnits(self):
+        """
+        """
+        self.clearPlanningUnitRows()
+    
+    
+    def handlerSelectPlanningUnitShapefile(self, rowNumber=None, shapefile=None, shapefileAttr=None):
+        """
+        """
+        file = None
+        tableRow = None
+        
+        if shapefile:
+            file = shapefile
+        else:
+            file = unicode(QtGui.QFileDialog.getOpenFileName(
+                self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if file:
+            ##self.lineEditShapefile.setText(file)
+            
+            if not rowNumber:
+                buttonSender = self.sender()
+                objectName = buttonSender.objectName()
+                tableRow = objectName.split('_')[1]
+            else:
+                tableRow = str(rowNumber)
+            
+            lineEditShapefile = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QLineEdit, 'lineEditShapefile_' + tableRow)
+            lineEditShapefile.setText(file)
+            
+            registry = QgsProviderRegistry.instance()
+            provider = registry.provider('ogr', file)
+            
+            if not provider.isValid():
+                logging.getLogger(type(self).__name__).error('invalid shapefile')
+                return
+            
+            attributes = []
+            for field in provider.fields():
+                attributes.append(field.name())
+            
+            comboBoxShapefileAttribute = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QComboBox, 'comboBoxShapefileAttribute_' + tableRow)
+            comboBoxShapefileAttribute.clear()
+            comboBoxShapefileAttribute.addItems(sorted(attributes))
+            comboBoxShapefileAttribute.setEnabled(True)
+            
+            if shapefileAttr:
+                comboBoxShapefileAttribute.setCurrentIndex(comboBoxShapefileAttribute.findText(shapefileAttr))
+    
+    
+    def handlerDeletePlanningUnitShapefile(self):
+        """
+        """
+        buttonSender = self.sender()
+        objectName = buttonSender.objectName()
+        tableRow = objectName.split('_')[1]
+        layoutRow = self.layoutTablePlanningUnit.itemAt(int(tableRow) - 1).layout()
+        self.clearLayout(layoutRow)
+    
+    
+    def handlerSelectShapefile(self, shapefile=None, shapefileAttr=None):
+        """Select a shp file and load the attributes in the shapefile attribute combobox
+        """
+        file = None
+        
+        if shapefile:
+            file = shapefile
+        else:
+            file = unicode(QtGui.QFileDialog.getOpenFileName(
+                self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        
+        if file:
+            self.lineEditShapefile.setText(file)
+            
+            registry = QgsProviderRegistry.instance()
+            provider = registry.provider('ogr', file)
+            
+            if not provider.isValid():
+                logging.getLogger(type(self).__name__).error('invalid shapefile')
+                return
+            
+            attributes = []
+            for field in provider.fields():
+                attributes.append(field.name())
+            
+            self.comboBoxShapefileAttribute.clear()
+            self.comboBoxShapefileAttribute.addItems(sorted(attributes))
+            self.comboBoxShapefileAttribute.setEnabled(True)
+            
+            if shapefileAttr:
+                self.comboBoxShapefileAttribute.setCurrentIndex(self.comboBoxShapefileAttribute.findText(shapefileAttr))
+            
+            logging.getLogger(type(self).__name__).info('select shapefile: %s', file)
+    
+    
+    def handlerChangeShapefileAttribute(self, currentIndex):
+        """
+        """
+        shapefileAttribute = self.comboBoxShapefileAttribute.currentText()
+        self.populateTableReferenceMapping(shapefileAttribute)
+    
+    
+    def handlerEditReferenceClasses(self):
+        """
+        """
+        dialog = DialogLumensPURReferenceClasses(self)
+        
+        if dialog.exec_() == QtGui.QDialog.Accepted:
+            self.updateReferenceClasses(dialog.getReferenceClasses())
+        
+    
+    #***********************************************************
+    # Process tabs
+    #***********************************************************
     def setAppSettings(self):
         """
         """
@@ -616,151 +847,10 @@ class DialogLumensPUR(QtGui.QDialog):
         
         print 'DEBUG: appSettings["DialogLumensPUR"]'
         print self.main.appSettings[type(self).__name__]
-        
     
-    def handlerButtonAddPlanningUnitRow(self):
-        """
-        """
-        self.addPlanningUnitRow()
-    
-    
-    def handlerButtonClearAllPlanningUnits(self):
-        """
-        """
-        self.clearPlanningUnitRows()
-    
-    
-    def handlerSelectPlanningUnitShapefile(self, rowNumber=None, shapefile=None, shapefileAttr=None):
-        """
-        """
-        print 'DEBUG handlerSelectPlanningUnitShapefile'
-        print rowNumber, shapefile, shapefileAttr
-        
-        file = None
-        tableRow = None
-        
-        if shapefile:
-            file = shapefile
-        else:
-            file = unicode(QtGui.QFileDialog.getOpenFileName(
-                self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
-        
-        if file:
-            ##self.lineEditShapefile.setText(file)
-            
-            if not rowNumber:
-                buttonSender = self.sender()
-                objectName = buttonSender.objectName()
-                tableRow = objectName.split('_')[1]
-            else:
-                tableRow = str(rowNumber)
-            
-            print 'DEBUG tableRow file'
-            print tableRow, file
-            
-            lineEditShapefile = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QLineEdit, 'lineEditShapefile_' + tableRow)
-            lineEditShapefile.setText(file)
-            
-            print 'DEBUG lineEditShapefile'
-            print lineEditShapefile
-            
-            registry = QgsProviderRegistry.instance()
-            provider = registry.provider('ogr', file)
-            
-            if not provider.isValid():
-                logging.getLogger(type(self).__name__).error('invalid shapefile')
-                return
-            
-            attributes = []
-            for field in provider.fields():
-                attributes.append(field.name())
-            
-            comboBoxShapefileAttribute = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QComboBox, 'comboBoxShapefileAttribute_' + tableRow)
-            comboBoxShapefileAttribute.clear()
-            comboBoxShapefileAttribute.addItems(sorted(attributes))
-            comboBoxShapefileAttribute.setEnabled(True)
-            
-            if shapefileAttr:
-                comboBoxShapefileAttribute.setCurrentIndex(comboBoxShapefileAttribute.findText(shapefileAttr))
-    
-    
-    def handlerDeletePlanningUnitShapefile(self):
-        """
-        """
-        buttonSender = self.sender()
-        objectName = buttonSender.objectName()
-        tableRow = objectName.split('_')[1]
-        layoutRow = self.layoutTablePlanningUnit.itemAt(int(tableRow) - 1).layout()
-        self.clearLayout(layoutRow)
-    
-    
-    def handlerSelectShapefile(self, shapefile=None, shapefileAttr=None):
-        """Select a shp file and load the attributes in the shapefile attribute combobox
-        """
-        print 'DEBUG handlerSelectShapefile'
-        print shapefile
-        print shapefileAttr
-        
-        file = None
-        
-        if shapefile:
-            file = shapefile
-        else:
-            file = unicode(QtGui.QFileDialog.getOpenFileName(
-                self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
-        
-        if file:
-            self.lineEditShapefile.setText(file)
-            
-            registry = QgsProviderRegistry.instance()
-            provider = registry.provider('ogr', file)
-            
-            if not provider.isValid():
-                logging.getLogger(type(self).__name__).error('invalid shapefile')
-                return
-            
-            attributes = []
-            for field in provider.fields():
-                attributes.append(field.name())
-            
-            self.comboBoxShapefileAttribute.clear()
-            self.comboBoxShapefileAttribute.addItems(sorted(attributes))
-            self.comboBoxShapefileAttribute.setEnabled(True)
-            
-            if shapefileAttr:
-                print 'DEBUG'
-                print 'setting shapefileAttr'
-                print shapefileAttr
-                self.comboBoxShapefileAttribute.setCurrentIndex(self.comboBoxShapefileAttribute.findText(shapefileAttr))
-            
-            logging.getLogger(type(self).__name__).info('select shapefile: %s', file)
-    
-    
-    def handlerChangeShapefileAttribute(self, currentIndex):
-        """
-        """
-        shapefileAttribute = self.comboBoxShapefileAttribute.currentText()
-        self.populateTableReferenceMapping(shapefileAttribute)
-    
-    
-    def handlerEditReferenceClasses(self):
-        """
-        """
-        dialog = DialogLumensPURReferenceClasses(self)
-        
-        if dialog.exec_() == QtGui.QDialog.Accepted:
-            self.updateReferenceClasses(dialog.getReferenceClasses())
-        
     
     def handlerProcessSetup(self):
         """
         """
-        print 'DEBUG handlerProcessSetup'
         self.setAppSettings()
-        self.saveTemplate('Setup', 'PUR.ini')
     
-    
-    def handlerLoadTemplate(self):
-        """
-        """
-        self.loadTemplate('Setup', 'PUR.ini')
