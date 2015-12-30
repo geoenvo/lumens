@@ -929,7 +929,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layerListView.setAcceptDrops(True)
         self.layerListView.setDropIndicatorShown(True)
         self.layerListView.setDragEnabled(True)
-        self.layerListView.setFixedWidth(200)
+        ##self.layerListView.setFixedWidth(200)
         
         self.layerListView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
@@ -940,11 +940,50 @@ class MainWindow(QtGui.QMainWindow):
         ##self.scrollSidebar.setFixedWidth(200)
         ##self.scrollSidebar.setWidget(self.contentSidebar)
         
+        self.projectModel = QtGui.QFileSystemModel()
+        self.projectModel.setRootPath(QtCore.QDir.rootPath())
+        
+        self.projectTreeView = QtGui.QTreeView()
+        self.projectTreeView.setModel(self.projectModel)
+        self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.homePath()))
+        self.projectTreeView.hideColumn(1) # Hide all columns except name
+        self.projectTreeView.hideColumn(2)
+        self.projectTreeView.hideColumn(3)
+        
+        self.sidebarTabWidget = QtGui.QTabWidget()
+        self.sidebarTabWidget.setTabPosition(QtGui.QTabWidget.West)
+        
+        self.tabLayers = QtGui.QWidget()
+        self.tabProject = QtGui.QWidget()
+        self.layoutTabLayers = QtGui.QVBoxLayout()
+        self.layoutTabProject = QtGui.QVBoxLayout()
+        
+        self.tabLayers.setLayout(self.layoutTabLayers)
+        self.tabProject.setLayout(self.layoutTabProject)
+        
+        self.sidebarTabWidget.addTab(self.tabLayers, 'Layers')
+        self.sidebarTabWidget.addTab(self.tabProject, 'Project')
+        
+        self.layoutTabLayers.addWidget(self.layerListView)
+        self.layoutTabProject.addWidget(self.projectTreeView)
+        
+        self.splitterBody = QtGui.QSplitter(self)
+        self.splitterBody.setOrientation(QtCore.Qt.Horizontal)
+        
+        self.splitterBody.setStretchFactor(0, 1)
+        self.splitterBody.setStretchFactor(1, 5)
+        self.splitterBody.setCollapsible(0, False)
+        self.splitterBody.setCollapsible(1, False)
+        
+        self.splitterBody.addWidget(self.sidebarTabWidget)
+        
         self.layoutBody = QtGui.QHBoxLayout()
         self.layoutBody.setContentsMargins(0, 0, 0, 0)
         self.layoutBody.setAlignment(QtCore.Qt.AlignLeft)
         ##self.layoutBody.addWidget(self.scrollSidebar)
-        self.layoutBody.addWidget(self.layerListView)
+        ##self.layoutBody.addWidget(self.layerListView)
+        ##self.layoutBody.addWidget(self.sidebarTabWidget)
+        self.layoutBody.addWidget(self.splitterBody)
         
         self.layoutMain = QtGui.QVBoxLayout()
         self.layoutMain.setContentsMargins(11, 11, 11, 0) # Reduce gap with statusbar
@@ -1180,6 +1219,7 @@ class MainWindow(QtGui.QMainWindow):
             self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = os.path.dirname(lumensDatabase)
             
             self.lineEditActiveProject.setText(os.path.normpath(lumensDatabase))
+            self.projectTreeView.setRootIndex(self.projectModel.index(self.appSettings['DialogLumensOpenDatabase']['projectFolder']))
             
             self.lumensEnableMenus()
         
@@ -1207,6 +1247,7 @@ class MainWindow(QtGui.QMainWindow):
         self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = ''
         
         self.lineEditActiveProject.clear()
+        self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.homePath()))
         
         self.lumensDisableMenus()
         
@@ -1589,14 +1630,16 @@ class MainWindow(QtGui.QMainWindow):
         ##self.addLayer(self.appSettings['defaultVectorFilePath'])
         self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
         ###self.mapCanvas.refresh()
-        self.layoutBody.addWidget(self.mapCanvas)
+        ##self.layoutBody.addWidget(self.mapCanvas)
+        self.splitterBody.addWidget(self.mapCanvas)
     
     
     def loadMapCanvas(self):
         """
         """
         self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
-        self.layoutBody.addWidget(self.mapCanvas)
+        ##self.layoutBody.addWidget(self.mapCanvas)
+        self.splitterBody.addWidget(self.mapCanvas)
     
     
     def loadMap(self):
@@ -1620,7 +1663,8 @@ class MainWindow(QtGui.QMainWindow):
         
         self.mapCanvas.setLayerSet(layers)
         
-        self.layoutBody.addWidget(self.mapCanvas)
+        ##self.layoutBody.addWidget(self.mapCanvas)
+        self.splitterBody.addWidget(self.mapCanvas)
     
     
     def showVisibleLayers(self):
