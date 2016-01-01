@@ -972,10 +972,9 @@ class MainWindow(QtGui.QMainWindow):
         
         self.splitterBody.setStretchFactor(0, 1)
         self.splitterBody.setStretchFactor(1, 5)
-        self.splitterBody.setCollapsible(0, False)
-        self.splitterBody.setCollapsible(1, False)
         
         self.splitterBody.addWidget(self.sidebarTabWidget)
+        self.splitterBody.setCollapsible(0, False)
         
         self.layoutBody = QtGui.QHBoxLayout()
         self.layoutBody.setContentsMargins(0, 0, 0, 0)
@@ -1632,6 +1631,7 @@ class MainWindow(QtGui.QMainWindow):
         ###self.mapCanvas.refresh()
         ##self.layoutBody.addWidget(self.mapCanvas)
         self.splitterBody.addWidget(self.mapCanvas)
+        self.splitterBody.setCollapsible(1, False)
     
     
     def loadMapCanvas(self):
@@ -1640,6 +1640,7 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
         ##self.layoutBody.addWidget(self.mapCanvas)
         self.splitterBody.addWidget(self.mapCanvas)
+        self.splitterBody.setCollapsible(1, False)
     
     
     def loadMap(self):
@@ -1665,6 +1666,7 @@ class MainWindow(QtGui.QMainWindow):
         
         ##self.layoutBody.addWidget(self.mapCanvas)
         self.splitterBody.addWidget(self.mapCanvas)
+        self.splitterBody.setCollapsible(1, False)
     
     
     def showVisibleLayers(self):
