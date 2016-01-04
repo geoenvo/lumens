@@ -135,6 +135,7 @@ class MainWindow(QtGui.QMainWindow):
             'folderQUES': 'QUES',
             'folderTA': 'TA',
             'folderSCIENDO': 'SCIENDO',
+            'validDocumentFormats': ('.doc', 'docx', '.rtf', '.xls', '.xlsx', '.txt', '.log', '.csv'),
             
             'DialogFeatureSelectExpression': {
                 'expression': '',
@@ -524,6 +525,9 @@ class MainWindow(QtGui.QMainWindow):
         
         # For checking drop events
         ##self.layerListView.viewport().installEventFilter(self)
+        
+        # project treeview doubleclick item handling
+        self.projectTreeView.doubleClicked.connect(self.handlerDoubleClickProjectTree)
         
         # App action handlers
         self.actionQuit.triggered.connect(QtGui.qApp.quit)
@@ -1727,6 +1731,24 @@ class MainWindow(QtGui.QMainWindow):
         layerItemData = self.getSelectedLayerData()
         dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
+    
+    
+    def handlerDoubleClickProjectTree(self, index):
+        """
+        """
+        indexItem = self.projectTreeView.model().index(index.row(), 0, index.parent())
+
+        # path or filename selected
+        fileName = self.projectTreeView.model().fileName(indexItem)
+        # full path/filename selected
+        filePath = self.projectTreeView.model().filePath(indexItem)
+        
+        ext = os.path.splitext(filePath)[-1].lower()
+        
+        # open the document file in Windows
+        if ext in self.appSettings['validDocumentFormats']:
+            if sys.platform == 'win32':
+                os.startfile(filePath)
     
     
     def handlerDropLayer(self):
