@@ -27,13 +27,14 @@ class DialogLumensPUR(QtGui.QDialog):
             self.buttonLoadPURTemplate.setDisabled(True)
     
     
-    def loadTemplate(self, tabName, fileName):
+    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
+        templateSettings = {}
         dialogsToLoad = None
         
         if tabName == 'Setup':
@@ -48,36 +49,41 @@ class DialogLumensPUR(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensPUR')
             
-            shapefile = settings.value('shapefile')
-            shapefileAttr = settings.value('shapefileAttr')
-            dataTitle = settings.value('dataTitle')
-            referenceClasses = settings.value('referenceClasses')
-            referenceMapping = settings.value('referenceMapping')
-            planningUnits = settings.value('planningUnits')
+            templateSettings['DialogLumensPUR'] = {}
+            templateSettings['DialogLumensPUR']['shapefile'] = shapefile = settings.value('shapefile')
+            templateSettings['DialogLumensPUR']['shapefileAttr'] = shapefileAttr = settings.value('shapefileAttr')
+            templateSettings['DialogLumensPUR']['dataTitle'] = dataTitle = settings.value('dataTitle')
+            templateSettings['DialogLumensPUR']['referenceClasses'] = referenceClasses = settings.value('referenceClasses')
+            templateSettings['DialogLumensPUR']['referenceMapping'] = referenceMapping = settings.value('referenceMapping')
+            templateSettings['DialogLumensPUR']['planningUnits'] = planningUnits = settings.value('planningUnits')
             
-            if shapefile and os.path.exists(shapefile):
-                if shapefileAttr:
-                    self.handlerSelectShapefile(shapefile, shapefileAttr)
+            if not returnTemplateSettings:
+                if shapefile and os.path.exists(shapefile):
+                    if shapefileAttr:
+                        self.handlerSelectShapefile(shapefile, shapefileAttr)
+                    else:
+                        self.lineEditShapefile.setText(shapefile)
                 else:
-                    self.lineEditShapefile.setText(shapefile)
-            else:
-                self.lineEditShapefile.setText('')
-            if dataTitle:
-                self.lineEditDataTitle.setText(dataTitle)
-            else:
-                self.lineEditDataTitle.setText('')
-            if referenceClasses:
-                self.updateReferenceClasses(referenceClasses)
-            if referenceMapping:
-                self.updateReferenceMapping(referenceMapping)
-            if planningUnits:
-                self.updatePlanningUnits(planningUnits)
+                    self.lineEditShapefile.setText('')
+                if dataTitle:
+                    self.lineEditDataTitle.setText(dataTitle)
+                else:
+                    self.lineEditDataTitle.setText('')
+                if referenceClasses:
+                    self.updateReferenceClasses(referenceClasses)
+                if referenceMapping:
+                    self.updateReferenceMapping(referenceMapping)
+                if planningUnits:
+                    self.updatePlanningUnits(planningUnits)
             
             settings.endGroup()
             # /dialog
             
             settings.endGroup()
             # /tab
+            
+        if returnTemplateSettings:
+            return templateSettings
         
         """
         print 'DEBUG'
@@ -91,28 +97,81 @@ class DialogLumensPUR(QtGui.QDialog):
         """
     
     
+    def checkForDuplicateTemplates(self, tabName, templateToSkip):
+        """
+        """
+        duplicateTemplate = None
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        dialogsToLoad = None
+        
+        if tabName == 'Setup':
+            dialogsToLoad = (
+                'DialogLumensPUR',
+            )
+        
+        for templateFile in templateFiles:
+            if templateFile == templateToSkip:
+                continue
+            
+            duplicateTemplate = templateFile
+            templateSettings = self.loadTemplate(tabName, templateFile, True)
+            
+            print 'DEBUG'
+            print templateFile, templateSettings
+            
+            # Loop thru all dialogs in a tab
+            for dialog in dialogsToLoad:
+                # Loop thru all settings in a dialog
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    if templateSettings[dialog][key] != val:
+                        # A setting doesn't match! This is not a matching template file, move along
+                        duplicateTemplate = None
+                    else:
+                        print 'DEBUG equal settings'
+                        print templateSettings[dialog][key], val
+        
+        # Found a duplicate template, offer to load it?
+        if duplicateTemplate:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Existing Template',
+                'The template you are about to save matches an existing template.\nDo you want to load \'{0}\' instead?'.format(duplicateTemplate),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+            if reply == QtGui.QMessageBox.Yes:
+                self.handlerLoadPURTemplate(duplicateTemplate)
+                return True
+        
+        return False
+    
+    
     def saveTemplate(self, tabName, fileName):
         """Save form values according to their tab and dialog to a template file
         """
         self.setAppSettings()
-        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderPUR'], fileName)
-        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True) # only use ini files
         
-        dialogsToSave = None
-        
-        if tabName == 'Setup':
-            dialogsToSave = (
-                'DialogLumensPUR',
-            )
-        
-        settings.beginGroup(tabName)
-        for dialog in dialogsToSave:
-            settings.beginGroup(dialog)
-            for key, val in self.main.appSettings[dialog].iteritems():
-                settings.setValue(key, val)
+        # Check if current form values duplicate an existing template
+        if not self.checkForDuplicateTemplates(tabName, fileName):
+            templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderPUR'], fileName)
+            settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+            settings.setFallbacksEnabled(True) # only use ini files
+            
+            dialogsToSave = None
+            
+            if tabName == 'Setup':
+                dialogsToSave = (
+                    'DialogLumensPUR',
+                )
+            
+            settings.beginGroup(tabName)
+            for dialog in dialogsToSave:
+                settings.beginGroup(dialog)
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    settings.setValue(key, val)
+                settings.endGroup()
             settings.endGroup()
-        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -231,7 +290,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.labelDataTitle.setBuddy(self.lineEditDataTitle)
         
         self.tableReferenceMapping = QtGui.QTableWidget()
-        self.tableReferenceMapping.setRowCount(20)
+        self.tableReferenceMapping.setRowCount(1)
         self.tableReferenceMapping.setColumnCount(2)
         self.tableReferenceMapping.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
         self.tableReferenceMapping.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
@@ -652,7 +711,9 @@ class DialogLumensPUR(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSavePURTemplate(fileName)
             else:

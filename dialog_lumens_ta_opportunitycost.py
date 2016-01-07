@@ -42,13 +42,14 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             self.buttonLoadOpportunityCostMapTemplate.setDisabled(True)
         
     
-    def loadTemplate(self, tabName, fileName):
+    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
+        templateSettings = {}
         dialogsToLoad = None
         
         td = datetime.date.today()
@@ -65,12 +66,14 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTAAbacusOpportunityCostCurve')
             
-            projectFile = settings.value('projectFile')
+            templateSettings['DialogLumensTAAbacusOpportunityCostCurve'] = {}
+            templateSettings['DialogLumensTAAbacusOpportunityCostCurve']['projectFile'] = projectFile = settings.value('projectFile')
             
-            if projectFile and os.path.isdir(projectFile):
-                self.lineEditAOCProjectFile.setText(projectFile)
-            else:
-                self.lineEditAOCProjectFile.setText('')
+            if not returnTemplateSettings:
+                if projectFile and os.path.isdir(projectFile):
+                    self.lineEditAOCProjectFile.setText(projectFile)
+                else:
+                    self.lineEditAOCProjectFile.setText('')
             
             settings.endGroup()
             # /dialog
@@ -89,47 +92,49 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTAOpportunityCostCurve')
             
-            period1 = settings.value('period1')
-            period2 = settings.value('period2')
-            workingDir = settings.value('workingDir')
-            QUESCDatabase = settings.value('QUESCDatabase')
-            csvNPVTable = settings.value('csvNPVTable')
-            costThreshold = settings.value('costThreshold')
-            outputOpportunityCostDatabase = settings.value('outputOpportunityCostDatabase')
-            outputOpportunityCostReport = settings.value('outputOpportunityCostReport')
+            templateSettings['DialogLumensTAOpportunityCostCurve'] = {}
+            templateSettings['DialogLumensTAOpportunityCostCurve']['period1'] = period1 = settings.value('period1')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['period2'] = period2 = settings.value('period2')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['QUESCDatabase'] = QUESCDatabase = settings.value('QUESCDatabase')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['csvNPVTable'] = csvNPVTable = settings.value('csvNPVTable')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['costThreshold'] = costThreshold = settings.value('costThreshold')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['outputOpportunityCostDatabase'] = outputOpportunityCostDatabase = settings.value('outputOpportunityCostDatabase')
+            templateSettings['DialogLumensTAOpportunityCostCurve']['outputOpportunityCostReport'] = outputOpportunityCostReport = settings.value('outputOpportunityCostReport')
             
-            if period1:
-                self.spinBoxOCCPeriod1.setValue(int(period1))
-            else:
-                self.spinBoxOCCPeriod1.setValue(td.year)
-            if period2:
-                self.spinBoxOCCPeriod2.setValue(int(period2))
-            else:
-                self.spinBoxOCCPeriod2.setValue(td.year)
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditOCCWorkingDir.setText(workingDir)
-            else:
-                self.lineEditOCCWorkingDir.setText('')
-            if QUESCDatabase and os.path.exists(QUESCDatabase):
-                self.lineEditOCCQUESCDatabase.setText(QUESCDatabase)
-            else:
-                self.lineEditOCCQUESCDatabase.setText('')
-            if csvNPVTable and os.path.exists(csvNPVTable):
-                self.lineEditOCCCsvNPVTable.setText(csvNPVTable)
-            else:
-                self.lineEditOCCCsvNPVTable.setText('')
-            if costThreshold:
-                self.spinBoxOCCCostThreshold.setValue(int(costThreshold))
-            else:
-                self.spinBoxOCCCostThreshold.setValue(5)
-            if outputOpportunityCostDatabase:
-                self.lineEditOCCOutputOpportunityCostDatabase.setText(outputOpportunityCostDatabase)
-            else:
-                self.lineEditOCCOutputOpportunityCostDatabase.setText('')
-            if outputOpportunityCostReport:
-                self.lineEditOCCOutputOpportunityCostReport.setText(outputOpportunityCostReport)
-            else:
-                self.lineEditOCCOutputOpportunityCostReport.setText('')
+            if not returnTemplateSettings:
+                if period1:
+                    self.spinBoxOCCPeriod1.setValue(int(period1))
+                else:
+                    self.spinBoxOCCPeriod1.setValue(td.year)
+                if period2:
+                    self.spinBoxOCCPeriod2.setValue(int(period2))
+                else:
+                    self.spinBoxOCCPeriod2.setValue(td.year)
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditOCCWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditOCCWorkingDir.setText('')
+                if QUESCDatabase and os.path.exists(QUESCDatabase):
+                    self.lineEditOCCQUESCDatabase.setText(QUESCDatabase)
+                else:
+                    self.lineEditOCCQUESCDatabase.setText('')
+                if csvNPVTable and os.path.exists(csvNPVTable):
+                    self.lineEditOCCCsvNPVTable.setText(csvNPVTable)
+                else:
+                    self.lineEditOCCCsvNPVTable.setText('')
+                if costThreshold:
+                    self.spinBoxOCCCostThreshold.setValue(int(costThreshold))
+                else:
+                    self.spinBoxOCCCostThreshold.setValue(5)
+                if outputOpportunityCostDatabase:
+                    self.lineEditOCCOutputOpportunityCostDatabase.setText(outputOpportunityCostDatabase)
+                else:
+                    self.lineEditOCCOutputOpportunityCostDatabase.setText('')
+                if outputOpportunityCostReport:
+                    self.lineEditOCCOutputOpportunityCostReport.setText(outputOpportunityCostReport)
+                else:
+                    self.lineEditOCCOutputOpportunityCostReport.setText('')
             
             settings.endGroup()
             # /dialog
@@ -148,63 +153,68 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTAOpportunityCostMap')
             
-            t1 = settings.value('t1')
-            t2 = settings.value('t2')
-            landUseT1 = settings.value('landUseT1')
-            landUseT2 = settings.value('landUseT2')
-            planningUnit = settings.value('planningUnit')
-            csvPlanningUnit = settings.value('csvPlanningUnit')
-            workingDir = settings.value('workingDir')
-            location = settings.value('location')
-            csvCarbon = settings.value('csvCarbon')
-            csvProfitability = settings.value('csvProfitability')
+            templateSettings['DialogLumensTAOpportunityCostMap'] = {}
+            templateSettings['DialogLumensTAOpportunityCostMap']['t1'] = t1 = settings.value('t1')
+            templateSettings['DialogLumensTAOpportunityCostMap']['t2'] = t2 = settings.value('t2')
+            templateSettings['DialogLumensTAOpportunityCostMap']['landUseT1'] = landUseT1 = settings.value('landUseT1')
+            templateSettings['DialogLumensTAOpportunityCostMap']['landUseT2'] = landUseT2 = settings.value('landUseT2')
+            templateSettings['DialogLumensTAOpportunityCostMap']['planningUnit'] = planningUnit = settings.value('planningUnit')
+            templateSettings['DialogLumensTAOpportunityCostMap']['csvPlanningUnit'] = csvPlanningUnit = settings.value('csvPlanningUnit')
+            templateSettings['DialogLumensTAOpportunityCostMap']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensTAOpportunityCostMap']['location'] = location = settings.value('location')
+            templateSettings['DialogLumensTAOpportunityCostMap']['csvCarbon'] = csvCarbon = settings.value('csvCarbon')
+            templateSettings['DialogLumensTAOpportunityCostMap']['csvProfitability'] = csvProfitability = settings.value('csvProfitability')
             
-            if t1:
-                self.spinBoxOCMPeriod1.setValue(int(t1))
-            else:
-                self.spinBoxOCMPeriod1.setValue(td.year)
-            if t2:
-                self.spinBoxOCMPeriod2.setValue(int(t2))
-            else:
-                self.spinBoxOCMPeriod2.setValue(td.year)
-            if landUseT1 and os.path.exists(landUseT1):
-                self.lineEditOCMLandUseT1.setText(landUseT1)
-            else:
-                self.lineEditOCMLandUseT1.setText('')
-            if landUseT2 and os.path.exists(landUseT2):
-                self.lineEditOCMLandUseT2.setText(landUseT2)
-            else:
-                self.lineEditOCMLandUseT2.setText('')
-            if planningUnit and os.path.exists(planningUnit):
-                self.lineEditOCMPlanningUnit.setText(planningUnit)
-            else:
-                self.lineEditOCMPlanningUnit.setText('')
-            if csvPlanningUnit and os.path.exists(csvPlanningUnit):
-                self.lineEditOCMCsvPlanningUnit.setText(csvPlanningUnit)
-            else:
-                self.lineEditOCMCsvPlanningUnit.setText('')
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditOCMWorkingDir.setText(workingDir)
-            else:
-                self.lineEditOCMWorkingDir.setText('')
-            if location:
-                self.lineEditOCMLocation.setText(location)
-            else:
-                self.lineEditOCMLocation.setText('location')
-            if csvCarbon and os.path.exists(csvCarbon):
-                self.lineEditOCMCsvCarbon.setText(csvCarbon)
-            else:
-                self.lineEditOCMCsvCarbon.setText('')
-            if csvProfitability and os.path.exists(csvProfitability):
-                self.lineEditOCMCsvProfitability.setText(csvProfitability)
-            else:
-                self.lineEditOCMCsvProfitability.setText('')
+            if not returnTemplateSettings:
+                if t1:
+                    self.spinBoxOCMPeriod1.setValue(int(t1))
+                else:
+                    self.spinBoxOCMPeriod1.setValue(td.year)
+                if t2:
+                    self.spinBoxOCMPeriod2.setValue(int(t2))
+                else:
+                    self.spinBoxOCMPeriod2.setValue(td.year)
+                if landUseT1 and os.path.exists(landUseT1):
+                    self.lineEditOCMLandUseT1.setText(landUseT1)
+                else:
+                    self.lineEditOCMLandUseT1.setText('')
+                if landUseT2 and os.path.exists(landUseT2):
+                    self.lineEditOCMLandUseT2.setText(landUseT2)
+                else:
+                    self.lineEditOCMLandUseT2.setText('')
+                if planningUnit and os.path.exists(planningUnit):
+                    self.lineEditOCMPlanningUnit.setText(planningUnit)
+                else:
+                    self.lineEditOCMPlanningUnit.setText('')
+                if csvPlanningUnit and os.path.exists(csvPlanningUnit):
+                    self.lineEditOCMCsvPlanningUnit.setText(csvPlanningUnit)
+                else:
+                    self.lineEditOCMCsvPlanningUnit.setText('')
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditOCMWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditOCMWorkingDir.setText('')
+                if location:
+                    self.lineEditOCMLocation.setText(location)
+                else:
+                    self.lineEditOCMLocation.setText('location')
+                if csvCarbon and os.path.exists(csvCarbon):
+                    self.lineEditOCMCsvCarbon.setText(csvCarbon)
+                else:
+                    self.lineEditOCMCsvCarbon.setText('')
+                if csvProfitability and os.path.exists(csvProfitability):
+                    self.lineEditOCMCsvProfitability.setText(csvProfitability)
+                else:
+                    self.lineEditOCMCsvProfitability.setText('')
             
             settings.endGroup()
             # /dialog
             
             settings.endGroup()
             # /tab
+        
+        if returnTemplateSettings:
+            return templateSettings
         
         """
         print 'DEBUG'
@@ -218,36 +228,97 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         """
     
     
+    def checkForDuplicateTemplates(self, tabName, templateToSkip):
+        """
+        """
+        duplicateTemplate = None
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        dialogsToLoad = None
+        
+        if tabName == 'Abacus Opportunity Cost':
+            dialogsToLoad = (
+                'DialogLumensTAAbacusOpportunityCostCurve',
+            )
+        elif tabName == 'Opportunity Cost Curve':
+            dialogsToLoad = (
+                'DialogLumensTAOpportunityCostCurve',
+            )
+        elif tabName == 'Opportunity Cost Map':
+            dialogsToLoad = (
+                'DialogLumensTAOpportunityCostMap',
+            )
+        
+        for templateFile in templateFiles:
+            if templateFile == templateToSkip:
+                continue
+            
+            duplicateTemplate = templateFile
+            templateSettings = self.loadTemplate(tabName, templateFile, True)
+            
+            print 'DEBUG'
+            print templateFile, templateSettings
+            
+            # Loop thru all dialogs in a tab
+            for dialog in dialogsToLoad:
+                # Loop thru all settings in a dialog
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    if templateSettings[dialog][key] != val:
+                        # A setting doesn't match! This is not a matching template file, move along
+                        duplicateTemplate = None
+                    else:
+                        print 'DEBUG equal settings'
+                        print templateSettings[dialog][key], val
+        
+        # Found a duplicate template, offer to load it?
+        if duplicateTemplate:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Existing Template',
+                'The template you are about to save matches an existing template.\nDo you want to load \'{0}\' instead?'.format(duplicateTemplate),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+            if reply == QtGui.QMessageBox.Yes:
+                self.handlerLoadPURTemplate(duplicateTemplate)
+                return True
+        
+        return False
+    
+    
     def saveTemplate(self, tabName, fileName):
         """Save form values according to their tab and dialog to a template file
         """
         self.setAppSettings()
-        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'], fileName)
-        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True) # only use ini files
         
-        dialogsToSave = None
-        
-        if tabName == 'Abacus Opportunity Cost':
-            dialogsToSave = (
-                'DialogLumensTAAbacusOpportunityCostCurve',
-            )
-        elif tabName == 'Opportunity Cost Curve':
-            dialogsToSave = (
-                'DialogLumensTAOpportunityCostCurve',
-            )
-        elif tabName == 'Opportunity Cost Map':
-            dialogsToSave = (
-                'DialogLumensTAOpportunityCostMap',
-            )
-        
-        settings.beginGroup(tabName)
-        for dialog in dialogsToSave:
-            settings.beginGroup(dialog)
-            for key, val in self.main.appSettings[dialog].iteritems():
-                settings.setValue(key, val)
+        # Check if current form values duplicate an existing template
+        if not self.checkForDuplicateTemplates(tabName, fileName):
+            templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'], fileName)
+            settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+            settings.setFallbacksEnabled(True) # only use ini files
+            
+            dialogsToSave = None
+            
+            if tabName == 'Abacus Opportunity Cost':
+                dialogsToSave = (
+                    'DialogLumensTAAbacusOpportunityCostCurve',
+                )
+            elif tabName == 'Opportunity Cost Curve':
+                dialogsToSave = (
+                    'DialogLumensTAOpportunityCostCurve',
+                )
+            elif tabName == 'Opportunity Cost Map':
+                dialogsToSave = (
+                    'DialogLumensTAOpportunityCostMap',
+                )
+            
+            settings.beginGroup(tabName)
+            for dialog in dialogsToSave:
+                settings.beginGroup(dialog)
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    settings.setValue(key, val)
+                settings.endGroup()
             settings.endGroup()
-        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -930,7 +1001,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveAbacusOpportunityCostTemplate(fileName)
             else:
@@ -1013,7 +1086,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveOpportunityCostCurveTemplate(fileName)
             else:
@@ -1139,7 +1214,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveOpportunityCostMapTemplate(fileName)
             else:

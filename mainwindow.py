@@ -48,6 +48,7 @@ from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_layer_attribute_table import DialogLayerAttributeTable
 from dialog_feature_selectexpression import DialogFeatureSelectExpression
 from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
+from dialog_result_viewer import DialogResultViewer
 
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
@@ -557,6 +558,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensCreateDatabase.triggered.connect(self.handlerDialogLumensCreateDatabase)
         self.actionLumensOpenDatabase.triggered.connect(self.handlerLumensOpenDatabase)
         self.actionLumensCloseDatabase.triggered.connect(self.handlerLumensCloseDatabase)
+        self.actionLumensDatabaseStatus.triggered.connect(self.handlerLumensDatabaseStatus)
         self.actionDialogLumensAddLandcoverRaster.triggered.connect(self.handlerDialogLumensAddLandcoverRaster)
         self.actionDialogLumensAddPeatData.triggered.connect(self.handlerDialogLumensAddPeatData)
         self.actionDialogLumensAddFactorData.triggered.connect(self.handlerDialogLumensAddFactorData)
@@ -639,10 +641,10 @@ class MainWindow(QtGui.QMainWindow):
     def setupUi(self):
         """
         """
-        self.setWindowTitle('LUMENS: Alpha')
+        self.setWindowTitle('LUMENS: Beta')
 
         self.centralWidget = QtGui.QWidget(self)
-        self.centralWidget.setMinimumSize(800, 400)
+        self.centralWidget.setMinimumSize(1024, 600)
         self.setCentralWidget(self.centralWidget)
         
         # Create the default menus
@@ -788,6 +790,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensCreateDatabase = QtGui.QAction('Create LUMENS database', self)
         self.actionLumensOpenDatabase = QtGui.QAction('Open LUMENS database', self)
         self.actionLumensCloseDatabase = QtGui.QAction('Close LUMENS database', self)
+        self.actionLumensDatabaseStatus = QtGui.QAction('LUMENS database status', self)
         self.actionDialogLumensAddLandcoverRaster = QtGui.QAction('Add land use/cover data', self)
         self.actionDialogLumensAddPeatData = QtGui.QAction('Add peat data', self)
         self.actionDialogLumensAddFactorData = QtGui.QAction('Add factor data', self)
@@ -798,6 +801,7 @@ class MainWindow(QtGui.QMainWindow):
         self.databaseMenu.addAction(self.actionDialogLumensCreateDatabase)
         self.databaseMenu.addAction(self.actionLumensOpenDatabase)
         self.databaseMenu.addAction(self.actionLumensCloseDatabase)
+        self.databaseMenu.addAction(self.actionLumensDatabaseStatus)
         self.addDataMenu = self.databaseMenu.addMenu('Add data into LUMENS database')
         self.addDataMenu.addAction(self.actionDialogLumensAddLandcoverRaster)
         self.addDataMenu.addAction(self.actionDialogLumensAddPeatData)
@@ -1035,7 +1039,7 @@ class MainWindow(QtGui.QMainWindow):
         self.infoTool = InfoTool(self)
         self.infoTool.setAction(self.actionInfo)
 
-        self.setMinimumSize(800, 400)
+        self.setMinimumSize(1024, 600)
         self.resize(self.sizeHint())
     
     
@@ -1071,34 +1075,11 @@ class MainWindow(QtGui.QMainWindow):
             dialog.exec_()
     
     
-    def handlerDialogLumensCreateDatabase(self):
-        """
-        """
-        self.openDialog(DialogLumensCreateDatabase)
-    
-    
-    def handlerDialogLumensOpenDatabase(self):
-        """
-        """
-        self.openDialog(DialogLumensOpenDatabase)
-    
-    
-    def handlerLumensOpenDatabase(self):
-        """Select a .lpj database file and open it
-        """
-        lumensDatabase = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
-        
-        if lumensDatabase:
-            logging.getLogger(__name__).info('select LUMENS database: %s', lumensDatabase)
-            
-            self.lumensOpenDatabase(lumensDatabase)
-    
-    
     def lumensEnableMenus(self):
         """
         """
         self.actionLumensCloseDatabase.setEnabled(True)
+        self.actionLumensDatabaseStatus.setEnabled(True)
         self.actionLumensDeleteData.setEnabled(True)
         
         self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
@@ -1152,6 +1133,7 @@ class MainWindow(QtGui.QMainWindow):
     def lumensDisableMenus(self):
         """
         """
+        self.actionLumensDatabaseStatus.setDisabled(True)
         self.actionLumensDeleteData.setDisabled(True)
         self.actionDialogLumensAddLandcoverRaster.setDisabled(True)
         self.actionDialogLumensAddPeatData.setDisabled(True)
@@ -1231,12 +1213,6 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger(__name__).info('end: LUMENS Open Database')
     
     
-    def handlerLumensCloseDatabase(self):
-        """
-        """
-        self.lumensCloseDatabase()
-    
-    
     def lumensCloseDatabase(self):
         """
         """
@@ -1257,7 +1233,24 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger(__name__).info('end: LUMENS Close Database')
     
     
-    def handlerLumensDeleteData(self):
+    def lumensDatabaseStatus(self):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('start: lumensdatabasestatus')
+        
+        self.actionLumensDatabaseStatus.setDisabled(True)
+        outputs = general.runalg('r:lumensdatabasestatus', None)
+        
+        if outputs:
+            dialog = DialogResultViewer('Database Status', 'csv', outputs['database_status'], self)
+            dialog.exec_()
+        
+        self.actionLumensDatabaseStatus.setEnabled(True)
+        
+        logging.getLogger(__name__).info('end: lumensdatabasestatus')
+    
+    
+    def lumensDeleteData(self):
         """
         """
         logging.getLogger(type(self).__name__).info('start: lumensdeletedata')
@@ -1267,6 +1260,48 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensDeleteData.setEnabled(True)
         
         logging.getLogger(__name__).info('end: lumensdeletedata')
+    
+    
+    def handlerDialogLumensCreateDatabase(self):
+        """
+        """
+        self.openDialog(DialogLumensCreateDatabase)
+    
+    
+    def handlerDialogLumensOpenDatabase(self):
+        """
+        """
+        self.openDialog(DialogLumensOpenDatabase)
+    
+    
+    def handlerLumensOpenDatabase(self):
+        """Select a .lpj database file and open it
+        """
+        lumensDatabase = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
+        
+        if lumensDatabase:
+            logging.getLogger(__name__).info('select LUMENS database: %s', lumensDatabase)
+            
+            self.lumensOpenDatabase(lumensDatabase)
+    
+    
+    def handlerLumensDeleteData(self):
+        """
+        """
+        self.lumensDeleteData()
+    
+    
+    def handlerLumensCloseDatabase(self):
+        """
+        """
+        self.lumensCloseDatabase()
+    
+    
+    def handlerLumensDatabaseStatus(self):
+        """
+        """
+        self.lumensDatabaseStatus()
     
     
     def handlerDialogLumensAddLandcoverRaster(self):

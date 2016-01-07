@@ -66,13 +66,14 @@ class DialogLumensQUES(QtGui.QDialog):
             self.buttonLoadWatershedIndicatorsTemplate.setDisabled(True)
         
     
-    def loadTemplate(self, tabName, fileName):
+    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
+        templateSettings = {}
         dialogsToLoad = None
         
         td = datetime.date.today()
@@ -89,57 +90,59 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensPreQUESLandcoverTrajectoriesAnalysis')
             
-            workingDir = settings.value('workingDir')
-            location = settings.value('location')
-            planningUnit = settings.value('planningUnit')
-            csvPlanningUnit = settings.value('csvPlanningUnit')
-            csvLandUse = settings.value('csvLandUse')
-            landCoverT1 = settings.value('landCoverT1')
-            t1 = settings.value('t1')
-            landCoverT2 = settings.value('landCoverT2')
-            t2 = settings.value('t2')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis'] = {}
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['location'] = location = settings.value('location')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] = planningUnit = settings.value('planningUnit')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvPlanningUnit'] = csvPlanningUnit = settings.value('csvPlanningUnit')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] = csvLandUse = settings.value('csvLandUse')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT1'] = landCoverT1 = settings.value('landCoverT1')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t1'] = t1 = settings.value('t1')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT2'] = landCoverT2 = settings.value('landCoverT2')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t2'] = t2 = settings.value('t2')
             
             lineEditLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T1')
             spinBoxLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T1')
             lineEditLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T2')
             spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
             
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditPreQUESWorkingDir.setText(workingDir)
-            else:
-                self.lineEditPreQUESWorkingDir.setText('')
-            if location:
-                self.lineEditPreQUESLocation.setText(location)
-            else:
-                self.lineEditPreQUESLocation.setText('location')
-            if planningUnit and os.path.exists(planningUnit):
-                self.lineEditPreQUESPlanningUnit.setText(planningUnit)
-            else:
-                self.lineEditPreQUESPlanningUnit.setText('')
-            if csvPlanningUnit and os.path.exists(csvPlanningUnit):
-                self.lineEditPreQUESCsvPlanningUnit.setText(csvPlanningUnit)
-            else:
-                self.lineEditPreQUESCsvPlanningUnit.setText('')
-            if csvLandUse and os.path.exists(csvLandUse):
-                self.lineEditLandCoverCsvLandUse.setText(csvLandUse)
-            else:
-                self.lineEditLandCoverCsvLandUse.setText('')
-            if landCoverT1 and os.path.exists(landCoverT1):
-                lineEditLandCoverT1.setText(landCoverT1)
-            else:
-                self.lineEditLandCoverT1.setText('')
-            if t1:
-                spinBoxLandCoverT1.setValue(int(t1))
-            else:
-                self.spinBoxLandCoverT1.setValue(td.year)
-            if landCoverT2 and os.path.exists(landCoverT2):
-                lineEditLandCoverT2.setText(landCoverT2)
-            else:
-                self.lineEditLandCoverT2.setText('')
-            if t2:
-                spinBoxLandCoverT2.setValue(int(t2))
-            else:
-                self.spinBoxLandCoverT2.setValue(td.year)
+            if not returnTemplateSettings:
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditPreQUESWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditPreQUESWorkingDir.setText('')
+                if location:
+                    self.lineEditPreQUESLocation.setText(location)
+                else:
+                    self.lineEditPreQUESLocation.setText('location')
+                if planningUnit and os.path.exists(planningUnit):
+                    self.lineEditPreQUESPlanningUnit.setText(planningUnit)
+                else:
+                    self.lineEditPreQUESPlanningUnit.setText('')
+                if csvPlanningUnit and os.path.exists(csvPlanningUnit):
+                    self.lineEditPreQUESCsvPlanningUnit.setText(csvPlanningUnit)
+                else:
+                    self.lineEditPreQUESCsvPlanningUnit.setText('')
+                if csvLandUse and os.path.exists(csvLandUse):
+                    self.lineEditLandCoverCsvLandUse.setText(csvLandUse)
+                else:
+                    self.lineEditLandCoverCsvLandUse.setText('')
+                if landCoverT1 and os.path.exists(landCoverT1):
+                    lineEditLandCoverT1.setText(landCoverT1)
+                else:
+                    self.lineEditLandCoverT1.setText('')
+                if t1:
+                    spinBoxLandCoverT1.setValue(int(t1))
+                else:
+                    self.spinBoxLandCoverT1.setValue(td.year)
+                if landCoverT2 and os.path.exists(landCoverT2):
+                    lineEditLandCoverT2.setText(landCoverT2)
+                else:
+                    self.lineEditLandCoverT2.setText('')
+                if t2:
+                    spinBoxLandCoverT2.setValue(int(t2))
+                else:
+                    self.spinBoxLandCoverT2.setValue(td.year)
             
             settings.endGroup()
             # /dialog
@@ -160,17 +163,19 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESCCarbonAccounting')
             
-            csvfile = settings.value('csvfile')
-            nodata = settings.value('nodata')
+            templateSettings['DialogLumensQUESCCarbonAccounting'] = {}
+            templateSettings['DialogLumensQUESCCarbonAccounting']['csvfile'] = csvfile = settings.value('csvfile')
+            templateSettings['DialogLumensQUESCCarbonAccounting']['nodata'] = nodata = settings.value('nodata')
             
-            if csvfile and os.path.exists(csvfile):
-                self.lineEditCACsvfile.setText(csvfile)
-            else:
-                self.lineEditCACsvfile.setText('')
-            if nodata:
-                self.spinBoxCANoDataValue.setValue(int(nodata))
-            else:
-                self.spinBoxCANoDataValue.setValue(0)
+            if not returnTemplateSettings:
+                if csvfile and os.path.exists(csvfile):
+                    self.lineEditCACsvfile.setText(csvfile)
+                else:
+                    self.lineEditCACsvfile.setText('')
+                if nodata:
+                    self.spinBoxCANoDataValue.setValue(int(nodata))
+                else:
+                    self.spinBoxCANoDataValue.setValue(0)
             
             settings.endGroup()
             # /dialog
@@ -179,12 +184,14 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESCPeatlandCarbonAccounting')
             
-            csvfile = settings.value('csvfile')
+            templateSettings['DialogLumensQUESCPeatlandCarbonAccounting'] = {}
+            templateSettings['DialogLumensQUESCPeatlandCarbonAccounting']['csvfile'] = csvfile = settings.value('csvfile')
             
-            if csvfile and os.path.exists(csvfile):
-                self.lineEditPCACsvfile.setText(csvfile)
-            else:
-                self.lineEditPCACsvfile.setText('')
+            if not returnTemplateSettings:
+                if csvfile and os.path.exists(csvfile):
+                    self.lineEditPCACsvfile.setText(csvfile)
+                else:
+                    self.lineEditPCACsvfile.setText('')
             
             settings.endGroup()
             # /dialog
@@ -193,12 +200,14 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESCSummarizeMultiplePeriod')
             
-            checkbox = settings.value('checkbox')
+            templateSettings['DialogLumensQUESCSummarizeMultiplePeriod'] = {}
+            templateSettings['DialogLumensQUESCSummarizeMultiplePeriod']['checkbox'] = checkbox = settings.value('checkbox')
             
-            if csvfile == 'true':
-                self.checkBoxSummarizeMultiplePeriod.setChecked(True)
-            else:
-                self.checkBoxSummarizeMultiplePeriod.setChecked(False)
+            if not returnTemplateSettings:
+                if csvfile == 'true':
+                    self.checkBoxSummarizeMultiplePeriod.setChecked(True)
+                else:
+                    self.checkBoxSummarizeMultiplePeriod.setChecked(False)
             
             settings.endGroup()
             # /dialog
@@ -217,80 +226,82 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESBAnalysis')
             
-            csvLandCover = settings.value('csvLandCover')
-            samplingGridRes = settings.value('samplingGridRes')
-            samplingWindowSize = settings.value('samplingWindowSize')
-            windowShape = settings.value('windowShape')
-            nodata = settings.value('nodata')
-            csvClassDescriptors = settings.value('csvClassDescriptors')
-            csvEdgeContrast = settings.value('csvEdgeContrast')
-            csvZoneLookup = settings.value('csvZoneLookup')
-            refMapID = settings.value('refMapID')
-            outputTECIInitial = settings.value('outputTECIInitial')
-            outputTECIFinal = settings.value('outputTECIFinal')
-            outputHabitatLoss = settings.value('outputHabitatLoss')
-            outputDegradedHabitat = settings.value('outputDegradedHabitat')
-            outputHabitatGain = settings.value('outputHabitatGain')
-            outputRecoveredHabitat = settings.value('outputRecoveredHabitat')
+            templateSettings['DialogLumensQUESBAnalysis'] = {}
+            templateSettings['DialogLumensQUESBAnalysis']['csvLandCover'] = csvLandCover = settings.value('csvLandCover')
+            templateSettings['DialogLumensQUESBAnalysis']['samplingGridRes'] = samplingGridRes = settings.value('samplingGridRes')
+            templateSettings['DialogLumensQUESBAnalysis']['samplingWindowSize'] = samplingWindowSize = settings.value('samplingWindowSize')
+            templateSettings['DialogLumensQUESBAnalysis']['windowShape'] = windowShape = settings.value('windowShape')
+            templateSettings['DialogLumensQUESBAnalysis']['nodata'] = nodata = settings.value('nodata')
+            templateSettings['DialogLumensQUESBAnalysis']['csvClassDescriptors'] = csvClassDescriptors = settings.value('csvClassDescriptors')
+            templateSettings['DialogLumensQUESBAnalysis']['csvEdgeContrast'] = csvEdgeContrast = settings.value('csvEdgeContrast')
+            templateSettings['DialogLumensQUESBAnalysis']['csvZoneLookup'] = csvZoneLookup = settings.value('csvZoneLookup')
+            templateSettings['DialogLumensQUESBAnalysis']['refMapID'] = refMapID = settings.value('refMapID')
+            templateSettings['DialogLumensQUESBAnalysis']['outputTECIInitial'] = outputTECIInitial = settings.value('outputTECIInitial')
+            templateSettings['DialogLumensQUESBAnalysis']['outputTECIFinal'] = outputTECIFinal = settings.value('outputTECIFinal')
+            templateSettings['DialogLumensQUESBAnalysis']['outputHabitatLoss'] = outputHabitatLoss = settings.value('outputHabitatLoss')
+            templateSettings['DialogLumensQUESBAnalysis']['outputDegradedHabitat'] = outputDegradedHabitat = settings.value('outputDegradedHabitat')
+            templateSettings['DialogLumensQUESBAnalysis']['outputHabitatGain'] = outputHabitatGain = settings.value('outputHabitatGain')
+            templateSettings['DialogLumensQUESBAnalysis']['outputRecoveredHabitat'] = outputRecoveredHabitat = settings.value('outputRecoveredHabitat')
             
-            if csvLandCover and os.path.exists(csvLandCover):
-                self.lineEditQUESBCsvLandCover.setText(csvLandCover)
-            else:
-                self.lineEditQUESBCsvLandCover.setText('')
-            if samplingGridRes:
-                self.spinBoxQUESBSamplingGridRes.setValue(int(samplingGridRes))
-            else:
-                self.spinBoxQUESBSamplingGridRes.setValue(9999)
-            if samplingWindowSize:
-                self.spinBoxQUESBSamplingWindowSize.setValue(int(samplingWindowSize))
-            else:
-                self.spinBoxQUESBSamplingWindowSize.setValue(1000)
-            if windowShape:
-                self.spinBoxQUESBWindowShape.setValue(int(windowShape))
-            else:
-                self.spinBoxQUESBWindowShape.setValue(1000)
-            if nodata:
-                self.spinBoxQUESBNodata.setValue(int(nodata))
-            else:
-                self.spinBoxQUESBNodata.setValue(0)
-            if csvClassDescriptors and os.path.exists(csvClassDescriptors):
-                self.lineEditQUESBCsvClassDescriptors.setText(csvClassDescriptors)
-            else:
-                self.lineEditQUESBCsvClassDescriptors.setText('')
-            if csvEdgeContrast and os.path.exists(csvEdgeContrast):
-                self.lineEditQUESBCsvEdgeContrast.setText(csvEdgeContrast)
-            else:
-                self.lineEditQUESBCsvEdgeContrast.setText('')
-            if csvZoneLookup and os.path.exists(csvZoneLookup):
-                self.lineEditQUESBCsvZoneLookup.setText(csvZoneLookup)
-            else:
-                self.lineEditQUESBCsvZoneLookup.setText('')
-            if refMapID:
-                self.comboBoxQUESBRefMapID.setCurrentIndex(self.comboBoxQUESBRefMapID.findData(int(refMapID)))
-            if outputTECIInitial:
-                self.lineEditQUESBOutputTECIInitial.setText(outputTECIInitial)
-            else:
-                self.lineEditQUESBOutputTECIInitial.setText('')
-            if outputTECIFinal:
-                self.lineEditQUESBOutputTECIFinal.setText(outputTECIFinal)
-            else:
-                self.lineEditQUESBOutputTECIFinal.setText('')
-            if outputHabitatLoss:
-                self.lineEditQUESBOutputHabitatLoss.setText(outputHabitatLoss)
-            else:
-                self.lineEditQUESBOutputHabitatLoss.setText('')
-            if outputDegradedHabitat:
-                self.lineEditQUESBOutputDegradedHabitat.setText(outputDegradedHabitat)
-            else:
-                self.lineEditQUESBOutputDegradedHabitat.setText('')
-            if outputHabitatGain:
-                self.lineEditQUESBOutputHabitatGain.setText(outputHabitatGain)
-            else:
-                self.lineEditQUESBOutputHabitatGain.setText('')
-            if outputRecoveredHabitat:
-                self.lineEditQUESBOutputRecoveredHabitat.setText(outputRecoveredHabitat)
-            else:
-                self.lineEditQUESBOutputRecoveredHabitat.setText('')
+            if not returnTemplateSettings:
+                if csvLandCover and os.path.exists(csvLandCover):
+                    self.lineEditQUESBCsvLandCover.setText(csvLandCover)
+                else:
+                    self.lineEditQUESBCsvLandCover.setText('')
+                if samplingGridRes:
+                    self.spinBoxQUESBSamplingGridRes.setValue(int(samplingGridRes))
+                else:
+                    self.spinBoxQUESBSamplingGridRes.setValue(9999)
+                if samplingWindowSize:
+                    self.spinBoxQUESBSamplingWindowSize.setValue(int(samplingWindowSize))
+                else:
+                    self.spinBoxQUESBSamplingWindowSize.setValue(1000)
+                if windowShape:
+                    self.spinBoxQUESBWindowShape.setValue(int(windowShape))
+                else:
+                    self.spinBoxQUESBWindowShape.setValue(1000)
+                if nodata:
+                    self.spinBoxQUESBNodata.setValue(int(nodata))
+                else:
+                    self.spinBoxQUESBNodata.setValue(0)
+                if csvClassDescriptors and os.path.exists(csvClassDescriptors):
+                    self.lineEditQUESBCsvClassDescriptors.setText(csvClassDescriptors)
+                else:
+                    self.lineEditQUESBCsvClassDescriptors.setText('')
+                if csvEdgeContrast and os.path.exists(csvEdgeContrast):
+                    self.lineEditQUESBCsvEdgeContrast.setText(csvEdgeContrast)
+                else:
+                    self.lineEditQUESBCsvEdgeContrast.setText('')
+                if csvZoneLookup and os.path.exists(csvZoneLookup):
+                    self.lineEditQUESBCsvZoneLookup.setText(csvZoneLookup)
+                else:
+                    self.lineEditQUESBCsvZoneLookup.setText('')
+                if refMapID:
+                    self.comboBoxQUESBRefMapID.setCurrentIndex(self.comboBoxQUESBRefMapID.findData(int(refMapID)))
+                if outputTECIInitial:
+                    self.lineEditQUESBOutputTECIInitial.setText(outputTECIInitial)
+                else:
+                    self.lineEditQUESBOutputTECIInitial.setText('')
+                if outputTECIFinal:
+                    self.lineEditQUESBOutputTECIFinal.setText(outputTECIFinal)
+                else:
+                    self.lineEditQUESBOutputTECIFinal.setText('')
+                if outputHabitatLoss:
+                    self.lineEditQUESBOutputHabitatLoss.setText(outputHabitatLoss)
+                else:
+                    self.lineEditQUESBOutputHabitatLoss.setText('')
+                if outputDegradedHabitat:
+                    self.lineEditQUESBOutputDegradedHabitat.setText(outputDegradedHabitat)
+                else:
+                    self.lineEditQUESBOutputDegradedHabitat.setText('')
+                if outputHabitatGain:
+                    self.lineEditQUESBOutputHabitatGain.setText(outputHabitatGain)
+                else:
+                    self.lineEditQUESBOutputHabitatGain.setText('')
+                if outputRecoveredHabitat:
+                    self.lineEditQUESBOutputRecoveredHabitat.setText(outputRecoveredHabitat)
+                else:
+                    self.lineEditQUESBOutputRecoveredHabitat.setText('')
             
             settings.endGroup()
             # /dialog
@@ -311,53 +322,55 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESHDominantHRU')
             
-            workingDir = settings.value('workingDir')
-            landUseMap = settings.value('landUseMap')
-            soilMap = settings.value('soilMap')
-            slopeMap = settings.value('slopeMap')
-            subcatchmentMap = settings.value('subcatchmentMap')
-            landUseClassification = settings.value('landUseClassification')
-            soilClassification = settings.value('soilClassification')
-            slopeClassification = settings.value('slopeClassification')
-            areaName = settings.value('areaName')
-            period = settings.value('period')
+            templateSettings['DialogLumensQUESHDominantHRU'] = {}
+            templateSettings['DialogLumensQUESHDominantHRU']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensQUESHDominantHRU']['landUseMap'] = landUseMap = settings.value('landUseMap')
+            templateSettings['DialogLumensQUESHDominantHRU']['soilMap'] = soilMap = settings.value('soilMap')
+            templateSettings['DialogLumensQUESHDominantHRU']['slopeMap'] = slopeMap = settings.value('slopeMap')
+            templateSettings['DialogLumensQUESHDominantHRU']['subcatchmentMap'] = subcatchmentMap = settings.value('subcatchmentMap')
+            templateSettings['DialogLumensQUESHDominantHRU']['landUseClassification'] = landUseClassification = settings.value('landUseClassification')
+            templateSettings['DialogLumensQUESHDominantHRU']['soilClassification'] = soilClassification = settings.value('soilClassification')
+            templateSettings['DialogLumensQUESHDominantHRU']['slopeClassification'] = slopeClassification = settings.value('slopeClassification')
+            templateSettings['DialogLumensQUESHDominantHRU']['areaName'] = areaName = settings.value('areaName')
+            templateSettings['DialogLumensQUESHDominantHRU']['period'] = period = settings.value('period')
             
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditHRUWorkingDir.setText(workingDir)
-            else:
-                self.lineEditHRUWorkingDir.setText('')
-            if landUseMap and os.path.exists(landUseMap):
-                self.lineEditHRULandUseMap.setText(landUseMap)
-            else:
-                self.lineEditHRULandUseMap.setText('')
-            if soilMap and os.path.exists(soilMap):
-                self.lineEditHRUSoilMap.setText(soilMap)
-            else:
-                self.lineEditHRUSoilMap.setText('')
-            if subcatchmentMap and os.path.exists(subcatchmentMap):
-                self.lineEditHRUSubcatchmentMap.setText(subcatchmentMap)
-            else:
-                self.lineEditHRUSubcatchmentMap.setText('')
-            if landUseClassification and os.path.exists(landUseClassification):
-                self.lineEditHRULandUseClassification.setText(landUseClassification)
-            else:
-                self.lineEditHRULandUseClassification.setText('')
-            if soilClassification and os.path.exists(soilClassification):
-                self.lineEditHRUSoilClassification.setText(soilClassification)
-            else:
-                self.lineEditHRUSoilClassification.setText('')
-            if slopeClassification and os.path.exists(slopeClassification):
-                self.lineEditHRUSlopeClassification.setText(slopeClassification)
-            else:
-                self.lineEditHRUSlopeClassification.setText('')
-            if areaName:
-                self.lineEditHRUAreaName.setText(areaName)
-            else:
-                self.lineEditHRUAreaName.setText('')
-            if period:
-                self.spinBoxHRUPeriod.setValue(int(period))
-            else:
-                self.spinBoxHRUPeriod.setValue(td.year)
+            if not returnTemplateSettings:
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditHRUWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditHRUWorkingDir.setText('')
+                if landUseMap and os.path.exists(landUseMap):
+                    self.lineEditHRULandUseMap.setText(landUseMap)
+                else:
+                    self.lineEditHRULandUseMap.setText('')
+                if soilMap and os.path.exists(soilMap):
+                    self.lineEditHRUSoilMap.setText(soilMap)
+                else:
+                    self.lineEditHRUSoilMap.setText('')
+                if subcatchmentMap and os.path.exists(subcatchmentMap):
+                    self.lineEditHRUSubcatchmentMap.setText(subcatchmentMap)
+                else:
+                    self.lineEditHRUSubcatchmentMap.setText('')
+                if landUseClassification and os.path.exists(landUseClassification):
+                    self.lineEditHRULandUseClassification.setText(landUseClassification)
+                else:
+                    self.lineEditHRULandUseClassification.setText('')
+                if soilClassification and os.path.exists(soilClassification):
+                    self.lineEditHRUSoilClassification.setText(soilClassification)
+                else:
+                    self.lineEditHRUSoilClassification.setText('')
+                if slopeClassification and os.path.exists(slopeClassification):
+                    self.lineEditHRUSlopeClassification.setText(slopeClassification)
+                else:
+                    self.lineEditHRUSlopeClassification.setText('')
+                if areaName:
+                    self.lineEditHRUAreaName.setText(areaName)
+                else:
+                    self.lineEditHRUAreaName.setText('')
+                if period:
+                    self.spinBoxHRUPeriod.setValue(int(period))
+                else:
+                    self.spinBoxHRUPeriod.setValue(td.year)
             
             settings.endGroup()
             # /dialog
@@ -365,22 +378,24 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESHMultipleHRU')
             
-            landUseThreshold = settings.value('landUseThreshold')
-            soilThreshold = settings.value('soilThreshold')
-            slopeThreshold = settings.value('slopeThreshold')
+            templateSettings['DialogLumensQUESHMultipleHRU'] = {}
+            templateSettings['DialogLumensQUESHMultipleHRU']['landUseThreshold'] = landUseThreshold = settings.value('landUseThreshold')
+            templateSettings['DialogLumensQUESHMultipleHRU']['soilThreshold'] = soilThreshold = settings.value('soilThreshold')
+            templateSettings['DialogLumensQUESHMultipleHRU']['slopeThreshold'] = slopeThreshold = settings.value('slopeThreshold')
             
-            if landUseThreshold:
-                self.spinBoxMultipleHRULandUseThreshold.setValue(int(landUseThreshold))
-            else:
-                self.spinBoxMultipleHRULandUseThreshold.setValue(0)
-            if soilThreshold:
-                self.spinBoxMultipleHRUSoilThreshold.setValue(int(soilThreshold))
-            else:
-                self.spinBoxMultipleHRUSoilThreshold.setValue(0)
-            if slopeThreshold:
-                self.spinBoxMultipleHRUSlopeThreshold.setValue(int(slopeThreshold))
-            else:
-                self.spinBoxMultipleHRUSlopeThreshold.setValue(0)
+            if not returnTemplateSettings:
+                if landUseThreshold:
+                    self.spinBoxMultipleHRULandUseThreshold.setValue(int(landUseThreshold))
+                else:
+                    self.spinBoxMultipleHRULandUseThreshold.setValue(0)
+                if soilThreshold:
+                    self.spinBoxMultipleHRUSoilThreshold.setValue(int(soilThreshold))
+                else:
+                    self.spinBoxMultipleHRUSoilThreshold.setValue(0)
+                if slopeThreshold:
+                    self.spinBoxMultipleHRUSlopeThreshold.setValue(int(slopeThreshold))
+                else:
+                    self.spinBoxMultipleHRUSlopeThreshold.setValue(0)
             
             settings.endGroup()
             # /dialog
@@ -399,45 +414,47 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESHWatershedModelEvaluation')
             
-            workingDir = settings.value('workingDir')
-            dateInitial = settings.value('dateInitial')
-            dateFinal = settings.value('dateFinal')
-            SWATModel = settings.value('SWATModel')
-            location = settings.value('location')
-            outletReachSubBasinID = settings.value('outletReachSubBasinID')
-            observedDebitFile = settings.value('observedDebitFile')
-            outputWatershedModelEvaluation = settings.value('outputWatershedModelEvaluation')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation'] = {}
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['dateInitial'] = dateInitial = settings.value('dateInitial')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['dateFinal'] = dateFinal = settings.value('dateFinal')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['SWATModel'] = SWATModel = settings.value('SWATModel')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['location'] = location = settings.value('location')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['outletReachSubBasinID'] = outletReachSubBasinID = settings.value('outletReachSubBasinID')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['observedDebitFile'] = observedDebitFile = settings.value('observedDebitFile')
+            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['outputWatershedModelEvaluation'] = outputWatershedModelEvaluation = settings.value('outputWatershedModelEvaluation')
             
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditWatershedModelEvaluationWorkingDir.setText(workingDir)
-            else:
-                self.lineEditWatershedModelEvaluationWorkingDir.setText('')
-            if dateInitial:
-                self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
-            else:
-                self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.currentDate())
-            if dateFinal:
-                self.dateWatershedModelEvaluationDateFinal.setDate(QtCore.QDate.fromString(dateFinal), 'dd/MM/yyyy')
-            else:
-                self.dateWatershedModelEvaluationDateFinal.setDate(QtCore.QDate.currentDate())
-            if SWATModel:
-                self.comboBoxWatershedModelEvaluationSWATModel.setCurrentIndex(self.comboBoxWatershedModelEvaluationSWATModel.findData(int(SWATModel)))
-            if location:
-                self.lineEditWatershedModelEvaluationLocation.setText(location)
-            else:
-                self.lineEditWatershedModelEvaluationLocation.setText('')
-            if outletReachSubBasinID:
-                self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(int(outletReachSubBasinID))
-            else:
-                self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(10)
-            if observedDebitFile and os.path.exists(observedDebitFile):
-                self.lineEditWatershedModelEvaluationObservedDebitFile.setText(observedDebitFile)
-            else:
-                self.lineEditWatershedModelEvaluationObservedDebitFile.setText('')
-            if outputWatershedModelEvaluation:
-                self.lineEditOutputWatershedModelEvaluation.setText(outputWatershedModelEvaluation)
-            else:
-                self.lineEditOutputWatershedModelEvaluation.setText('')
+            if not returnTemplateSettings:
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditWatershedModelEvaluationWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditWatershedModelEvaluationWorkingDir.setText('')
+                if dateInitial:
+                    self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
+                else:
+                    self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.currentDate())
+                if dateFinal:
+                    self.dateWatershedModelEvaluationDateFinal.setDate(QtCore.QDate.fromString(dateFinal), 'dd/MM/yyyy')
+                else:
+                    self.dateWatershedModelEvaluationDateFinal.setDate(QtCore.QDate.currentDate())
+                if SWATModel:
+                    self.comboBoxWatershedModelEvaluationSWATModel.setCurrentIndex(self.comboBoxWatershedModelEvaluationSWATModel.findData(int(SWATModel)))
+                if location:
+                    self.lineEditWatershedModelEvaluationLocation.setText(location)
+                else:
+                    self.lineEditWatershedModelEvaluationLocation.setText('')
+                if outletReachSubBasinID:
+                    self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(int(outletReachSubBasinID))
+                else:
+                    self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(10)
+                if observedDebitFile and os.path.exists(observedDebitFile):
+                    self.lineEditWatershedModelEvaluationObservedDebitFile.setText(observedDebitFile)
+                else:
+                    self.lineEditWatershedModelEvaluationObservedDebitFile.setText('')
+                if outputWatershedModelEvaluation:
+                    self.lineEditOutputWatershedModelEvaluation.setText(outputWatershedModelEvaluation)
+                else:
+                    self.lineEditOutputWatershedModelEvaluation.setText('')
             
             settings.endGroup()
             # /dialog
@@ -456,53 +473,58 @@ class DialogLumensQUES(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensQUESHWatershedIndicators')
             
-            SWATTXTINOUTDir = settings.value('SWATTXTINOUTDir')
-            dateInitial = settings.value('dateInitial')
-            dateFinal = settings.value('dateFinal')
-            subWatershedPolygon = settings.value('subWatershedPolygon')
-            location = settings.value('location')
-            subWatershedOutput = settings.value('subWatershedOutput')
-            outputInitialYearSubWatershedLevelIndicators = settings.value('outputInitialYearSubWatershedLevelIndicators')
-            outputFinalYearSubWatershedLevelIndicators = settings.value('outputFinalYearSubWatershedLevelIndicators')
+            templateSettings['DialogLumensQUESHWatershedIndicators'] = {}
+            templateSettings['DialogLumensQUESHWatershedIndicators']['SWATTXTINOUTDir'] = SWATTXTINOUTDir = settings.value('SWATTXTINOUTDir')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['dateInitial'] = dateInitial = settings.value('dateInitial')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['dateFinal'] = dateFinal = settings.value('dateFinal')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['subWatershedPolygon'] = subWatershedPolygon = settings.value('subWatershedPolygon')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['location'] = location = settings.value('location')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['subWatershedOutput'] = subWatershedOutput = settings.value('subWatershedOutput')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['outputInitialYearSubWatershedLevelIndicators'] = outputInitialYearSubWatershedLevelIndicators = settings.value('outputInitialYearSubWatershedLevelIndicators')
+            templateSettings['DialogLumensQUESHWatershedIndicators']['outputFinalYearSubWatershedLevelIndicators'] = outputFinalYearSubWatershedLevelIndicators = settings.value('outputFinalYearSubWatershedLevelIndicators')
             
-            if SWATTXTINOUTDir and os.path.isdir(SWATTXTINOUTDir):
-                self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText(SWATTXTINOUTDir)
-            else:
-                self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText('')
-            if dateInitial:
-                self.dateWatershedIndicatorsDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
-            else:
-                self.dateWatershedIndicatorsDateInitial.setDate(QtCore.QDate.currentDate())
-            if dateFinal:
-                self.dateWatershedIndicatorsDateFinal.setDate(QtCore.QDate.fromString(dateFinal), 'dd/MM/yyyy')
-            else:
-                self.dateWatershedIndicatorsDateFinal.setDate(QtCore.QDate.currentDate())
-            if subWatershedPolygon and os.path.exists(subWatershedPolygon):
-                self.lineEditWatershedIndicatorsSubWatershedPolygon.setText(subWatershedPolygon)
-            else:
-                self.lineEditWatershedIndicatorsSubWatershedPolygon.setText('')
-            if location:
-                self.lineEditWatershedIndicatorsLocation.setText(location)
-            else:
-                self.lineEditWatershedIndicatorsLocation.setText('')
-            if subWatershedOutput:
-                self.spinBoxWatershedIndicatorsSubWatershedOutputsetValue(int(subWatershedOutput))
-            else:
-                self.spinBoxWatershedIndicatorsSubWatershedOutputsetValue.setValue(10)
-            if outputInitialYearSubWatershedLevelIndicators:
-                self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText(outputInitialYearSubWatershedLevelIndicators)
-            else:
-                self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText('')
-            if outputFinalYearSubWatershedLevelIndicators:
-                self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText(outputFinalYearSubWatershedLevelIndicators)
-            else:
-                self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText('')
+            if not returnTemplateSettings:
+                if SWATTXTINOUTDir and os.path.isdir(SWATTXTINOUTDir):
+                    self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText(SWATTXTINOUTDir)
+                else:
+                    self.lineEditWatershedIndicatorsSWATTXTINOUTDir.setText('')
+                if dateInitial:
+                    self.dateWatershedIndicatorsDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
+                else:
+                    self.dateWatershedIndicatorsDateInitial.setDate(QtCore.QDate.currentDate())
+                if dateFinal:
+                    self.dateWatershedIndicatorsDateFinal.setDate(QtCore.QDate.fromString(dateFinal), 'dd/MM/yyyy')
+                else:
+                    self.dateWatershedIndicatorsDateFinal.setDate(QtCore.QDate.currentDate())
+                if subWatershedPolygon and os.path.exists(subWatershedPolygon):
+                    self.lineEditWatershedIndicatorsSubWatershedPolygon.setText(subWatershedPolygon)
+                else:
+                    self.lineEditWatershedIndicatorsSubWatershedPolygon.setText('')
+                if location:
+                    self.lineEditWatershedIndicatorsLocation.setText(location)
+                else:
+                    self.lineEditWatershedIndicatorsLocation.setText('')
+                if subWatershedOutput:
+                    self.spinBoxWatershedIndicatorsSubWatershedOutputsetValue(int(subWatershedOutput))
+                else:
+                    self.spinBoxWatershedIndicatorsSubWatershedOutputsetValue.setValue(10)
+                if outputInitialYearSubWatershedLevelIndicators:
+                    self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText(outputInitialYearSubWatershedLevelIndicators)
+                else:
+                    self.lineEditWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.setText('')
+                if outputFinalYearSubWatershedLevelIndicators:
+                    self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText(outputFinalYearSubWatershedLevelIndicators)
+                else:
+                    self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText('')
             
             settings.endGroup()
             # /dialog
             
             settings.endGroup()
             # /tab
+        
+        if returnTemplateSettings:
+            return templateSettings
         
         """
         print 'DEBUG'
@@ -516,52 +538,129 @@ class DialogLumensQUES(QtGui.QDialog):
         """
     
     
-    def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+    def checkForDuplicateTemplates(self, tabName, templateToSkip):
         """
-        self.setAppSettings()
-        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderQUES'], fileName)
-        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True) # only use ini files
-        
-        dialogsToSave = None
+        """
+        duplicateTemplate = None
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        dialogsToLoad = None
         
         if tabName == 'Pre-QUES':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensPreQUESLandcoverTrajectoriesAnalysis',
             )
         elif tabName == 'QUES-C':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensQUESCCarbonAccounting',
                 'DialogLumensQUESCPeatlandCarbonAccounting',
                 'DialogLumensQUESCSummarizeMultiplePeriod',
             )
         elif tabName == 'QUES-B':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensQUESBAnalysis',
             )
         elif tabName == 'Hydrological Response Unit Definition':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensQUESHDominantHRU',
                 'DialogLumensQUESHDominantLUSSL',
                 'DialogLumensQUESHMultipleHRU',
             )
         elif tabName == 'Watershed Model Evaluation':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensQUESHWatershedModelEvaluation',
             )
         elif tabName == 'Watershed Indicators':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensQUESHWatershedIndicators',
             )
         
-        settings.beginGroup(tabName)
-        for dialog in dialogsToSave:
-            settings.beginGroup(dialog)
-            for key, val in self.main.appSettings[dialog].iteritems():
-                settings.setValue(key, val)
+        for templateFile in templateFiles:
+            if templateFile == templateToSkip:
+                continue
+            
+            duplicateTemplate = templateFile
+            templateSettings = self.loadTemplate(tabName, templateFile, True)
+            
+            print 'DEBUG'
+            print templateFile, templateSettings
+            
+            # Loop thru all dialogs in a tab
+            for dialog in dialogsToLoad:
+                # Loop thru all settings in a dialog
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    if templateSettings[dialog][key] != val:
+                        # A setting doesn't match! This is not a matching template file, move along
+                        duplicateTemplate = None
+                    else:
+                        print 'DEBUG equal settings'
+                        print templateSettings[dialog][key], val
+        
+        # Found a duplicate template, offer to load it?
+        if duplicateTemplate:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Existing Template',
+                'The template you are about to save matches an existing template.\nDo you want to load \'{0}\' instead?'.format(duplicateTemplate),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+            if reply == QtGui.QMessageBox.Yes:
+                self.handlerLoadPURTemplate(duplicateTemplate)
+                return True
+        
+        return False
+    
+    
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
+        """
+        self.setAppSettings()
+        
+        # Check if current form values duplicate an existing template
+        if not self.checkForDuplicateTemplates(tabName, fileName):
+            templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderQUES'], fileName)
+            settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+            settings.setFallbacksEnabled(True) # only use ini files
+            
+            dialogsToSave = None
+            
+            if tabName == 'Pre-QUES':
+                dialogsToSave = (
+                    'DialogLumensPreQUESLandcoverTrajectoriesAnalysis',
+                )
+            elif tabName == 'QUES-C':
+                dialogsToSave = (
+                    'DialogLumensQUESCCarbonAccounting',
+                    'DialogLumensQUESCPeatlandCarbonAccounting',
+                    'DialogLumensQUESCSummarizeMultiplePeriod',
+                )
+            elif tabName == 'QUES-B':
+                dialogsToSave = (
+                    'DialogLumensQUESBAnalysis',
+                )
+            elif tabName == 'Hydrological Response Unit Definition':
+                dialogsToSave = (
+                    'DialogLumensQUESHDominantHRU',
+                    'DialogLumensQUESHDominantLUSSL',
+                    'DialogLumensQUESHMultipleHRU',
+                )
+            elif tabName == 'Watershed Model Evaluation':
+                dialogsToSave = (
+                    'DialogLumensQUESHWatershedModelEvaluation',
+                )
+            elif tabName == 'Watershed Indicators':
+                dialogsToSave = (
+                    'DialogLumensQUESHWatershedIndicators',
+                )
+            
+            settings.beginGroup(tabName)
+            for dialog in dialogsToSave:
+                settings.beginGroup(dialog)
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    settings.setValue(key, val)
+                settings.endGroup()
             settings.endGroup()
-        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -1171,7 +1270,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBParameters.addWidget(self.comboBoxQUESBRefMapID, 8, 1)
         
         # 'Output' GroupBox
-        self.groupBoxQUESBOutput = QtGui.QGroupBox('QUESBOutput')
+        self.groupBoxQUESBOutput = QtGui.QGroupBox('Output')
         self.layoutGroupBoxQUESBOutput = QtGui.QVBoxLayout()
         self.layoutGroupBoxQUESBOutput.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.groupBoxQUESBOutput.setLayout(self.layoutGroupBoxQUESBOutput)
@@ -1185,7 +1284,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBOutputInfo.addWidget(self.labelQUESBOutputInfo)
         
         self.labelQUESBOutputTECIInitial = QtGui.QLabel()
-        self.labelQUESBOutputTECIInitial.setText('[QUESBOutput] TECI initial:')
+        self.labelQUESBOutputTECIInitial.setText('[Output] TECI initial:')
         self.layoutQUESBOutput.addWidget(self.labelQUESBOutputTECIInitial, 0, 0)
         
         self.lineEditQUESBOutputTECIInitial = QtGui.QLineEdit()
@@ -1197,7 +1296,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputTECIInitial, 0, 2)
         
         self.labelQUESBOutputTECIFinal = QtGui.QLabel()
-        self.labelQUESBOutputTECIFinal.setText('[QUESBOutput] TECI final:')
+        self.labelQUESBOutputTECIFinal.setText('[Output] TECI final:')
         self.layoutQUESBOutput.addWidget(self.labelQUESBOutputTECIFinal, 1, 0)
         
         self.lineEditQUESBOutputTECIFinal = QtGui.QLineEdit()
@@ -1209,7 +1308,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputTECIFinal, 1, 2)
         
         self.labelQUESBOutputHabitatLoss = QtGui.QLabel()
-        self.labelQUESBOutputHabitatLoss.setText('[QUESBOutput] Habitat Loss:')
+        self.labelQUESBOutputHabitatLoss.setText('[Output] Habitat Loss:')
         self.layoutQUESBOutput.addWidget(self.labelQUESBOutputHabitatLoss, 2, 0)
         
         self.lineEditQUESBOutputHabitatLoss = QtGui.QLineEdit()
@@ -1221,7 +1320,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputHabitatLoss, 2, 2)
         
         self.labelQUESBOutputDegradedHabitat = QtGui.QLabel()
-        self.labelQUESBOutputDegradedHabitat.setText('[QUESBOutput] Degraded habitat:')
+        self.labelQUESBOutputDegradedHabitat.setText('[Output] Degraded habitat:')
         self.layoutQUESBOutput.addWidget(self.labelQUESBOutputDegradedHabitat, 3, 0)
         
         self.lineEditQUESBOutputDegradedHabitat = QtGui.QLineEdit()
@@ -1233,7 +1332,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputDegradedHabitat, 3, 2)
         
         self.labelQUESBOutputHabitatGain = QtGui.QLabel()
-        self.labelQUESBOutputHabitatGain.setText('[QUESBOutput] Habitat gain:')
+        self.labelQUESBOutputHabitatGain.setText('[Output] Habitat gain:')
         self.layoutQUESBOutput.addWidget(self.labelQUESBOutputHabitatGain, 4, 0)
         
         self.lineEditQUESBOutputHabitatGain = QtGui.QLineEdit()
@@ -1245,7 +1344,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutQUESBOutput.addWidget(self.buttonSelectQUESBOutputHabitatGain, 4, 2)
         
         self.labelQUESBOutputRecoveredHabitat = QtGui.QLabel()
-        self.labelQUESBOutputRecoveredHabitat.setText('[QUESBOutput] Recovered habitat:')
+        self.labelQUESBOutputRecoveredHabitat.setText('[Output] Recovered habitat:')
         self.layoutQUESBOutput.addWidget(self.labelQUESBOutputRecoveredHabitat, 5, 0)
         
         self.lineEditQUESBOutputRecoveredHabitat = QtGui.QLineEdit()
@@ -1327,7 +1426,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWatershedModelEvaluation = QtGui.QWidget()
         self.tabWatershedIndicators = QtGui.QWidget()
         
-        self.tabWidgetQUESH.addTab(self.tabWatershedDelineation, 'Watershed Delineation')
+        ###self.tabWidgetQUESH.addTab(self.tabWatershedDelineation, 'Watershed Delineation')
         self.tabWidgetQUESH.addTab(self.tabHRUDefinition, 'Hydrological Response Unit Definition')
         self.tabWidgetQUESH.addTab(self.tabWatershedModelEvaluation, 'Watershed Model Evaluation')
         self.tabWidgetQUESH.addTab(self.tabWatershedIndicators, 'Watershed Indicators')
@@ -1647,7 +1746,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelWatershedModelEvaluationDateFinal.setText('Final date:')
         self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateFinal, 2, 0)
         
-        self.dateWatershedModelEvaluationDateFinal = QtGui.QDateEdit(QtCore.QDate.currentDate(), )
+        self.dateWatershedModelEvaluationDateFinal = QtGui.QDateEdit(QtCore.QDate.currentDate())
         self.dateWatershedModelEvaluationDateFinal.setCalendarPopup(True)
         self.dateWatershedModelEvaluationDateFinal.setDisplayFormat('dd/MM/yyyy')
         self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateFinal, 2, 1)
@@ -2105,7 +2204,9 @@ class DialogLumensQUES(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSavePreQUESTemplate(fileName)
             else:
@@ -2266,7 +2367,9 @@ class DialogLumensQUES(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveQUESCTemplate(fileName)
             else:
@@ -2360,7 +2463,9 @@ class DialogLumensQUES(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveQUESBTemplate(fileName)
             else:
@@ -2543,7 +2648,9 @@ class DialogLumensQUES(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveHRUDefinitionTemplate(fileName)
             else:
@@ -2702,7 +2809,9 @@ class DialogLumensQUES(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveWatershedModelEvaluationTemplate(fileName)
             else:
@@ -2806,7 +2915,9 @@ class DialogLumensQUES(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveWatershedIndicatorsTemplate(fileName)
             else:

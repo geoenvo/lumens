@@ -34,13 +34,14 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             self.buttonLoadLandUseChangeModelingTemplate.setDisabled(True)
         
     
-    def loadTemplate(self, tabName, fileName):
+    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
+        templateSettings = {}
         dialogsToLoad = None
         
         td = datetime.date.today()
@@ -60,32 +61,34 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensSCIENDOHistoricalBaselineProjection')
             
-            workingDir = settings.value('workingDir')
-            QUESCDatabase = settings.value('QUESCDatabase')
-            t1 = settings.value('t1')
-            t2 = settings.value('t2')
-            iteration = settings.value('iteration')
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection'] = {}
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['QUESCDatabase'] = QUESCDatabase = settings.value('QUESCDatabase')
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t1'] = t1 = settings.value('t1')
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t2'] = t2 = settings.value('t2')
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['iteration'] = iteration = settings.value('iteration')
             
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditHistoricalBaselineProjectionWorkingDir.setText(workingDir)
-            else:
-                self.lineEditHistoricalBaselineProjectionWorkingDir.setText('')
-            if QUESCDatabase and os.path.exists(QUESCDatabase):
-                self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(QUESCDatabase)
-            else:
-                self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText('')
-            if t1:
-                self.spinBoxHistoricalBaselineProjectionT1.setValue(int(t1))
-            else:
-                self.spinBoxHistoricalBaselineProjectionT1.setValue(td.year)
-            if t2:
-                self.spinBoxHistoricalBaselineProjectionT2.setValue(int(t2))
-            else:
-                self.spinBoxHistoricalBaselineProjectionT2.setValue(td.year)
-            if iteration:
-                self.spinBoxHistoricalBaselineProjectionIteration.setValue(int(iteration))
-            else:
-                self.spinBoxHistoricalBaselineProjectionIteration.setValue(5)
+            if not returnTemplateSettings:
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditHistoricalBaselineProjectionWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditHistoricalBaselineProjectionWorkingDir.setText('')
+                if QUESCDatabase and os.path.exists(QUESCDatabase):
+                    self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(QUESCDatabase)
+                else:
+                    self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText('')
+                if t1:
+                    self.spinBoxHistoricalBaselineProjectionT1.setValue(int(t1))
+                else:
+                    self.spinBoxHistoricalBaselineProjectionT1.setValue(td.year)
+                if t2:
+                    self.spinBoxHistoricalBaselineProjectionT2.setValue(int(t2))
+                else:
+                    self.spinBoxHistoricalBaselineProjectionT2.setValue(td.year)
+                if iteration:
+                    self.spinBoxHistoricalBaselineProjectionIteration.setValue(int(iteration))
+                else:
+                    self.spinBoxHistoricalBaselineProjectionIteration.setValue(5)
             
             settings.endGroup()
             # /dialog
@@ -94,12 +97,14 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensSCIENDOHistoricalBaselineAnnualProjection')
             
-            iteration = settings.value('iteration')
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineAnnualProjection'] = {}
+            templateSettings['DialogLumensSCIENDOHistoricalBaselineAnnualProjection']['iteration'] = iteration = settings.value('iteration')
             
-            if iteration:
-                self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(int(iteration))
-            else:
-                self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(5)
+            if not returnTemplateSettings:
+                if iteration:
+                    self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(int(iteration))
+                else:
+                    self.spinBoxHistoricalBaselineAnnualProjectionIteration.setValue(5)
             
             settings.endGroup()
             # /dialog
@@ -108,17 +113,19 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensSCIENDODriversAnalysis')
             
-            landUseCoverChangeDrivers = settings.value('landUseCoverChangeDrivers')
-            landUseCoverChangeType = settings.value('landUseCoverChangeType')
+            templateSettings['DialogLumensSCIENDODriversAnalysis'] = {}
+            templateSettings['DialogLumensSCIENDODriversAnalysis']['landUseCoverChangeDrivers'] = landUseCoverChangeDrivers = settings.value('landUseCoverChangeDrivers')
+            templateSettings['DialogLumensSCIENDODriversAnalysis']['landUseCoverChangeType'] = landUseCoverChangeType = settings.value('landUseCoverChangeType')
             
-            if landUseCoverChangeDrivers and os.path.exists(landUseCoverChangeDrivers):
-                self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText(landUseCoverChangeDrivers)
-            else:
-                self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText('')
-            if landUseCoverChangeType:
-                self.lineEditDriversAnalysisLandUseCoverChangeType.setText(landUseCoverChangeType)
-            else:
-                self.lineEditDriversAnalysisLandUseCoverChangeType.setText('Land use change')
+            if not returnTemplateSettings:
+                if landUseCoverChangeDrivers and os.path.exists(landUseCoverChangeDrivers):
+                    self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText(landUseCoverChangeDrivers)
+                else:
+                    self.lineEditDriversAnalysisLandUseCoverChangeDrivers.setText('')
+                if landUseCoverChangeType:
+                    self.lineEditDriversAnalysisLandUseCoverChangeType.setText(landUseCoverChangeType)
+                else:
+                    self.lineEditDriversAnalysisLandUseCoverChangeType.setText('Land use change')
             
             settings.endGroup()
             # /dialog
@@ -127,12 +134,14 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensSCIENDOBuildScenario')
             
-            historicalBaselineCar = settings.value('historicalBaselineCar')
+            templateSettings['DialogLumensSCIENDOBuildScenario'] = {}
+            templateSettings['DialogLumensSCIENDOBuildScenario']['historicalBaselineCar'] = historicalBaselineCar = settings.value('historicalBaselineCar')
             
-            if historicalBaselineCar and os.path.exists(historicalBaselineCar):
-                self.lineEditBuildScenarioHistoricalBaselineCar.setText(historicalBaselineCar)
-            else:
-                self.lineEditBuildScenarioHistoricalBaselineCar.setText('')
+            if not returnTemplateSettings:
+                if historicalBaselineCar and os.path.exists(historicalBaselineCar):
+                    self.lineEditBuildScenarioHistoricalBaselineCar.setText(historicalBaselineCar)
+                else:
+                    self.lineEditBuildScenarioHistoricalBaselineCar.setText('')
             
             settings.endGroup()
             # /dialog
@@ -151,33 +160,38 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensSCIENDOCalculateTransitionMatrix')
             
-            factorsDir = settings.value('factorsDir')
-            landUseLookup = settings.value('landUseLookup')
-            baseYear = settings.value('baseYear')
-            location = settings.value('location')
+            templateSettings['DialogLumensSCIENDOCalculateTransitionMatrix'] = {}
+            templateSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['factorsDir'] = factorsDir = settings.value('factorsDir')
+            templateSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['landUseLookup'] = landUseLookup = settings.value('landUseLookup')
+            templateSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['baseYear'] = baseYear = settings.value('baseYear')
+            templateSettings['DialogLumensSCIENDOCalculateTransitionMatrix']['location'] = location = settings.value('location')
             
-            if factorsDir and os.path.isdir(factorsDir):
-                self.lineEditLandUseChangeModelingFactorsDir.setText(factorsDir)
-            else:
-                self.lineEditLandUseChangeModelingFactorsDir.setText('')
-            if landUseLookup and os.path.exists(landUseLookup):
-                self.lineEditLandUseChangeModelingLandUseLookup.setText(landUseLookup)
-            else:
-                self.lineEditLandUseChangeModelingLandUseLookup.setText('')
-            if baseYear:
-                self.spinBoxLandUseChangeModelingBaseYear.setValue(int(baseYear))
-            else:
-                self.spinBoxLandUseChangeModelingBaseYear.setValue(td.year)
-            if location:
-                self.lineEditLandUseChangeModelingLocation.setText(location)
-            else:
-                self.lineEditLandUseChangeModelingLocation.setText('location')
+            if not returnTemplateSettings:
+                if factorsDir and os.path.isdir(factorsDir):
+                    self.lineEditLandUseChangeModelingFactorsDir.setText(factorsDir)
+                else:
+                    self.lineEditLandUseChangeModelingFactorsDir.setText('')
+                if landUseLookup and os.path.exists(landUseLookup):
+                    self.lineEditLandUseChangeModelingLandUseLookup.setText(landUseLookup)
+                else:
+                    self.lineEditLandUseChangeModelingLandUseLookup.setText('')
+                if baseYear:
+                    self.spinBoxLandUseChangeModelingBaseYear.setValue(int(baseYear))
+                else:
+                    self.spinBoxLandUseChangeModelingBaseYear.setValue(td.year)
+                if location:
+                    self.lineEditLandUseChangeModelingLocation.setText(location)
+                else:
+                    self.lineEditLandUseChangeModelingLocation.setText('location')
             
             settings.endGroup()
             # /dialog
             
             settings.endGroup()
             # /tab
+        
+        if returnTemplateSettings:
+            return templateSettings
         
         """
         print 'DEBUG'
@@ -191,35 +205,95 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         """
     
     
-    def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+    def checkForDuplicateTemplates(self, tabName, templateToSkip):
         """
-        self.setAppSettings()
-        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
-        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True) # only use ini files
-        
-        dialogsToSave = None
+        """
+        duplicateTemplate = None
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        dialogsToLoad = None
         
         if tabName == 'Low Emission Development Analysis':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensSCIENDOHistoricalBaselineProjection',
                 'DialogLumensSCIENDOHistoricalBaselineAnnualProjection',
                 'DialogLumensSCIENDODriversAnalysis',
                 'DialogLumensSCIENDOBuildScenario',
             )
         elif tabName == 'Land Use Change Modeling':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensSCIENDOCalculateTransitionMatrix',
             )
         
-        settings.beginGroup(tabName)
-        for dialog in dialogsToSave:
-            settings.beginGroup(dialog)
-            for key, val in self.main.appSettings[dialog].iteritems():
-                settings.setValue(key, val)
+        for templateFile in templateFiles:
+            if templateFile == templateToSkip:
+                continue
+            
+            duplicateTemplate = templateFile
+            templateSettings = self.loadTemplate(tabName, templateFile, True)
+            
+            print 'DEBUG'
+            print templateFile, templateSettings
+            
+            # Loop thru all dialogs in a tab
+            for dialog in dialogsToLoad:
+                # Loop thru all settings in a dialog
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    if templateSettings[dialog][key] != val:
+                        # A setting doesn't match! This is not a matching template file, move along
+                        duplicateTemplate = None
+                    else:
+                        print 'DEBUG equal settings'
+                        print templateSettings[dialog][key], val
+        
+        # Found a duplicate template, offer to load it?
+        if duplicateTemplate:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Existing Template',
+                'The template you are about to save matches an existing template.\nDo you want to load \'{0}\' instead?'.format(duplicateTemplate),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+            if reply == QtGui.QMessageBox.Yes:
+                self.handlerLoadPURTemplate(duplicateTemplate)
+                return True
+        
+        return False
+    
+    
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
+        """
+        self.setAppSettings()
+        
+        # Check if current form values duplicate an existing template
+        if not self.checkForDuplicateTemplates(tabName, fileName):
+            templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'], fileName)
+            settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+            settings.setFallbacksEnabled(True) # only use ini files
+            
+            dialogsToSave = None
+            
+            if tabName == 'Low Emission Development Analysis':
+                dialogsToSave = (
+                    'DialogLumensSCIENDOHistoricalBaselineProjection',
+                    'DialogLumensSCIENDOHistoricalBaselineAnnualProjection',
+                    'DialogLumensSCIENDODriversAnalysis',
+                    'DialogLumensSCIENDOBuildScenario',
+                )
+            elif tabName == 'Land Use Change Modeling':
+                dialogsToSave = (
+                    'DialogLumensSCIENDOCalculateTransitionMatrix',
+                )
+            
+            settings.beginGroup(tabName)
+            for dialog in dialogsToSave:
+                settings.beginGroup(dialog)
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    settings.setValue(key, val)
+                settings.endGroup()
             settings.endGroup()
-        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -846,7 +920,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveLowEmissionDevelopmentAnalysisTemplate(fileName)
             else:
@@ -961,7 +1037,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveLandUseChangeModelingTemplate(fileName)
             else:

@@ -50,13 +50,14 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.buttonLoadLandUseChangeImpactTemplate.setDisabled(True)
         
     
-    def loadTemplate(self, tabName, fileName):
+    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
+        templateSettings = {}
         dialogsToLoad = None
         
         td = datetime.date.today()
@@ -74,32 +75,34 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTARegionalEconomySingleIODescriptiveAnalysis')
             
-            period = settings.value('period')
-            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
-            valueAddedMatrix = settings.value('valueAddedMatrix')
-            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
-            labourRequirement = settings.value('labourRequirement')
+            templateSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis'] = {}
+            templateSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['period'] = period = settings.value('period')
+            templateSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['intermediateConsumptionMatrix'] = intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            templateSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['valueAddedMatrix'] = valueAddedMatrix = settings.value('valueAddedMatrix')
+            templateSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['finalConsumptionMatrix'] = finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            templateSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['labourRequirement'] = labourRequirement = settings.value('labourRequirement')
             
-            if period:
-                self.spinBoxSinglePeriod.setValue(int(period))
-            else:
-                self.spinBoxSinglePeriod.setValue(td.year)
-            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
-                self.lineEditSingleIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
-            else:
-                self.lineEditSingleIntermediateConsumptionMatrix.setText('')
-            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
-                self.lineEditSingleValueAddedMatrix.setText(valueAddedMatrix)
-            else:
-                self.lineEditSingleValueAddedMatrix.setText('')
-            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
-                self.lineEditSingleFinalConsumptionMatrix.setText(finalConsumptionMatrix)
-            else:
-                self.lineEditSingleFinalConsumptionMatrix.setText('')
-            if labourRequirement and os.path.exists(labourRequirement):
-                self.lineEditSingleLabourRequirement.setText(labourRequirement)
-            else:
-                self.lineEditSingleLabourRequirement.setText('')
+            if not returnTemplateSettings:
+                if period:
+                    self.spinBoxSinglePeriod.setValue(int(period))
+                else:
+                    self.spinBoxSinglePeriod.setValue(td.year)
+                if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                    self.lineEditSingleIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+                else:
+                    self.lineEditSingleIntermediateConsumptionMatrix.setText('')
+                if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                    self.lineEditSingleValueAddedMatrix.setText(valueAddedMatrix)
+                else:
+                    self.lineEditSingleValueAddedMatrix.setText('')
+                if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                    self.lineEditSingleFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+                else:
+                    self.lineEditSingleFinalConsumptionMatrix.setText('')
+                if labourRequirement and os.path.exists(labourRequirement):
+                    self.lineEditSingleLabourRequirement.setText(labourRequirement)
+                else:
+                    self.lineEditSingleLabourRequirement.setText('')
             
             settings.endGroup()
             # /dialog
@@ -108,62 +111,64 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis')
             
-            period2 = settings.value('period2')
-            intermediateConsumptionMatrixP2 = settings.value('intermediateConsumptionMatrixP2')
-            valueAddedMatrixP2 = settings.value('valueAddedMatrixP2')
-            finalConsumptionMatrixP2 = settings.value('finalConsumptionMatrixP2')
-            labourRequirementP2 = settings.value('labourRequirementP2')
-            workingDir = settings.value('workingDir')
-            valueAddedComponent = settings.value('valueAddedComponent')
-            finalConsumptionComponent = settings.value('finalConsumptionComponent')
-            listOfEconomicSector = settings.value('listOfEconomicSector')
-            financialUnit = settings.value('financialUnit')
-            areaName = settings.value('areaName')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis'] = {}
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['period2'] = period2 = settings.value('period2')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['intermediateConsumptionMatrixP2'] = intermediateConsumptionMatrixP2 = settings.value('intermediateConsumptionMatrixP2')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedMatrixP2'] = valueAddedMatrixP2 = settings.value('valueAddedMatrixP2')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionMatrixP2'] = finalConsumptionMatrixP2 = settings.value('finalConsumptionMatrixP2')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['labourRequirementP2'] = labourRequirementP2 = settings.value('labourRequirementP2')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedComponent'] = valueAddedComponent = settings.value('valueAddedComponent')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionComponent'] = finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['listOfEconomicSector'] = listOfEconomicSector = settings.value('listOfEconomicSector')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['financialUnit'] = financialUnit = settings.value('financialUnit')
+            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['areaName'] = areaName = settings.value('areaName')
             
-            if period2:
-                self.spinBoxMultiplePeriod.setValue(int(period2))
-            else:
-                self.spinBoxMultiplePeriod.setValue(td.year)
-            if intermediateConsumptionMatrixP2 and os.path.exists(intermediateConsumptionMatrixP2):
-                self.lineEditMultipleIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrixP2)
-            else:
-                self.lineEditMultipleIntermediateConsumptionMatrix.setText('')
-            if valueAddedMatrixP2 and os.path.exists(valueAddedMatrixP2):
-                self.lineEditMultipleValueAddedMatrix.setText(valueAddedMatrixP2)
-            else:
-                self.lineEditMultipleValueAddedMatrix.setText('')
-            if finalConsumptionMatrixP2 and os.path.exists(finalConsumptionMatrixP2):
-                self.lineEditMultipleFinalConsumptionMatrix.setText(finalConsumptionMatrixP2)
-            else:
-                self.lineEditMultipleFinalConsumptionMatrix.setText('')
-            if labourRequirementP2 and os.path.exists(labourRequirementP2):
-                self.lineEditMultipleLabourRequirement.setText(labourRequirementP2)
-            else:
-                self.lineEditMultipleLabourRequirement.setText('')
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditOtherWorkingDir.setText(workingDir)
-            else:
-                self.lineEditOtherWorkingDir.setText('')
-            if valueAddedComponent and os.path.exists(valueAddedComponent):
-                self.lineEditOtherValueAddedComponent.setText(valueAddedComponent)
-            else:
-                self.lineEditOtherValueAddedComponent.setText('')
-            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
-                self.lineEditOtherFinalConsumptionComponent.setText(finalConsumptionComponent)
-            else:
-                self.lineEditOtherFinalConsumptionComponent.setText('')
-            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
-                self.lineEditOtherListOfEconomicSector.setText(listOfEconomicSector)
-            else:
-                self.lineEditOtherListOfEconomicSector.setText('')
-            if financialUnit:
-                self.lineEditOtherFinancialUnit.setText(financialUnit)
-            else:
-                self.lineEditOtherFinancialUnit.setText('')
-            if areaName:
-                self.lineEditOtherAreaName.setText(areaName)
-            else:
-                self.lineEditOtherAreaName.setText('')
+            if not returnTemplateSettings:
+                if period2:
+                    self.spinBoxMultiplePeriod.setValue(int(period2))
+                else:
+                    self.spinBoxMultiplePeriod.setValue(td.year)
+                if intermediateConsumptionMatrixP2 and os.path.exists(intermediateConsumptionMatrixP2):
+                    self.lineEditMultipleIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrixP2)
+                else:
+                    self.lineEditMultipleIntermediateConsumptionMatrix.setText('')
+                if valueAddedMatrixP2 and os.path.exists(valueAddedMatrixP2):
+                    self.lineEditMultipleValueAddedMatrix.setText(valueAddedMatrixP2)
+                else:
+                    self.lineEditMultipleValueAddedMatrix.setText('')
+                if finalConsumptionMatrixP2 and os.path.exists(finalConsumptionMatrixP2):
+                    self.lineEditMultipleFinalConsumptionMatrix.setText(finalConsumptionMatrixP2)
+                else:
+                    self.lineEditMultipleFinalConsumptionMatrix.setText('')
+                if labourRequirementP2 and os.path.exists(labourRequirementP2):
+                    self.lineEditMultipleLabourRequirement.setText(labourRequirementP2)
+                else:
+                    self.lineEditMultipleLabourRequirement.setText('')
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditOtherWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditOtherWorkingDir.setText('')
+                if valueAddedComponent and os.path.exists(valueAddedComponent):
+                    self.lineEditOtherValueAddedComponent.setText(valueAddedComponent)
+                else:
+                    self.lineEditOtherValueAddedComponent.setText('')
+                if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                    self.lineEditOtherFinalConsumptionComponent.setText(finalConsumptionComponent)
+                else:
+                    self.lineEditOtherFinalConsumptionComponent.setText('')
+                if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                    self.lineEditOtherListOfEconomicSector.setText(listOfEconomicSector)
+                else:
+                    self.lineEditOtherListOfEconomicSector.setText('')
+                if financialUnit:
+                    self.lineEditOtherFinancialUnit.setText(financialUnit)
+                else:
+                    self.lineEditOtherFinancialUnit.setText('')
+                if areaName:
+                    self.lineEditOtherAreaName.setText(areaName)
+                else:
+                    self.lineEditOtherAreaName.setText('')
             
             settings.endGroup()
             # /dialog
@@ -183,97 +188,101 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis')
             
-            finalDemandChangeScenario = settings.value('finalDemandChangeScenario')
-            workingDir = settings.value('workingDir')
-            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
-            valueAddedMatrix = settings.value('valueAddedMatrix')
-            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
-            valueAddedComponent = settings.value('valueAddedComponent')
-            finalConsumptionComponent = settings.value('finalConsumptionComponent')
-            listOfEconomicSector = settings.value('listOfEconomicSector')
-            landDistributionMatrix = settings.value('landDistributionMatrix')
-            landRequirementCoefficientMatrix = settings.value('landRequirementCoefficientMatrix')
-            landCoverComponent = settings.value('landCoverComponent')
-            labourRequirement = settings.value('labourRequirement')
-            financialUnit = settings.value('financialUnit')
-            areaName = settings.value('areaName')
-            period = settings.value('period')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis'] = {}
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalDemandChangeScenario'] = finalDemandChangeScenario = settings.value('finalDemandChangeScenario')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['intermediateConsumptionMatrix'] = intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['valueAddedMatrix'] = valueAddedMatrix = settings.value('valueAddedMatrix')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalConsumptionMatrix'] = finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['valueAddedComponent'] = valueAddedComponent = settings.value('valueAddedComponent')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalConsumptionComponent'] = finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['listOfEconomicSector'] = listOfEconomicSector = settings.value('listOfEconomicSector')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['landDistributionMatrix'] = landDistributionMatrix = settings.value('landDistributionMatrix')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['landRequirementCoefficientMatrix'] = landRequirementCoefficientMatrix = settings.value('landRequirementCoefficientMatrix')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['landCoverComponent'] = landCoverComponent = settings.value('landCoverComponent')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['labourRequirement'] = labourRequirement = settings.value('labourRequirement')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['financialUnit'] = financialUnit = settings.value('financialUnit')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['areaName'] = areaName = settings.value('areaName')
+            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['period'] = period = settings.value('period')
             
-            if finalDemandChangeScenario and os.path.exists(finalDemandChangeScenario):
-                self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText(finalDemandChangeScenario)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('')
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(workingDir)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText('')
-            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
-                self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText('')
-            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
-                self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText(valueAddedMatrix)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText('')
-            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
-                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText(finalConsumptionMatrix)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText('')
-            if valueAddedComponent and os.path.exists(valueAddedComponent):
-                self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText(valueAddedComponent)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText('')
-            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
-                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText(finalConsumptionComponent)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText('')
-            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
-                self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText(listOfEconomicSector)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText('')
-            
-            if landDistributionMatrix and os.path.exists(landDistributionMatrix):
-                self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText(landDistributionMatrix)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText('')
-            if landRequirementCoefficientMatrix and os.path.exists(landRequirementCoefficientMatrix):
-                self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText(landRequirementCoefficientMatrix)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText('')
-            if landCoverComponent and os.path.exists(landCoverComponent):
-                self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText(landCoverComponent)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText('')
-            if labourRequirement and os.path.exists(labourRequirement):
-                self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText(labourRequirement)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText('')
-            if financialUnit:
-                self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText(financialUnit)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText('')
-            if areaName:
-                self.lineEditRegionalEconomicScenarioImpactAreaName.setText(areaName)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactAreaName.setText('')
-            if period:
-                self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(int(period))
-            else:
-                self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(td.year)
+            if not returnTemplateSettings:
+                if finalDemandChangeScenario and os.path.exists(finalDemandChangeScenario):
+                    self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText(finalDemandChangeScenario)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('')
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText('')
+                if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                    self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText('')
+                if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                    self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText(valueAddedMatrix)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactValueAddedMatrix.setText('')
+                if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                    self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactFinalConsumptionMatrix.setText('')
+                if valueAddedComponent and os.path.exists(valueAddedComponent):
+                    self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText(valueAddedComponent)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactValueAddedComponent.setText('')
+                if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                    self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText(finalConsumptionComponent)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactFinalConsumptionComponent.setText('')
+                if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                    self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText(listOfEconomicSector)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactListOfEconomicSector.setText('')
+                
+                if landDistributionMatrix and os.path.exists(landDistributionMatrix):
+                    self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText(landDistributionMatrix)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactLandDistributionMatrix.setText('')
+                if landRequirementCoefficientMatrix and os.path.exists(landRequirementCoefficientMatrix):
+                    self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText(landRequirementCoefficientMatrix)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix.setText('')
+                if landCoverComponent and os.path.exists(landCoverComponent):
+                    self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText(landCoverComponent)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactLandCoverComponent.setText('')
+                if labourRequirement and os.path.exists(labourRequirement):
+                    self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText(labourRequirement)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactLabourRequirement.setText('')
+                if financialUnit:
+                    self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText(financialUnit)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactFinancialUnit.setText('')
+                if areaName:
+                    self.lineEditRegionalEconomicScenarioImpactAreaName.setText(areaName)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactAreaName.setText('')
+                if period:
+                    self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(int(period))
+                else:
+                    self.spinBoxRegionalEconomicScenarioImpactPeriod.setValue(td.year)
             
             settings.endGroup()
             # /dialog
             
             # 'GDP Scenario' widgets
             # start dialog
-            settings.beginGroup('DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis')
+            settings.beginGroup('DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis')
             
-            gdpChangeScenario = settings.value('gdpChangeScenario')
+            templateSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis'] = {}
+            templateSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['gdpChangeScenario'] = gdpChangeScenario = settings.value('gdpChangeScenario')
             
-            if gdpChangeScenario and os.path.exists(gdpChangeScenario):
-                self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText(gdpChangeScenario)
-            else:
-                self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText('')
+            if not returnTemplateSettings:
+                if gdpChangeScenario and os.path.exists(gdpChangeScenario):
+                    self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText(gdpChangeScenario)
+                else:
+                    self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText('')
             
             settings.endGroup()
             # /dialog
@@ -292,77 +301,79 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis')
             
-            workingDir = settings.value('workingDir')
-            landCoverMap = settings.value('landCoverMap')
-            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
-            valueAddedMatrix = settings.value('valueAddedMatrix')
-            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
-            valueAddedComponent = settings.value('valueAddedComponent')
-            finalConsumptionComponent = settings.value('finalConsumptionComponent')
-            listOfEconomicSector = settings.value('listOfEconomicSector')
-            landDistributionMatrix = settings.value('landDistributionMatrix')
-            landCoverComponent = settings.value('landCoverComponent')
-            labourRequirement = settings.value('labourRequirement')
-            financialUnit = settings.value('financialUnit')
-            areaName = settings.value('areaName')
-            period = settings.value('period')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis'] = {}
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['landCoverMap'] = landCoverMap = settings.value('landCoverMap')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['intermediateConsumptionMatrix'] = intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['valueAddedMatrix'] = valueAddedMatrix = settings.value('valueAddedMatrix')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['finalConsumptionMatrix'] = finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['valueAddedComponent'] = valueAddedComponent = settings.value('valueAddedComponent')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['finalConsumptionComponent'] = finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['listOfEconomicSector'] = listOfEconomicSector = settings.value('listOfEconomicSector')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['landDistributionMatrix'] = landDistributionMatrix = settings.value('landDistributionMatrix')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['landCoverComponent'] = landCoverComponent = settings.value('landCoverComponent')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['labourRequirement'] = labourRequirement = settings.value('labourRequirement')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['financialUnit'] = financialUnit = settings.value('financialUnit')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['areaName'] = areaName = settings.value('areaName')
+            templateSettings['DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis']['period'] = period = settings.value('period')
             
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditLandRequirementAnalysisWorkingDir.setText(workingDir)
-            else:
-                self.lineEditLandRequirementAnalysisWorkingDir.setText('')
-            if landCoverMap and os.path.exists(landCoverMap):
-                self.lineEditLandRequirementAnalysisLandCoverMap.setText(landCoverMap)
-            else:
-                self.lineEditLandRequirementAnalysisLandCoverMap.setText('')
-            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
-                self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
-            else:
-                self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText('')
-            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
-                self.lineEditLandRequirementAnalysisValueAddedMatrix.setText(valueAddedMatrix)
-            else:
-                self.lineEditLandRequirementAnalysisValueAddedMatrix.setText('')
-            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
-                self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText(finalConsumptionMatrix)
-            else:
-                self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText('')
-            if valueAddedComponent and os.path.exists(valueAddedComponent):
-                self.lineEditLandRequirementAnalysisValueAddedComponent.setText(valueAddedComponent)
-            else:
-                self.lineEditLandRequirementAnalysisValueAddedComponent.setText('')
-            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
-                self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText(finalConsumptionComponent)
-            else:
-                self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText('')
-            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
-                self.lineEditLandRequirementAnalysisListOfEconomicSector.setText(listOfEconomicSector)
-            else:
-                self.lineEditLandRequirementAnalysisListOfEconomicSector.setText('')
-            if landDistributionMatrix and os.path.exists(landDistributionMatrix):
-                self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText(landDistributionMatrix)
-            else:
-                self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText('')
-            if landCoverComponent and os.path.exists(landCoverComponent):
-                self.lineEditLandRequirementAnalysisLandCoverComponent.setText(landCoverComponent)
-            else:
-                self.lineEditLandRequirementAnalysisLandCoverComponent.setText('')
-            if labourRequirement and os.path.exists(labourRequirement):
-                self.lineEditLandRequirementAnalysisLabourRequirement.setText(labourRequirement)
-            else:
-                self.lineEditLandRequirementAnalysisLabourRequirement.setText('')
-            if financialUnit:
-                self.lineEditLandRequirementAnalysisFinancialUnit.setText(financialUnit)
-            else:
-                self.lineEditLandRequirementAnalysisFinancialUnit.setText('')
-            if areaName:
-                self.lineEditLandRequirementAnalysisAreaName.setText(areaName)
-            else:
-                self.lineEditLandRequirementAnalysisAreaName.setText('')
-            if period:
-                self.spinBoxLandRequirementAnalysisPeriod.setValue(int(period))
-            else:
-                self.spinBoxLandRequirementAnalysisPeriod.setValue(td.year)
+            if not returnTemplateSettings:
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditLandRequirementAnalysisWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditLandRequirementAnalysisWorkingDir.setText('')
+                if landCoverMap and os.path.exists(landCoverMap):
+                    self.lineEditLandRequirementAnalysisLandCoverMap.setText(landCoverMap)
+                else:
+                    self.lineEditLandRequirementAnalysisLandCoverMap.setText('')
+                if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                    self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+                else:
+                    self.lineEditLandRequirementAnalysisIntermediateConsumptionMatrix.setText('')
+                if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                    self.lineEditLandRequirementAnalysisValueAddedMatrix.setText(valueAddedMatrix)
+                else:
+                    self.lineEditLandRequirementAnalysisValueAddedMatrix.setText('')
+                if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                    self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+                else:
+                    self.lineEditLandRequirementAnalysisFinalConsumptionMatrix.setText('')
+                if valueAddedComponent and os.path.exists(valueAddedComponent):
+                    self.lineEditLandRequirementAnalysisValueAddedComponent.setText(valueAddedComponent)
+                else:
+                    self.lineEditLandRequirementAnalysisValueAddedComponent.setText('')
+                if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                    self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText(finalConsumptionComponent)
+                else:
+                    self.lineEditLandRequirementAnalysisFinalConsumptionComponent.setText('')
+                if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                    self.lineEditLandRequirementAnalysisListOfEconomicSector.setText(listOfEconomicSector)
+                else:
+                    self.lineEditLandRequirementAnalysisListOfEconomicSector.setText('')
+                if landDistributionMatrix and os.path.exists(landDistributionMatrix):
+                    self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText(landDistributionMatrix)
+                else:
+                    self.lineEditLandRequirementAnalysisLandDistributionMatrix.setText('')
+                if landCoverComponent and os.path.exists(landCoverComponent):
+                    self.lineEditLandRequirementAnalysisLandCoverComponent.setText(landCoverComponent)
+                else:
+                    self.lineEditLandRequirementAnalysisLandCoverComponent.setText('')
+                if labourRequirement and os.path.exists(labourRequirement):
+                    self.lineEditLandRequirementAnalysisLabourRequirement.setText(labourRequirement)
+                else:
+                    self.lineEditLandRequirementAnalysisLabourRequirement.setText('')
+                if financialUnit:
+                    self.lineEditLandRequirementAnalysisFinancialUnit.setText(financialUnit)
+                else:
+                    self.lineEditLandRequirementAnalysisFinancialUnit.setText('')
+                if areaName:
+                    self.lineEditLandRequirementAnalysisAreaName.setText(areaName)
+                else:
+                    self.lineEditLandRequirementAnalysisAreaName.setText('')
+                if period:
+                    self.spinBoxLandRequirementAnalysisPeriod.setValue(int(period))
+                else:
+                    self.spinBoxLandRequirementAnalysisPeriod.setValue(td.year)
             
             settings.endGroup()
             # /dialog
@@ -381,93 +392,98 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             # start dialog
             settings.beginGroup('DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis')
             
-            workingDir = settings.value('workingDir')
-            landCoverMapP1 = settings.value('landCoverMapP1')
-            landCoverMapP2 = settings.value('landCoverMapP2')
-            intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
-            valueAddedMatrix = settings.value('valueAddedMatrix')
-            finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
-            valueAddedComponent = settings.value('valueAddedComponent')
-            finalConsumptionComponent = settings.value('finalConsumptionComponent')
-            listOfEconomicSector = settings.value('listOfEconomicSector')
-            landDistributionMatrix = settings.value('landDistributionMatrix')
-            landRequirementCoefficientMatrix = settings.value('landRequirementCoefficientMatrix')
-            landCoverComponent = settings.value('landCoverComponent')
-            labourRequirement = settings.value('labourRequirement')
-            financialUnit = settings.value('financialUnit')
-            areaName = settings.value('areaName')
-            period = settings.value('period')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis'] = {}
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landCoverMapP1'] = landCoverMapP1 = settings.value('landCoverMapP1')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landCoverMapP2'] = landCoverMapP2 = settings.value('landCoverMapP2')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['intermediateConsumptionMatrix'] = intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['valueAddedMatrix'] = valueAddedMatrix = settings.value('valueAddedMatrix')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['finalConsumptionMatrix'] = finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['valueAddedComponent'] = valueAddedComponent = settings.value('valueAddedComponent')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['finalConsumptionComponent'] = finalConsumptionComponent = settings.value('finalConsumptionComponent')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['listOfEconomicSector'] = listOfEconomicSector = settings.value('listOfEconomicSector')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landDistributionMatrix'] = landDistributionMatrix = settings.value('landDistributionMatrix')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landRequirementCoefficientMatrix'] = landRequirementCoefficientMatrix = settings.value('landRequirementCoefficientMatrix')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['landCoverComponent'] = landCoverComponent = settings.value('landCoverComponent')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['labourRequirement'] = labourRequirement = settings.value('labourRequirement')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['financialUnit'] = financialUnit = settings.value('financialUnit')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['areaName'] = areaName = settings.value('areaName')
+            templateSettings['DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis']['period'] = period = settings.value('period')
             
-            if workingDir and os.path.isdir(workingDir):
-                self.lineEditLandUseChangeImpactWorkingDir.setText(workingDir)
-            else:
-                self.lineEditLandUseChangeImpactWorkingDir.setText('')
-            if landCoverMapP1 and os.path.exists(landCoverMapP1):
-                self.lineEditLandUseChangeImpactLandCoverMapP1.setText(landCoverMapP1)
-            else:
-                self.lineEditLandUseChangeImpactLandCoverMapP1.setText('')
-            if landCoverMapP2 and os.path.exists(landCoverMapP2):
-                self.lineEditLandUseChangeImpactLandCoverMapP2.setText(landCoverMapP2)
-            else:
-                self.lineEditLandUseChangeImpactLandCoverMapP2.setText('')
-            if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
-                self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
-            else:
-                self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText('')
-            if valueAddedMatrix and os.path.exists(valueAddedMatrix):
-                self.lineEditLandUseChangeImpactValueAddedMatrix.setText(valueAddedMatrix)
-            else:
-                self.lineEditLandUseChangeImpactValueAddedMatrix.setText('')
-            if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
-                self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText(finalConsumptionMatrix)
-            else:
-                self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText('')
-            if valueAddedComponent and os.path.exists(valueAddedComponent):
-                self.lineEditLandUseChangeImpactValueAddedComponent.setText(valueAddedComponent)
-            else:
-                self.lineEditLandUseChangeImpactValueAddedComponent.setText('')
-            if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
-                self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText(finalConsumptionComponent)
-            else:
-                self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText('')
-            if listOfEconomicSector and os.path.exists(listOfEconomicSector):
-                self.lineEditLandUseChangeImpactListOfEconomicSector.setText(listOfEconomicSector)
-            else:
-                self.lineEditLandUseChangeImpactListOfEconomicSector.setText('')
-            if landDistributionMatrix and os.path.exists(landDistributionMatrix):
-                self.lineEditLandUseChangeImpactLandDistributionMatrix.setText(landDistributionMatrix)
-            else:
-                self.lineEditLandUseChangeImpactLandDistributionMatrix.setText('')
-            if landRequirementCoefficientMatrix and os.path.exists(landRequirementCoefficientMatrix):
-                self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText(landRequirementCoefficientMatrix)
-            else:
-                self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText('')
-            if landCoverComponent and os.path.exists(landCoverComponent):
-                self.lineEditLandUseChangeImpactLandCoverComponent.setText(landCoverComponent)
-            else:
-                self.lineEditLandUseChangeImpactLandCoverComponent.setText('')
-            if labourRequirement and os.path.exists(labourRequirement):
-                self.lineEditLandUseChangeImpactLabourRequirement.setText(labourRequirement)
-            else:
-                self.lineEditLandUseChangeImpactLabourRequirement.setText('')
-            if financialUnit:
-                self.lineEditLandUseChangeImpactFinancialUnit.setText(financialUnit)
-            else:
-                self.lineEditLandUseChangeImpactFinancialUnit.setText('')
-            if areaName:
-                self.lineEditLandUseChangeImpactAreaName.setText(areaName)
-            else:
-                self.lineEditLandUseChangeImpactAreaName.setText('')
-            if period:
-                self.spinBoxLandUseChangeImpactPeriod.setValue(int(period))
-            else:
-                self.spinBoxLandUseChangeImpactPeriod.setValue(td.year)
+            if not returnTemplateSettings:
+                if workingDir and os.path.isdir(workingDir):
+                    self.lineEditLandUseChangeImpactWorkingDir.setText(workingDir)
+                else:
+                    self.lineEditLandUseChangeImpactWorkingDir.setText('')
+                if landCoverMapP1 and os.path.exists(landCoverMapP1):
+                    self.lineEditLandUseChangeImpactLandCoverMapP1.setText(landCoverMapP1)
+                else:
+                    self.lineEditLandUseChangeImpactLandCoverMapP1.setText('')
+                if landCoverMapP2 and os.path.exists(landCoverMapP2):
+                    self.lineEditLandUseChangeImpactLandCoverMapP2.setText(landCoverMapP2)
+                else:
+                    self.lineEditLandUseChangeImpactLandCoverMapP2.setText('')
+                if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
+                    self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
+                else:
+                    self.lineEditLandUseChangeImpactIntermediateConsumptionMatrix.setText('')
+                if valueAddedMatrix and os.path.exists(valueAddedMatrix):
+                    self.lineEditLandUseChangeImpactValueAddedMatrix.setText(valueAddedMatrix)
+                else:
+                    self.lineEditLandUseChangeImpactValueAddedMatrix.setText('')
+                if finalConsumptionMatrix and os.path.exists(finalConsumptionMatrix):
+                    self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText(finalConsumptionMatrix)
+                else:
+                    self.lineEditLandUseChangeImpactFinalConsumptionMatrix.setText('')
+                if valueAddedComponent and os.path.exists(valueAddedComponent):
+                    self.lineEditLandUseChangeImpactValueAddedComponent.setText(valueAddedComponent)
+                else:
+                    self.lineEditLandUseChangeImpactValueAddedComponent.setText('')
+                if finalConsumptionComponent and os.path.exists(finalConsumptionComponent):
+                    self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText(finalConsumptionComponent)
+                else:
+                    self.lineEditLandUseChangeImpactFinalConsumptionComponent.setText('')
+                if listOfEconomicSector and os.path.exists(listOfEconomicSector):
+                    self.lineEditLandUseChangeImpactListOfEconomicSector.setText(listOfEconomicSector)
+                else:
+                    self.lineEditLandUseChangeImpactListOfEconomicSector.setText('')
+                if landDistributionMatrix and os.path.exists(landDistributionMatrix):
+                    self.lineEditLandUseChangeImpactLandDistributionMatrix.setText(landDistributionMatrix)
+                else:
+                    self.lineEditLandUseChangeImpactLandDistributionMatrix.setText('')
+                if landRequirementCoefficientMatrix and os.path.exists(landRequirementCoefficientMatrix):
+                    self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText(landRequirementCoefficientMatrix)
+                else:
+                    self.lineEditLandUseChangeImpactLandRequirementCoefficientMatrix.setText('')
+                if landCoverComponent and os.path.exists(landCoverComponent):
+                    self.lineEditLandUseChangeImpactLandCoverComponent.setText(landCoverComponent)
+                else:
+                    self.lineEditLandUseChangeImpactLandCoverComponent.setText('')
+                if labourRequirement and os.path.exists(labourRequirement):
+                    self.lineEditLandUseChangeImpactLabourRequirement.setText(labourRequirement)
+                else:
+                    self.lineEditLandUseChangeImpactLabourRequirement.setText('')
+                if financialUnit:
+                    self.lineEditLandUseChangeImpactFinancialUnit.setText(financialUnit)
+                else:
+                    self.lineEditLandUseChangeImpactFinancialUnit.setText('')
+                if areaName:
+                    self.lineEditLandUseChangeImpactAreaName.setText(areaName)
+                else:
+                    self.lineEditLandUseChangeImpactAreaName.setText('')
+                if period:
+                    self.spinBoxLandUseChangeImpactPeriod.setValue(int(period))
+                else:
+                    self.spinBoxLandUseChangeImpactPeriod.setValue(td.year)
             
             settings.endGroup()
             # /dialog
             
             settings.endGroup()
             # /tab
+        
+        if returnTemplateSettings:
+            return templateSettings
         
         """
         print 'DEBUG'
@@ -481,42 +497,109 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         """
     
     
-    def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+    def checkForDuplicateTemplates(self, tabName, templateToSkip):
         """
-        self.setAppSettings()
-        templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'], fileName)
-        settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
-        settings.setFallbacksEnabled(True) # only use ini files
-        
-        dialogsToSave = None
+        """
+        duplicateTemplate = None
+        templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
+        dialogsToLoad = None
         
         if tabName == 'Descriptive Analysis of Regional Economy':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis',
                 'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis',
             )
         elif tabName == 'Regional Economic Scenario Impact':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis',
                 'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis',
             )
         elif tabName == 'Land Requirement Analysis':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis',
             )
         elif tabName == 'Land Use Change Impact':
-            dialogsToSave = (
+            dialogsToLoad = (
                 'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis',
             )
         
-        settings.beginGroup(tabName)
-        for dialog in dialogsToSave:
-            settings.beginGroup(dialog)
-            for key, val in self.main.appSettings[dialog].iteritems():
-                settings.setValue(key, val)
+        for templateFile in templateFiles:
+            if templateFile == templateToSkip:
+                continue
+            
+            duplicateTemplate = templateFile
+            templateSettings = self.loadTemplate(tabName, templateFile, True)
+            
+            print 'DEBUG'
+            print templateFile, templateSettings
+            
+            # Loop thru all dialogs in a tab
+            for dialog in dialogsToLoad:
+                # Loop thru all settings in a dialog
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    if templateSettings[dialog][key] != val:
+                        # A setting doesn't match! This is not a matching template file, move along
+                        duplicateTemplate = None
+                    else:
+                        print 'DEBUG equal settings'
+                        print templateSettings[dialog][key], val
+        
+        # Found a duplicate template, offer to load it?
+        if duplicateTemplate:
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load Existing Template',
+                'The template you are about to save matches an existing template.\nDo you want to load \'{0}\' instead?'.format(duplicateTemplate),
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                QtGui.QMessageBox.No
+            )
+            
+            if reply == QtGui.QMessageBox.Yes:
+                self.handlerLoadPURTemplate(duplicateTemplate)
+                return True
+        
+        return False
+    
+    
+    def saveTemplate(self, tabName, fileName):
+        """Save form values according to their tab and dialog to a template file
+        """
+        self.setAppSettings()
+        
+        # Check if current form values duplicate an existing template
+        if not self.checkForDuplicateTemplates(tabName, fileName):
+            templateFilePath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderTA'], fileName)
+            settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
+            settings.setFallbacksEnabled(True) # only use ini files
+            
+            dialogsToSave = None
+            
+            if tabName == 'Descriptive Analysis of Regional Economy':
+                dialogsToSave = (
+                    'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis',
+                    'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis',
+                )
+            elif tabName == 'Regional Economic Scenario Impact':
+                dialogsToSave = (
+                    'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis',
+                    'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis',
+                )
+            elif tabName == 'Land Requirement Analysis':
+                dialogsToSave = (
+                    'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis',
+                )
+            elif tabName == 'Land Use Change Impact':
+                dialogsToSave = (
+                    'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis',
+                )
+            
+            settings.beginGroup(tabName)
+            for dialog in dialogsToSave:
+                settings.beginGroup(dialog)
+                for key, val in self.main.appSettings[dialog].iteritems():
+                    settings.setValue(key, val)
+                settings.endGroup()
             settings.endGroup()
-        settings.endGroup()
     
     
     def __init__(self, parent):
@@ -1919,7 +2002,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveDescriptiveAnalysisTemplate(fileName)
             else:
@@ -2122,7 +2207,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveRegionalEconomicScenarioImpactTemplate(fileName)
             else:
@@ -2337,7 +2424,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveLandRequirementAnalysisTemplate(fileName)
             else:
@@ -2530,7 +2619,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         fileSaved = False
         
         if ok:
-            fileName = fileName + '.ini'
+            now = QtCore.QDateTime.currentDateTime().toString('yyyyMMdd-hhmmss')
+            fileName = now + '__' + fileName + '.ini'
+            
             if os.path.exists(os.path.join(self.settingsPath, fileName)):
                 fileSaved = self.handlerSaveLandUseChangeImpactTemplate(fileName)
             else:
