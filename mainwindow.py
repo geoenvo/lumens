@@ -53,6 +53,7 @@ from dialog_result_viewer import DialogResultViewer
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
 from dialog_lumens_importdatabase import DialogLumensImportDatabase
+from dialog_lumens_adddata import DialogLumensAddData
 from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeatdata import DialogLumensAddPeatData
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
@@ -559,6 +560,8 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensOpenDatabase.triggered.connect(self.handlerLumensOpenDatabase)
         self.actionLumensCloseDatabase.triggered.connect(self.handlerLumensCloseDatabase)
         self.actionLumensDatabaseStatus.triggered.connect(self.handlerLumensDatabaseStatus)
+        self.actionDialogLumensAddData.triggered.connect(self.handlerDialogLumensAddData)
+        
         self.actionDialogLumensAddLandcoverRaster.triggered.connect(self.handlerDialogLumensAddLandcoverRaster)
         self.actionDialogLumensAddPeatData.triggered.connect(self.handlerDialogLumensAddPeatData)
         self.actionDialogLumensAddFactorData.triggered.connect(self.handlerDialogLumensAddFactorData)
@@ -568,6 +571,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # PUR menu
         self.actionDialogLumensPUR.triggered.connect(self.handlerDialogLumensPUR)
+        
         self.actionDialogLumensPURCreateReferenceData.triggered.connect(self.handlerDialogLumensPURCreateReferenceData)
         self.actionDialogLumensPURPreparePlanningUnit.triggered.connect(self.handlerDialogLumensPURPreparePlanningUnit)
         self.actionDialogLumensPURReconcilePlanningUnit.triggered.connect(self.handlerDialogLumensPURReconcilePlanningUnit)
@@ -575,6 +579,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # QUES menu
         self.actionDialogLumensQUES.triggered.connect(self.handlerDialogLumensQUES)
+        
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis.triggered.connect(self.handlerDialogLumensPreQUESLandcoverChangeAnalysis)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.triggered.connect(self.handlerDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
         self.actionDialogLumensQUESCCarbonAccounting.triggered.connect(self.handlerDialogLumensQUESCCarbonAccounting)
@@ -590,6 +595,7 @@ class MainWindow(QtGui.QMainWindow):
         # TA menu
         self.actionDialogLumensTAOpportunityCost.triggered.connect(self.handlerDialogLumensTAOpportunityCost)
         self.actionDialogLumensTARegionalEconomy.triggered.connect(self.handlerDialogLumensTARegionalEconomy)
+        
         self.actionDialogLumensTAAbacusOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCostCurve)
         self.actionDialogLumensTAOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAOpportunityCostCurve)
         self.actionDialogLumensTAOpportunityCostMap.triggered.connect(self.handlerDialogLumensTAOpportunityCostMap)
@@ -602,6 +608,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # SCIENDO menu
         self.actionDialogLumensSCIENDO.triggered.connect(self.handlerDialogLumensSCIENDO)
+        
         self.actionDialogLumensSCIENDODriversAnalysis.triggered.connect(self.handlerDialogLumensSCIENDODriversAnalysis)
         self.actionDialogLumensSCIENDOBuildScenario.triggered.connect(self.handlerDialogLumensSCIENDOBuildScenario)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.triggered.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineProjection)
@@ -791,6 +798,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensOpenDatabase = QtGui.QAction('Open LUMENS database', self)
         self.actionLumensCloseDatabase = QtGui.QAction('Close LUMENS database', self)
         self.actionLumensDatabaseStatus = QtGui.QAction('LUMENS database status', self)
+        self.actionDialogLumensAddData = QtGui.QAction('Add data to LUMENS database', self)
         self.actionDialogLumensAddLandcoverRaster = QtGui.QAction('Add land use/cover data', self)
         self.actionDialogLumensAddPeatData = QtGui.QAction('Add peat data', self)
         self.actionDialogLumensAddFactorData = QtGui.QAction('Add factor data', self)
@@ -802,7 +810,8 @@ class MainWindow(QtGui.QMainWindow):
         self.databaseMenu.addAction(self.actionLumensOpenDatabase)
         self.databaseMenu.addAction(self.actionLumensCloseDatabase)
         self.databaseMenu.addAction(self.actionLumensDatabaseStatus)
-        self.addDataMenu = self.databaseMenu.addMenu('Add data into LUMENS database')
+        self.databaseMenu.addAction(self.actionDialogLumensAddData)
+        self.addDataMenu = self.databaseMenu.addMenu('Add data to LUMENS database')
         self.addDataMenu.addAction(self.actionDialogLumensAddLandcoverRaster)
         self.addDataMenu.addAction(self.actionDialogLumensAddPeatData)
         self.addDataMenu.addAction(self.actionDialogLumensAddFactorData)
@@ -1078,22 +1087,28 @@ class MainWindow(QtGui.QMainWindow):
     def lumensEnableMenus(self):
         """
         """
+        # Database menu
         self.actionLumensCloseDatabase.setEnabled(True)
         self.actionLumensDatabaseStatus.setEnabled(True)
         self.actionLumensDeleteData.setEnabled(True)
+        self.actionDialogLumensAddData.setEnabled(True)
         
         self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
         self.actionDialogLumensAddPeatData.setEnabled(True)
         self.actionDialogLumensAddFactorData.setEnabled(True)
         self.actionDialogLumensAddPlanningUnitData.setEnabled(True)
         
+        # PUR menu
         self.actionDialogLumensPUR.setEnabled(True)
+        
         self.actionDialogLumensPURCreateReferenceData.setEnabled(True)
         self.actionDialogLumensPURPreparePlanningUnit.setEnabled(True)
         self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
         self.actionDialogLumensPURFinalization.setEnabled(True)
         
+        # QUES menu
         self.actionDialogLumensQUES.setEnabled(True)
+        
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
         self.actionDialogLumensQUESCCarbonAccounting.setEnabled(True)
@@ -1106,8 +1121,10 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setEnabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setEnabled(True)
         
+        # TA menu
         self.actionDialogLumensTAOpportunityCost.setEnabled(True)
         self.actionDialogLumensTARegionalEconomy.setEnabled(True)
+        
         self.actionDialogLumensTAAbacusOpportunityCostCurve.setEnabled(True)
         self.actionDialogLumensTAOpportunityCostCurve.setEnabled(True)
         self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
@@ -1118,7 +1135,9 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
         self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
         
+        # SCIENDO menu
         self.actionDialogLumensSCIENDO.setEnabled(True)
+        
         self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
         self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
@@ -1133,20 +1152,26 @@ class MainWindow(QtGui.QMainWindow):
     def lumensDisableMenus(self):
         """
         """
+        # Database menu
         self.actionLumensDatabaseStatus.setDisabled(True)
+        self.actionDialogLumensAddData.setDisabled(True)
         self.actionLumensDeleteData.setDisabled(True)
+        
         self.actionDialogLumensAddLandcoverRaster.setDisabled(True)
         self.actionDialogLumensAddPeatData.setDisabled(True)
         self.actionDialogLumensAddFactorData.setDisabled(True)
         self.actionDialogLumensAddPlanningUnitData.setDisabled(True)
         
+        # PUR menu
         self.actionDialogLumensPUR.setDisabled(True)
         self.actionDialogLumensPURCreateReferenceData.setDisabled(True)
         self.actionDialogLumensPURPreparePlanningUnit.setDisabled(True)
         self.actionDialogLumensPURReconcilePlanningUnit.setDisabled(True)
         self.actionDialogLumensPURFinalization.setDisabled(True)
         
+        # QUES menu
         self.actionDialogLumensQUES.setDisabled(True)
+        
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setDisabled(True)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setDisabled(True)
         self.actionDialogLumensQUESCCarbonAccounting.setDisabled(True)
@@ -1159,8 +1184,10 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL.setDisabled(True)
         self.actionDialogLumensQUESHMultipleHRU.setDisabled(True)
         
+        # TA menu
         self.actionDialogLumensTAOpportunityCost.setDisabled(True)
         self.actionDialogLumensTARegionalEconomy.setDisabled(True)
+        
         self.actionDialogLumensTAAbacusOpportunityCostCurve.setDisabled(True)
         self.actionDialogLumensTAOpportunityCostCurve.setDisabled(True)
         self.actionDialogLumensTAOpportunityCostMap.setDisabled(True)
@@ -1171,7 +1198,9 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
         self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
         
+        # SCIENDO menu
         self.actionDialogLumensSCIENDO.setDisabled(True)
+        
         self.actionDialogLumensSCIENDODriversAnalysis.setDisabled(True)
         self.actionDialogLumensSCIENDOBuildScenario.setDisabled(True)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
@@ -1302,6 +1331,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.lumensDatabaseStatus()
+    
+    
+    def handlerDialogLumensAddData(self):
+        """
+        """
+        self.openDialog(DialogLumensAddData)
     
     
     def handlerDialogLumensAddLandcoverRaster(self):

@@ -37,49 +37,6 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.buttonProcessCreateDatabase.clicked.connect(self.handlerProcessCreateDatabase)
     
     
-    def showEvent(self, event):
-        """Called when the widget is shown
-        """
-        super(DialogLumensCreateDatabase, self).showEvent(event)
-        self.loadSelectedVectorLayer()
-    
-    
-    def closeEvent(self, event):
-        """Called when the widget is closed
-        """
-        super(DialogLumensCreateDatabase, self).closeEvent(event)
-    
-    
-    def loadSelectedVectorLayer(self):
-        """Load the attributes of the selected layer into the shapefile attribute combobox
-        """
-        selectedIndexes = self.main.layerListView.selectedIndexes()
-        
-        if not selectedIndexes:
-            return
-        
-        layerItemIndex = selectedIndexes[0]
-        layerItem = self.main.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
-        
-        if layerItemData['layerType'] == 'vector':
-            provider = self.main.qgsLayerList[layerItemData['layer']].dataProvider()
-            
-            if not provider.isValid():
-                logging.getLogger(type(self).__name__).error('invalid shapefile')
-                return
-            
-            attributes = []
-            for field in provider.fields():
-                attributes.append(field.name())
-            
-            self.lineEditShapefile.setText(layerItemData['layerFile'])
-            
-            self.comboBoxShapefileAttr.clear()
-            self.comboBoxShapefileAttr.addItems(sorted(attributes))
-            self.comboBoxShapefileAttr.setEnabled(True)
-    
-    
     def setupUi(self, parent):
         self.dialogLayout = QtGui.QVBoxLayout()
         
@@ -207,6 +164,52 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.resize(parent.sizeHint())
     
     
+    def showEvent(self, event):
+        """Called when the widget is shown
+        """
+        super(DialogLumensCreateDatabase, self).showEvent(event)
+        self.loadSelectedVectorLayer()
+    
+    
+    def closeEvent(self, event):
+        """Called when the widget is closed
+        """
+        super(DialogLumensCreateDatabase, self).closeEvent(event)
+    
+    
+    def loadSelectedVectorLayer(self):
+        """Load the attributes of the selected layer into the shapefile attribute combobox
+        """
+        selectedIndexes = self.main.layerListView.selectedIndexes()
+        
+        if not selectedIndexes:
+            return
+        
+        layerItemIndex = selectedIndexes[0]
+        layerItem = self.main.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        
+        if layerItemData['layerType'] == 'vector':
+            provider = self.main.qgsLayerList[layerItemData['layer']].dataProvider()
+            
+            if not provider.isValid():
+                logging.getLogger(type(self).__name__).error('invalid shapefile')
+                return
+            
+            attributes = []
+            for field in provider.fields():
+                attributes.append(field.name())
+            
+            self.lineEditShapefile.setText(layerItemData['layerFile'])
+            
+            self.comboBoxShapefileAttr.clear()
+            self.comboBoxShapefileAttr.addItems(sorted(attributes))
+            self.comboBoxShapefileAttr.setEnabled(True)
+    
+    
+    #***********************************************************
+    # 'Create Database' QPushButton handlers
+    #***********************************************************
     def handlerSelectOutputFolder(self):
         """Select a folder as output dir
         """
@@ -245,6 +248,9 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             logging.getLogger(type(self).__name__).info('select shapefile: %s', shapefile)
     
     
+    #***********************************************************
+    # Process dialog
+    #***********************************************************
     def setAppSettings(self):
         """Set the required values from the form widgets
         """
