@@ -116,6 +116,7 @@ class MainWindow(QtGui.QMainWindow):
         self.appSettings = {
             'debug': False,
             'appDir': os.path.dirname(os.path.realpath(__file__)),
+            'appSettingsFile': 'settings.ini',
             'dataDir': 'data',
             'basemapDir': 'basemap',
             'vectorDir': 'vector',
@@ -138,6 +139,7 @@ class MainWindow(QtGui.QMainWindow):
             'folderTA': 'TA',
             'folderSCIENDO': 'SCIENDO',
             'validDocumentFormats': ('.doc', 'docx', '.rtf', '.xls', '.xlsx', '.txt', '.log', '.csv'),
+            'validSpatialFormats': ('.shp', '.tif'),
             
             'DialogFeatureSelectExpression': {
                 'expression': '',
@@ -482,6 +484,12 @@ class MainWindow(QtGui.QMainWindow):
             },
         }
         
+        self.appSettings['defaultBasemapFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['basemapDir'], self.appSettings['defaultBasemapFile'])
+        self.appSettings['defaultVectorFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['vectorDir'], self.appSettings['defaultVectorFile'])
+        
+        # For keeping track of open dialogs
+        self.openDialogs = []
+        
         # Process app arguments
         parser = argparse.ArgumentParser()
         parser.add_argument('--debug', action='store_true', help='Show the logging widget')
@@ -491,13 +499,11 @@ class MainWindow(QtGui.QMainWindow):
         if args.debug:
             self.appSettings['debug'] = True
         
-        self.appSettings['defaultBasemapFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['basemapDir'], self.appSettings['defaultBasemapFile'])
-        self.appSettings['defaultVectorFilePath'] = os.path.join(self.appSettings['appDir'], self.appSettings['dataDir'], self.appSettings['vectorDir'], self.appSettings['defaultVectorFile'])
-
+        # Build the mainwindow UI!
         self.setupUi()
         
         if args.debug:
-            # Init the logger
+            # Init the logger for mainwindow
             self.logger = logging.getLogger(__name__)
             formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             ch = logging.StreamHandler()
@@ -512,7 +518,11 @@ class MainWindow(QtGui.QMainWindow):
         
         self.installEventFilter(self)
         
-        self.openDialogs = []
+        # Load the app settings
+        self.loadSettings()
+        
+        # File menu updating
+        self.fileMenu.aboutToShow.connect(self.updateFileMenu)
         
         # For holding QgsVectorLayer/QgsRasterLayer objects
         self.qgsLayerList = dict()
@@ -532,7 +542,7 @@ class MainWindow(QtGui.QMainWindow):
         self.projectTreeView.doubleClicked.connect(self.handlerDoubleClickProjectTree)
         
         # App action handlers
-        self.actionQuit.triggered.connect(QtGui.qApp.quit)
+        self.actionQuit.triggered.connect(self.close)
         self.actionZoomIn.triggered.connect(self.handlerZoomIn)
         self.actionZoomOut.triggered.connect(self.handlerZoomOut)
         self.actionZoomFull.triggered.connect(self.handlerZoomFull)
@@ -621,28 +631,6 @@ class MainWindow(QtGui.QMainWindow):
         
         # Tools menu
         self.actionDialogLumensToolsREDDAbacusSP.triggered.connect(self.handlerDialogLumensToolsREDDAbacusSP)
-    
-    
-    def eventFilter(self, source, event):
-        """
-        """
-        if event.type() == QtCore.QEvent.WindowActivate:
-            print 'widget window has gained focus'
-            if not self.appSettings['DialogLumensOpenDatabase']['projectFile']:
-                self.actionLumensCloseDatabase.setDisabled(True)
-                self.lumensDisableMenus()
-            else:
-                self.lumensEnableMenus()
-        elif event.type() == QtCore.QEvent.WindowDeactivate:
-            print 'widget window has lost focus'
-        elif event.type() == QtCore.QEvent.FocusIn:
-            print 'widget has gained keyboard focus'
-        elif event.type() == QtCore.QEvent.FocusOut:
-            print 'widget has lost keyboard focus'
-        elif event.type() == QtCore.QEvent.Drop and source == self.layerListView.viewport():
-            self.handlerDropLayer()
-        
-        return False
     
     
     def setupUi(self):
@@ -962,7 +950,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.projectTreeView = QtGui.QTreeView()
         self.projectTreeView.setModel(self.projectModel)
-        self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.homePath()))
+        self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.rootPath()))
         self.projectTreeView.hideColumn(1) # Hide all columns except name
         self.projectTreeView.hideColumn(2)
         self.projectTreeView.hideColumn(3)
@@ -970,18 +958,46 @@ class MainWindow(QtGui.QMainWindow):
         self.sidebarTabWidget = QtGui.QTabWidget()
         self.sidebarTabWidget.setTabPosition(QtGui.QTabWidget.West)
         
+        self.dashboardTabWidget = QtGui.QTabWidget()
+        
         self.tabLayers = QtGui.QWidget()
+        self.tabDashboard = QtGui.QWidget()
         self.tabProject = QtGui.QWidget()
+        
         self.layoutTabLayers = QtGui.QVBoxLayout()
+        self.layoutTabDashboard = QtGui.QVBoxLayout()
         self.layoutTabProject = QtGui.QVBoxLayout()
         
         self.tabLayers.setLayout(self.layoutTabLayers)
+        self.tabDashboard.setLayout(self.layoutTabDashboard)
         self.tabProject.setLayout(self.layoutTabProject)
         
         self.sidebarTabWidget.addTab(self.tabLayers, 'Layers')
+        self.sidebarTabWidget.addTab(self.tabDashboard, 'Dashboard')
         self.sidebarTabWidget.addTab(self.tabProject, 'Project')
         
+        self.tabDashboardPUR = QtGui.QWidget()
+        self.tabDashboardQUES = QtGui.QWidget()
+        self.tabDashboardTA = QtGui.QWidget()
+        self.tabDashboardSCIENDO = QtGui.QWidget()
+        
+        self.layoutDashboardPUR = QtGui.QVBoxLayout()
+        self.layoutDashboardQUES = QtGui.QVBoxLayout()
+        self.layoutDashboardTA = QtGui.QVBoxLayout()
+        self.layoutDashboardSCIENDO = QtGui.QVBoxLayout()
+        
+        self.tabDashboardPUR.setLayout(self.layoutDashboardPUR)
+        self.tabDashboardQUES.setLayout(self.layoutDashboardQUES)
+        self.tabDashboardTA.setLayout(self.layoutDashboardTA)
+        self.tabDashboardSCIENDO.setLayout(self.layoutDashboardSCIENDO)
+        
+        self.dashboardTabWidget.addTab(self.tabDashboardPUR, 'PUR')
+        self.dashboardTabWidget.addTab(self.tabDashboardQUES, 'QUES')
+        self.dashboardTabWidget.addTab(self.tabDashboardTA, 'TA')
+        self.dashboardTabWidget.addTab(self.tabDashboardSCIENDO, 'SCIENDO')
+        
         self.layoutTabLayers.addWidget(self.layerListView)
+        self.layoutTabDashboard.addWidget(self.dashboardTabWidget)
         self.layoutTabProject.addWidget(self.projectTreeView)
         
         self.splitterBody = QtGui.QSplitter(self)
@@ -1052,18 +1068,82 @@ class MainWindow(QtGui.QMainWindow):
         self.resize(self.sizeHint())
     
     
-    def handlerLayerItemContextMenu(self, pos):
-        """Construct the layer item context menu
+    def eventFilter(self, source, event):
         """
-        self.contextMenu = QtGui.QMenu()
-        self.contextMenu.addAction(self.actionDeleteLayer)
-        self.contextMenu.addAction(self.actionZoomLayer)
-        self.contextMenu.addAction(self.actionLayerAttributeTable)
-        self.contextMenu.addAction(self.actionFeatureSelectExpression)
+        """
+        if event.type() == QtCore.QEvent.WindowActivate:
+            print 'widget window has gained focus'
+            if not self.appSettings['DialogLumensOpenDatabase']['projectFile']:
+                self.actionLumensCloseDatabase.setDisabled(True)
+                self.lumensDisableMenus()
+            else:
+                self.lumensEnableMenus()
+        elif event.type() == QtCore.QEvent.WindowDeactivate:
+            print 'widget window has lost focus'
+        elif event.type() == QtCore.QEvent.FocusIn:
+            print 'widget has gained keyboard focus'
+        elif event.type() == QtCore.QEvent.FocusOut:
+            print 'widget has lost keyboard focus'
+        elif event.type() == QtCore.QEvent.Drop and source == self.layerListView.viewport():
+            self.handlerDropLayer()
         
-        parentPosition = self.layerListView.mapToGlobal(QtCore.QPoint(0, 0))
-        self.contextMenu.move(parentPosition + pos)
-        self.contextMenu.show()
+        return False
+    
+    
+    def closeEvent(self, event):
+        """Save app settings on window close
+        """
+        settings = QtCore.QSettings(self.appSettings['appSettingsFile'], QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        settings.setValue('recentProjects', self.recentProjects)
+    
+    
+    def addRecentProject(self, projectFile):
+        """Add a project file to the recent project list
+        """
+        if projectFile is None:
+            return
+        if projectFile not in self.recentProjects:
+            self.recentProjects.insert(0, projectFile)
+            while len(self.recentProjects) > 10:
+                self.recentProjects.pop()
+    
+    
+    def loadSettings(self):
+        """Load app settings from .ini file
+        """
+        settings = QtCore.QSettings(self.appSettings['appSettingsFile'], QtCore.QSettings.IniFormat)
+        settings.setFallbacksEnabled(True) # only use ini files
+        recentProjects = settings.value('recentProjects')
+        if recentProjects:
+            self.recentProjects = recentProjects
+        else:
+            self.recentProjects = []
+    
+    
+    def updateFileMenu(self):
+        """Handle updating the file menu
+        """
+        recentProjects = []
+        
+        self.fileMenu.clear()
+        
+        for projectFile in self.recentProjects:
+            if os.path.exists(projectFile):
+                recentProjects.append(projectFile)
+        
+        if recentProjects:
+            self.fileMenu.addSeparator()
+            
+            for i, projectFile in enumerate(recentProjects):
+                action = QtGui.QAction('&{0} {1}'.format(i + 1, os.path.basename(projectFile)), self)
+                action.setData(projectFile)
+                action.triggered.connect(self.lumensOpenDatabase)
+                self.fileMenu.addAction(action)
+            
+            self.fileMenu.addSeparator()
+        
+        self.fileMenu.addAction(self.actionQuit)
     
     
     def openDialog(self, DialogClass):
@@ -1085,7 +1165,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensEnableMenus(self):
-        """
+        """Enable menus that require an open project
         """
         # Database menu
         self.actionLumensCloseDatabase.setEnabled(True)
@@ -1150,7 +1230,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensDisableMenus(self):
-        """
+        """Disable menus that require an open project
         """
         # Database menu
         self.actionLumensDatabaseStatus.setDisabled(True)
@@ -1212,9 +1292,16 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
     
     
-    def lumensOpenDatabase(self, lumensDatabase):
+    def lumensOpenDatabase(self, lumensDatabase=False):
         """
         """
+        if lumensDatabase is False:
+            action = self.sender()
+            if isinstance(action, QtGui.QAction):
+                lumensDatabase = unicode(action.data())
+            else:
+                return
+        
         logging.getLogger(__name__).info('start: LUMENS Open Database')
         
         self.actionLumensOpenDatabase.setDisabled(True)
@@ -1234,6 +1321,7 @@ class MainWindow(QtGui.QMainWindow):
             
             self.lineEditActiveProject.setText(os.path.normpath(lumensDatabase))
             self.projectTreeView.setRootIndex(self.projectModel.index(self.appSettings['DialogLumensOpenDatabase']['projectFolder']))
+            self.addRecentProject(lumensDatabase)
             
             self.lumensEnableMenus()
         
@@ -1289,6 +1377,185 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensDeleteData.setEnabled(True)
         
         logging.getLogger(__name__).info('end: lumensdeletedata')
+    
+    
+    def checkDefaultBasemap(self):
+        """
+        """
+        if os.path.isfile(self.appSettings['defaultBasemapFilePath']):
+            return True
+        else:
+            return False
+    
+    
+    def checkDefaultVector(self):
+        """
+        """
+        if os.path.isfile(self.appSettings['defaultVectorFilePath']):
+            return True
+        else:
+            return False
+    
+    
+    def loadDefaultLayers(self):
+        """Replaces loadMap()
+        """
+        self.addLayer(self.appSettings['defaultBasemapFilePath'])
+        ##self.addLayer(self.appSettings['defaultVectorFilePath'])
+        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
+        ###self.mapCanvas.refresh()
+        ##self.layoutBody.addWidget(self.mapCanvas)
+        self.splitterBody.addWidget(self.mapCanvas)
+        self.splitterBody.setCollapsible(1, False)
+    
+    
+    def loadMapCanvas(self):
+        """
+        """
+        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
+        ##self.layoutBody.addWidget(self.mapCanvas)
+        self.splitterBody.addWidget(self.mapCanvas)
+        self.splitterBody.setCollapsible(1, False)
+    
+    
+    def loadMap(self):
+        """OBSOLETE DEBUG on-the-fly projection
+        """
+        cur_dir = os.path.dirname(os.path.realpath(__file__))
+        filename = os.path.join(cur_dir, 'data', 'basemap', 'basemap.tif')
+        self.basemap_layer = QgsRasterLayer(filename, 'basemap')
+        QgsMapLayerRegistry.instance().addMapLayer(self.basemap_layer)
+        
+        filename = os.path.join(cur_dir, 'data', 'vector', 'Paser_rtrwp2014_utm50s.shp')
+        self.landmark_layer = QgsVectorLayer(filename, 'landmarks', 'ogr')
+        QgsMapLayerRegistry.instance().addMapLayer(self.landmark_layer)
+
+        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
+        
+        layers = []
+        
+        layers.append(QgsMapCanvasLayer(self.landmark_layer))
+        layers.append(QgsMapCanvasLayer(self.basemap_layer))
+        
+        self.mapCanvas.setLayerSet(layers)
+        
+        ##self.layoutBody.addWidget(self.mapCanvas)
+        self.splitterBody.addWidget(self.mapCanvas)
+        self.splitterBody.setCollapsible(1, False)
+    
+    
+    def addLayer(self, layerFile):
+        """
+        """
+        if os.path.isfile(layerFile):
+            layerName = os.path.basename(layerFile)
+            
+            # Check for existing layers with same file name
+            existingLayerItems = self.layerListModel.findItems(layerName)
+                
+            for existingLayerItem in existingLayerItems:
+                existingLayerData = existingLayerItem.data()
+                if os.path.abspath(layerFile) == os.path.abspath(existingLayerData['layerFile']):
+                    QtGui.QMessageBox.warning(self, 'Duplicate Layer', 'Layer "{0}" has already been added.\nPlease select another file.'.format(layerName))
+                    return
+            
+            layer = None
+            layerType = None
+            fileExt = os.path.splitext(layerName)[1].lower()
+            
+            if  fileExt == '.shp':
+                layerType = 'vector'
+                layer = QgsVectorLayer(layerFile, layerName, 'ogr')
+            elif fileExt == '.tif':
+                layerType = 'raster'
+                layer = QgsRasterLayer(layerFile, layerName)
+            
+            if not layer.isValid():
+                print 'ERROR: Invalid layer!'
+                return
+            
+            layerItemData = {
+                'layerFile': layerFile,
+                'layerName': layerName,
+                'layerType': layerType,
+                'layer': layerName,
+            }
+            
+            # Can't keep raster/vector object in layerItemData because of object copy error upon drag-drop
+            self.qgsLayerList[layerName] = layer
+            
+            layerItem = QtGui.QStandardItem(layerName)
+            layerItem.setData(layerItemData)
+            layerItem.setToolTip(layerFile)
+            layerItem.setEditable(False)
+            layerItem.setCheckable(True)
+            layerItem.setDragEnabled(True)
+            layerItem.setDropEnabled(False)
+            layerItem.setCheckState(QtCore.Qt.Checked)
+            self.layerListModel.appendRow(layerItem)
+            
+            QgsMapLayerRegistry.instance().addMapLayer(self.qgsLayerList[layerName])
+            # FIX 20151118:
+            # since on-the-fly CRS reprojection is enabled no need to set layer CRS
+            # setting canvas extent to layer extent causes canvas to turn blank
+            ###self.qgsLayerList[layerName].setCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
+            ###self.mapCanvas.setExtent(self.qgsLayerList[layerName].extent())
+            self.showVisibleLayers()
+    
+    
+    def getSelectedLayerData(self):
+        """Get the data of the selected layer
+        """
+        layerItemIndex = self.layerListView.selectedIndexes()[0]
+        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
+        layerItemData = layerItem.data()
+        return layerItemData
+    
+    
+    def printDebugInfo(self):
+        """
+        """
+        layerItemData = self.getSelectedLayerData()
+        
+        logging.getLogger(__name__).info('DEBUG INFO ===================================')
+        logging.getLogger(__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
+        logging.getLogger(__name__).info('MapCanvas destination CRS: ' + self.mapCanvas.mapRenderer().destinationCrs().authid())
+        logging.getLogger(__name__).info('On-the-fly projection enabled: ' + str(self.mapCanvas.hasCrsTransformEnabled()))
+        logging.getLogger(__name__).info('Selected layer CRS: ' + self.qgsLayerList[layerItemData['layer']].crs().authid())
+    
+    
+    def showVisibleLayers(self):
+        """Find checked layers in layerlistmodel and add them to the mapcanvas layerset
+        """
+        layers = []
+        i = 0
+        
+        while self.layerListModel.item(i):
+            layerItem = self.layerListModel.item(i)
+            layerItemData = layerItem.data()
+            if layerItem.checkState():
+                logging.getLogger(__name__).info('showing layer: %s', layerItem.text())
+                layers.append(QgsMapCanvasLayer(self.qgsLayerList[layerItemData['layer']]))
+            i += 1
+        
+        if i > 0:
+            logging.getLogger(__name__).info('===========================================')
+        
+        self.mapCanvas.setLayerSet(layers)
+    
+    
+    def handlerLayerItemContextMenu(self, pos):
+        """Construct the layer item context menu
+        """
+        self.contextMenu = QtGui.QMenu()
+        self.contextMenu.addAction(self.actionDeleteLayer)
+        self.contextMenu.addAction(self.actionZoomLayer)
+        self.contextMenu.addAction(self.actionLayerAttributeTable)
+        self.contextMenu.addAction(self.actionFeatureSelectExpression)
+        
+        parentPosition = self.layerListView.mapToGlobal(QtCore.QPoint(0, 0))
+        self.contextMenu.move(parentPosition + pos)
+        self.contextMenu.show()
     
     
     def handlerDialogLumensCreateDatabase(self):
@@ -1603,24 +1870,6 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensToolsREDDAbacusSP)
     
     
-    def checkDefaultBasemap(self):
-        """
-        """
-        if os.path.isfile(self.appSettings['defaultBasemapFilePath']):
-            return True
-        else:
-            return False
-    
-    
-    def checkDefaultVector(self):
-        """
-        """
-        if os.path.isfile(self.appSettings['defaultVectorFilePath']):
-            return True
-        else:
-            return False
-    
-    
     def handlerZoomIn(self):
         """
         """
@@ -1696,73 +1945,6 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.setMapTool(self.infoTool)
     
     
-    def loadDefaultLayers(self):
-        """Replaces loadMap()
-        """
-        self.addLayer(self.appSettings['defaultBasemapFilePath'])
-        ##self.addLayer(self.appSettings['defaultVectorFilePath'])
-        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
-        ###self.mapCanvas.refresh()
-        ##self.layoutBody.addWidget(self.mapCanvas)
-        self.splitterBody.addWidget(self.mapCanvas)
-        self.splitterBody.setCollapsible(1, False)
-    
-    
-    def loadMapCanvas(self):
-        """
-        """
-        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
-        ##self.layoutBody.addWidget(self.mapCanvas)
-        self.splitterBody.addWidget(self.mapCanvas)
-        self.splitterBody.setCollapsible(1, False)
-    
-    
-    def loadMap(self):
-        """DEBUG on-the-fly projection
-        """
-        cur_dir = os.path.dirname(os.path.realpath(__file__))
-        filename = os.path.join(cur_dir, 'data', 'basemap', 'basemap.tif')
-        self.basemap_layer = QgsRasterLayer(filename, 'basemap')
-        QgsMapLayerRegistry.instance().addMapLayer(self.basemap_layer)
-        
-        filename = os.path.join(cur_dir, 'data', 'vector', 'Paser_rtrwp2014_utm50s.shp')
-        self.landmark_layer = QgsVectorLayer(filename, 'landmarks', 'ogr')
-        QgsMapLayerRegistry.instance().addMapLayer(self.landmark_layer)
-
-        self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
-        
-        layers = []
-        
-        layers.append(QgsMapCanvasLayer(self.landmark_layer))
-        layers.append(QgsMapCanvasLayer(self.basemap_layer))
-        
-        self.mapCanvas.setLayerSet(layers)
-        
-        ##self.layoutBody.addWidget(self.mapCanvas)
-        self.splitterBody.addWidget(self.mapCanvas)
-        self.splitterBody.setCollapsible(1, False)
-    
-    
-    def showVisibleLayers(self):
-        """Find checked layers in layerlistmodel and add them to the mapcanvas layerset
-        """
-        layers = []
-        i = 0
-        
-        while self.layerListModel.item(i):
-            layerItem = self.layerListModel.item(i)
-            layerItemData = layerItem.data()
-            if layerItem.checkState():
-                logging.getLogger(__name__).info('showing layer: %s', layerItem.text())
-                layers.append(QgsMapCanvasLayer(self.qgsLayerList[layerItemData['layer']]))
-            i += 1
-        
-        if i > 0:
-            logging.getLogger(__name__).info('===========================================')
-        
-        self.mapCanvas.setLayerSet(layers)
-    
-    
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def handlerSelectLayer(self, layerItemIndex):
         """
@@ -1808,17 +1990,18 @@ class MainWindow(QtGui.QMainWindow):
         """
         indexItem = self.projectTreeView.model().index(index.row(), 0, index.parent())
 
-        # path or filename selected
+        # Path or filename selected
         fileName = self.projectTreeView.model().fileName(indexItem)
-        # full path/filename selected
+        # Full path/filename selected
         filePath = self.projectTreeView.model().filePath(indexItem)
         
         ext = os.path.splitext(filePath)[-1].lower()
         
-        # open the document file in Windows
         if ext in self.appSettings['validDocumentFormats']:
             if sys.platform == 'win32':
-                os.startfile(filePath)
+                os.startfile(filePath) # Open the document file in Windows
+        elif ext in self.appSettings['validSpatialFormats']:
+            self.addLayer(filePath) # Add the spatial file to the layer list
     
     
     def handlerDropLayer(self):
@@ -1856,65 +2039,6 @@ class MainWindow(QtGui.QMainWindow):
         
         if file:
             self.addLayer(file)
-    
-    
-    def addLayer(self, layerFile):
-        """
-        """
-        if os.path.isfile(layerFile):
-            layerName = os.path.basename(layerFile)
-            
-            # Check for existing layers with same file name
-            existingLayerItems = self.layerListModel.findItems(layerName)
-                
-            for existingLayerItem in existingLayerItems:
-                existingLayerData = existingLayerItem.data()
-                if os.path.abspath(layerFile) == os.path.abspath(existingLayerData['layerFile']):
-                    QtGui.QMessageBox.warning(self, 'Duplicate Layer', 'Layer "{0}" has already been added.\nPlease select another file.'.format(layerName))
-                    return
-            
-            layer = None
-            layerType = None
-            fileExt = os.path.splitext(layerName)[1].lower()
-            
-            if  fileExt == '.shp':
-                layerType = 'vector'
-                layer = QgsVectorLayer(layerFile, layerName, 'ogr')
-            elif fileExt == '.tif':
-                layerType = 'raster'
-                layer = QgsRasterLayer(layerFile, layerName)
-            
-            if not layer.isValid():
-                print 'ERROR: Invalid layer!'
-                return
-            
-            layerItemData = {
-                'layerFile': layerFile,
-                'layerName': layerName,
-                'layerType': layerType,
-                'layer': layerName,
-            }
-            
-            # Can't keep raster/vector object in layerItemData because of object copy error upon drag-drop
-            self.qgsLayerList[layerName] = layer
-            
-            layerItem = QtGui.QStandardItem(layerName)
-            layerItem.setData(layerItemData)
-            layerItem.setToolTip(layerFile)
-            layerItem.setEditable(False)
-            layerItem.setCheckable(True)
-            layerItem.setDragEnabled(True)
-            layerItem.setDropEnabled(False)
-            layerItem.setCheckState(QtCore.Qt.Checked)
-            self.layerListModel.appendRow(layerItem)
-            
-            QgsMapLayerRegistry.instance().addMapLayer(self.qgsLayerList[layerName])
-            # FIX 20151118:
-            # since on-the-fly CRS reprojection is enabled no need to set layer CRS
-            # setting canvas extent to layer extent causes canvas to turn blank
-            ###self.qgsLayerList[layerName].setCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
-            ###self.mapCanvas.setExtent(self.qgsLayerList[layerName].extent())
-            self.showVisibleLayers()
     
     
     def handlerDeleteLayer(self):
@@ -1989,27 +2113,6 @@ class MainWindow(QtGui.QMainWindow):
             self.labelMapCanvasCoordinate.setText(point.toDegreesMinutesSeconds(3))
         else:
             print self.labelMapCanvasCoordinate.setText(point.toString(3))
-    
-    
-    def getSelectedLayerData(self):
-        """Get the data of the selected layer
-        """
-        layerItemIndex = self.layerListView.selectedIndexes()[0]
-        layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
-        layerItemData = layerItem.data()
-        return layerItemData
-    
-    
-    def printDebugInfo(self):
-        """
-        """
-        layerItemData = self.getSelectedLayerData()
-        
-        logging.getLogger(__name__).info('DEBUG INFO ===================================')
-        logging.getLogger(__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
-        logging.getLogger(__name__).info('MapCanvas destination CRS: ' + self.mapCanvas.mapRenderer().destinationCrs().authid())
-        logging.getLogger(__name__).info('On-the-fly projection enabled: ' + str(self.mapCanvas.hasCrsTransformEnabled()))
-        logging.getLogger(__name__).info('Selected layer CRS: ' + self.qgsLayerList[layerItemData['layer']].crs().authid())
 
 
 #############################################################################
