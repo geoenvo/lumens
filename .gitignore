@@ -3,6 +3,7 @@
 *.pyc
 *.old
 *.bat
+*.ini
 _*
 processing/*
 qgis.db
