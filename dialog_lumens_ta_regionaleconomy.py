@@ -1355,7 +1355,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         # Place the GroupBoxes
         self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactType, 0, 0)
         self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactParameters, 1, 0)
-        self.layoutContentRegionalEconomicScenarioImpact.addLayout(self.layoutButtonRegionalEconomicScenarioImpact, 2, 0, 1, 2)
+        self.layoutContentRegionalEconomicScenarioImpact.addLayout(self.layoutButtonRegionalEconomicScenarioImpact, 2, 0, 1, 2, QtCore.Qt.AlignRight)
         self.layoutContentRegionalEconomicScenarioImpact.addWidget(self.groupBoxRegionalEconomicScenarioImpactTemplate, 0, 1, 2, 1)
         self.layoutContentRegionalEconomicScenarioImpact.setColumnStretch(0, 3)
         self.layoutContentRegionalEconomicScenarioImpact.setColumnStretch(1, 1) # Smaller template column
@@ -1603,7 +1603,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         # Place the GroupBoxes
         self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisParameters, 0, 0)
-        self.layoutContentLandRequirementAnalysis.addLayout(self.layoutButtonLandRequirementAnalysis, 1, 0)
+        self.layoutContentLandRequirementAnalysis.addLayout(self.layoutButtonLandRequirementAnalysis, 1, 0, 1, 2, QtCore.Qt.AlignRight)
         self.layoutContentLandRequirementAnalysis.addWidget(self.groupBoxLandRequirementAnalysisTemplate, 0, 1, 1, 1)
         self.layoutContentLandRequirementAnalysis.setColumnStretch(0, 3)
         self.layoutContentLandRequirementAnalysis.setColumnStretch(1, 1) # Smaller template column
@@ -1874,7 +1874,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         # Place the GroupBoxes
         self.layoutContentLandUseChangeImpact.addWidget(self.groupBoxLandUseChangeImpactParameters, 0, 0)
-        self.layoutContentLandUseChangeImpact.addLayout(self.layoutButtonLandUseChangeImpact, 1, 0)
+        self.layoutContentLandUseChangeImpact.addLayout(self.layoutButtonLandUseChangeImpact, 1, 0, 1, 2, QtCore.Qt.AlignRight)
         self.layoutContentLandUseChangeImpact.addWidget(self.groupBoxLandUseChangeImpactTemplate, 0, 1, 1, 1)
         self.layoutContentLandUseChangeImpact.setColumnStretch(0, 3)
         self.layoutContentLandUseChangeImpact.setColumnStretch(1, 1) # Smaller template column
@@ -2998,7 +2998,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         # Run multiple period if checked
         if self.checkBoxMultiplePeriod.isChecked():
             formName = 'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis'
-            algName = 'modeler:ta_reg_io_da'
+            algName = 'modeler:ta_reg_ts_io'
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)

@@ -490,6 +490,9 @@ class MainWindow(QtGui.QMainWindow):
         # For keeping track of open dialogs
         self.openDialogs = []
         
+        # Recently opened LUMENS project databases
+        self.recentProjects = []
+        
         # Process app arguments
         parser = argparse.ArgumentParser()
         parser.add_argument('--debug', action='store_true', help='Show the logging widget')
@@ -499,12 +502,15 @@ class MainWindow(QtGui.QMainWindow):
         if args.debug:
             self.appSettings['debug'] = True
         
+        # Load the app settings
+        self.loadSettings()
+        
         # Build the mainwindow UI!
         self.setupUi()
         
         if args.debug:
             # Init the logger for mainwindow
-            self.logger = logging.getLogger(__name__)
+            self.logger = logging.getLogger(type(self).__name__)
             formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             ch = logging.StreamHandler()
             ch.setFormatter(formatter)
@@ -517,9 +523,6 @@ class MainWindow(QtGui.QMainWindow):
             self.logger.setLevel(logging.DEBUG)
         
         self.installEventFilter(self)
-        
-        # Load the app settings
-        self.loadSettings()
         
         # File menu updating
         self.fileMenu.aboutToShow.connect(self.updateFileMenu)
@@ -538,7 +541,7 @@ class MainWindow(QtGui.QMainWindow):
         # For checking drop events
         ##self.layerListView.viewport().installEventFilter(self)
         
-        # project treeview doubleclick item handling
+        # Project treeview doubleclick item handling
         self.projectTreeView.doubleClicked.connect(self.handlerDoubleClickProjectTree)
         
         # App action handlers
@@ -1117,17 +1120,16 @@ class MainWindow(QtGui.QMainWindow):
         recentProjects = settings.value('recentProjects')
         if recentProjects:
             self.recentProjects = recentProjects
-        else:
-            self.recentProjects = []
     
     
     def updateFileMenu(self):
-        """Handle updating the file menu
+        """Handle updating the file menu actions
         """
         recentProjects = []
         
         self.fileMenu.clear()
         
+        # Populate file menu with recently opened project databases
         for projectFile in self.recentProjects:
             if os.path.exists(projectFile):
                 recentProjects.append(projectFile)
@@ -1165,7 +1167,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensEnableMenus(self):
-        """Enable menus that require an open project
+        """Enable menus that require an open project database
         """
         # Database menu
         self.actionLumensCloseDatabase.setEnabled(True)
@@ -1230,7 +1232,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensDisableMenus(self):
-        """Disable menus that require an open project
+        """Disable menus that require an open project database
         """
         # Database menu
         self.actionLumensDatabaseStatus.setDisabled(True)
@@ -1293,16 +1295,16 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensOpenDatabase(self, lumensDatabase=False):
+        """Open a LUMENS project database
         """
-        """
-        if lumensDatabase is False:
+        if lumensDatabase is False: # Recent projects
             action = self.sender()
             if isinstance(action, QtGui.QAction):
                 lumensDatabase = unicode(action.data())
             else:
                 return
         
-        logging.getLogger(__name__).info('start: LUMENS Open Database')
+        logging.getLogger(type(self).__name__).info('start: LUMENS Open Database')
         
         self.actionLumensOpenDatabase.setDisabled(True)
         
@@ -1327,13 +1329,13 @@ class MainWindow(QtGui.QMainWindow):
         
         self.actionLumensOpenDatabase.setEnabled(True)
         
-        logging.getLogger(__name__).info('end: LUMENS Open Database')
+        logging.getLogger(type(self).__name__).info('end: LUMENS Open Database')
     
     
     def lumensCloseDatabase(self):
+        """Close a LUMENS project database
         """
-        """
-        logging.getLogger(__name__).info('start: LUMENS Close Database')
+        logging.getLogger(type(self).__name__).info('start: LUMENS Close Database')
         
         self.actionLumensCloseDatabase.setDisabled(True)
         
@@ -1347,11 +1349,11 @@ class MainWindow(QtGui.QMainWindow):
         
         self.lumensDisableMenus()
         
-        logging.getLogger(__name__).info('end: LUMENS Close Database')
+        logging.getLogger(type(self).__name__).info('end: LUMENS Close Database')
     
     
     def lumensDatabaseStatus(self):
-        """
+        """Display the project database stats in a popup dialog
         """
         logging.getLogger(type(self).__name__).info('start: lumensdatabasestatus')
         
@@ -1364,7 +1366,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.actionLumensDatabaseStatus.setEnabled(True)
         
-        logging.getLogger(__name__).info('end: lumensdatabasestatus')
+        logging.getLogger(type(self).__name__).info('end: lumensdatabasestatus')
     
     
     def lumensDeleteData(self):
@@ -1376,7 +1378,7 @@ class MainWindow(QtGui.QMainWindow):
         outputs = general.runalg('r:lumensdeletedata')
         self.actionLumensDeleteData.setEnabled(True)
         
-        logging.getLogger(__name__).info('end: lumensdeletedata')
+        logging.getLogger(type(self).__name__).info('end: lumensdeletedata')
     
     
     def checkDefaultBasemap(self):
@@ -1445,7 +1447,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def addLayer(self, layerFile):
-        """
+        """Add a spatial data file to the layer list and display it
         """
         if os.path.isfile(layerFile):
             layerName = os.path.basename(layerFile)
@@ -1517,11 +1519,11 @@ class MainWindow(QtGui.QMainWindow):
         """
         layerItemData = self.getSelectedLayerData()
         
-        logging.getLogger(__name__).info('DEBUG INFO ===================================')
-        logging.getLogger(__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
-        logging.getLogger(__name__).info('MapCanvas destination CRS: ' + self.mapCanvas.mapRenderer().destinationCrs().authid())
-        logging.getLogger(__name__).info('On-the-fly projection enabled: ' + str(self.mapCanvas.hasCrsTransformEnabled()))
-        logging.getLogger(__name__).info('Selected layer CRS: ' + self.qgsLayerList[layerItemData['layer']].crs().authid())
+        logging.getLogger(type(self).__name__).info('DEBUG INFO ===================================')
+        logging.getLogger(type(self).__name__).info('MapCanvas layer count: ' + str(self.mapCanvas.layerCount()))
+        logging.getLogger(type(self).__name__).info('MapCanvas destination CRS: ' + self.mapCanvas.mapRenderer().destinationCrs().authid())
+        logging.getLogger(type(self).__name__).info('On-the-fly projection enabled: ' + str(self.mapCanvas.hasCrsTransformEnabled()))
+        logging.getLogger(type(self).__name__).info('Selected layer CRS: ' + self.qgsLayerList[layerItemData['layer']].crs().authid())
     
     
     def showVisibleLayers(self):
@@ -1534,12 +1536,12 @@ class MainWindow(QtGui.QMainWindow):
             layerItem = self.layerListModel.item(i)
             layerItemData = layerItem.data()
             if layerItem.checkState():
-                logging.getLogger(__name__).info('showing layer: %s', layerItem.text())
+                logging.getLogger(type(self).__name__).info('showing layer: %s', layerItem.text())
                 layers.append(QgsMapCanvasLayer(self.qgsLayerList[layerItemData['layer']]))
             i += 1
         
         if i > 0:
-            logging.getLogger(__name__).info('===========================================')
+            logging.getLogger(type(self).__name__).info('===========================================')
         
         self.mapCanvas.setLayerSet(layers)
     
@@ -1577,7 +1579,7 @@ class MainWindow(QtGui.QMainWindow):
             self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
         
         if lumensDatabase:
-            logging.getLogger(__name__).info('select LUMENS database: %s', lumensDatabase)
+            logging.getLogger(type(self).__name__).info('select LUMENS database: %s', lumensDatabase)
             
             self.lumensOpenDatabase(lumensDatabase)
     
@@ -2001,7 +2003,7 @@ class MainWindow(QtGui.QMainWindow):
             if sys.platform == 'win32':
                 os.startfile(filePath) # Open the document file in Windows
         elif ext in self.appSettings['validSpatialFormats']:
-            self.addLayer(filePath) # Add the spatial file to the layer list
+            self.addLayer(filePath) # Add the spatial data file to the layer list
     
     
     def handlerDropLayer(self):

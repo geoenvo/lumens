@@ -5,68 +5,94 @@ import os, logging
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
-from dialog_lumens_base import DialogLumensBase
 
 
-class DialogLumensImportDatabase(DialogLumensBase):
+class DialogLumensImportDatabase(QtGui.QDialog):
     """
     """
-    
-    
     def __init__(self, parent):
         super(DialogLumensImportDatabase, self).__init__(parent)
         
+        self.main = parent
         self.dialogTitle = 'LUMENS Import Database'
+        
+        if self.main.appSettings['debug']:
+            print 'DEBUG: DialogLumensImportDatabase init'
+            self.logger = logging.getLogger(type(self).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.setLevel(logging.DEBUG)
         
         self.setupUi(self)
         
         self.buttonSelectWorkingDir.clicked.connect(self.handlerSelectWorkingDir)
         self.buttonSelectLumensDatabase.clicked.connect(self.handlerSelectLumensDatabase)
-        self.buttonLumensDialogSubmit.clicked.connect(self.handlerLumensDialogSubmit)
+        self.buttonProcessImportDatabase.clicked.connect(self.handlerProcessImportDatabase)
     
     
     def setupUi(self, parent):
-        super(DialogLumensImportDatabase, self).setupUi(self)
+        self.dialogLayout = QtGui.QVBoxLayout()
         
-        layoutLumensDialog = QtGui.QGridLayout()
+        self.groupBoxDatabaseDetails = QtGui.QGroupBox('Database details')
+        self.layoutGroupBoxDatabaseDetails = QtGui.QVBoxLayout()
+        self.layoutGroupBoxDatabaseDetails.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxDatabaseDetails.setLayout(self.layoutGroupBoxDatabaseDetails)
+        self.layoutDatabaseDetailsInfo = QtGui.QVBoxLayout()
+        self.layoutDatabaseDetails = QtGui.QGridLayout()
+        self.layoutGroupBoxDatabaseDetails.addLayout(self.layoutDatabaseDetailsInfo)
+        self.layoutGroupBoxDatabaseDetails.addLayout(self.layoutDatabaseDetails)
         
-        self.labelWorkingDir = QtGui.QLabel(parent)
+        self.labelDatabaseDetailsInfo = QtGui.QLabel()
+        self.labelDatabaseDetailsInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutDatabaseDetailsInfo.addWidget(self.labelDatabaseDetailsInfo)
+        
+        self.labelWorkingDir = QtGui.QLabel()
         self.labelWorkingDir.setText('Working directory:')
-        layoutLumensDialog.addWidget(self.labelWorkingDir, 0, 0)
+        self.layoutDatabaseDetails.addWidget(self.labelWorkingDir, 0, 0)
         
-        self.lineEditWorkingDir = QtGui.QLineEdit(parent)
+        self.lineEditWorkingDir = QtGui.QLineEdit()
         self.lineEditWorkingDir.setReadOnly(True)
-        layoutLumensDialog.addWidget(self.lineEditWorkingDir, 0, 1)
+        self.layoutDatabaseDetails.addWidget(self.lineEditWorkingDir, 0, 1)
         
-        self.buttonSelectWorkingDir = QtGui.QPushButton(parent)
-        self.buttonSelectWorkingDir.setText('Select &Working Directory')
-        layoutLumensDialog.addWidget(self.buttonSelectWorkingDir, 1, 0, 1, 2)
+        self.buttonSelectWorkingDir = QtGui.QPushButton()
+        self.buttonSelectWorkingDir.setText('&Browse')
+        self.layoutDatabaseDetails.addWidget(self.buttonSelectWorkingDir, 0, 2)
         
-        self.labelLumensDatabase = QtGui.QLabel(parent)
+        self.labelLumensDatabase = QtGui.QLabel()
         self.labelLumensDatabase.setText('LUMENS database:')
-        layoutLumensDialog.addWidget(self.labelLumensDatabase, 2, 0)
+        self.layoutDatabaseDetails.addWidget(self.labelLumensDatabase, 1, 0)
         
-        self.lineEditLumensDatabase = QtGui.QLineEdit(parent)
+        self.lineEditLumensDatabase = QtGui.QLineEdit()
         self.lineEditLumensDatabase.setReadOnly(True)
-        layoutLumensDialog.addWidget(self.lineEditLumensDatabase, 2, 1)
+        self.layoutDatabaseDetails.addWidget(self.lineEditLumensDatabase, 1, 1)
         
-        self.buttonSelectLumensDatabase = QtGui.QPushButton(parent)
-        self.buttonSelectLumensDatabase.setText('&Select LUMENS Database')
-        layoutLumensDialog.addWidget(self.buttonSelectLumensDatabase, 3, 0, 1, 2)
+        self.buttonSelectLumensDatabase = QtGui.QPushButton()
+        self.buttonSelectLumensDatabase.setText('&Browse')
+        self.layoutDatabaseDetails.addWidget(self.buttonSelectLumensDatabase, 1, 2)
         
-        self.buttonLumensDialogSubmit = QtGui.QPushButton(parent)
-        self.buttonLumensDialogSubmit.setText(self.dialogTitle)
-        layoutLumensDialog.addWidget(self.buttonLumensDialogSubmit, 4, 0, 1, 2)
+        self.layoutButtonImportDatabase = QtGui.QHBoxLayout()
+        self.buttonProcessImportDatabase = QtGui.QPushButton()
+        self.buttonProcessImportDatabase.setText('&Process')
+        self.layoutButtonImportDatabase.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonImportDatabase.addWidget(self.buttonProcessImportDatabase)
         
-        self.dialogLayout.addLayout(layoutLumensDialog)
+        self.dialogLayout.addWidget(self.groupBoxDatabaseDetails)
+        self.dialogLayout.addLayout(self.layoutButtonImportDatabase)
         
         self.setLayout(self.dialogLayout)
-        
         self.setWindowTitle(self.dialogTitle)
         self.setMinimumSize(400, 200)
         self.resize(parent.sizeHint())
     
     
+    #***********************************************************
+    # 'Import Database' QPushButton handlers
+    #***********************************************************
     def handlerSelectWorkingDir(self):
         """Select a folder as working dir
         """
@@ -90,23 +116,46 @@ class DialogLumensImportDatabase(DialogLumensBase):
             logging.getLogger(type(self).__name__).info('select LUMENS database: %s', projectFile)
     
     
+    #***********************************************************
+    # Process dialog
+    #***********************************************************
     def setAppSettings(self):
         """Set the required values from the form widgets
         """
-        # BUG? workingDir path separator must be forward slash
+        # BUG in R script execution? workingDir path separator must be forward slash
         self.main.appSettings[type(self).__name__]['workingDir'] = unicode(self.lineEditWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings[type(self).__name__]['projectFile'] = unicode(self.lineEditLumensDatabase.text())
     
     
-    def handlerLumensDialogSubmit(self):
+    def validForm(self):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
+        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
+        
+        valid = True
+        
+        for key, val in self.main.appSettings[type(self).__name__].iteritems():
+            if val == 0: # for values set specific to 0
+                continue
+            elif not val:
+                valid = False
+        
+        if not valid:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
+    
+    
+    def handlerProcessImportDatabase(self):
         """LUMENS Import Database
         """
         self.setAppSettings()
         
-        if self.validDialogForm():
+        if self.validForm():
             logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             
-            self.buttonLumensDialogSubmit.setDisabled(True)
+            self.buttonProcessImportDatabase.setDisabled(True)
             
             outputs = general.runalg(
                 'modeler:lumens_import_database',
@@ -114,7 +163,7 @@ class DialogLumensImportDatabase(DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['projectFile'],
             )
             
-            self.buttonLumensDialogSubmit.setEnabled(True)
+            self.buttonProcessImportDatabase.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             

@@ -1202,6 +1202,29 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
+        
+        if self.checkBoxDriversAnalysis.isChecked():
+            formName = 'DialogLumensSCIENDODriversAnalysis'
+            algName = 'modeler:drivers_analysis'
+            
+            if self.validForm(formName):
+                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
+                
+                outputs = general.runalg(
+                    algName,
+                    self.main.appSettings[formName]['landUseCoverChangeDrivers'],
+                    self.main.appSettings[formName]['landUseCoverChangeType'],
+                )
+                
+                ##print outputs
+                
+                self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
+                
+                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+        
+        
         if self.checkBoxBuildScenario.isChecked():
             formName = 'DialogLumensSCIENDOBuildScenario'
             algName = 'r:abacususingabsolutearea'
