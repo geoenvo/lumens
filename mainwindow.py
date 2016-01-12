@@ -138,8 +138,9 @@ class MainWindow(QtGui.QMainWindow):
             'folderQUES': 'QUES',
             'folderTA': 'TA',
             'folderSCIENDO': 'SCIENDO',
-            'validDocumentFormats': ('.doc', 'docx', '.rtf', '.xls', '.xlsx', '.txt', '.log', '.csv'),
-            'validSpatialFormats': ('.shp', '.tif'),
+            'acceptedDocumentFormats': ('.doc', 'docx', '.rtf', '.xls', '.xlsx', '.txt', '.log', '.csv'),
+            'acceptedWebFormats': ('.html', '.htm'),
+            'acceptedSpatialFormats': ('.shp', '.tif'),
             
             'DialogFeatureSelectExpression': {
                 'expression': '',
@@ -1345,7 +1346,7 @@ class MainWindow(QtGui.QMainWindow):
         self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = ''
         
         self.lineEditActiveProject.clear()
-        self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.homePath()))
+        self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.rootPath()))
         
         self.lumensDisableMenus()
         
@@ -1361,7 +1362,7 @@ class MainWindow(QtGui.QMainWindow):
         outputs = general.runalg('r:lumensdatabasestatus', None)
         
         if outputs:
-            dialog = DialogResultViewer('Database Status', 'csv', outputs['database_status'], self)
+            dialog = DialogResultViewer(self, 'Database Status', 'csv', outputs['database_status'])
             dialog.exec_()
         
         self.actionLumensDatabaseStatus.setEnabled(True)
@@ -1999,11 +2000,14 @@ class MainWindow(QtGui.QMainWindow):
         
         ext = os.path.splitext(filePath)[-1].lower()
         
-        if ext in self.appSettings['validDocumentFormats']:
+        if ext in self.appSettings['acceptedDocumentFormats']:
             if sys.platform == 'win32':
                 os.startfile(filePath) # Open the document file in Windows
-        elif ext in self.appSettings['validSpatialFormats']:
+        elif ext in self.appSettings['acceptedSpatialFormats']:
             self.addLayer(filePath) # Add the spatial data file to the layer list
+        elif ext in self.appSettings['acceptedWebFormats']: # Open web documents in internal viewer
+            dialog = DialogResultViewer(self, os.path.basename(filePath), 'html', filePath)
+            dialog.exec_()
     
     
     def handlerDropLayer(self):
