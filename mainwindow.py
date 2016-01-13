@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, sys, logging, subprocess, argparse
+import os, platform, sys, logging, subprocess, argparse
 
 from qgis.core import *
 from qgis.gui import *
@@ -105,6 +105,7 @@ from dialog_lumens_tools_reddabacussp import DialogLumensToolsREDDAbacusSP
 
 #############################################################################
 
+__version__ = '1.0.0'
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -633,6 +634,9 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOSimulateLandUseChange.triggered.connect(self.handlerDialogLumensSCIENDOSimulateLandUseChange)
         self.actionDialogLumensSCIENDOSimulateWithScenario.triggered.connect(self.handlerDialogLumensSCIENDOSimulateWithScenario)
         
+        # About menu
+        self.actionDialogLumensAbout.triggered.connect(self.handlerDialogLumensAbout)
+        
         # Tools menu
         self.actionDialogLumensToolsREDDAbacusSP.triggered.connect(self.handlerDialogLumensToolsREDDAbacusSP)
     
@@ -656,6 +660,7 @@ class MainWindow(QtGui.QMainWindow):
         self.quesMenu = self.menubar.addMenu('&QUES')
         self.taMenu = self.menubar.addMenu('&TA')
         self.sciendoMenu = self.menubar.addMenu('&SCIENDO')
+        self.aboutMenu = self.menubar.addMenu('&About')
         ###self.toolsMenu = self.menubar.addMenu('T&ools')
 
         self.toolBar = QtGui.QToolBar(self)
@@ -791,42 +796,45 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensCloseDatabase = QtGui.QAction('Close LUMENS database', self)
         self.actionLumensDatabaseStatus = QtGui.QAction('LUMENS database status', self)
         self.actionDialogLumensAddData = QtGui.QAction('Add data to LUMENS database', self)
+        self.actionLumensDeleteData = QtGui.QAction('Delete LUMENS data', self)
+        self.actionDialogLumensImportDatabase = QtGui.QAction('Import LUMENS database', self)
+        
         self.actionDialogLumensAddLandcoverRaster = QtGui.QAction('Add land use/cover data', self)
         self.actionDialogLumensAddPeatData = QtGui.QAction('Add peat data', self)
         self.actionDialogLumensAddFactorData = QtGui.QAction('Add factor data', self)
         self.actionDialogLumensAddPlanningUnitData = QtGui.QAction('Add planning unit data', self)
-        self.actionLumensDeleteData = QtGui.QAction('Delete LUMENS data', self)
-        self.actionDialogLumensImportDatabase = QtGui.QAction('Import LUMENS database', self)
         
         self.databaseMenu.addAction(self.actionDialogLumensCreateDatabase)
         self.databaseMenu.addAction(self.actionLumensOpenDatabase)
         self.databaseMenu.addAction(self.actionLumensCloseDatabase)
         self.databaseMenu.addAction(self.actionLumensDatabaseStatus)
         self.databaseMenu.addAction(self.actionDialogLumensAddData)
-        self.addDataMenu = self.databaseMenu.addMenu('Add data to LUMENS database')
-        self.addDataMenu.addAction(self.actionDialogLumensAddLandcoverRaster)
-        self.addDataMenu.addAction(self.actionDialogLumensAddPeatData)
-        self.addDataMenu.addAction(self.actionDialogLumensAddFactorData)
-        self.addDataMenu.addAction(self.actionDialogLumensAddPlanningUnitData)
+        ####self.addDataMenu = self.databaseMenu.addMenu('Add data to LUMENS database')
+        ####self.addDataMenu.addAction(self.actionDialogLumensAddLandcoverRaster)
+        ####self.addDataMenu.addAction(self.actionDialogLumensAddPeatData)
+        ####self.addDataMenu.addAction(self.actionDialogLumensAddFactorData)
+        ####self.addDataMenu.addAction(self.actionDialogLumensAddPlanningUnitData)
         self.databaseMenu.addAction(self.actionLumensDeleteData)
         self.databaseMenu.addAction(self.actionDialogLumensImportDatabase)
         
         # PUR menu
         self.actionDialogLumensPUR = QtGui.QAction('Planning Unit Reconciliation', self)
+        
         self.actionDialogLumensPURCreateReferenceData = QtGui.QAction('Create reference data', self)
         self.actionDialogLumensPURPreparePlanningUnit = QtGui.QAction('Prepare planning unit', self)
         self.actionDialogLumensPURReconcilePlanningUnit = QtGui.QAction('Reconcile planning unit', self)
         self.actionDialogLumensPURFinalization = QtGui.QAction('Finalization', self)
         
-        self.functionsBasedReconciliationMenu = self.purMenu.addMenu('Functions-based Reconciliation')
+        ####self.functionsBasedReconciliationMenu = self.purMenu.addMenu('Functions-based Reconciliation')
         self.purMenu.addAction(self.actionDialogLumensPUR)
-        self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURCreateReferenceData)
-        self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURPreparePlanningUnit)
-        self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURReconcilePlanningUnit)
-        self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURFinalization)
+        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURCreateReferenceData)
+        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURPreparePlanningUnit)
+        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURReconcilePlanningUnit)
+        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURFinalization)
         
         # QUES menu
         self.actionDialogLumensQUES = QtGui.QAction('Quantification Environmental Services', self)
+        
         self.actionDialogLumensPreQUESLandcoverChangeAnalysis = QtGui.QAction('Land cover change analysis', self)
         self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis = QtGui.QAction('Land cover trajectories analysis', self)
         self.actionDialogLumensQUESCCarbonAccounting = QtGui.QAction('Carbon accounting', self)
@@ -839,27 +847,28 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensQUESHDominantLUSSL = QtGui.QAction('Dominant land use, soil, and slope', self)
         self.actionDialogLumensQUESHMultipleHRU = QtGui.QAction('Multiple HRU', self)
         
-        self.preQUESMenu = self.quesMenu.addMenu('Pre-QUES')
-        self.QUESCMenu = self.quesMenu.addMenu('QUES-C')
-        self.QUESBMenu = self.quesMenu.addMenu('QUES-B')
-        self.QUESHMenu = self.quesMenu.addMenu('QUES-H')
+        ####self.preQUESMenu = self.quesMenu.addMenu('Pre-QUES')
+        ####self.QUESCMenu = self.quesMenu.addMenu('QUES-C')
+        ####self.QUESBMenu = self.quesMenu.addMenu('QUES-B')
+        ####self.QUESHMenu = self.quesMenu.addMenu('QUES-H')
         self.quesMenu.addAction(self.actionDialogLumensQUES)
-        self.HRUDefMenu = self.QUESHMenu.addMenu('Hydrological Response Unit Definition')
-        self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverChangeAnalysis)
-        self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
-        self.QUESCMenu.addAction(self.actionDialogLumensQUESCCarbonAccounting)
-        self.QUESCMenu.addAction(self.actionDialogLumensQUESCPeatlandCarbonAccounting)
-        self.QUESCMenu.addAction(self.actionDialogLumensQUESCSummarizeMultiplePeriod)
-        self.QUESBMenu.addAction(self.actionDialogLumensQUESBAnalysis)
-        self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedModelEvaluation)
-        self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedIndicators)
-        self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantHRU)
-        self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantLUSSL)
-        self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
+        ####self.HRUDefMenu = self.QUESHMenu.addMenu('Hydrological Response Unit Definition')
+        ####self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverChangeAnalysis)
+        ####self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
+        ####self.QUESCMenu.addAction(self.actionDialogLumensQUESCCarbonAccounting)
+        ####self.QUESCMenu.addAction(self.actionDialogLumensQUESCPeatlandCarbonAccounting)
+        ####self.QUESCMenu.addAction(self.actionDialogLumensQUESCSummarizeMultiplePeriod)
+        ####self.QUESBMenu.addAction(self.actionDialogLumensQUESBAnalysis)
+        ####self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedModelEvaluation)
+        ####self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedIndicators)
+        ####self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantHRU)
+        ####self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantLUSSL)
+        ####self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost = QtGui.QAction('Trade-off Analysis [Opportunity Cost]', self)
         self.actionDialogLumensTARegionalEconomy = QtGui.QAction('Trade-off Analysis [Regional Economy]', self)
+        
         self.actionDialogLumensTAAbacusOpportunityCostCurve = QtGui.QAction('Abacus opportunity cost curve', self)
         self.actionDialogLumensTAOpportunityCostCurve = QtGui.QAction('Opportunity cost curve', self)
         self.actionDialogLumensTAOpportunityCostMap = QtGui.QAction('Opportunity cost map', self)
@@ -870,22 +879,23 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis = QtGui.QAction('Impact of regional economic scenario to land use change (final demand scenario)', self)
         self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis = QtGui.QAction('Impact of regional economic scenario to land use change (GDP scenario)', self)
         
-        self.opportunityCostMenu = self.taMenu.addMenu('Opportunity cost')
-        self.regionalEconomyMenu = self.taMenu.addMenu('Regional economy')
+        ####self.opportunityCostMenu = self.taMenu.addMenu('Opportunity cost')
+        ####self.regionalEconomyMenu = self.taMenu.addMenu('Regional economy')
         self.taMenu.addAction(self.actionDialogLumensTAOpportunityCost)
         self.taMenu.addAction(self.actionDialogLumensTARegionalEconomy)
-        self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCostCurve)
-        self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostCurve)
-        self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostMap)
-        self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
-        self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
-        self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
-        self.regionalEconomyMenu.addAction(self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
-        self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
-        self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
+        ####self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCostCurve)
+        ####self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostCurve)
+        ####self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostMap)
+        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
+        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
+        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
+        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
+        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
+        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
         
         # SCIENDO menu
         self.actionDialogLumensSCIENDO = QtGui.QAction('SCIENDO', self)
+        
         self.actionDialogLumensSCIENDODriversAnalysis = QtGui.QAction('Drivers analysis', self)
         self.actionDialogLumensSCIENDOBuildScenario = QtGui.QAction('Build scenario', self)
         self.actionDialogLumensSCIENDOHistoricalBaselineProjection = QtGui.QAction('Historical baseline projection', self)
@@ -896,19 +906,24 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOSimulateLandUseChange = QtGui.QAction('Simulate land use change', self)
         self.actionDialogLumensSCIENDOSimulateWithScenario = QtGui.QAction('Simulate with scenario', self)
         
-        self.lowEmissionDevelopmentMenu = self.sciendoMenu.addMenu('Low emission development analysis')
-        self.landUseChangeModelingMenu = self.sciendoMenu.addMenu('Land use change modeling')
+        ####self.lowEmissionDevelopmentMenu = self.sciendoMenu.addMenu('Low emission development analysis')
+        ####self.landUseChangeModelingMenu = self.sciendoMenu.addMenu('Land use change modeling')
         self.sciendoMenu.addAction(self.actionDialogLumensSCIENDO)
-        self.historicalBaselineMenu = self.lowEmissionDevelopmentMenu.addMenu('Historical baseline')
-        self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineProjection)
-        self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
-        self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDODriversAnalysis)
-        self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDOBuildScenario)
-        self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateTransitionMatrix)
-        self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCreateRasterCube)
-        self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateWeightofEvidence)
-        self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateLandUseChange)
-        self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateWithScenario)
+        ####self.historicalBaselineMenu = self.lowEmissionDevelopmentMenu.addMenu('Historical baseline')
+        ####self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineProjection)
+        ####self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
+        ####self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDODriversAnalysis)
+        ####self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDOBuildScenario)
+        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateTransitionMatrix)
+        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCreateRasterCube)
+        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateWeightofEvidence)
+        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateLandUseChange)
+        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateWithScenario)
+        
+        # About menu
+        self.actionDialogLumensAbout = QtGui.QAction('About LUMENS', self)
+        
+        self.aboutMenu.addAction(self.actionDialogLumensAbout)
         
         # Tools menu
         self.actionDialogLumensToolsREDDAbacusSP = QtGui.QAction('REDD Abacus SP', self)
@@ -1247,6 +1262,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # PUR menu
         self.actionDialogLumensPUR.setDisabled(True)
+        
         self.actionDialogLumensPURCreateReferenceData.setDisabled(True)
         self.actionDialogLumensPURPreparePlanningUnit.setDisabled(True)
         self.actionDialogLumensPURReconcilePlanningUnit.setDisabled(True)
@@ -1865,6 +1881,20 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensSCIENDOSimulateWithScenario)
+    
+    
+    def handlerDialogLumensAbout(self):
+        """
+        """
+        
+        QtGui.QMessageBox.about(self, 'LUMENS',
+            """<b>LUMENS</b> v {0}
+            <p>Copyright &copy; 2015-2016 ICRAF. 
+            All rights reserved.
+            <p>Python {1} - Qt {2} - PyQt {3} on {4}""".format(
+            __version__, platform.python_version(),
+            QtCore.QT_VERSION_STR, QtCore.PYQT_VERSION_STR,
+            platform.system()))
     
     
     def handlerDialogLumensToolsREDDAbacusSP(self):
