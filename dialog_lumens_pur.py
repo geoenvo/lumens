@@ -211,15 +211,15 @@ class DialogLumensPUR(QtGui.QDialog):
         self.setupUi(self)
         
         # History log
-        historyLog = '{0}{1}'.format('action', type(self).__name__)
-        self.historyLogPath = os.path.join(self.settingsPath, historyLog + '.log')
-        self.historyLogger = logging.getLogger(historyLog)
+        self.historyLog = '{0}{1}'.format('action', type(self).__name__)
+        self.historyLogPath = os.path.join(self.settingsPath, self.historyLog + '.log')
+        self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)
         self.log_box.setFormatter(formatter)
         self.historyLogger.addHandler(self.log_box)
-        self.historyLogger.setLevel(logging.DEBUG)
+        self.historyLogger.setLevel(logging.INFO)
         
         self.loadHistoryLog()
         
@@ -466,6 +466,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.layoutHistoryLog.addWidget(self.log_box.widget)
         
         self.layoutTabLog.addWidget(self.groupBoxHistoryLog)
+        
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)

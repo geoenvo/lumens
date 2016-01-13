@@ -5,6 +5,7 @@ import os, logging, datetime, glob
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
+from utils import QPlainTextEditLogger
 import resource
 
 
@@ -331,10 +332,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.currentOpportunityCostCurveTemplate = None
         self.currentOpportunityCostMapTemplate = None
         
+        # Init logging
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLumensTAOpportunityCost init'
             self.logger = logging.getLogger(type(self).__name__)
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             ch = logging.StreamHandler()
             ch.setFormatter(formatter)
             fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
@@ -345,7 +348,22 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         self.setupUi(self)
         
+        # History log
+        self.historyLog = '{0}{1}'.format('action', type(self).__name__)
+        self.historyLogPath = os.path.join(self.settingsPath, self.historyLog + '.log')
+        self.historyLogger = logging.getLogger(self.historyLog)
+        fh = logging.FileHandler(self.historyLogPath)
+        fh.setFormatter(formatter)
+        self.logger.addHandler(fh)
+        self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(self.log_box)
+        self.historyLogger.setLevel(logging.INFO)
+        
+        self.loadHistoryLog()
+        
         self.loadTemplateFiles()
+        
+        self.tabWidget.currentChanged.connect(self.handlerTabWidgetChanged)
         
         # 'Abacus Opportunity Cost' tab buttons
         self.buttonSelectAOCProjectFile.clicked.connect(self.handlerSelectAOCProjectFile)
@@ -919,10 +937,27 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabOpportunityCostMap.setColumnStretch(0, 3)
         self.layoutTabOpportunityCostMap.setColumnStretch(1, 1) # Smaller template column
         
+        #***********************************************************
+        # Setup 'Log' tab
+        #***********************************************************
+        # 'History Log' GroupBox
+        self.groupBoxHistoryLog = QtGui.QGroupBox('{0} {1}'.format(self.dialogTitle, 'history log'))
+        self.layoutGroupBoxHistoryLog = QtGui.QVBoxLayout()
+        self.layoutGroupBoxHistoryLog.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxHistoryLog.setLayout(self.layoutGroupBoxHistoryLog)
+        self.layoutHistoryLogInfo = QtGui.QVBoxLayout()
+        self.layoutHistoryLog = QtGui.QVBoxLayout()
+        self.layoutGroupBoxHistoryLog.addLayout(self.layoutHistoryLogInfo)
+        self.layoutGroupBoxHistoryLog.addLayout(self.layoutHistoryLog)
         
-        #***********************************************************
-        # Setup 'Result' tab
-        #***********************************************************
+        self.labelHistoryLogInfo = QtGui.QLabel()
+        self.labelHistoryLogInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutHistoryLogInfo.addWidget(self.labelHistoryLogInfo)
+        
+        self.log_box = QPlainTextEditLogger(self)
+        self.layoutHistoryLog.addWidget(self.log_box.widget)
+        
+        self.layoutTabLog.addWidget(self.groupBoxHistoryLog)
         
         
         self.setLayout(self.dialogLayout)
@@ -941,6 +976,21 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         """Called when the widget is closed
         """
         super(DialogLumensTAOpportunityCost, self).closeEvent(event)
+    
+    
+    def loadHistoryLog(self):
+        """Load the history log file
+        """
+        if os.path.exists(self.historyLogPath):
+            logText = open(self.historyLogPath).read()
+            self.log_box.widget.setPlainText(logText)
+    
+    
+    def handlerTabWidgetChanged(self, index):
+        """
+        """
+        if self.tabWidget.widget(index) == self.tabLog:
+            self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
     
     
     #***********************************************************
