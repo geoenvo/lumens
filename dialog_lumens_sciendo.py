@@ -353,28 +353,20 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         
         self.tabLowEmissionDevelopmentAnalysis = QtGui.QWidget()
         self.tabLandUseChangeModeling = QtGui.QWidget()
-        self.tabResult = QtGui.QWidget()
-        self.tabReport = QtGui.QWidget()
         self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabLowEmissionDevelopmentAnalysis, 'Low Emission Development Analysis')
         self.tabWidget.addTab(self.tabLandUseChangeModeling, 'Land Use Change Modeling')
-        self.tabWidget.addTab(self.tabResult, 'Result')
-        self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
         ###self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QVBoxLayout()
         self.layoutTabLowEmissionDevelopmentAnalysis = QtGui.QGridLayout()
         ##self.layoutTabLandUseChangeModeling = QtGui.QVBoxLayout()
         self.layoutTabLandUseChangeModeling = QtGui.QGridLayout()
-        self.layoutTabResult = QtGui.QVBoxLayout()
-        self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.tabLowEmissionDevelopmentAnalysis.setLayout(self.layoutTabLowEmissionDevelopmentAnalysis)
         self.tabLandUseChangeModeling.setLayout(self.layoutTabLandUseChangeModeling)
-        self.tabResult.setLayout(self.layoutTabResult)
-        self.tabReport.setLayout(self.layoutTabReport)
         self.tabLog.setLayout(self.layoutTabLog)
         
         self.dialogLayout.addWidget(self.tabWidget)
@@ -1153,6 +1145,23 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessLowEmissionDevelopmentAnalysis(self):
         """
         """
@@ -1178,6 +1187,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -1197,6 +1208,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 
@@ -1220,6 +1233,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -1240,6 +1255,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 
@@ -1268,6 +1285,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -1290,6 +1309,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 
@@ -1314,6 +1335,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -1337,6 +1360,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -1359,6 +1384,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 

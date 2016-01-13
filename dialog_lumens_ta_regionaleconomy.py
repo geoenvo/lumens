@@ -718,16 +718,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.tabRegionalEconomicScenarioImpact = QtGui.QWidget()
         self.tabLandRequirementAnalysis = QtGui.QWidget()
         self.tabLandUseChangeImpact = QtGui.QWidget()
-        self.tabResult = QtGui.QWidget()
-        self.tabReport = QtGui.QWidget()
         self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabDescriptiveAnalysis, 'Descriptive Analysis of Regional Economy')
         self.tabWidget.addTab(self.tabRegionalEconomicScenarioImpact, 'Regional Economic Scenario Impact')
         self.tabWidget.addTab(self.tabLandRequirementAnalysis, 'Land Requirement Analysis')
         self.tabWidget.addTab(self.tabLandUseChangeImpact, 'Land Use Change Impact')
-        self.tabWidget.addTab(self.tabResult, 'Result')
-        self.tabWidget.addTab(self.tabReport, 'Report')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
         ##self.layoutTabDescriptiveAnalysis = QtGui.QVBoxLayout()
@@ -738,16 +734,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.layoutTabLandRequirementAnalysis = QtGui.QGridLayout()
         ##self.layoutTabLandUseChangeImpact = QtGui.QVBoxLayout()
         self.layoutTabLandUseChangeImpact = QtGui.QGridLayout()
-        self.layoutTabResult = QtGui.QVBoxLayout()
-        self.layoutTabReport = QtGui.QVBoxLayout()
         self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.tabDescriptiveAnalysis.setLayout(self.layoutTabDescriptiveAnalysis)
         self.tabRegionalEconomicScenarioImpact.setLayout(self.layoutTabRegionalEconomicScenarioImpact)
         self.tabLandRequirementAnalysis.setLayout(self.layoutTabLandRequirementAnalysis)
         self.tabLandUseChangeImpact.setLayout(self.layoutTabLandUseChangeImpact)
-        self.tabResult.setLayout(self.layoutTabResult)
-        self.tabReport.setLayout(self.layoutTabReport)
         self.tabLog.setLayout(self.layoutTabLog)
         
         self.dialogLayout.addWidget(self.tabWidget)
@@ -2961,6 +2953,23 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessDescriptiveAnalysis(self):
         """
         """
@@ -2990,6 +2999,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             )
             
             ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessDescriptiveAnalysis.setEnabled(True)
             
@@ -3026,6 +3037,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessDescriptiveAnalysis.setEnabled(True)
                 
@@ -3067,6 +3080,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessRegionalEconomicScenarioImpact.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -3100,6 +3115,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessRegionalEconomicScenarioImpact.setEnabled(True)
                 
@@ -3138,6 +3155,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             )
             
             ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessDescriptiveAnalysis.setEnabled(True)
             
@@ -3178,6 +3197,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             )
             
             ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessDescriptiveAnalysis.setEnabled(True)
             

@@ -48,7 +48,7 @@ from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_layer_attribute_table import DialogLayerAttributeTable
 from dialog_feature_selectexpression import DialogFeatureSelectExpression
 from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
-from dialog_result_viewer import DialogResultViewer
+from dialog_lumens_viewer import DialogLumensViewer
 
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
@@ -1362,7 +1362,7 @@ class MainWindow(QtGui.QMainWindow):
         outputs = general.runalg('r:lumensdatabasestatus', None)
         
         if outputs:
-            dialog = DialogResultViewer(self, 'Database Status', 'csv', outputs['database_status'])
+            dialog = DialogLumensViewer(self, 'Database Status', 'csv', outputs['database_status'])
             dialog.exec_()
         
         self.actionLumensDatabaseStatus.setEnabled(True)
@@ -2006,7 +2006,7 @@ class MainWindow(QtGui.QMainWindow):
         elif ext in self.appSettings['acceptedSpatialFormats']:
             self.addLayer(filePath) # Add the spatial data file to the layer list
         elif ext in self.appSettings['acceptedWebFormats']: # Open web documents in internal viewer
-            dialog = DialogResultViewer(self, os.path.basename(filePath), 'html', filePath)
+            dialog = DialogLumensViewer(self, os.path.basename(filePath), 'html', filePath)
             dialog.exec_()
     
     

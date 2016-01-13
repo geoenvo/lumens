@@ -777,14 +777,14 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabQUESB = QtGui.QWidget()
         self.tabQUESH = QtGui.QWidget()
         self.tabReclassification = QtGui.QWidget()
-        self.tabResult = QtGui.QWidget()
+        self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabPreQUES, 'Pre-QUES')
         self.tabWidget.addTab(self.tabQUESC, 'QUES-C')
         self.tabWidget.addTab(self.tabQUESB, 'QUES-B')
         self.tabWidget.addTab(self.tabQUESH, 'QUES-H')
         self.tabWidget.addTab(self.tabReclassification, 'Reclassification')
-        self.tabWidget.addTab(self.tabResult, 'Result')
+        self.tabWidget.addTab(self.tabLog, 'Log')
         
         ##self.layoutTabPreQUES = QtGui.QVBoxLayout()
         self.layoutTabPreQUES = QtGui.QGridLayout()
@@ -794,14 +794,14 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutTabQUESB = QtGui.QGridLayout()
         self.layoutTabQUESH = QtGui.QVBoxLayout()
         self.layoutTabReclassification = QtGui.QVBoxLayout()
-        self.layoutTabResult = QtGui.QVBoxLayout()
+        self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.tabPreQUES.setLayout(self.layoutTabPreQUES)
         self.tabQUESC.setLayout(self.layoutTabQUESC)
         self.tabQUESB.setLayout(self.layoutTabQUESB)
         self.tabQUESH.setLayout(self.layoutTabQUESH)
         self.tabReclassification.setLayout(self.layoutTabReclassification)
-        self.tabResult.setLayout(self.layoutTabResult)
+        self.tabLog.setLayout(self.layoutTabLog)
         
         self.dialogLayout.addWidget(self.tabWidget)
         
@@ -3189,6 +3189,23 @@ class DialogLumensQUES(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessPreQUES(self):
         """
         """
@@ -3217,6 +3234,8 @@ class DialogLumensQUES(QtGui.QDialog):
             
             ##print outputs
             
+            self.outputsMessageBox(algName, outputs, '', '')
+            
             self.buttonProcessPreQUES.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -3244,6 +3263,8 @@ class DialogLumensQUES(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessQUESC.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -3264,6 +3285,8 @@ class DialogLumensQUES(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessQUESC.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -3271,7 +3294,7 @@ class DialogLumensQUES(QtGui.QDialog):
         
         if self.checkBoxSummarizeMultiplePeriod.isChecked():
             formName = 'DialogLumensQUESCSummarizeMultiplePeriod'
-            algName = 'r:summarizemultipleperiod'
+            algName = 'r:summarizemultipleperiode'
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -3284,6 +3307,8 @@ class DialogLumensQUES(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessQUESC.setEnabled(True)
                 
@@ -3349,6 +3374,8 @@ class DialogLumensQUES(QtGui.QDialog):
             
             ##print outputs
             
+            self.outputsMessageBox(algName, outputs, '', '')
+            
             self.buttonProcessQUESB.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -3384,6 +3411,8 @@ class DialogLumensQUES(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessHRUDefinition.setEnabled(True)
                 
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -3412,6 +3441,8 @@ class DialogLumensQUES(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessHRUDefinition.setEnabled(True)
                 
@@ -3444,6 +3475,8 @@ class DialogLumensQUES(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessHRUDefinition.setEnabled(True)
                 
@@ -3481,6 +3514,8 @@ class DialogLumensQUES(QtGui.QDialog):
             )
             
             ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessWatershedModelEvaluation.setEnabled(True)
             
@@ -3522,6 +3557,8 @@ class DialogLumensQUES(QtGui.QDialog):
             )
             
             ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessWatershedIndicators.setEnabled(True)
             

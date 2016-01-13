@@ -386,12 +386,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.tabAbacusOpportunityCost = QtGui.QWidget()
         self.tabOpportunityCostCurve = QtGui.QWidget()
         self.tabOpportunityCostMap = QtGui.QWidget()
-        self.tabResult = QtGui.QWidget()
+        self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabAbacusOpportunityCost, 'Abacus Opportunity Cost')
         self.tabWidget.addTab(self.tabOpportunityCostCurve, 'Opportunity Cost Curve')
         self.tabWidget.addTab(self.tabOpportunityCostMap, 'Opportunity Cost Map')
-        self.tabWidget.addTab(self.tabResult, 'Result')
+        self.tabWidget.addTab(self.tabLog, 'Log')
         
         ##self.layoutTabAbacusOpportunityCost = QtGui.QVBoxLayout()
         self.layoutTabAbacusOpportunityCost = QtGui.QGridLayout()
@@ -399,12 +399,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutTabOpportunityCostCurve = QtGui.QGridLayout()
         ##self.layoutTabOpportunityCostMap = QtGui.QVBoxLayout()
         self.layoutTabOpportunityCostMap = QtGui.QGridLayout()
-        self.layoutTabResult = QtGui.QVBoxLayout()
+        self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.tabAbacusOpportunityCost.setLayout(self.layoutTabAbacusOpportunityCost)
         self.tabOpportunityCostCurve.setLayout(self.layoutTabOpportunityCostCurve)
         self.tabOpportunityCostMap.setLayout(self.layoutTabOpportunityCostMap)
-        self.tabResult.setLayout(self.layoutTabResult)
+        self.tabLog.setLayout(self.layoutTabLog)
         
         self.dialogLayout.addWidget(self.tabWidget)
         
@@ -1365,6 +1365,23 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessAbacusOpportunityCost(self):
         """
         """
@@ -1384,6 +1401,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             )
             
             ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessAbacusOpportunityCost.setEnabled(True)
             
@@ -1426,6 +1445,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
             ##print outputs
             
+            self.outputsMessageBox(algName, outputs, '', '')
+            
             self.buttonProcessOpportunityCostCurve.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -1460,8 +1481,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
             ##print outputs
             
+            self.outputsMessageBox(algName, outputs, '', '')
+            
             self.buttonProcessOpportunityCostMap.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-        
     

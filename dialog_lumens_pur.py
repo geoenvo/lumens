@@ -227,16 +227,16 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.tabSetup = QtGui.QWidget()
         self.tabReconcile = QtGui.QWidget()
-        self.tabResult = QtGui.QWidget()
+        self.tabLog = QtGui.QWidget()
         
         self.tabWidget.addTab(self.tabSetup, 'Setup')
         self.tabWidget.addTab(self.tabReconcile, 'Reconcile')
-        self.tabWidget.addTab(self.tabResult, 'Result')
+        self.tabWidget.addTab(self.tabLog, 'Log')
         
         ##self.layoutTabSetup = QtGui.QVBoxLayout()
         self.layoutTabSetup = QtGui.QGridLayout()
         self.layoutTabReconcile = QtGui.QVBoxLayout()
-        self.layoutTabResult = QtGui.QVBoxLayout()
+        self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.dialogLayout.addWidget(self.tabWidget)
         ##self.dialogLayout.setContentsMargins(10, 10, 10, 10)
@@ -427,7 +427,7 @@ class DialogLumensPUR(QtGui.QDialog):
         #***********************************************************
         # Setup 'Result' tab
         #***********************************************************
-        self.tabResult.setLayout(self.layoutTabResult)
+        self.tabLog.setLayout(self.layoutTabLog)
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -910,8 +910,53 @@ class DialogLumensPUR(QtGui.QDialog):
         print self.main.appSettings[type(self).__name__]
     
     
+    def validForm(self):
+        """
+        """
+        logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
+        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
+        
+        valid = True
+        
+        for key, val in self.main.appSettings[type(self).__name__].iteritems():
+            if val == 0: # for values set specific to 0
+                continue
+            elif not val:
+                valid = False
+        
+        if not valid:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
+    
+    
     def handlerProcessSetup(self):
         """
         """
         self.setAppSettings()
+        
+        if self.validForm():
+            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
+            
+            self.buttonProcessSetup.setDisabled(True)
+            
+            algName = 'modeler:lumens_pur'
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[type(self).__name__]['shapefile'],
+                self.main.appSettings[type(self).__name__]['shapefileAttr'],
+                self.main.appSettings[type(self).__name__]['dataTitle'],
+                self.main.appSettings[type(self).__name__]['referenceClasses'],
+                self.main.appSettings[type(self).__name__]['referenceMapping'],
+                self.main.appSettings[type(self).__name__]['planningUnits'],
+            )
+            
+            ##print outputs
+            
+            self.outputsMessageBox(algName, outputs, '', '')
+            
+            self.buttonProcessSetup.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
     

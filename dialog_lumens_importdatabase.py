@@ -147,6 +147,23 @@ class DialogLumensImportDatabase(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessImportDatabase(self):
         """LUMENS Import Database
         """
@@ -157,11 +174,15 @@ class DialogLumensImportDatabase(QtGui.QDialog):
             
             self.buttonProcessImportDatabase.setDisabled(True)
             
+            algName = 'modeler:lumens_import_database'
+            
             outputs = general.runalg(
-                'modeler:lumens_import_database',
+                algName,
                 self.main.appSettings[type(self).__name__]['workingDir'],
                 self.main.appSettings[type(self).__name__]['projectFile'],
             )
+            
+            self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessImportDatabase.setEnabled(True)
             

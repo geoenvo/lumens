@@ -5,6 +5,7 @@ import os, logging
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
+from dialog_lumens_viewer import DialogLumensViewer
 
 
 class DialogLumensCreateDatabase(QtGui.QDialog):
@@ -286,6 +287,23 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessCreateDatabase(self):
         """LUMENS Create Database R algorithm
         """
@@ -296,8 +314,17 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             
             self.buttonProcessCreateDatabase.setDisabled(True)
             
+            ### 20160112 new R scripts
+            ### 1. modeler:lumens_create_database_1(projectname, outputfolder, projectdescription, projectlocation, projectprovince, projectcountry, shapefile, shapefileattribute, projectspatialresolution)
+            ### 2. r:LUMENS_create_database_2(proj.file, p.admin.df)
+            ### replaces: modeler:lumens_create_database
+            
+            """
+            ###OBSOLETE
+            algName = 'modeler:lumens_create_database'
+            
             outputs = general.runalg(
-                'modeler:lumens_create_database',
+                algName,
                 self.main.appSettings[type(self).__name__]['projectName'],
                 self.main.appSettings[type(self).__name__]['outputFolder'],
                 self.main.appSettings[type(self).__name__]['projectDescription'],
@@ -308,16 +335,52 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
                 self.main.appSettings[type(self).__name__]['projectSpatialRes']
             )
+            """
             
-            self.buttonProcessCreateDatabase.setEnabled(True)
+            algName = 'modeler:lumens_create_database_1'
             
-            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[type(self).__name__]['projectName'],
+                self.main.appSettings[type(self).__name__]['outputFolder'],
+                self.main.appSettings[type(self).__name__]['projectDescription'],
+                self.main.appSettings[type(self).__name__]['projectLocation'],
+                self.main.appSettings[type(self).__name__]['projectProvince'],
+                self.main.appSettings[type(self).__name__]['projectCountry'],
+                self.main.appSettings[type(self).__name__]['shapefile'],
+                self.main.appSettings[type(self).__name__]['shapefileAttr'],
+                self.main.appSettings[type(self).__name__]['projectSpatialRes'],
+                None,
+            )
             
+            # Construct the project .lpj filepath
             lumensDatabase = os.path.join(
                 self.main.appSettings[type(self).__name__]['outputFolder'],
                 self.main.appSettings[type(self).__name__]['projectName'],
                 "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectProjectfileExt'])
             )
+            
+            algName = 'r:lumenscreatedatabase2'
+            
+            if outputs and outputs['p.admin.df_ALG2']:
+                dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['p.admin.df_ALG2'], True)
+                dialog.exec_()
+                
+                # Create a temp csv file from the csv dialog
+                tableData = dialog.getTableData()
+                tableCsv = dialog.getTableCsv(tableData)
+                
+                outputs = general.runalg(
+                    algName,
+                    lumensDatabase,
+                    tableCsv,
+                )
+            
+            self.outputsMessageBox(algName, outputs, '', '')
+            
+            self.buttonProcessCreateDatabase.setEnabled(True)
+            
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             # If LUMENS database file exists, open it and close this dialog
             if os.path.exists(lumensDatabase):

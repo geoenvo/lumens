@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import csv
+import os, tempfile, csv
 from PyQt4 import QtCore, QtGui, QtWebKit
 
 
-class DialogResultViewer(QtGui.QDialog):
-    """
+class DialogLumensViewer(QtGui.QDialog):
+    """Dialog class for displaying csv and html content, also provides an editable table that returns tabular data
     """
     def __init__(self, parent, contentTitle, contentType, contentSource, editableTable=False):
-        super(DialogResultViewer, self).__init__(parent)
+        super(DialogLumensViewer, self).__init__(parent)
         self.main = parent
         
         self.contentType = contentType
         self.contentSource = contentSource
         self.editableTable = editableTable
         
-        self.dialogTitle = 'Result Viewer - ' + contentTitle
+        self.dialogTitle = 'LUMENS Viewer - ' + contentTitle
         
         self.setupUi(self)
         
@@ -38,9 +38,11 @@ class DialogResultViewer(QtGui.QDialog):
         """
         tableData = []
         
+        # Loop rows
         for tableRow in range(self.tableModel.rowCount()):
             dataRow = []
             
+            # Loop row columns
             for tableColumn in range (self.tableModel.columnCount()):
                 item = self.tableModel.item(tableRow, tableColumn)
                 dataRow.append(item.text())
@@ -48,12 +50,25 @@ class DialogResultViewer(QtGui.QDialog):
             tableData.append(dataRow)
         
         return tableData
+    
+    
+    def getTableCsv(self, tableData):
+        """Write the table data to a temp csv file
+        """
+        handle, csvFilePath = tempfile.mkstemp(suffix='.csv')
         
+        with os.fdopen(handle, 'w') as f:
+            writer = csv.writer(f)
+            for dataRow in tableData:
+                writer.writerow(dataRow)
+        
+        return csvFilePath
+    
     
     def closeEvent(self, event):
         """Called when the widget is closed
         """
-        super(DialogResultViewer, self).closeEvent(event)
+        super(DialogLumensViewer, self).closeEvent(event)
         
         # Set result code
         self.done(1)
@@ -62,7 +77,7 @@ class DialogResultViewer(QtGui.QDialog):
     
     
     def loadContent(self):
-        """
+        """Load the source content in the relevant widget
         """
         if self.contentType == 'csv':
             self.tableModel = QtGui.QStandardItemModel()
@@ -70,6 +85,7 @@ class DialogResultViewer(QtGui.QDialog):
             self.tableContent = QtGui.QTableView()
             self.tableContent.setModel(self.tableModel)
             
+            # Disable table editing
             if not self.editableTable:
                 self.tableContent.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
                 self.tableContent.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)

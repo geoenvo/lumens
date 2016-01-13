@@ -443,6 +443,23 @@ class DialogLumensAddData(QtGui.QDialog):
         return valid
     
     
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
+    
+    
     def handlerProcessAddData(self):
         """
         """
@@ -465,6 +482,8 @@ class DialogLumensAddData(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessAddData.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
@@ -485,6 +504,8 @@ class DialogLumensAddData(QtGui.QDialog):
                 
                 ##print outputs
                 
+                self.outputsMessageBox(algName, outputs, '', '')
+                
                 self.buttonProcessAddData.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
@@ -503,6 +524,8 @@ class DialogLumensAddData(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessAddData.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
@@ -523,6 +546,8 @@ class DialogLumensAddData(QtGui.QDialog):
                 )
                 
                 ##print outputs
+                
+                self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessAddData.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
