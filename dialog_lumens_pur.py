@@ -5,6 +5,7 @@ import os, logging, glob
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
+from utils import QPlainTextEditLogger
 from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
 import resource
 
@@ -192,10 +193,13 @@ class DialogLumensPUR(QtGui.QDialog):
         self.tablePlanningUnitRowCount = 0
         self.tablePlanningUnitData = []
         
+        # Init logging
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        
+        # Module debug log to stdout and file
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLumensPUR init'
             self.logger = logging.getLogger(type(self).__name__)
-            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             ch = logging.StreamHandler()
             ch.setFormatter(formatter)
             fh = logging.FileHandler(os.path.join(self.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
@@ -206,8 +210,22 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setupUi(self)
         
+        # History log
+        historyLog = '{0}{1}'.format('action', type(self).__name__)
+        self.historyLogPath = os.path.join(self.settingsPath, historyLog + '.log')
+        self.historyLogger = logging.getLogger(historyLog)
+        fh = logging.FileHandler(self.historyLogPath)
+        fh.setFormatter(formatter)
+        self.logger.addHandler(fh)
+        self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(self.log_box)
+        self.historyLogger.setLevel(logging.DEBUG)
+        
+        self.loadHistoryLog()
+        
         self.loadTemplateFiles()
         
+        self.tabWidget.currentChanged.connect(self.handlerTabWidgetChanged)
         self.buttonProcessSetup.clicked.connect(self.handlerProcessSetup)
         self.buttonLoadPURTemplate.clicked.connect(self.handlerLoadPURTemplate)
         self.buttonSavePURTemplate.clicked.connect(self.handlerSavePURTemplate)
@@ -258,6 +276,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.labelSetupReferenceInfo = QtGui.QLabel()
         self.labelSetupReferenceInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutSetupReferenceInfo.addWidget(self.labelSetupReferenceInfo)
+        
         self.labelShapefile = QtGui.QLabel()
         self.labelShapefile.setText('Reference data:')
         self.layoutSetupReferenceOptions.addWidget(self.labelShapefile, 0, 0)
@@ -425,14 +444,41 @@ class DialogLumensPUR(QtGui.QDialog):
         self.tabReconcile.setLayout(self.layoutTabReconcile)
         
         #***********************************************************
-        # Setup 'Result' tab
+        # Setup 'Log' tab
         #***********************************************************
         self.tabLog.setLayout(self.layoutTabLog)
+        
+        # 'History Log' GroupBox
+        self.groupBoxHistoryLog = QtGui.QGroupBox('{0} {1}'.format(self.dialogTitle, 'history log'))
+        self.layoutGroupBoxHistoryLog = QtGui.QVBoxLayout()
+        self.layoutGroupBoxHistoryLog.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxHistoryLog.setLayout(self.layoutGroupBoxHistoryLog)
+        self.layoutHistoryLogInfo = QtGui.QVBoxLayout()
+        self.layoutHistoryLog = QtGui.QVBoxLayout()
+        self.layoutGroupBoxHistoryLog.addLayout(self.layoutHistoryLogInfo)
+        self.layoutGroupBoxHistoryLog.addLayout(self.layoutHistoryLog)
+        
+        self.labelHistoryLogInfo = QtGui.QLabel()
+        self.labelHistoryLogInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutHistoryLogInfo.addWidget(self.labelHistoryLogInfo)
+        
+        self.log_box = QPlainTextEditLogger(self)
+        self.layoutHistoryLog.addWidget(self.log_box.widget)
+        
+        self.layoutTabLog.addWidget(self.groupBoxHistoryLog)
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
         self.setMinimumSize(1024, 600)
         self.resize(parent.sizeHint())
+    
+    
+    def loadHistoryLog(self):
+        """Load the history log file
+        """
+        if os.path.exists(self.historyLogPath):
+            logText = open(self.historyLogPath).read()
+            self.log_box.widget.setPlainText(logText)
     
     
     def populateTableReferenceMapping(self, shapefileAttribute):
@@ -656,6 +702,13 @@ class DialogLumensPUR(QtGui.QDialog):
     #***********************************************************
     # 'Setup' tab QPushButton handlers
     #***********************************************************
+    def handlerTabWidgetChanged(self, index):
+        """
+        """
+        if self.tabWidget.widget(index) == self.tabLog:
+            self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
+    
+    
     def handlerLoadPURTemplate(self, fileName=None):
         """
         """

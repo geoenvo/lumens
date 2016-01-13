@@ -54,12 +54,14 @@ from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
 from dialog_lumens_importdatabase import DialogLumensImportDatabase
 from dialog_lumens_adddata import DialogLumensAddData
+
 from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeatdata import DialogLumensAddPeatData
 from dialog_lumens_addfactordata import DialogLumensAddFactorData
 from dialog_lumens_addplanningunitdata import DialogLumensAddPlanningUnitData
 
 from dialog_lumens_pur import DialogLumensPUR
+
 from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReferenceData
 from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
 from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlanningUnit
@@ -68,6 +70,7 @@ from dialog_lumens_preques_landcoverchangeanalysis import DialogLumensPreQUESLan
 from dialog_lumens_preques_landcovertrajectoriesanalysis import DialogLumensPreQUESLandcoverTrajectoriesAnalysis
 
 from dialog_lumens_ques import DialogLumensQUES
+
 from dialog_lumens_quesc_carbonaccounting import DialogLumensQUESCCarbonAccounting
 from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatlandCarbonAccounting
 from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummarizeMultiplePeriod
@@ -80,6 +83,7 @@ from dialog_lumens_quesh_dominantlussl import DialogLumensQUESHDominantLUSSL
 
 from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_regionaleconomy import DialogLumensTARegionalEconomy
+
 from dialog_lumens_ta_abacusopportunitycostcurve import DialogLumensTAAbacusOpportunityCostCurve
 from dialog_lumens_ta_opportunitycostcurve import DialogLumensTAOpportunityCostCurve
 from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
@@ -91,6 +95,7 @@ from dialog_lumens_ta_finaldemandscenario import DialogLumensTARegionalEconomyFi
 from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis
 
 from dialog_lumens_sciendo import DialogLumensSCIENDO
+
 from dialog_lumens_sciendo_driversanalysis import DialogLumensSCIENDODriversAnalysis
 from dialog_lumens_sciendo_buildscenario import DialogLumensSCIENDOBuildScenario
 from dialog_lumens_sciendo_historicalbaselineproj import DialogLumensSCIENDOHistoricalBaselineProjection
@@ -1886,7 +1891,6 @@ class MainWindow(QtGui.QMainWindow):
     def handlerDialogLumensAbout(self):
         """
         """
-        
         QtGui.QMessageBox.about(self, 'LUMENS',
             """<b>LUMENS</b> v {0}
             <p>Copyright &copy; 2015-2016 ICRAF. 
