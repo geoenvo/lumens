@@ -219,7 +219,7 @@ class MainWindow(QtGui.QMainWindow):
                 'nodata': '',
             },
             'DialogLumensPreQUESLandcoverTrajectoriesAnalysis': {
-                'workingDir': '',
+                ####'workingDir': '',
                 'location': '',
                 't1': '',
                 't2': '',
@@ -341,7 +341,7 @@ class MainWindow(QtGui.QMainWindow):
                 't2': '',
             },
             'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis': {
-                'workingDir': '',
+                ####'workingDir': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
@@ -354,7 +354,7 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis': {
-                'workingDir': '',
+                ####'workingDir': '',
                 'intermediateConsumptionMatrixP1': '',
                 'intermediateConsumptionMatrixP2': '',
                 'valueAddedMatrixP1': '',
@@ -406,7 +406,7 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis': {
-                'workingDir': '',
+                ####'workingDir': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
@@ -423,7 +423,7 @@ class MainWindow(QtGui.QMainWindow):
                 'finalDemandChangeScenario': '',
             },
             'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis': {
-                'workingDir': '',
+                ####'workingDir': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',

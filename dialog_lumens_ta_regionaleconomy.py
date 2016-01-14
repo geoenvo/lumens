@@ -118,7 +118,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedMatrixP2'] = valueAddedMatrixP2 = settings.value('valueAddedMatrixP2')
             templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionMatrixP2'] = finalConsumptionMatrixP2 = settings.value('finalConsumptionMatrixP2')
             templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['labourRequirementP2'] = labourRequirementP2 = settings.value('labourRequirementP2')
-            templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            ####templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
             templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedComponent'] = valueAddedComponent = settings.value('valueAddedComponent')
             templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['finalConsumptionComponent'] = finalConsumptionComponent = settings.value('finalConsumptionComponent')
             templateSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['listOfEconomicSector'] = listOfEconomicSector = settings.value('listOfEconomicSector')
@@ -146,10 +146,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.lineEditMultipleLabourRequirement.setText(labourRequirementP2)
                 else:
                     self.lineEditMultipleLabourRequirement.setText('')
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditOtherWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditOtherWorkingDir.setText('')
+                ####if workingDir and os.path.isdir(workingDir):
+                ####    self.lineEditOtherWorkingDir.setText(workingDir)
+                ####else:
+                ####    self.lineEditOtherWorkingDir.setText('')
                 if valueAddedComponent and os.path.exists(valueAddedComponent):
                     self.lineEditOtherValueAddedComponent.setText(valueAddedComponent)
                 else:
@@ -191,7 +191,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
             templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis'] = {}
             templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalDemandChangeScenario'] = finalDemandChangeScenario = settings.value('finalDemandChangeScenario')
-            templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            ####templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
             templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['intermediateConsumptionMatrix'] = intermediateConsumptionMatrix = settings.value('intermediateConsumptionMatrix')
             templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['valueAddedMatrix'] = valueAddedMatrix = settings.value('valueAddedMatrix')
             templateSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['finalConsumptionMatrix'] = finalConsumptionMatrix = settings.value('finalConsumptionMatrix')
@@ -211,10 +211,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText(finalDemandChangeScenario)
                 else:
                     self.lineEditRegionalEconomicScenarioImpactFinalDemandChangeScenario.setText('')
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText('')
+                ####if workingDir and os.path.isdir(workingDir):
+                ####    self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(workingDir)
+                ####else:
+                ####    self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText('')
                 if intermediateConsumptionMatrix and os.path.exists(intermediateConsumptionMatrix):
                     self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText(intermediateConsumptionMatrix)
                 else:
@@ -659,7 +659,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.buttonSelectMultipleValueAddedMatrix.clicked.connect(self.handlerSelectMultipleValueAddedMatrix)
         self.buttonSelectMultipleFinalConsumptionMatrix.clicked.connect(self.handlerSelectMultipleFinalConsumptionMatrix)
         self.buttonSelectMultipleLabourRequirement.clicked.connect(self.handlerSelectMultipleLabourRequirement)
-        self.buttonSelectOtherWorkingDir.clicked.connect(self.handlerSelectOtherWorkingDir)
+        ####self.buttonSelectOtherWorkingDir.clicked.connect(self.handlerSelectOtherWorkingDir)
         self.buttonSelectOtherValueAddedComponent.clicked.connect(self.handlerSelectOtherValueAddedComponent)
         self.buttonSelectOtherFinalConsumptionComponent.clicked.connect(self.handlerSelectOtherFinalConsumptionComponent)
         self.buttonSelectOtherListOfEconomicSector.clicked.connect(self.handlerSelectOtherListOfEconomicSector)
@@ -675,7 +675,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         # 'Regional Economic Scenario Impact' tab buttons
         self.buttonSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario)
         self.buttonSelectRegionalEconomicScenarioImpactGDPChangeScenario.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactGDPChangeScenario)
-        self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactWorkingDir)
+        ####self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactWorkingDir)
         self.buttonSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix)
         self.buttonSelectRegionalEconomicScenarioImpactValueAddedMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactValueAddedMatrix)
         self.buttonSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix)
@@ -945,17 +945,17 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.labelOtherInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutOtherInfo.addWidget(self.labelOtherInfo)
         
-        self.labelOtherWorkingDir = QtGui.QLabel()
-        self.labelOtherWorkingDir.setText('Working directory:')
-        self.layoutOther.addWidget(self.labelOtherWorkingDir, 0, 0)
+        ####self.labelOtherWorkingDir = QtGui.QLabel()
+        ####self.labelOtherWorkingDir.setText('Working directory:')
+        ####self.layoutOther.addWidget(self.labelOtherWorkingDir, 0, 0)
         
-        self.lineEditOtherWorkingDir = QtGui.QLineEdit()
-        self.lineEditOtherWorkingDir.setReadOnly(True)
-        self.layoutOther.addWidget(self.lineEditOtherWorkingDir, 0, 1)
+        ####self.lineEditOtherWorkingDir = QtGui.QLineEdit()
+        ####self.lineEditOtherWorkingDir.setReadOnly(True)
+        ####self.layoutOther.addWidget(self.lineEditOtherWorkingDir, 0, 1)
         
-        self.buttonSelectOtherWorkingDir = QtGui.QPushButton()
-        self.buttonSelectOtherWorkingDir.setText('&Browse')
-        self.layoutOther.addWidget(self.buttonSelectOtherWorkingDir, 0, 2)
+        ####self.buttonSelectOtherWorkingDir = QtGui.QPushButton()
+        ####self.buttonSelectOtherWorkingDir.setText('&Browse')
+        ####self.layoutOther.addWidget(self.buttonSelectOtherWorkingDir, 0, 2)
         
         self.labelOtherValueAddedComponent = QtGui.QLabel()
         self.labelOtherValueAddedComponent.setText('Value added component:')
@@ -1149,17 +1149,17 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.labelRegionalEconomicScenarioImpactParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutRegionalEconomicScenarioImpactParametersInfo.addWidget(self.labelRegionalEconomicScenarioImpactParametersInfo)
         
-        self.labelRegionalEconomicScenarioImpactWorkingDir = QtGui.QLabel()
-        self.labelRegionalEconomicScenarioImpactWorkingDir.setText('Working directory:')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactWorkingDir, 0, 0)
+        ####self.labelRegionalEconomicScenarioImpactWorkingDir = QtGui.QLabel()
+        ####self.labelRegionalEconomicScenarioImpactWorkingDir.setText('Working directory:')
+        ####self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.labelRegionalEconomicScenarioImpactWorkingDir, 0, 0)
         
-        self.lineEditRegionalEconomicScenarioImpactWorkingDir = QtGui.QLineEdit()
-        self.lineEditRegionalEconomicScenarioImpactWorkingDir.setReadOnly(True)
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactWorkingDir, 0, 1)
+        ####self.lineEditRegionalEconomicScenarioImpactWorkingDir = QtGui.QLineEdit()
+        ####self.lineEditRegionalEconomicScenarioImpactWorkingDir.setReadOnly(True)
+        ####self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.lineEditRegionalEconomicScenarioImpactWorkingDir, 0, 1)
         
-        self.buttonSelectRegionalEconomicScenarioImpactWorkingDir = QtGui.QPushButton()
-        self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.setText('&Browse')
-        self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactWorkingDir, 0, 2)
+        ####self.buttonSelectRegionalEconomicScenarioImpactWorkingDir = QtGui.QPushButton()
+        ####self.buttonSelectRegionalEconomicScenarioImpactWorkingDir.setText('&Browse')
+        ####self.layoutRegionalEconomicScenarioImpactParameters.addWidget(self.buttonSelectRegionalEconomicScenarioImpactWorkingDir, 0, 2)
         
         self.labelRegionalEconomicScenarioImpactIntermediateConsumptionMatrix = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.setText('Intermediate consumption matrix:')
@@ -2096,14 +2096,15 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
+    """
     def handlerSelectOtherWorkingDir(self):
-        """
-        """
+        
         dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
         if dir:
             self.lineEditOtherWorkingDir.setText(dir) 
             logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    """
     
     
     def handlerSelectOtherValueAddedComponent(self):
@@ -2279,15 +2280,16 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             logging.getLogger(type(self).__name__).info('select file: %s', file)
     
     
+    """
     def handlerSelectRegionalEconomicScenarioImpactWorkingDir(self):
-        """
-        """
+        
         dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
         if dir:
             self.lineEditRegionalEconomicScenarioImpactWorkingDir.setText(dir)
             
             logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
+    """
     
     
     def handlerSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix(self):
@@ -2846,9 +2848,9 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['labourRequirementP2'] \
             = unicode(self.lineEditMultipleLabourRequirement.text())
         
-        self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['workingDir'] \
-            = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['workingDir'] \
-            = unicode(self.lineEditOtherWorkingDir.text())
+        ####self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['workingDir'] \
+        ####    = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['workingDir'] \
+        ####    = unicode(self.lineEditOtherWorkingDir.text())
         self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['valueAddedComponent'] \
             = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['valueAddedComponent'] \
             = unicode(self.lineEditOtherValueAddedComponent.text())
@@ -2865,10 +2867,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             = self.main.appSettings['DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis']['areaName'] \
             = unicode(self.lineEditOtherAreaName.text())
         
-        # 'Regional Economic Impact Scenario' tab fields
-        self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['workingDir'] \
-            = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['workingDir'] \
-            = unicode(self.lineEditRegionalEconomicScenarioImpactWorkingDir.text())
+        # 'Regional Economic Scenario Impact' tab fields
+        ####self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['workingDir'] \
+        ####    = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['workingDir'] \
+        ####    = unicode(self.lineEditRegionalEconomicScenarioImpactWorkingDir.text())
         self.main.appSettings['DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis']['intermediateConsumptionMatrix'] \
             = self.main.appSettings['DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis']['intermediateConsumptionMatrix'] \
             = unicode(self.lineEditRegionalEconomicScenarioImpactIntermediateConsumptionMatrix.text())
@@ -3027,7 +3029,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
             outputs = general.runalg(
                 algName,
-                self.main.appSettings[formName]['workingDir'],
+                ####self.main.appSettings[formName]['workingDir'],
                 self.main.appSettings[formName]['intermediateConsumptionMatrix'],
                 self.main.appSettings[formName]['valueAddedMatrix'],
                 self.main.appSettings[formName]['finalConsumptionMatrix'],
@@ -3060,7 +3062,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
+                    ####self.main.appSettings[formName]['workingDir'],
                     self.main.appSettings[formName]['intermediateConsumptionMatrixP1'],
                     self.main.appSettings[formName]['intermediateConsumptionMatrixP2'],
                     self.main.appSettings[formName]['valueAddedMatrixP1'],
@@ -3103,7 +3105,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
+                    ####self.main.appSettings[formName]['workingDir'],
                     self.main.appSettings[formName]['intermediateConsumptionMatrix'],
                     self.main.appSettings[formName]['valueAddedMatrix'],
                     self.main.appSettings[formName]['finalConsumptionMatrix'],
@@ -3139,7 +3141,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
+                    ####self.main.appSettings[formName]['workingDir'],
                     self.main.appSettings[formName]['intermediateConsumptionMatrix'],
                     self.main.appSettings[formName]['valueAddedMatrix'],
                     self.main.appSettings[formName]['finalConsumptionMatrix'],

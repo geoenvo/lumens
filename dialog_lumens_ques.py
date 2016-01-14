@@ -92,7 +92,7 @@ class DialogLumensQUES(QtGui.QDialog):
             settings.beginGroup('DialogLumensPreQUESLandcoverTrajectoriesAnalysis')
             
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis'] = {}
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
+            ####templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['location'] = location = settings.value('location')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] = planningUnit = settings.value('planningUnit')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvPlanningUnit'] = csvPlanningUnit = settings.value('csvPlanningUnit')
@@ -108,10 +108,10 @@ class DialogLumensQUES(QtGui.QDialog):
             spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
             
             if not returnTemplateSettings:
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditPreQUESWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditPreQUESWorkingDir.setText('')
+                ####if workingDir and os.path.isdir(workingDir):
+                ####    self.lineEditPreQUESWorkingDir.setText(workingDir)
+                ####else:
+                ####    self.lineEditPreQUESWorkingDir.setText('')
                 if location:
                     self.lineEditPreQUESLocation.setText(location)
                 else:
@@ -711,7 +711,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWidget.currentChanged.connect(self.handlerTabWidgetChanged)
         
         # 'Pre-QUES' tab buttons
-        self.buttonSelectPreQUESWorkingDir.clicked.connect(self.handlerSelectPreQUESWorkingDir)
+        ####self.buttonSelectPreQUESWorkingDir.clicked.connect(self.handlerSelectPreQUESWorkingDir)
         self.buttonSelectPreQUESPlanningUnit.clicked.connect(self.handlerSelectPreQUESPlanningUnit)
         self.buttonSelectPreQUESCsvPlanningUnit.clicked.connect(self.handlerSelectPreQUESCsvPlanningUnit)
         self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
@@ -840,15 +840,15 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutPlanningUnitInfo.addWidget(self.labelPlanningUnitInfo)
         
-        self.labelPreQUESWorkingDir = QtGui.QLabel()
-        self.labelPreQUESWorkingDir.setText('Working directory:')
-        self.layoutPlanningUnit.addWidget(self.labelPreQUESWorkingDir, 0, 0)
-        self.lineEditPreQUESWorkingDir = QtGui.QLineEdit()
-        self.lineEditPreQUESWorkingDir.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESWorkingDir, 0, 1)
-        self.buttonSelectPreQUESWorkingDir = QtGui.QPushButton()
-        self.buttonSelectPreQUESWorkingDir.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESWorkingDir, 0, 2)
+        ####self.labelPreQUESWorkingDir = QtGui.QLabel()
+        ####self.labelPreQUESWorkingDir.setText('Working directory:')
+        ####self.layoutPlanningUnit.addWidget(self.labelPreQUESWorkingDir, 0, 0)
+        ####self.lineEditPreQUESWorkingDir = QtGui.QLineEdit()
+        ####self.lineEditPreQUESWorkingDir.setReadOnly(True)
+        ####self.layoutPlanningUnit.addWidget(self.lineEditPreQUESWorkingDir, 0, 1)
+        ####self.buttonSelectPreQUESWorkingDir = QtGui.QPushButton()
+        ####self.buttonSelectPreQUESWorkingDir.setText('&Browse')
+        ####self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESWorkingDir, 0, 2)
         
         self.labelPreQUESLocation = QtGui.QLabel()
         self.labelPreQUESLocation.setText('&Location:')
@@ -2315,14 +2315,15 @@ class DialogLumensQUES(QtGui.QDialog):
             lineEditRasterfile.setText(file)
     
     
+    """
     def handlerSelectPreQUESWorkingDir(self):
-        """
-        """
+        
         dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
         if dir:
             self.lineEditPreQUESWorkingDir.setText(dir)
             logging.getLogger(type(self).__name__).info('select directory: %s', dir)
+    """
     
     
     def handlerSelectPreQUESPlanningUnit(self):
@@ -3031,8 +3032,8 @@ class DialogLumensQUES(QtGui.QDialog):
         """
         # 'Pre-QUES' tab fields
         
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] \
-            = unicode(self.lineEditPreQUESWorkingDir.text()).replace(os.path.sep, '/')
+        ####self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] \
+        ####    = unicode(self.lineEditPreQUESWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['location'] \
             = unicode(self.lineEditPreQUESLocation.text())
         
@@ -3270,7 +3271,7 @@ class DialogLumensQUES(QtGui.QDialog):
             
             outputs = general.runalg(
                 algName,
-                self.main.appSettings[formName]['workingDir'],
+                ####self.main.appSettings[formName]['workingDir'],
                 self.main.appSettings[formName]['location'],
                 self.main.appSettings[formName]['t1'],
                 self.main.appSettings[formName]['t2'],
