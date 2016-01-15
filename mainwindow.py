@@ -341,7 +341,6 @@ class MainWindow(QtGui.QMainWindow):
                 't2': '',
             },
             'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis': {
-                ####'workingDir': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
@@ -354,7 +353,6 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis': {
-                ####'workingDir': '',
                 'intermediateConsumptionMatrixP1': '',
                 'intermediateConsumptionMatrixP2': '',
                 'valueAddedMatrixP1': '',
@@ -372,8 +370,6 @@ class MainWindow(QtGui.QMainWindow):
                 'period2': '',
             },
             'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis': {
-                'workingDir': '',
-                'landCoverMap': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
@@ -388,9 +384,6 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis': {
-                'workingDir': '',
-                'landCoverMapP1': '',
-                'landCoverMapP2': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
@@ -406,7 +399,6 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis': {
-                ####'workingDir': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
@@ -423,7 +415,6 @@ class MainWindow(QtGui.QMainWindow):
                 'finalDemandChangeScenario': '',
             },
             'DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis': {
-                ####'workingDir': '',
                 'intermediateConsumptionMatrix': '',
                 'valueAddedMatrix': '',
                 'finalConsumptionMatrix': '',
