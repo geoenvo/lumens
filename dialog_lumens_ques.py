@@ -92,58 +92,18 @@ class DialogLumensQUES(QtGui.QDialog):
             settings.beginGroup('DialogLumensPreQUESLandcoverTrajectoriesAnalysis')
             
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis'] = {}
-            ####templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] = workingDir = settings.value('workingDir')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['location'] = location = settings.value('location')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] = planningUnit = settings.value('planningUnit')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvPlanningUnit'] = csvPlanningUnit = settings.value('csvPlanningUnit')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] = csvLandUse = settings.value('csvLandUse')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT1'] = landCoverT1 = settings.value('landCoverT1')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t1'] = t1 = settings.value('t1')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT2'] = landCoverT2 = settings.value('landCoverT2')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t2'] = t2 = settings.value('t2')
-            
-            lineEditLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T1')
-            spinBoxLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T1')
-            lineEditLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T2')
-            spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['nodata'] = nodata = settings.value('nodata')
             
             if not returnTemplateSettings:
-                ####if workingDir and os.path.isdir(workingDir):
-                ####    self.lineEditPreQUESWorkingDir.setText(workingDir)
-                ####else:
-                ####    self.lineEditPreQUESWorkingDir.setText('')
-                if location:
-                    self.lineEditPreQUESLocation.setText(location)
-                else:
-                    self.lineEditPreQUESLocation.setText('location')
-                if planningUnit and os.path.exists(planningUnit):
-                    self.lineEditPreQUESPlanningUnit.setText(planningUnit)
-                else:
-                    self.lineEditPreQUESPlanningUnit.setText('')
-                if csvPlanningUnit and os.path.exists(csvPlanningUnit):
-                    self.lineEditPreQUESCsvPlanningUnit.setText(csvPlanningUnit)
-                else:
-                    self.lineEditPreQUESCsvPlanningUnit.setText('')
                 if csvLandUse and os.path.exists(csvLandUse):
                     self.lineEditLandCoverCsvLandUse.setText(csvLandUse)
                 else:
                     self.lineEditLandCoverCsvLandUse.setText('')
-                if landCoverT1 and os.path.exists(landCoverT1):
-                    lineEditLandCoverT1.setText(landCoverT1)
+                if nodata:
+                    self.spinBoxPreQUESNodata.setValue(int(nodata))
                 else:
-                    self.lineEditLandCoverT1.setText('')
-                if t1:
-                    spinBoxLandCoverT1.setValue(int(t1))
-                else:
-                    self.spinBoxLandCoverT1.setValue(td.year)
-                if landCoverT2 and os.path.exists(landCoverT2):
-                    lineEditLandCoverT2.setText(landCoverT2)
-                else:
-                    self.lineEditLandCoverT2.setText('')
-                if t2:
-                    spinBoxLandCoverT2.setValue(int(t2))
-                else:
-                    self.spinBoxLandCoverT2.setValue(td.year)
+                    self.spinBoxPreQUESNodata.setValue(0)
             
             settings.endGroup()
             # /dialog
@@ -711,9 +671,6 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWidget.currentChanged.connect(self.handlerTabWidgetChanged)
         
         # 'Pre-QUES' tab buttons
-        ####self.buttonSelectPreQUESWorkingDir.clicked.connect(self.handlerSelectPreQUESWorkingDir)
-        self.buttonSelectPreQUESPlanningUnit.clicked.connect(self.handlerSelectPreQUESPlanningUnit)
-        self.buttonSelectPreQUESCsvPlanningUnit.clicked.connect(self.handlerSelectPreQUESCsvPlanningUnit)
         self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
         self.buttonProcessPreQUES.clicked.connect(self.handlerProcessPreQUES)
         self.buttonLoadPreQUESTemplate.clicked.connect(self.handlerLoadPreQUESTemplate)
@@ -826,59 +783,6 @@ class DialogLumensQUES(QtGui.QDialog):
         #***********************************************************
         # Setup 'Pre-QUES' tab
         #***********************************************************
-        # 'Planning unit' GroupBox
-        self.groupBoxPlanningUnit = QtGui.QGroupBox('Planning unit')
-        self.layoutGroupBoxPlanningUnit = QtGui.QVBoxLayout()
-        self.layoutGroupBoxPlanningUnit.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.groupBoxPlanningUnit.setLayout(self.layoutGroupBoxPlanningUnit)
-        self.layoutPlanningUnitInfo = QtGui.QVBoxLayout()
-        self.layoutPlanningUnit = QtGui.QGridLayout()
-        self.layoutGroupBoxPlanningUnit.addLayout(self.layoutPlanningUnitInfo)
-        self.layoutGroupBoxPlanningUnit.addLayout(self.layoutPlanningUnit)
-        
-        self.labelPlanningUnitInfo = QtGui.QLabel()
-        self.labelPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutPlanningUnitInfo.addWidget(self.labelPlanningUnitInfo)
-        
-        ####self.labelPreQUESWorkingDir = QtGui.QLabel()
-        ####self.labelPreQUESWorkingDir.setText('Working directory:')
-        ####self.layoutPlanningUnit.addWidget(self.labelPreQUESWorkingDir, 0, 0)
-        ####self.lineEditPreQUESWorkingDir = QtGui.QLineEdit()
-        ####self.lineEditPreQUESWorkingDir.setReadOnly(True)
-        ####self.layoutPlanningUnit.addWidget(self.lineEditPreQUESWorkingDir, 0, 1)
-        ####self.buttonSelectPreQUESWorkingDir = QtGui.QPushButton()
-        ####self.buttonSelectPreQUESWorkingDir.setText('&Browse')
-        ####self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESWorkingDir, 0, 2)
-        
-        self.labelPreQUESLocation = QtGui.QLabel()
-        self.labelPreQUESLocation.setText('&Location:')
-        self.layoutPlanningUnit.addWidget(self.labelPreQUESLocation, 1, 0)
-        self.lineEditPreQUESLocation = QtGui.QLineEdit()
-        self.lineEditPreQUESLocation.setText('location')
-        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESLocation, 1, 1)
-        self.labelPreQUESLocation.setBuddy(self.lineEditPreQUESLocation)
-        
-        self.labelPreQUESPlanningUnit = QtGui.QLabel()
-        self.labelPreQUESPlanningUnit.setText('Planning unit map:')
-        self.layoutPlanningUnit.addWidget(self.labelPreQUESPlanningUnit, 2, 0)
-        self.lineEditPreQUESPlanningUnit = QtGui.QLineEdit()
-        self.lineEditPreQUESPlanningUnit.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESPlanningUnit, 2, 1)
-        self.buttonSelectPreQUESPlanningUnit = QtGui.QPushButton()
-        self.buttonSelectPreQUESPlanningUnit.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESPlanningUnit, 2, 2)
-        
-        self.labelPreQUESCsvPlanningUnit = QtGui.QLabel()
-        self.labelPreQUESCsvPlanningUnit.setText('Planning unit lookup table:')
-        self.layoutPlanningUnit.addWidget(self.labelPreQUESCsvPlanningUnit, 3, 0)
-        self.lineEditPreQUESCsvPlanningUnit = QtGui.QLineEdit()
-        self.lineEditPreQUESCsvPlanningUnit.setReadOnly(True)
-        self.layoutPlanningUnit.addWidget(self.lineEditPreQUESCsvPlanningUnit, 3, 1)
-        self.buttonSelectPreQUESCsvPlanningUnit = QtGui.QPushButton()
-        self.buttonSelectPreQUESCsvPlanningUnit.setText('&Browse')
-        self.layoutPlanningUnit.addWidget(self.buttonSelectPreQUESCsvPlanningUnit, 3, 2)
-        
-        #######################################################################
         # 'Land cover' GroupBox
         self.groupBoxLandCover = QtGui.QGroupBox('Land cover')
         self.layoutGroupBoxLandCover = QtGui.QVBoxLayout()
@@ -902,27 +806,18 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSelectLandCoverCsvLandUse.setText('&Browse')
         self.layoutLandCoverOptions.addWidget(self.buttonSelectLandCoverCsvLandUse, 0, 2)
         
-        self.layoutContentGroupBoxLandCover = QtGui.QVBoxLayout()
-        self.layoutContentGroupBoxLandCover.setContentsMargins(10, 10, 10, 10)
-        self.contentGroupBoxLandCover = QtGui.QWidget()
-        self.contentGroupBoxLandCover.setLayout(self.layoutContentGroupBoxLandCover)
-        self.scrollLandCover = QtGui.QScrollArea()
-        self.scrollLandCover.setWidgetResizable(True);
-        self.scrollLandCover.setWidget(self.contentGroupBoxLandCover)
+        self.labelPreQUESNodata = QtGui.QLabel()
+        self.labelPreQUESNodata.setText('&No data value:')
+        self.layoutLandCoverOptions.addWidget(self.labelPreQUESNodata, 1, 0)
         
-        self.layoutTableLandCover = QtGui.QVBoxLayout()
-        self.layoutTableLandCover.setAlignment(QtCore.Qt.AlignTop)
-        self.layoutContentGroupBoxLandCover.addLayout(self.layoutTableLandCover)
+        self.spinBoxPreQUESNodata = QtGui.QSpinBox()
+        self.spinBoxPreQUESNodata.setRange(-9999, 9999)
+        self.spinBoxPreQUESNodata.setValue(0)
+        self.layoutLandCoverOptions.addWidget(self.spinBoxPreQUESNodata, 1, 1)
+        self.labelPreQUESNodata.setBuddy(self.spinBoxPreQUESNodata)
         
         self.layoutGroupBoxLandCover.addLayout(self.layoutLandCoverInfo)
         self.layoutGroupBoxLandCover.addLayout(self.layoutLandCoverOptions)
-        self.layoutGroupBoxLandCover.addSpacing(10)
-        self.layoutGroupBoxLandCover.addWidget(self.scrollLandCover)
-        
-        # Add land cover rows, T1 T2 T3
-        self.addLandCoverRow('T1')
-        self.addLandCoverRow('T2')
-        ##self.addLandCoverRow('T3')
         
         # Process tab button
         self.layoutButtonPreQUES = QtGui.QHBoxLayout()
@@ -978,10 +873,9 @@ class DialogLumensQUES(QtGui.QDialog):
         self.layoutGroupBoxPreQUESTemplate.addLayout(self.layoutButtonPreQUESTemplate)
         
         # Place the GroupBoxes
-        self.layoutTabPreQUES.addWidget(self.groupBoxPlanningUnit, 0, 0)
-        self.layoutTabPreQUES.addWidget(self.groupBoxLandCover, 1, 0)
-        self.layoutTabPreQUES.addLayout(self.layoutButtonPreQUES, 2, 0, 1, 2, QtCore.Qt.AlignRight)
-        self.layoutTabPreQUES.addWidget(self.groupBoxPreQUESTemplate, 0, 1, 2, 1)
+        self.layoutTabPreQUES.addWidget(self.groupBoxLandCover, 0, 0)
+        self.layoutTabPreQUES.addLayout(self.layoutButtonPreQUES, 1, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabPreQUES.addWidget(self.groupBoxPreQUESTemplate, 0, 1, 1, 1)
         self.layoutTabPreQUES.setColumnStretch(0, 3)
         self.layoutTabPreQUES.setColumnStretch(1, 1) # Smaller template column
         
@@ -2269,85 +2163,6 @@ class DialogLumensQUES(QtGui.QDialog):
                 self.handlerLoadPreQUESTemplate(fileName)
     
     
-    def addLandCoverRow(self, period):
-        """
-        """
-        layoutRow = QtGui.QHBoxLayout()
-        
-        labelLandCoverPeriod = QtGui.QLabel()
-        labelLandCoverPeriod.setText(period)
-        layoutRow.addWidget(labelLandCoverPeriod)
-        
-        lineEditLandCoverRasterfile = QtGui.QLineEdit()
-        lineEditLandCoverRasterfile.setReadOnly(True)
-        lineEditLandCoverRasterfile.setObjectName('lineEditLandCoverRasterfile_{0}'.format(period))
-        layoutRow.addWidget(lineEditLandCoverRasterfile)
-        
-        buttonSelectLandCoverRasterfile = QtGui.QPushButton()
-        buttonSelectLandCoverRasterfile.setText('Select {0} Raster'.format(period))
-        buttonSelectLandCoverRasterfile.setObjectName('buttonSelectLandCoverRasterfile_{0}'.format(period))
-        layoutRow.addWidget(buttonSelectLandCoverRasterfile)
-        
-        spinBoxLandCover = QtGui.QSpinBox()
-        spinBoxLandCover.setRange(1, 9999)
-        td = datetime.date.today()
-        spinBoxLandCover.setValue(td.year)
-        spinBoxLandCover.setObjectName('spinBoxLandCover_{0}'.format(period))
-        layoutRow.addWidget(spinBoxLandCover)
-        
-        self.layoutTableLandCover.addLayout(layoutRow)
-        
-        buttonSelectLandCoverRasterfile.clicked.connect(self.handlerSelectLandCoverRasterfile)
-    
-    
-    def handlerSelectLandCoverRasterfile(self):
-        """
-        """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Raster File', QtCore.QDir.homePath(), 'Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
-        
-        if file:
-            buttonSender = self.sender()
-            objectName = buttonSender.objectName()
-            period = objectName.split('_')[1]
-            
-            lineEditRasterfile = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_' + period)
-            lineEditRasterfile.setText(file)
-    
-    
-    """
-    def handlerSelectPreQUESWorkingDir(self):
-        
-        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
-        
-        if dir:
-            self.lineEditPreQUESWorkingDir.setText(dir)
-            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
-    """
-    
-    
-    def handlerSelectPreQUESPlanningUnit(self):
-        """
-        """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Planning Unit Map', QtCore.QDir.homePath(), 'Planning Unit Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
-        
-        if file:
-            self.lineEditPreQUESPlanningUnit.setText(file)
-            logging.getLogger(type(self).__name__).info('select file: %s', file)
-    
-    
-    def handlerSelectPreQUESCsvPlanningUnit(self):
-        """
-        """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Planning Unit Lookup Table', QtCore.QDir.homePath(), 'Planning Unit Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
-        
-        if file:
-            self.lineEditPreQUESCsvPlanningUnit.setText(file)
-            logging.getLogger(type(self).__name__).info('select file: %s', file)
-    
-    
     def handlerSelectLandCoverCsvLandUse(self):
         """
         """
@@ -3031,32 +2846,10 @@ class DialogLumensQUES(QtGui.QDialog):
         """
         """
         # 'Pre-QUES' tab fields
-        
-        ####self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['workingDir'] \
-        ####    = unicode(self.lineEditPreQUESWorkingDir.text()).replace(os.path.sep, '/')
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['location'] \
-            = unicode(self.lineEditPreQUESLocation.text())
-        
-        lineEditLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T1')
-        lineEditLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QLineEdit, 'lineEditLandCoverRasterfile_T2')
-        spinBoxLandCoverT1 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T1')
-        spinBoxLandCoverT2 = self.contentGroupBoxLandCover.findChild(QtGui.QSpinBox, 'spinBoxLandCover_T2')
-        
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t1'] \
-            = spinBoxLandCoverT1.value()
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['t2'] \
-            = spinBoxLandCoverT2.value()
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT1'] \
-            = unicode(lineEditLandCoverT1.text())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landCoverT2'] \
-            = unicode(lineEditLandCoverT2.text())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] \
-            = unicode(self.lineEditPreQUESPlanningUnit.text())
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] \
             = unicode(self.lineEditLandCoverCsvLandUse.text())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvPlanningUnit'] \
-            = unicode(self.lineEditPreQUESCsvPlanningUnit.text())
-        
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['nodata'] \
+            = self.spinBoxPreQUESNodata.value()
         
         # 'QUES-C' Carbon Accounting groupbox fields
         self.main.appSettings['DialogLumensQUESCCarbonAccounting']['csvfile'] \
@@ -3271,15 +3064,10 @@ class DialogLumensQUES(QtGui.QDialog):
             
             outputs = general.runalg(
                 algName,
-                ####self.main.appSettings[formName]['workingDir'],
-                self.main.appSettings[formName]['location'],
-                self.main.appSettings[formName]['t1'],
-                self.main.appSettings[formName]['t2'],
-                self.main.appSettings[formName]['landCoverT1'],
-                self.main.appSettings[formName]['landCoverT2'],
-                self.main.appSettings[formName]['planningUnit'],
                 self.main.appSettings[formName]['csvLandUse'],
-                self.main.appSettings[formName]['csvPlanningUnit'],
+                self.main.appSettings[formName]['nodata'],
+                None, # statuscode
+                None, # statusmessage
             )
             
             ##print outputs
@@ -3613,5 +3401,4 @@ class DialogLumensQUES(QtGui.QDialog):
             self.buttonProcessWatershedIndicators.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-    
     

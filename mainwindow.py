@@ -219,15 +219,8 @@ class MainWindow(QtGui.QMainWindow):
                 'nodata': '',
             },
             'DialogLumensPreQUESLandcoverTrajectoriesAnalysis': {
-                ####'workingDir': '',
-                'location': '',
-                't1': '',
-                't2': '',
-                'landCoverT1': '',
-                'landCoverT2': '',
-                'planningUnit': '',
                 'csvLandUse': '',
-                'csvPlanningUnit': '',
+                'nodata': '',
             },
             'DialogLumensQUESCCarbonAccounting': {
                 'csvfile': '',
