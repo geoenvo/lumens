@@ -976,15 +976,45 @@ class MainWindow(QtGui.QMainWindow):
         self.tabDashboardTA = QtGui.QWidget()
         self.tabDashboardSCIENDO = QtGui.QWidget()
         
-        self.layoutDashboardPUR = QtGui.QVBoxLayout()
+        self.layoutDashboardPUR = QtGui.QGridLayout()
         self.layoutDashboardQUES = QtGui.QVBoxLayout()
         self.layoutDashboardTA = QtGui.QVBoxLayout()
         self.layoutDashboardSCIENDO = QtGui.QVBoxLayout()
+        
+        self.layoutDashboardPUR.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.layoutDashboardQUES.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.layoutDashboardTA.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.layoutDashboardSCIENDO.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         
         self.tabDashboardPUR.setLayout(self.layoutDashboardPUR)
         self.tabDashboardQUES.setLayout(self.layoutDashboardQUES)
         self.tabDashboardTA.setLayout(self.layoutDashboardTA)
         self.tabDashboardSCIENDO.setLayout(self.layoutDashboardSCIENDO)
+        
+        
+        
+        
+        
+        
+        
+        self.labelPURInfo = QtGui.QLabel()
+        self.labelPURInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutDashboardPUR.addWidget(self.labelPURInfo, 0, 0, 1, 2)
+        
+        self.labelPURTemplate = QtGui.QLabel()
+        self.labelPURTemplate.setText('Template name:')
+        self.layoutDashboardPUR.addWidget(self.labelPURTemplate, 1, 0)
+        
+        self.comboBoxPURTemplate = QtGui.QComboBox()
+        self.comboBoxPURTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxPURTemplate.setDisabled(True)
+        self.comboBoxPURTemplate.addItem('No template found')
+        self.layoutDashboardPUR.addWidget(self.comboBoxPURTemplate, 1, 1)
+        
+        
+        
+        
+        
         
         self.dashboardTabWidget.addTab(self.tabDashboardPUR, 'PUR')
         self.dashboardTabWidget.addTab(self.tabDashboardQUES, 'QUES')
@@ -1140,7 +1170,7 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu.addAction(self.actionQuit)
     
     
-    def openDialog(self, DialogClass):
+    def openDialog(self, DialogClass, showDialog=True):
         """Keep track of already opened dialog instances instead of creating new ones
         """
         dialog = None
@@ -1150,12 +1180,23 @@ class MainWindow(QtGui.QMainWindow):
                 dialog = dlg
                 break
         
-        if dialog:
-            dialog.exec_()
-        else:
+        if not dialog:
             dialog = DialogClass(self)
             self.openDialogs.append(dialog)
+        
+        if showDialog:
             dialog.exec_()
+        else:
+            return dialog
+    
+    
+    def closeDialogs(self):
+        """
+        """
+        for dlg in self.openDialogs:
+            dlg.deleteLater()
+        
+        self.openDialogs = []
     
     
     def lumensEnableMenus(self):
@@ -1287,6 +1328,26 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
     
     
+    def loadModuleTemplates(self):
+        """
+        """
+        dialogLumensPUR = self.openDialog(DialogLumensPUR, False)
+        dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+        dialogLumensTAOpportunityCost = self.openDialog(DialogLumensTAOpportunityCost, False)
+        dialogLumensTARegionalEconomy = self.openDialog(DialogLumensTARegionalEconomy, False)
+        dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, False)
+        
+        dialogLumensPUR.loadTemplateFiles()
+    
+    
+    def clearModuleTemplates(self):
+        """
+        """
+        self.comboBoxPURTemplate.clear()
+        self.comboBoxPURTemplate.addItem('No template found')
+        self.comboBoxPURTemplate.setDisabled(True)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase=False):
         """Open a LUMENS project database
         """
@@ -1319,6 +1380,7 @@ class MainWindow(QtGui.QMainWindow):
             self.addRecentProject(lumensDatabase)
             
             self.lumensEnableMenus()
+            self.loadModuleTemplates()
         
         self.actionLumensOpenDatabase.setEnabled(True)
         
@@ -1340,7 +1402,9 @@ class MainWindow(QtGui.QMainWindow):
         self.lineEditActiveProject.clear()
         self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.rootPath()))
         
+        self.closeDialogs()
         self.lumensDisableMenus()
+        self.clearModuleTemplates()
         
         logging.getLogger(type(self).__name__).info('end: LUMENS Close Database')
     
