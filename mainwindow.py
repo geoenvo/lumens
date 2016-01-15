@@ -325,16 +325,7 @@ class MainWindow(QtGui.QMainWindow):
                 'outputOpportunityCostReport': '',
             },
             'DialogLumensTAOpportunityCostMap': {
-                'workingDir': '',
-                'landUseT1': '',
-                'landUseT2': '',
-                'planningUnit': '',
-                'csvCarbon': '',
                 'csvProfitability': '',
-                'csvPlanningUnit': '',
-                'location': '',
-                't1': '',
-                't2': '',
             },
             'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis': {
                 'intermediateConsumptionMatrix': '',
