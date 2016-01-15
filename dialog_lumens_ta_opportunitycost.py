@@ -94,32 +94,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             settings.beginGroup('DialogLumensTAOpportunityCostCurve')
             
             templateSettings['DialogLumensTAOpportunityCostCurve'] = {}
-            templateSettings['DialogLumensTAOpportunityCostCurve']['period1'] = period1 = settings.value('period1')
-            templateSettings['DialogLumensTAOpportunityCostCurve']['period2'] = period2 = settings.value('period2')
-            templateSettings['DialogLumensTAOpportunityCostCurve']['workingDir'] = workingDir = settings.value('workingDir')
-            templateSettings['DialogLumensTAOpportunityCostCurve']['QUESCDatabase'] = QUESCDatabase = settings.value('QUESCDatabase')
             templateSettings['DialogLumensTAOpportunityCostCurve']['csvNPVTable'] = csvNPVTable = settings.value('csvNPVTable')
             templateSettings['DialogLumensTAOpportunityCostCurve']['costThreshold'] = costThreshold = settings.value('costThreshold')
             templateSettings['DialogLumensTAOpportunityCostCurve']['outputOpportunityCostDatabase'] = outputOpportunityCostDatabase = settings.value('outputOpportunityCostDatabase')
             templateSettings['DialogLumensTAOpportunityCostCurve']['outputOpportunityCostReport'] = outputOpportunityCostReport = settings.value('outputOpportunityCostReport')
             
             if not returnTemplateSettings:
-                if period1:
-                    self.spinBoxOCCPeriod1.setValue(int(period1))
-                else:
-                    self.spinBoxOCCPeriod1.setValue(td.year)
-                if period2:
-                    self.spinBoxOCCPeriod2.setValue(int(period2))
-                else:
-                    self.spinBoxOCCPeriod2.setValue(td.year)
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditOCCWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditOCCWorkingDir.setText('')
-                if QUESCDatabase and os.path.exists(QUESCDatabase):
-                    self.lineEditOCCQUESCDatabase.setText(QUESCDatabase)
-                else:
-                    self.lineEditOCCQUESCDatabase.setText('')
                 if csvNPVTable and os.path.exists(csvNPVTable):
                     self.lineEditOCCCsvNPVTable.setText(csvNPVTable)
                 else:
@@ -373,8 +353,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.buttonSaveAsAbacusOpportunityCostTemplate.clicked.connect(self.handlerSaveAsAbacusOpportunityCostTemplate)
         
         # 'Opportunity Cost Curve' tab buttons
-        self.buttonSelectOCCWorkingDir.clicked.connect(self.handlerSelectOCCWorkingDir)
-        self.buttonSelectOCCQUESCDatabase.clicked.connect(self.handlerSelectOCCQUESCDatabase)
         self.buttonSelectOCCCsvNPVTable.clicked.connect(self.handlerSelectOCCCsvNPVTable)
         self.buttonSelectOCCOutputOpportunityCostDatabase.clicked.connect(self.handlerSelectOCCOutputOpportunityCostDatabase)
         self.buttonSelectOCCOutputOpportunityCostReport.clicked.connect(self.handlerSelectOCCOutputOpportunityCostReport)
@@ -519,122 +497,64 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         #***********************************************************
         # Setup 'Opportunity cost curve' tab
         #***********************************************************
-        # 'Period' GroupBox
-        self.groupBoxOCCPeriod = QtGui.QGroupBox('Period')
-        self.layoutGroupBoxOCCPeriod = QtGui.QVBoxLayout()
-        self.layoutGroupBoxOCCPeriod.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.groupBoxOCCPeriod.setLayout(self.layoutGroupBoxOCCPeriod)
-        self.layoutOCCPeriodInfo = QtGui.QVBoxLayout()
-        self.layoutOCCPeriod = QtGui.QGridLayout()
-        self.layoutGroupBoxOCCPeriod.addLayout(self.layoutOCCPeriodInfo)
-        self.layoutGroupBoxOCCPeriod.addLayout(self.layoutOCCPeriod)
+        # 'Parameters' GroupBox
+        self.groupBoxOCCParameters = QtGui.QGroupBox('Parameters')
+        self.layoutGroupBoxOCCParameters = QtGui.QVBoxLayout()
+        self.layoutGroupBoxOCCParameters.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxOCCParameters.setLayout(self.layoutGroupBoxOCCParameters)
+        self.layoutOCCParametersInfo = QtGui.QVBoxLayout()
+        self.layoutOCCParameters = QtGui.QGridLayout()
+        self.layoutGroupBoxOCCParameters.addLayout(self.layoutOCCParametersInfo)
+        self.layoutGroupBoxOCCParameters.addLayout(self.layoutOCCParameters)
         
-        self.labelOCCPeriodInfo = QtGui.QLabel()
-        self.labelOCCPeriodInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutOCCPeriodInfo.addWidget(self.labelOCCPeriodInfo)
-        
-        self.labelSpinBoxOCCPeriod1 = QtGui.QLabel(parent)
-        self.labelSpinBoxOCCPeriod1.setText('T&1:')
-        self.layoutOCCPeriod.addWidget(self.labelSpinBoxOCCPeriod1, 0, 0)
-        self.spinBoxOCCPeriod1 = QtGui.QSpinBox(parent)
-        self.spinBoxOCCPeriod1.setRange(1, 9999)
-        td = datetime.date.today()
-        self.spinBoxOCCPeriod1.setValue(td.year)
-        self.layoutOCCPeriod.addWidget(self.spinBoxOCCPeriod1, 0, 1)
-        self.labelSpinBoxOCCPeriod1.setBuddy(self.spinBoxOCCPeriod1)
-        
-        self.labelSpinBoxOCCPeriod2 = QtGui.QLabel(parent)
-        self.labelSpinBoxOCCPeriod2.setText('T&2:')
-        self.layoutOCCPeriod.addWidget(self.labelSpinBoxOCCPeriod2, 1, 0)
-        self.spinBoxOCCPeriod2 = QtGui.QSpinBox(parent)
-        self.spinBoxOCCPeriod2.setRange(1, 9999)
-        td = datetime.date.today()
-        self.spinBoxOCCPeriod2.setValue(td.year)
-        self.layoutOCCPeriod.addWidget(self.spinBoxOCCPeriod2, 1, 1)
-        self.labelSpinBoxOCCPeriod2.setBuddy(self.spinBoxOCCPeriod2)
-        
-        # 'Other' GroupBox
-        self.groupBoxOCCOther = QtGui.QGroupBox('Other')
-        self.layoutGroupBoxOCCOther = QtGui.QVBoxLayout()
-        self.layoutGroupBoxOCCOther.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.groupBoxOCCOther.setLayout(self.layoutGroupBoxOCCOther)
-        self.layoutOCCOtherInfo = QtGui.QVBoxLayout()
-        self.layoutOCCOther = QtGui.QGridLayout()
-        self.layoutGroupBoxOCCOther.addLayout(self.layoutOCCOtherInfo)
-        self.layoutGroupBoxOCCOther.addLayout(self.layoutOCCOther)
-        
-        self.labelOCCOtherInfo = QtGui.QLabel()
-        self.labelOCCOtherInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutOCCOtherInfo.addWidget(self.labelOCCOtherInfo)
-        
-        self.labelOCCWorkingDir = QtGui.QLabel()
-        self.labelOCCWorkingDir.setText('Working directory:')
-        self.layoutOCCOther.addWidget(self.labelOCCWorkingDir, 0, 0)
-        
-        self.lineEditOCCWorkingDir = QtGui.QLineEdit()
-        self.lineEditOCCWorkingDir.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOCCWorkingDir, 0, 1)
-        
-        self.buttonSelectOCCWorkingDir = QtGui.QPushButton()
-        self.buttonSelectOCCWorkingDir.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOCCWorkingDir, 0, 2)
-        
-        self.labelOCCQUESCDatabase = QtGui.QLabel(parent)
-        self.labelOCCQUESCDatabase.setText('QUES-C Database:')
-        self.layoutOCCOther.addWidget(self.labelOCCQUESCDatabase, 1, 0)
-        
-        self.lineEditOCCQUESCDatabase = QtGui.QLineEdit()
-        self.lineEditOCCQUESCDatabase.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOCCQUESCDatabase, 1, 1)
-        
-        self.buttonSelectOCCQUESCDatabase = QtGui.QPushButton()
-        self.buttonSelectOCCQUESCDatabase.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOCCQUESCDatabase, 1, 2)
+        self.labelOCCParametersInfo = QtGui.QLabel()
+        self.labelOCCParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutOCCParametersInfo.addWidget(self.labelOCCParametersInfo)
         
         self.labelOCCCsvNPVTable = QtGui.QLabel(parent)
         self.labelOCCCsvNPVTable.setText('Net Present Value (NPV) table:')
-        self.layoutOCCOther.addWidget(self.labelOCCCsvNPVTable, 2, 0)
+        self.layoutOCCParameters.addWidget(self.labelOCCCsvNPVTable, 0, 0)
         
         self.lineEditOCCCsvNPVTable = QtGui.QLineEdit(parent)
         self.lineEditOCCCsvNPVTable.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOCCCsvNPVTable, 2, 1)
+        self.layoutOCCParameters.addWidget(self.lineEditOCCCsvNPVTable, 0, 1)
         
         self.buttonSelectOCCCsvNPVTable = QtGui.QPushButton()
         self.buttonSelectOCCCsvNPVTable.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOCCCsvNPVTable, 2, 2)
+        self.layoutOCCParameters.addWidget(self.buttonSelectOCCCsvNPVTable, 0, 2)
         
         self.labelOCCCostThreshold = QtGui.QLabel()
         self.labelOCCCostThreshold.setText('Cost &Threshold:')
-        self.layoutOCCOther.addWidget(self.labelOCCCostThreshold, 3, 0)
+        self.layoutOCCParameters.addWidget(self.labelOCCCostThreshold, 1, 0)
         
         self.spinBoxOCCCostThreshold = QtGui.QSpinBox()
         self.spinBoxOCCCostThreshold.setValue(5)
-        self.layoutOCCOther.addWidget(self.spinBoxOCCCostThreshold, 3, 1)
+        self.layoutOCCParameters.addWidget(self.spinBoxOCCCostThreshold, 1, 1)
         self.labelOCCCostThreshold.setBuddy(self.spinBoxOCCCostThreshold)
         
         self.labelOCCOutputOpportunityCostDatabase = QtGui.QLabel()
         self.labelOCCOutputOpportunityCostDatabase.setText('[Output] Opportunity cost database:')
-        self.layoutOCCOther.addWidget(self.labelOCCOutputOpportunityCostDatabase, 4, 0)
+        self.layoutOCCParameters.addWidget(self.labelOCCOutputOpportunityCostDatabase, 2, 0)
         
         self.lineEditOCCOutputOpportunityCostDatabase = QtGui.QLineEdit()
         self.lineEditOCCOutputOpportunityCostDatabase.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOCCOutputOpportunityCostDatabase, 4, 1)
+        self.layoutOCCParameters.addWidget(self.lineEditOCCOutputOpportunityCostDatabase, 2, 1)
         
         self.buttonSelectOCCOutputOpportunityCostDatabase = QtGui.QPushButton(parent)
         self.buttonSelectOCCOutputOpportunityCostDatabase.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOCCOutputOpportunityCostDatabase, 4, 2)
+        self.layoutOCCParameters.addWidget(self.buttonSelectOCCOutputOpportunityCostDatabase, 2, 2)
         
         self.labelOCCOutputOpportunityCostReport = QtGui.QLabel()
         self.labelOCCOutputOpportunityCostReport.setText('[Output] Opportunity cost report:')
-        self.layoutOCCOther.addWidget(self.labelOCCOutputOpportunityCostReport, 5, 0)
+        self.layoutOCCParameters.addWidget(self.labelOCCOutputOpportunityCostReport, 3, 0)
         
         self.lineEditOCCOutputOpportunityCostReport = QtGui.QLineEdit()
         self.lineEditOCCOutputOpportunityCostReport.setReadOnly(True)
-        self.layoutOCCOther.addWidget(self.lineEditOCCOutputOpportunityCostReport, 5, 1)
+        self.layoutOCCParameters.addWidget(self.lineEditOCCOutputOpportunityCostReport, 3, 1)
         
         self.buttonSelectOCCOutputOpportunityCostReport = QtGui.QPushButton(parent)
         self.buttonSelectOCCOutputOpportunityCostReport.setText('&Browse')
-        self.layoutOCCOther.addWidget(self.buttonSelectOCCOutputOpportunityCostReport, 5, 2)
+        self.layoutOCCParameters.addWidget(self.buttonSelectOCCOutputOpportunityCostReport, 3, 2)
         
         # Process tab button
         self.layoutButtonOpportunityCostCurve = QtGui.QHBoxLayout()
@@ -690,17 +610,15 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.layoutGroupBoxOpportunityCostCurveTemplate.addLayout(self.layoutButtonOpportunityCostCurveTemplate)
         
         # Place the GroupBoxes
-        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCPeriod, 0, 0)
-        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCOther, 1, 0)
-        self.layoutTabOpportunityCostCurve.addLayout(self.layoutButtonOpportunityCostCurve, 2, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOCCParameters, 0, 0)
+        self.layoutTabOpportunityCostCurve.addLayout(self.layoutButtonOpportunityCostCurve, 1, 0, 1, 2, QtCore.Qt.AlignRight)
         self.layoutTabOpportunityCostCurve.addWidget(self.groupBoxOpportunityCostCurveTemplate, 0, 1, 2, 1)
         self.layoutTabOpportunityCostCurve.setColumnStretch(0, 3)
         self.layoutTabOpportunityCostCurve.setColumnStretch(1, 1) # Smaller template column
         
         ##self.layoutTabOpportunityCostCurve.insertStretch(2, 1)
         
-        ##self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCPeriod, 1)
-        ##self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCOther, 4)
+        ##self.layoutTabOpportunityCostCurve.setStretchFactor(self.groupBoxOCCParameters, 4)
         
         
         #***********************************************************
@@ -1152,27 +1070,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
                 self.handlerLoadOpportunityCostCurveTemplate(fileName)
     
     
-    def handlerSelectOCCWorkingDir(self):
-        """
-        """
-        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
-        
-        if dir:
-            self.lineEditOCCWorkingDir.setText(dir)
-            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
-    
-    
-    def handlerSelectOCCQUESCDatabase(self):
-        """
-        """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
-        
-        if file:
-            self.lineEditOCCQUESCDatabase.setText(file)
-            logging.getLogger(type(self).__name__).info('select file: %s', file)
-    
-    
     def handlerSelectOCCCsvNPVTable(self):
         """
         """
@@ -1366,11 +1263,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.main.appSettings['DialogLumensTAAbacusOpportunityCostCurve']['projectFile'] = unicode(self.lineEditAOCProjectFile.text())
         
         # 'Opportunity Cost Curve' tab fields
-        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['workingDir'] = unicode(self.lineEditOCCWorkingDir.text()).replace(os.path.sep, '/')
-        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['QUESCDatabase'] = unicode(self.lineEditOCCQUESCDatabase.text())
         self.main.appSettings['DialogLumensTAOpportunityCostCurve']['csvNPVTable'] = unicode(self.lineEditOCCCsvNPVTable.text())
-        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['period1'] = self.spinBoxOCCPeriod1.value()
-        self.main.appSettings['DialogLumensTAOpportunityCostCurve']['period2'] = self.spinBoxOCCPeriod2.value()
         self.main.appSettings['DialogLumensTAOpportunityCostCurve']['costThreshold'] = self.spinBoxOCCCostThreshold.value()
         
         outputOpportunityCostDatabase = unicode(self.lineEditOCCOutputOpportunityCostDatabase.text())
@@ -1483,11 +1376,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
             outputs = general.runalg(
                 algName,
-                self.main.appSettings[formName]['workingDir'],
-                self.main.appSettings[formName]['QUESCDatabase'],
                 self.main.appSettings[formName]['csvNPVTable'],
-                self.main.appSettings[formName]['period1'],
-                self.main.appSettings[formName]['period2'],
                 self.main.appSettings[formName]['costThreshold'],
                 outputOpportunityCostDatabase,
                 outputOpportunityCostReport,

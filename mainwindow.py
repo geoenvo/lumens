@@ -319,11 +319,7 @@ class MainWindow(QtGui.QMainWindow):
                 'projectFile': '',
             },
             'DialogLumensTAOpportunityCostCurve': {
-                'workingDir': '',
-                'QUESCDatabase': '',
                 'csvNPVTable': '',
-                'period1': '',
-                'period2': '',
                 'costThreshold': '',
                 'outputOpportunityCostDatabase': '',
                 'outputOpportunityCostReport': '',
