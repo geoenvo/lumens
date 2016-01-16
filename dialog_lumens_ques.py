@@ -60,6 +60,18 @@ class DialogLumensQUES(QtGui.QDialog):
             self.main.comboBoxQUESBTemplate.clear()
             self.main.comboBoxQUESBTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxQUESBTemplate.setEnabled(True)
+            
+            self.main.comboBoxHRUDefinitionTemplate.clear()
+            self.main.comboBoxHRUDefinitionTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxHRUDefinitionTemplate.setEnabled(True)
+            
+            self.main.comboBoxWatershedModelEvaluationTemplate.clear()
+            self.main.comboBoxWatershedModelEvaluationTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxWatershedModelEvaluationTemplate.setEnabled(True)
+            
+            self.main.comboBoxWatershedIndicatorsTemplate.clear()
+            self.main.comboBoxWatershedIndicatorsTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxWatershedIndicatorsTemplate.setEnabled(True)
         else:
             self.comboBoxPreQUESTemplate.setDisabled(True)
             self.buttonLoadPreQUESTemplate.setDisabled(True)
@@ -85,6 +97,12 @@ class DialogLumensQUES(QtGui.QDialog):
             self.main.comboBoxQUESCTemplate.setDisabled(True)
             
             self.main.comboBoxQUESBTemplate.setDisabled(True)
+            
+            self.main.comboBoxHRUDefinitionTemplate.setDisabled(True)
+            
+            self.main.comboBoxWatershedModelEvaluationTemplate.setDisabled(True)
+            
+            self.main.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
         
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):

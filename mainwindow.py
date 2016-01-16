@@ -544,6 +544,12 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
         self.actionFeatureSelectExpression.triggered.connect(self.handlerFeatureSelectExpression)
         self.layerListView.customContextMenuRequested.connect(self.handlerLayerItemContextMenu)
+        
+        # Dashboard tab
+        self.radioQUESHHRUDefinition.toggled.connect(lambda:self.handlerToggleQUESH(self.radioQUESHHRUDefinition))
+        self.radioQUESHWatershedModelEvaluation.toggled.connect(lambda:self.handlerToggleQUESH(self.radioQUESHWatershedModelEvaluation))
+        self.radioQUESHWatershedIndicators.toggled.connect(lambda:self.handlerToggleQUESH(self.radioQUESHWatershedIndicators))
+        self.radioQUESHHRUDefinition.click()
         self.radioTAOpportunityCostAbacus.toggled.connect(lambda:self.handlerToggleTAOpportunityCost(self.radioTAOpportunityCostAbacus))
         self.radioTAOpportunityCostCurve.toggled.connect(lambda:self.handlerToggleTAOpportunityCost(self.radioTAOpportunityCostCurve))
         self.radioTAOpportunityCostMap.toggled.connect(lambda:self.handlerToggleTAOpportunityCost(self.radioTAOpportunityCostMap))
@@ -1096,7 +1102,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxPURTemplate.addItem('No template found')
         self.layoutDashboardPUR.addWidget(self.comboBoxPURTemplate, 1, 1)
         
-        # PreQUES sub tab dashboard widgets
+        # Pre-QUES sub tab dashboard widgets
         self.labelPreQUESInfo = QtGui.QLabel()
         self.labelPreQUESInfo.setText('Lorem ipsum dolor sit amet...')
         self.layoutSubtabPreQUES.addWidget(self.labelPreQUESInfo, 0, 0, 1, 2)
@@ -1142,9 +1148,105 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutSubtabQUESB.addWidget(self.comboBoxQUESBTemplate, 1, 1)
         
         # QUES-H sub tab dashboard widgets
+        self.groupBoxQUESHFeatures = QtGui.QGroupBox('Features')
+        self.layoutGroupBoxQUESHFeatures = QtGui.QVBoxLayout()
+        self.groupBoxQUESHFeatures.setLayout(self.layoutGroupBoxQUESHFeatures)
         
+        self.labelQUESHFeaturesInfo = QtGui.QLabel()
+        self.labelQUESHFeaturesInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutGroupBoxQUESHFeatures.addWidget(self.labelQUESHFeaturesInfo)
         
-        # TA Opportunity Cost sub tab dashboard widgets
+        self.radioQUESHHRUDefinition = QtGui.QRadioButton('Hydrological Response Unit Definition')
+        self.radioQUESHWatershedModelEvaluation = QtGui.QRadioButton('Watershed Model Evaluation')
+        self.radioQUESHWatershedIndicators = QtGui.QRadioButton('Watershed Indicators')
+        
+        self.layoutGroupBoxQUESHFeatures.addWidget(self.radioQUESHHRUDefinition)
+        self.layoutGroupBoxQUESHFeatures.addWidget(self.radioQUESHWatershedModelEvaluation)
+        self.layoutGroupBoxQUESHFeatures.addWidget(self.radioQUESHWatershedIndicators)
+        
+        self.groupBoxHRUDefinitionFunction = QtGui.QGroupBox('Function')
+        self.layoutGroupBoxHRUDefinitionFunction = QtGui.QVBoxLayout()
+        self.groupBoxHRUDefinitionFunction.setLayout(self.layoutGroupBoxHRUDefinitionFunction)
+        
+        self.labelHRUDefinitionFunction = QtGui.QLabel()
+        self.labelHRUDefinitionFunction.setText('Lorem ipsum dolot sit amet...')
+        self.layoutGroupBoxHRUDefinitionFunction.addWidget(self.labelHRUDefinitionFunction)
+        
+        self.checkBoxHRUDefinitionDominantHRU = QtGui.QCheckBox('Dominant HRU')
+        self.checkBoxHRUDefinitionDominantHRU.setChecked(False)
+        self.checkBoxHRUDefinitionDominantLUSSL = QtGui.QCheckBox('Dominant Land Use, Soil, and Slope')
+        self.checkBoxHRUDefinitionDominantLUSSL.setChecked(False)
+        self.checkBoxHRUDefinitionMultipleHRU = QtGui.QCheckBox('Multiple HRU')
+        self.checkBoxHRUDefinitionMultipleHRU.setChecked(False)
+        
+        self.layoutGroupBoxHRUDefinitionFunction.addWidget(self.checkBoxHRUDefinitionDominantHRU)
+        self.layoutGroupBoxHRUDefinitionFunction.addWidget(self.checkBoxHRUDefinitionDominantLUSSL)
+        self.layoutGroupBoxHRUDefinitionFunction.addWidget(self.checkBoxHRUDefinitionMultipleHRU)
+        self.groupBoxHRUDefinitionFunction.setDisabled(True)
+        
+        self.groupBoxQUESHTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxQUESHTemplate = QtGui.QVBoxLayout()
+        self.groupBoxQUESHTemplate.setLayout(self.layoutGroupBoxQUESHTemplate)
+        
+        self.layoutQUESHHRUDefinitionTemplate = QtGui.QHBoxLayout()
+        self.layoutQUESHWatershedModelEvaluationTemplate = QtGui.QHBoxLayout()
+        self.layoutQUESHWatershedIndicatorsTemplate = QtGui.QHBoxLayout()
+        
+        # 'HRU Definition' template
+        self.labelHRUDefinitionTemplate = QtGui.QLabel()
+        self.labelHRUDefinitionTemplate.setText('Template name:')
+        self.layoutQUESHHRUDefinitionTemplate.addWidget(self.labelHRUDefinitionTemplate)
+        
+        self.comboBoxHRUDefinitionTemplate = QtGui.QComboBox()
+        self.comboBoxHRUDefinitionTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxHRUDefinitionTemplate.setDisabled(True)
+        self.comboBoxHRUDefinitionTemplate.addItem('No template found')
+        self.layoutQUESHHRUDefinitionTemplate.addWidget(self.comboBoxHRUDefinitionTemplate)
+        
+        # 'Watershed Model Evaluation' template
+        self.labelWatershedModelEvaluationTemplate = QtGui.QLabel()
+        self.labelWatershedModelEvaluationTemplate.setText('Template name:')
+        self.layoutQUESHWatershedModelEvaluationTemplate.addWidget(self.labelWatershedModelEvaluationTemplate)
+        
+        self.comboBoxWatershedModelEvaluationTemplate = QtGui.QComboBox()
+        self.comboBoxWatershedModelEvaluationTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxWatershedModelEvaluationTemplate.setDisabled(True)
+        self.comboBoxWatershedModelEvaluationTemplate.addItem('No template found')
+        self.layoutQUESHWatershedModelEvaluationTemplate.addWidget(self.comboBoxWatershedModelEvaluationTemplate)
+        
+        # 'Watershed Indicators' template
+        self.labelWatershedIndicatorsTemplate = QtGui.QLabel()
+        self.labelWatershedIndicatorsTemplate.setText('Template name:')
+        self.layoutQUESHWatershedIndicatorsTemplate.addWidget(self.labelWatershedIndicatorsTemplate)
+        
+        self.comboBoxWatershedIndicatorsTemplate = QtGui.QComboBox()
+        self.comboBoxWatershedIndicatorsTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
+        self.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
+        self.comboBoxWatershedIndicatorsTemplate.addItem('No template found')
+        self.layoutQUESHWatershedIndicatorsTemplate.addWidget(self.comboBoxWatershedIndicatorsTemplate)
+        
+        self.layoutGroupBoxQUESHTemplate.addLayout(self.layoutQUESHHRUDefinitionTemplate)
+        self.layoutGroupBoxQUESHTemplate.addLayout(self.layoutQUESHWatershedModelEvaluationTemplate)
+        self.layoutGroupBoxQUESHTemplate.addLayout(self.layoutQUESHWatershedIndicatorsTemplate)
+        
+        # Hide the templates first until a feature is selected
+        for i in range(self.layoutQUESHHRUDefinitionTemplate.count()):
+            item = self.layoutQUESHHRUDefinitionTemplate.itemAt(i)
+            item.widget().setVisible(False)
+        
+        for i in range(self.layoutQUESHWatershedModelEvaluationTemplate.count()):
+            item = self.layoutQUESHWatershedModelEvaluationTemplate.itemAt(i)
+            item.widget().setVisible(False)
+        
+        for i in range(self.layoutQUESHWatershedIndicatorsTemplate.count()):
+            item = self.layoutQUESHWatershedIndicatorsTemplate.itemAt(i)
+            item.widget().setVisible(False)
+        
+        self.layoutSubtabQUESH.addWidget(self.groupBoxQUESHFeatures)
+        self.layoutSubtabQUESH.addWidget(self.groupBoxHRUDefinitionFunction)
+        self.layoutSubtabQUESH.addWidget(self.groupBoxQUESHTemplate)
+        
+        # TA 'Opportunity Cost' sub tab dashboard widgets
         self.groupBoxTAOpportunityCostFeatures = QtGui.QGroupBox('Features')
         self.layoutGroupBoxTAOpportunityCostFeatures = QtGui.QVBoxLayout()
         self.groupBoxTAOpportunityCostFeatures.setLayout(self.layoutGroupBoxTAOpportunityCostFeatures)
@@ -1169,7 +1271,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutTAOpportunityCostCurveTemplate = QtGui.QHBoxLayout()
         self.layoutTAOpportunityCostMapTemplate = QtGui.QHBoxLayout()
         
-        # Abacus Opportunity Cost template
+        # 'Abacus Opportunity Cost' template
         self.labelAbacusOpportunityCostTemplate = QtGui.QLabel()
         self.labelAbacusOpportunityCostTemplate.setText('Template name:')
         self.layoutTAAbacusOpportunityCostTemplate.addWidget(self.labelAbacusOpportunityCostTemplate)
@@ -1180,7 +1282,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxAbacusOpportunityCostTemplate.addItem('No template found')
         self.layoutTAAbacusOpportunityCostTemplate.addWidget(self.comboBoxAbacusOpportunityCostTemplate)
         
-        # Opportunity Cost Curve template
+        # 'Opportunity Cost Curve' template
         self.labelOpportunityCostCurveTemplate = QtGui.QLabel()
         self.labelOpportunityCostCurveTemplate.setText('Template name:')
         self.layoutTAOpportunityCostCurveTemplate.addWidget(self.labelOpportunityCostCurveTemplate)
@@ -1191,7 +1293,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxOpportunityCostCurveTemplate.addItem('No template found')
         self.layoutTAOpportunityCostCurveTemplate.addWidget(self.comboBoxOpportunityCostCurveTemplate)
         
-        # Opportunity Cost Map template
+        # 'Opportunity Cost Map' template
         self.labelOpportunityCostMapTemplate = QtGui.QLabel()
         self.labelOpportunityCostMapTemplate.setText('Template name:')
         self.layoutTAOpportunityCostMapTemplate.addWidget(self.labelOpportunityCostMapTemplate)
@@ -1222,7 +1324,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutSubtabTAOpportunityCost.addWidget(self.groupBoxTAOpportunityCostFeatures)
         self.layoutSubtabTAOpportunityCost.addWidget(self.groupBoxTAOpportunityCostTemplate)
         
-        # TA Regional Economy sub tab dashboard widgets
+        # TA 'Regional Economy' sub tab dashboard widgets
         self.groupBoxTARegionalEconomyFeatures = QtGui.QGroupBox('Features')
         self.layoutGroupBoxTARegionalEconomyFeatures = QtGui.QVBoxLayout()
         self.groupBoxTARegionalEconomyFeatures.setLayout(self.layoutGroupBoxTARegionalEconomyFeatures)
@@ -1256,7 +1358,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutGroupBoxRegionalEconomicScenarioImpactType.addWidget(self.checkBoxRegionalEconomicScenarioImpactFinalDemand)
         self.layoutGroupBoxRegionalEconomicScenarioImpactType.addWidget(self.checkBoxRegionalEconomicScenarioImpactGDP)
-        self.groupBoxRegionalEconomicScenarioImpactType.setVisible(False)
+        self.groupBoxRegionalEconomicScenarioImpactType.setDisabled(True)
         
         self.groupBoxTARegionalEconomyTemplate = QtGui.QGroupBox('Template')
         self.layoutGroupBoxTARegionalEconomyTemplate = QtGui.QVBoxLayout()
@@ -1267,7 +1369,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutTARegionalEconomyLandRequirementAnalysisTemplate = QtGui.QHBoxLayout()
         self.layoutTARegionalEconomyLandUseChangeImpactTemplate = QtGui.QHBoxLayout()
         
-        # Descriptive Analysis template
+        # 'Descriptive Analysis' template
         self.labelDescriptiveAnalysisTemplate = QtGui.QLabel()
         self.labelDescriptiveAnalysisTemplate.setText('Template name:')
         self.layoutTARegionalEconomyDescriptiveAnalysisTemplate.addWidget(self.labelDescriptiveAnalysisTemplate)
@@ -1278,7 +1380,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxDescriptiveAnalysisTemplate.addItem('No template found')
         self.layoutTARegionalEconomyDescriptiveAnalysisTemplate.addWidget(self.comboBoxDescriptiveAnalysisTemplate)
         
-        # Regional Economic Scenario Impact template
+        # 'Regional Economic Scenario Impact' template
         self.labelRegionalEconomicScenarioImpactTemplate = QtGui.QLabel()
         self.labelRegionalEconomicScenarioImpactTemplate.setText('Template name:')
         self.layoutTARegionalEconomyRegionalEconomicScenarioImpactTemplate.addWidget(self.labelRegionalEconomicScenarioImpactTemplate)
@@ -1289,7 +1391,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxRegionalEconomicScenarioImpactTemplate.addItem('No template found')
         self.layoutTARegionalEconomyRegionalEconomicScenarioImpactTemplate.addWidget(self.comboBoxRegionalEconomicScenarioImpactTemplate)
         
-        # Land Requirement Analysis template
+        # 'Land Requirement Analysis' template
         self.labelLandRequirementAnalysisTemplate = QtGui.QLabel()
         self.labelLandRequirementAnalysisTemplate.setText('Template name:')
         self.layoutTARegionalEconomyLandRequirementAnalysisTemplate.addWidget(self.labelLandRequirementAnalysisTemplate)
@@ -1300,7 +1402,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxLandRequirementAnalysisTemplate.addItem('No template found')
         self.layoutTARegionalEconomyLandRequirementAnalysisTemplate.addWidget(self.comboBoxLandRequirementAnalysisTemplate)
         
-        # Land Use Change Impact Analysis template
+        # 'Land Use Change Impact Analysis' template
         self.labelLandUseChangeImpactTemplate = QtGui.QLabel()
         self.labelLandUseChangeImpactTemplate.setText('Template name:')
         self.layoutTARegionalEconomyLandUseChangeImpactTemplate.addWidget(self.labelLandUseChangeImpactTemplate)
@@ -1337,7 +1439,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyTemplate)
         
-        # SCIENDO Low Emission Development Analysis sub tab dashboard widgets
+        # SCIENDO 'Low Emission Development Analysis' sub tab dashboard widgets
         self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures = QtGui.QGroupBox('Features')
         self.layoutGroupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures = QtGui.QVBoxLayout()
         self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures.setLayout(self.layoutGroupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures)
@@ -1362,7 +1464,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutSCIENDOLowEmissionDevelopmentAnalysisTemplate = QtGui.QHBoxLayout()
         
-        # Low Emission Development Analysis template
+        # 'Low Emission Development Analysis' template
         self.labelLowEmissionDevelopmentAnalysisTemplate = QtGui.QLabel()
         self.labelLowEmissionDevelopmentAnalysisTemplate.setText('Template name:')
         self.layoutSCIENDOLowEmissionDevelopmentAnalysisTemplate.addWidget(self.labelLowEmissionDevelopmentAnalysisTemplate)
@@ -1378,7 +1480,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures)
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisTemplate)
         
-        # SCIENDO Land Use Change Modeling sub tab dashboard widgets
+        # SCIENDO 'Land Use Change Modeling' sub tab dashboard widgets
         self.groupBoxSCIENDOLandUseChangeModelingFeatures = QtGui.QGroupBox('Features')
         self.layoutGroupBoxSCIENDOLandUseChangeModelingFeatures = QtGui.QVBoxLayout()
         self.groupBoxSCIENDOLandUseChangeModelingFeatures.setLayout(self.layoutGroupBoxSCIENDOLandUseChangeModelingFeatures)
@@ -1405,7 +1507,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutSCIENDOLandUseChangeModelingTemplate = QtGui.QHBoxLayout()
         
-        # Land Use Change Modeling template
+        # 'Land Use Change Modeling' template
         self.labelLandUseChangeModelingTemplate = QtGui.QLabel()
         self.labelLandUseChangeModelingTemplate.setText('Template name:')
         self.layoutSCIENDOLandUseChangeModelingTemplate.addWidget(self.labelLandUseChangeModelingTemplate)
@@ -1769,6 +1871,18 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxQUESBTemplate.addItem('No template found')
         self.comboBoxQUESBTemplate.setDisabled(True)
         
+        self.comboBoxHRUDefinitionTemplate.clear()
+        self.comboBoxHRUDefinitionTemplate.addItem('No template found')
+        self.comboBoxHRUDefinitionTemplate.setDisabled(True)
+        
+        self.comboBoxWatershedModelEvaluationTemplate.clear()
+        self.comboBoxWatershedModelEvaluationTemplate.addItem('No template found')
+        self.comboBoxWatershedModelEvaluationTemplate.setDisabled(True)
+        
+        self.comboBoxWatershedIndicatorsTemplate.clear()
+        self.comboBoxWatershedIndicatorsTemplate.addItem('No template found')
+        self.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
+        
         # TA
         self.comboBoxAbacusOpportunityCostTemplate.clear()
         self.comboBoxAbacusOpportunityCostTemplate.addItem('No template found')
@@ -2077,6 +2191,42 @@ class MainWindow(QtGui.QMainWindow):
         self.contextMenu.show()
     
     
+    def handlerToggleQUESH(self, radio):
+        """
+        """
+        for i in range(self.layoutQUESHHRUDefinitionTemplate.count()):
+            item = self.layoutQUESHHRUDefinitionTemplate.itemAt(i)
+            item.widget().setVisible(False)
+    
+        for i in range(self.layoutQUESHWatershedModelEvaluationTemplate.count()):
+            item = self.layoutQUESHWatershedModelEvaluationTemplate.itemAt(i)
+            item.widget().setVisible(False)
+        
+        for i in range(self.layoutQUESHWatershedIndicatorsTemplate.count()):
+            item = self.layoutQUESHWatershedIndicatorsTemplate.itemAt(i)
+            item.widget().setVisible(False)
+        
+        self.groupBoxHRUDefinitionFunction.setDisabled(True)
+        
+        if radio.text() == 'Hydrological Response Unit Definition':
+            if radio.isChecked():
+                self.groupBoxHRUDefinitionFunction.setDisabled(False)
+                
+                for i in range(self.layoutQUESHHRUDefinitionTemplate.count()):
+                    item = self.layoutQUESHHRUDefinitionTemplate.itemAt(i)
+                    item.widget().setVisible(True)
+        elif radio.text() == 'Watershed Model Evaluation':
+            if radio.isChecked():
+                for i in range(self.layoutQUESHWatershedModelEvaluationTemplate.count()):
+                    item = self.layoutQUESHWatershedModelEvaluationTemplate.itemAt(i)
+                    item.widget().setVisible(True)
+        elif radio.text() == 'Watershed Indicators':
+            if radio.isChecked():
+                for i in range(self.layoutQUESHWatershedIndicatorsTemplate.count()):
+                    item = self.layoutQUESHWatershedIndicatorsTemplate.itemAt(i)
+                    item.widget().setVisible(True)
+        
+    
     def handlerToggleTAOpportunityCost(self, radio):
         """
         """
@@ -2128,7 +2278,7 @@ class MainWindow(QtGui.QMainWindow):
             item = self.layoutTARegionalEconomyLandUseChangeImpactTemplate.itemAt(i)
             item.widget().setVisible(False)
             
-        self.groupBoxRegionalEconomicScenarioImpactType.setVisible(False)
+        self.groupBoxRegionalEconomicScenarioImpactType.setDisabled(True)
         
         if radio.text() == 'Descriptive Analysis of Regional Economy':
             if radio.isChecked():
@@ -2137,7 +2287,7 @@ class MainWindow(QtGui.QMainWindow):
                     item.widget().setVisible(True)
         elif radio.text() == 'Regional Economic Scenario Impact':
             if radio.isChecked():
-                self.groupBoxRegionalEconomicScenarioImpactType.setVisible(True)
+                self.groupBoxRegionalEconomicScenarioImpactType.setDisabled(False)
                 
                 for i in range(self.layoutTARegionalEconomyRegionalEconomicScenarioImpactTemplate.count()):
                     item = self.layoutTARegionalEconomyRegionalEconomicScenarioImpactTemplate.itemAt(i)
