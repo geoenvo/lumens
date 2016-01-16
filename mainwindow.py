@@ -1760,17 +1760,53 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxPreQUESTemplate.clear()
         self.comboBoxPreQUESTemplate.addItem('No template found')
         self.comboBoxPreQUESTemplate.setDisabled(True)
+        
         self.comboBoxQUESCTemplate.clear()
         self.comboBoxQUESCTemplate.addItem('No template found')
         self.comboBoxQUESCTemplate.setDisabled(True)
+        
         self.comboBoxQUESBTemplate.clear()
         self.comboBoxQUESBTemplate.addItem('No template found')
         self.comboBoxQUESBTemplate.setDisabled(True)
         
         # TA
+        self.comboBoxAbacusOpportunityCostTemplate.clear()
+        self.comboBoxAbacusOpportunityCostTemplate.addItem('No template found')
+        self.comboBoxAbacusOpportunityCostTemplate.setDisabled(True)
+        
+        self.comboBoxOpportunityCostCurveTemplate.clear()
+        self.comboBoxOpportunityCostCurveTemplate.addItem('No template found')
+        self.comboBoxOpportunityCostCurveTemplate.setDisabled(True)
+        
+        self.comboBoxOpportunityCostMapTemplate.clear()
+        self.comboBoxOpportunityCostMapTemplate.addItem('No template found')
+        self.comboBoxOpportunityCostMapTemplate.setDisabled(True)
+        
+        self.comboBoxDescriptiveAnalysisTemplate.clear()
+        self.comboBoxDescriptiveAnalysisTemplate.addItem('No template found')
+        self.comboBoxDescriptiveAnalysisTemplate.setDisabled(True)
+        
+        self.comboBoxRegionalEconomicScenarioImpactTemplate.clear()
+        self.comboBoxRegionalEconomicScenarioImpactTemplate.addItem('No template found')
+        self.comboBoxRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+        
+        self.comboBoxLandRequirementAnalysisTemplate.clear()
+        self.comboBoxLandRequirementAnalysisTemplate.addItem('No template found')
+        self.comboBoxLandRequirementAnalysisTemplate.setDisabled(True)
+        
+        self.comboBoxLandUseChangeImpactTemplate.clear()
+        self.comboBoxLandUseChangeImpactTemplate.addItem('No template found')
+        self.comboBoxLandUseChangeImpactTemplate.setDisabled(True)
         
         # SCIENDO
-    
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate.clear()
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItem('No template found')
+        self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+        
+        self.comboBoxLandUseChangeModelingTemplate.clear()
+        self.comboBoxLandUseChangeModelingTemplate.addItem('No template found')
+        self.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
+        
     
     def lumensOpenDatabase(self, lumensDatabase=False):
         """Open a LUMENS project database
