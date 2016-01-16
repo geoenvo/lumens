@@ -27,12 +27,26 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             self.comboBoxLandUseChangeModelingTemplate.addItems(sorted(templateFiles))
             self.comboBoxLandUseChangeModelingTemplate.setEnabled(True)
             self.buttonLoadLandUseChangeModelingTemplate.setEnabled(True)
+            
+            # MainWindow SCIENDO dashboard templates
+            self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.clear()
+            self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+            
+            self.main.comboBoxLandUseChangeModelingTemplate.clear()
+            self.main.comboBoxLandUseChangeModelingTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxLandUseChangeModelingTemplate.setEnabled(True)
         else:
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
             self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
             
             self.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
             self.buttonLoadLandUseChangeModelingTemplate.setDisabled(True)
+            
+            # MainWindow SCIENDO dashboard templates
+            self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+            
+            self.main.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
         
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
@@ -670,7 +684,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.layoutLandUseChangeModelingFunctionsInfo.addWidget(self.labelLandUseChangeModelingFunctionsInfo)
         
         self.checkBoxCalculateTransitionMatrix = QtGui.QCheckBox('Calculate transition matrix')
-        self.checkBoxCreateRasterCubeOfFactors = QtGui.QCheckBox('Create raster cuve of factors')
+        self.checkBoxCreateRasterCubeOfFactors = QtGui.QCheckBox('Create raster cube of factors')
         self.checkBoxCalculateWeightOfEvidence = QtGui.QCheckBox('Calculate weight of evidence')
         self.checkBoxSimulateLandUseChange = QtGui.QCheckBox('Simulate land use change')
         self.checkBoxSimulateWithScenario = QtGui.QCheckBox('Simulate with scenario')

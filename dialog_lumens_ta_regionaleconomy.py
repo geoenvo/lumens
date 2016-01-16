@@ -37,6 +37,23 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.comboBoxLandUseChangeImpactTemplate.addItems(sorted(templateFiles))
             self.comboBoxLandUseChangeImpactTemplate.setEnabled(True)
             self.buttonLoadLandUseChangeImpactTemplate.setEnabled(True)
+            
+            # MainWindow TA Regional Economy dashboard templates
+            self.main.comboBoxDescriptiveAnalysisTemplate.clear()
+            self.main.comboBoxDescriptiveAnalysisTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxDescriptiveAnalysisTemplate.setEnabled(True)
+            
+            self.main.comboBoxRegionalEconomicScenarioImpactTemplate.clear()
+            self.main.comboBoxRegionalEconomicScenarioImpactTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxRegionalEconomicScenarioImpactTemplate.setEnabled(True)
+            
+            self.main.comboBoxLandRequirementAnalysisTemplate.clear()
+            self.main.comboBoxLandRequirementAnalysisTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxLandRequirementAnalysisTemplate.setEnabled(True)
+            
+            self.main.comboBoxLandUseChangeImpactTemplate.clear()
+            self.main.comboBoxLandUseChangeImpactTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxLandUseChangeImpactTemplate.setEnabled(True)
         else:
             self.comboBoxDescriptiveAnalysisTemplate.setDisabled(True)
             self.buttonLoadDescriptiveAnalysisTemplate.setDisabled(True)
@@ -49,7 +66,16 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
             self.comboBoxLandUseChangeImpactTemplate.setDisabled(True)
             self.buttonLoadLandUseChangeImpactTemplate.setDisabled(True)
-        
+            
+            # MainWindow TA Regional Economy dashboard templates
+            self.main.comboBoxDescriptiveAnalysisTemplate.setDisabled(True)
+            
+            self.main.comboBoxRegionalEconomicScenarioImpactTemplate.setDisabled(True)
+            
+            self.main.comboBoxLandRequirementAnalysisTemplate.setDisabled(True)
+            
+            self.main.comboBoxLandUseChangeImpactTemplate.setDisabled(True)
+            
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget

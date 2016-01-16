@@ -47,6 +47,19 @@ class DialogLumensQUES(QtGui.QDialog):
             self.comboBoxWatershedIndicatorsTemplate.addItems(sorted(templateFiles))
             self.comboBoxWatershedIndicatorsTemplate.setEnabled(True)
             self.buttonLoadWatershedIndicatorsTemplate.setEnabled(True)
+            
+            # MainWindow QUES dashboard templates
+            self.main.comboBoxPreQUESTemplate.clear()
+            self.main.comboBoxPreQUESTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxPreQUESTemplate.setEnabled(True)
+            
+            self.main.comboBoxQUESCTemplate.clear()
+            self.main.comboBoxQUESCTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxQUESCTemplate.setEnabled(True)
+            
+            self.main.comboBoxQUESBTemplate.clear()
+            self.main.comboBoxQUESBTemplate.addItems(sorted(templateFiles))
+            self.main.comboBoxQUESBTemplate.setEnabled(True)
         else:
             self.comboBoxPreQUESTemplate.setDisabled(True)
             self.buttonLoadPreQUESTemplate.setDisabled(True)
@@ -65,6 +78,13 @@ class DialogLumensQUES(QtGui.QDialog):
             
             self.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
             self.buttonLoadWatershedIndicatorsTemplate.setDisabled(True)
+            
+            # MainWindow QUES dashboard templates
+            self.main.comboBoxPreQUESTemplate.setDisabled(True)
+            
+            self.main.comboBoxQUESCTemplate.setDisabled(True)
+            
+            self.main.comboBoxQUESBTemplate.setDisabled(True)
         
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):

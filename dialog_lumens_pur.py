@@ -24,7 +24,7 @@ class DialogLumensPUR(QtGui.QDialog):
             self.comboBoxPURTemplate.setEnabled(True)
             self.buttonLoadPURTemplate.setEnabled(True)
             
-            # MainWindow dashboard templates
+            # MainWindow PUR dashboard templates
             self.main.comboBoxPURTemplate.clear()
             self.main.comboBoxPURTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxPURTemplate.setEnabled(True)
@@ -32,6 +32,7 @@ class DialogLumensPUR(QtGui.QDialog):
             self.comboBoxPURTemplate.setDisabled(True)
             self.buttonLoadPURTemplate.setDisabled(True)
             
+            # MainWindow PUR dashboard templates
             self.main.comboBoxPURTemplate.setDisabled(True)
     
     
