@@ -56,6 +56,7 @@ class DialogLumensQUES(QtGui.QDialog):
             self.main.comboBoxQUESCTemplate.clear()
             self.main.comboBoxQUESCTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxQUESCTemplate.setEnabled(True)
+            self.main.buttonProcessQUESCTemplate.setEnabled(True)
             
             self.main.comboBoxQUESBTemplate.clear()
             self.main.comboBoxQUESBTemplate.addItems(sorted(templateFiles))
@@ -95,15 +96,16 @@ class DialogLumensQUES(QtGui.QDialog):
             self.main.comboBoxPreQUESTemplate.setDisabled(True)
             
             self.main.comboBoxQUESCTemplate.setDisabled(True)
+            self.main.buttonProcessQUESCTemplate.setDisabled(True)
             
             self.main.comboBoxQUESBTemplate.setDisabled(True)
+            self.main.buttonProcessQUESBTemplate.setDisabled(True)
             
             self.main.comboBoxHRUDefinitionTemplate.setDisabled(True)
-            
             self.main.comboBoxWatershedModelEvaluationTemplate.setDisabled(True)
-            
             self.main.comboBoxWatershedIndicatorsTemplate.setDisabled(True)
-        
+            self.main.buttonProcessQUESHTemplate.setDisabled(True)
+            
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget

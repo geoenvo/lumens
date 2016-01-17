@@ -45,6 +45,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             self.main.comboBoxOpportunityCostMapTemplate.clear()
             self.main.comboBoxOpportunityCostMapTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxOpportunityCostMapTemplate.setEnabled(True)
+            
+            self.main.buttonProcessTAOpportunityCostTemplate.setEnabled(True)
         else:
             self.comboBoxAbacusOpportunityCostTemplate.setDisabled(True)
             self.buttonLoadAbacusOpportunityCostTemplate.setDisabled(True)
@@ -61,6 +63,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             self.main.comboBoxOpportunityCostCurveTemplate.setDisabled(True)
             
             self.main.comboBoxOpportunityCostMapTemplate.setDisabled(True)
+            
+            self.main.buttonProcessTAOpportunityCostTemplate.setDisabled(True)
         
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):

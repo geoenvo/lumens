@@ -1088,64 +1088,137 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutDashboardSCIENDO.addWidget(self.SCIENDOTabWidget)
         
         # PUR dashboard widgets
-        self.labelPURInfo = QtGui.QLabel()
-        self.labelPURInfo.setText('Lorem ipsum dolor sit amet...')
-        self.layoutDashboardPUR.addWidget(self.labelPURInfo, 0, 0, 1, 2)
+        self.groupBoxPURTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxPURTemplate = QtGui.QVBoxLayout()
+        self.groupBoxPURTemplate.setLayout(self.layoutGroupBoxPURTemplate)
         
+        self.layoutPURTemplate = QtGui.QHBoxLayout()
+        
+        # PUR template
         self.labelPURTemplate = QtGui.QLabel()
         self.labelPURTemplate.setText('Template name:')
-        self.layoutDashboardPUR.addWidget(self.labelPURTemplate, 1, 0)
+        self.layoutPURTemplate.addWidget(self.labelPURTemplate)
         
         self.comboBoxPURTemplate = QtGui.QComboBox()
         self.comboBoxPURTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
         self.comboBoxPURTemplate.setDisabled(True)
         self.comboBoxPURTemplate.addItem('No template found')
-        self.layoutDashboardPUR.addWidget(self.comboBoxPURTemplate, 1, 1)
+        self.layoutPURTemplate.addWidget(self.comboBoxPURTemplate)
+        
+        self.layoutGroupBoxPURTemplate.addLayout(self.layoutPURTemplate)
+        
+        self.buttonProcessPURTemplate = QtGui.QPushButton()
+        self.buttonProcessPURTemplate.setText('Process')
+        self.buttonProcessPURTemplate.setDisabled(True)
+        
+        self.layoutDashboardPUR.addWidget(self.groupBoxPURTemplate)
+        self.layoutDashboardPUR.addWidget(self.buttonProcessPURTemplate)
+        
+        #####################################################################
         
         # Pre-QUES sub tab dashboard widgets
-        self.labelPreQUESInfo = QtGui.QLabel()
-        self.labelPreQUESInfo.setText('Lorem ipsum dolor sit amet...')
-        self.layoutSubtabPreQUES.addWidget(self.labelPreQUESInfo, 0, 0, 1, 2)
+        self.groupBoxPreQUESTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxPreQUESTemplate = QtGui.QVBoxLayout()
+        self.groupBoxPreQUESTemplate.setLayout(self.layoutGroupBoxPreQUESTemplate)
         
+        self.layoutPreQUESTemplate = QtGui.QHBoxLayout()
+        
+        # Pre-QUES template
         self.labelPreQUESTemplate = QtGui.QLabel()
         self.labelPreQUESTemplate.setText('Template name:')
-        self.layoutSubtabPreQUES.addWidget(self.labelPreQUESTemplate, 1, 0)
+        self.layoutPreQUESTemplate.addWidget(self.labelPreQUESTemplate)
         
         self.comboBoxPreQUESTemplate = QtGui.QComboBox()
         self.comboBoxPreQUESTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
         self.comboBoxPreQUESTemplate.setDisabled(True)
         self.comboBoxPreQUESTemplate.addItem('No template found')
-        self.layoutSubtabPreQUES.addWidget(self.comboBoxPreQUESTemplate, 1, 1)
+        self.layoutPreQUESTemplate.addWidget(self.comboBoxPreQUESTemplate)
+        
+        self.layoutGroupBoxPreQUESTemplate.addLayout(self.layoutPreQUESTemplate)
+        
+        self.buttonProcessPreQUESTemplate = QtGui.QPushButton()
+        self.buttonProcessPreQUESTemplate.setText('Process')
+        self.buttonProcessPreQUESTemplate.setDisabled(True)
+        
+        self.layoutSubtabPreQUES.addWidget(self.groupBoxPreQUESTemplate)
+        self.layoutSubtabPreQUES.addWidget(self.buttonProcessPreQUESTemplate)
+        
+        #####################################################################
         
         # QUES-C sub tab dashboard widgets
-        self.labelQUESCInfo = QtGui.QLabel()
-        self.labelQUESCInfo.setText('Lorem ipsum dolor sit amet...')
-        self.layoutSubtabQUESC.addWidget(self.labelQUESCInfo, 0, 0, 1, 2)
+        self.groupBoxQUESCFeatures = QtGui.QGroupBox('Features')
+        self.layoutGroupBoxQUESCFeatures = QtGui.QVBoxLayout()
+        self.groupBoxQUESCFeatures.setLayout(self.layoutGroupBoxQUESCFeatures)
         
+        self.labelQUESCFeaturesInfo = QtGui.QLabel()
+        self.labelQUESCFeaturesInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutGroupBoxQUESCFeatures.addWidget(self.labelQUESCFeaturesInfo)
+        
+        self.checkBoxQUESCCarbonAccounting = QtGui.QCheckBox('Carbon Accounting')
+        self.checkBoxQUESCPeatlandCarbonAccounting = QtGui.QCheckBox('Peatland Carbon Accounting')
+        self.checkBoxQUESCSummarizeMultiplePeriod = QtGui.QCheckBox('Summarize Multiple Period')
+        
+        self.layoutGroupBoxQUESCFeatures.addWidget(self.checkBoxQUESCCarbonAccounting)
+        self.layoutGroupBoxQUESCFeatures.addWidget(self.checkBoxQUESCPeatlandCarbonAccounting)
+        self.layoutGroupBoxQUESCFeatures.addWidget(self.checkBoxQUESCSummarizeMultiplePeriod)
+        
+        self.groupBoxQUESCTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxQUESCTemplate = QtGui.QVBoxLayout()
+        self.groupBoxQUESCTemplate.setLayout(self.layoutGroupBoxQUESCTemplate)
+        
+        self.layoutQUESCTemplate = QtGui.QHBoxLayout()
+        
+        # QUES-C template
         self.labelQUESCTemplate = QtGui.QLabel()
         self.labelQUESCTemplate.setText('Template name:')
-        self.layoutSubtabQUESC.addWidget(self.labelQUESCTemplate, 1, 0)
+        self.layoutQUESCTemplate.addWidget(self.labelQUESCTemplate)
         
         self.comboBoxQUESCTemplate = QtGui.QComboBox()
         self.comboBoxQUESCTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
         self.comboBoxQUESCTemplate.setDisabled(True)
         self.comboBoxQUESCTemplate.addItem('No template found')
-        self.layoutSubtabQUESC.addWidget(self.comboBoxQUESCTemplate, 1, 1)
+        self.layoutQUESCTemplate.addWidget(self.comboBoxQUESCTemplate)
+        
+        self.layoutGroupBoxQUESCTemplate.addLayout(self.layoutQUESCTemplate)
+        
+        self.buttonProcessQUESCTemplate = QtGui.QPushButton()
+        self.buttonProcessQUESCTemplate.setText('Process')
+        self.buttonProcessQUESCTemplate.setDisabled(True)
+        
+        self.layoutSubtabQUESC.addWidget(self.groupBoxQUESCFeatures)
+        self.layoutSubtabQUESC.addWidget(self.groupBoxQUESCTemplate)
+        self.layoutSubtabQUESC.addWidget(self.buttonProcessQUESCTemplate)
+        
+        #####################################################################
         
         # QUES-B sub tab dashboard widgets
-        self.labelQUESBInfo = QtGui.QLabel()
-        self.labelQUESBInfo.setText('Lorem ipsum dolor sit amet...')
-        self.layoutSubtabQUESB.addWidget(self.labelQUESBInfo, 0, 0, 1, 2)
+        self.groupBoxQUESBTemplate = QtGui.QGroupBox('Template')
+        self.layoutGroupBoxQUESBTemplate = QtGui.QVBoxLayout()
+        self.groupBoxQUESBTemplate.setLayout(self.layoutGroupBoxQUESBTemplate)
         
+        self.layoutQUESBTemplate = QtGui.QHBoxLayout()
+        
+        # QUES-B template
         self.labelQUESBTemplate = QtGui.QLabel()
         self.labelQUESBTemplate.setText('Template name:')
-        self.layoutSubtabQUESB.addWidget(self.labelQUESBTemplate, 1, 0)
+        self.layoutQUESBTemplate.addWidget(self.labelQUESBTemplate)
         
         self.comboBoxQUESBTemplate = QtGui.QComboBox()
         self.comboBoxQUESBTemplate.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Maximum)
         self.comboBoxQUESBTemplate.setDisabled(True)
         self.comboBoxQUESBTemplate.addItem('No template found')
-        self.layoutSubtabQUESB.addWidget(self.comboBoxQUESBTemplate, 1, 1)
+        self.layoutQUESBTemplate.addWidget(self.comboBoxQUESBTemplate)
+        
+        self.layoutGroupBoxQUESBTemplate.addLayout(self.layoutQUESBTemplate)
+        
+        self.buttonProcessQUESBTemplate = QtGui.QPushButton()
+        self.buttonProcessQUESBTemplate.setText('Process')
+        self.buttonProcessQUESBTemplate.setDisabled(True)
+        
+        self.layoutSubtabQUESB.addWidget(self.groupBoxQUESBTemplate)
+        self.layoutSubtabQUESB.addWidget(self.buttonProcessQUESBTemplate)
+        
+        #####################################################################
         
         # QUES-H sub tab dashboard widgets
         self.groupBoxQUESHFeatures = QtGui.QGroupBox('Features')
@@ -1242,9 +1315,16 @@ class MainWindow(QtGui.QMainWindow):
             item = self.layoutQUESHWatershedIndicatorsTemplate.itemAt(i)
             item.widget().setVisible(False)
         
+        self.buttonProcessQUESHTemplate = QtGui.QPushButton()
+        self.buttonProcessQUESHTemplate.setText('Process')
+        self.buttonProcessQUESHTemplate.setDisabled(True)
+        
         self.layoutSubtabQUESH.addWidget(self.groupBoxQUESHFeatures)
         self.layoutSubtabQUESH.addWidget(self.groupBoxHRUDefinitionFunction)
         self.layoutSubtabQUESH.addWidget(self.groupBoxQUESHTemplate)
+        self.layoutSubtabQUESH.addWidget(self.buttonProcessQUESHTemplate)
+        
+        #####################################################################
         
         # TA 'Opportunity Cost' sub tab dashboard widgets
         self.groupBoxTAOpportunityCostFeatures = QtGui.QGroupBox('Features')
@@ -1271,7 +1351,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutTAOpportunityCostCurveTemplate = QtGui.QHBoxLayout()
         self.layoutTAOpportunityCostMapTemplate = QtGui.QHBoxLayout()
         
-        # 'Abacus Opportunity Cost' template
+        # TA 'Abacus Opportunity Cost' template
         self.labelAbacusOpportunityCostTemplate = QtGui.QLabel()
         self.labelAbacusOpportunityCostTemplate.setText('Template name:')
         self.layoutTAAbacusOpportunityCostTemplate.addWidget(self.labelAbacusOpportunityCostTemplate)
@@ -1282,7 +1362,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxAbacusOpportunityCostTemplate.addItem('No template found')
         self.layoutTAAbacusOpportunityCostTemplate.addWidget(self.comboBoxAbacusOpportunityCostTemplate)
         
-        # 'Opportunity Cost Curve' template
+        # TA 'Opportunity Cost Curve' template
         self.labelOpportunityCostCurveTemplate = QtGui.QLabel()
         self.labelOpportunityCostCurveTemplate.setText('Template name:')
         self.layoutTAOpportunityCostCurveTemplate.addWidget(self.labelOpportunityCostCurveTemplate)
@@ -1293,7 +1373,7 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxOpportunityCostCurveTemplate.addItem('No template found')
         self.layoutTAOpportunityCostCurveTemplate.addWidget(self.comboBoxOpportunityCostCurveTemplate)
         
-        # 'Opportunity Cost Map' template
+        # TA 'Opportunity Cost Map' template
         self.labelOpportunityCostMapTemplate = QtGui.QLabel()
         self.labelOpportunityCostMapTemplate.setText('Template name:')
         self.layoutTAOpportunityCostMapTemplate.addWidget(self.labelOpportunityCostMapTemplate)
@@ -1321,8 +1401,15 @@ class MainWindow(QtGui.QMainWindow):
             item = self.layoutTAOpportunityCostMapTemplate.itemAt(i)
             item.widget().setVisible(False)
         
+        self.buttonProcessTAOpportunityCostTemplate = QtGui.QPushButton()
+        self.buttonProcessTAOpportunityCostTemplate.setText('Process')
+        self.buttonProcessTAOpportunityCostTemplate.setDisabled(True)
+        
         self.layoutSubtabTAOpportunityCost.addWidget(self.groupBoxTAOpportunityCostFeatures)
         self.layoutSubtabTAOpportunityCost.addWidget(self.groupBoxTAOpportunityCostTemplate)
+        self.layoutSubtabTAOpportunityCost.addWidget(self.buttonProcessTAOpportunityCostTemplate)
+        
+        #####################################################################
         
         # TA 'Regional Economy' sub tab dashboard widgets
         self.groupBoxTARegionalEconomyFeatures = QtGui.QGroupBox('Features')
@@ -1435,9 +1522,16 @@ class MainWindow(QtGui.QMainWindow):
             item = self.layoutTARegionalEconomyLandUseChangeImpactTemplate.itemAt(i)
             item.widget().setVisible(False)
         
+        self.buttonProcessTARegionalEconomyTemplate = QtGui.QPushButton()
+        self.buttonProcessTARegionalEconomyTemplate.setText('Process')
+        self.buttonProcessTARegionalEconomyTemplate.setDisabled(True)
+        
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyFeatures)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyTemplate)
+        self.layoutSubtabTARegionalEconomy.addWidget(self.buttonProcessTARegionalEconomyTemplate)
+        
+        #####################################################################
         
         # SCIENDO 'Low Emission Development Analysis' sub tab dashboard widgets
         self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures = QtGui.QGroupBox('Features')
@@ -1477,8 +1571,15 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutGroupBoxSCIENDOLowEmissionDevelopmentAnalysisTemplate.addLayout(self.layoutSCIENDOLowEmissionDevelopmentAnalysisTemplate)
         
+        self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate = QtGui.QPushButton()
+        self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setText('Process')
+        self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+        
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures)
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisTemplate)
+        self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate)
+        
+        #####################################################################
         
         # SCIENDO 'Land Use Change Modeling' sub tab dashboard widgets
         self.groupBoxSCIENDOLandUseChangeModelingFeatures = QtGui.QGroupBox('Features')
@@ -1520,8 +1621,13 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layoutGroupBoxSCIENDOLandUseChangeModelingTemplate.addLayout(self.layoutSCIENDOLandUseChangeModelingTemplate)
         
+        self.buttonProcessSCIENDOLandUseChangeModelingTemplate = QtGui.QPushButton()
+        self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setText('Process')
+        self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setDisabled(True)
+        
         self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.groupBoxSCIENDOLandUseChangeModelingFeatures)
         self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.groupBoxSCIENDOLandUseChangeModelingTemplate)
+        self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.buttonProcessSCIENDOLandUseChangeModelingTemplate)
         
         #***********************************************************
         # End 'Dashboard' tab setup

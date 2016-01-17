@@ -32,10 +32,12 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.clear()
             self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+            self.main.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
             
             self.main.comboBoxLandUseChangeModelingTemplate.clear()
             self.main.comboBoxLandUseChangeModelingTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxLandUseChangeModelingTemplate.setEnabled(True)
+            self.main.buttonProcessSCIENDOLandUseChangeModelingTemplate.setEnabled(True)
         else:
             self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
             self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
@@ -45,9 +47,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             # MainWindow SCIENDO dashboard templates
             self.main.comboBoxLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+            self.main.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
             
             self.main.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
-        
+            self.main.buttonProcessSCIENDOLandUseChangeModelingTemplate.setDisabled(True)
+    
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget

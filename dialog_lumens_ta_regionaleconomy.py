@@ -54,6 +54,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.main.comboBoxLandUseChangeImpactTemplate.clear()
             self.main.comboBoxLandUseChangeImpactTemplate.addItems(sorted(templateFiles))
             self.main.comboBoxLandUseChangeImpactTemplate.setEnabled(True)
+            
+            self.main.buttonProcessTARegionalEconomyTemplate.setEnabled(True)
         else:
             self.comboBoxDescriptiveAnalysisTemplate.setDisabled(True)
             self.buttonLoadDescriptiveAnalysisTemplate.setDisabled(True)
