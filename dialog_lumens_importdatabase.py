@@ -5,6 +5,7 @@ import os, logging
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
+from dialog_lumens_viewer import DialogLumensViewer
 
 
 class DialogLumensImportDatabase(QtGui.QDialog):
@@ -171,10 +172,12 @@ class DialogLumensImportDatabase(QtGui.QDialog):
         
         if self.validForm():
             logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
-            
             self.buttonProcessImportDatabase.setDisabled(True)
             
             algName = 'modeler:lumens_import_database'
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -182,10 +185,17 @@ class DialogLumensImportDatabase(QtGui.QDialog):
                 self.main.appSettings[type(self).__name__]['projectFile'],
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
+            
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessImportDatabase.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             projectName = os.path.basename(os.path.splitext(self.main.appSettings[type(self).__name__]['projectFile'])[0])

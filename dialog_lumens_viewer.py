@@ -107,4 +107,13 @@ class DialogLumensViewer(QtGui.QDialog):
             
             self.webContent.load(QtCore.QUrl.fromLocalFile(self.contentSource))
             self.setMinimumSize(800, 600)
+        elif self.contentType == 'text':
+            self.textContent = QtGui.QPlainTextEdit()
+            self.textContent.setReadOnly(True)
+            
+            self.dialogLayout.addWidget(self.textContent)
+            
+            with open(self.contentSource) as file:
+                text = file.read()
+                self.textContent.setPlainText(text)
     

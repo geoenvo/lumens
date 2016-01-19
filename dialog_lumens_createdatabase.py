@@ -78,7 +78,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.layoutDatabaseDetails.addWidget(self.buttonSelectOutputFolder, 1, 2)
         
         self.labelShapefile = QtGui.QLabel()
-        self.labelShapefile.setText('Shapefile:')
+        self.labelShapefile.setText('Project administrative boundary:')
         self.layoutDatabaseDetails.addWidget(self.labelShapefile, 2, 0)
         
         self.lineEditShapefile = QtGui.QLineEdit()
@@ -90,7 +90,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.layoutDatabaseDetails.addWidget(self.buttonSelectShapefile, 2, 2)
         
         self.labelShapefileAttr = QtGui.QLabel()
-        self.labelShapefileAttr.setText('Shapefile &attribute:')
+        self.labelShapefileAttr.setText('Administrative boundary &attribute:')
         self.layoutDatabaseDetails.addWidget(self.labelShapefileAttr, 3, 0)
         
         self.comboBoxShapefileAttr = QtGui.QComboBox(parent)
@@ -339,6 +339,9 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             
             algName = 'modeler:lumens_create_database_1'
             
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
+            
             outputs = general.runalg(
                 algName,
                 self.main.appSettings[type(self).__name__]['projectName'],
@@ -352,6 +355,11 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                 self.main.appSettings[type(self).__name__]['projectSpatialRes'],
                 None,
             )
+            
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
             
             # Construct the project .lpj filepath
             lumensDatabase = os.path.join(
@@ -375,15 +383,23 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                     lumensDatabase,
                     tableCsv,
                 )
+                
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
             
-            self.outputsMessageBox(algName, outputs, '', '')
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
+            
+            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessCreateDatabase.setEnabled(True)
             
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             # If LUMENS database file exists, open it and close this dialog
-            if os.path.exists(lumensDatabase):
+            if algSuccess and os.path.exists(lumensDatabase):
                 self.main.lumensOpenDatabase(lumensDatabase)
                 self.close()
             else:

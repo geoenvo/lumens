@@ -7,6 +7,7 @@ from processing.tools import *
 from PyQt4 import QtCore, QtGui
 from utils import QPlainTextEditLogger
 from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
+from dialog_lumens_viewer import DialogLumensViewer
 import resource
 
 
@@ -1001,10 +1002,12 @@ class DialogLumensPUR(QtGui.QDialog):
         
         if self.validForm():
             logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
-            
             self.buttonProcessSetup.setDisabled(True)
             
             algName = 'modeler:lumens_pur'
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -1016,11 +1019,18 @@ class DialogLumensPUR(QtGui.QDialog):
                 self.main.appSettings[type(self).__name__]['planningUnits'],
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessSetup.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
     

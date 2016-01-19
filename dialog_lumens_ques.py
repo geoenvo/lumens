@@ -6,6 +6,7 @@ from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
 from utils import QPlainTextEditLogger
+from dialog_lumens_viewer import DialogLumensViewer
 import resource
 
 
@@ -3099,8 +3100,10 @@ class DialogLumensQUES(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessPreQUES.setDisabled(True)
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -3110,12 +3113,19 @@ class DialogLumensQUES(QtGui.QDialog):
                 None, # statusmessage
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessPreQUES.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -3130,8 +3140,10 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessQUESC.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -3139,12 +3151,19 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.main.appSettings[formName]['nodata'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessQUESC.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
         if self.checkBoxPeatlandCarbonAccounting.isChecked():
@@ -3153,20 +3172,29 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessQUESC.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
                     self.main.appSettings[formName]['csvfile'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessQUESC.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
         
@@ -3176,20 +3204,29 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessQUESC.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
                     self.main.appSettings[formName]['checkbox'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessQUESC.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -3203,7 +3240,6 @@ class DialogLumensQUES(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessQUESB.setDisabled(True)
             
             outputTECIInitial = self.main.appSettings[formName]['outputTECIInitial']
@@ -3231,6 +3267,9 @@ class DialogLumensQUES(QtGui.QDialog):
             if outputRecoveredHabitat == '__UNSET__':
                 outputRecoveredHabitat = None
             
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
+            
             outputs = general.runalg(
                 algName,
                 self.main.appSettings[formName]['csvLandCover'],
@@ -3250,12 +3289,19 @@ class DialogLumensQUES(QtGui.QDialog):
                 outputRecoveredHabitat,
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessQUESB.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -3270,8 +3316,10 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessHRUDefinition.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -3287,12 +3335,19 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.main.appSettings[formName]['period'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessHRUDefinition.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
         if self.checkBoxDominantLUSSL.isChecked():
@@ -3301,8 +3356,10 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessHRUDefinition.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -3318,12 +3375,19 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.main.appSettings[formName]['period'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessHRUDefinition.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
         if self.checkBoxMultipleHRU.isChecked():
@@ -3332,8 +3396,10 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessHRUDefinition.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -3352,12 +3418,19 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.main.appSettings[formName]['slopeThreshold'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessHRUDefinition.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -3371,13 +3444,15 @@ class DialogLumensQUES(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessWatershedModelEvaluation.setDisabled(True)
             
             outputWatershedModelEvaluation = self.main.appSettings[formName]['outputWatershedModelEvaluation']
             
             if outputWatershedModelEvaluation == '__UNSET__':
                 outputWatershedModelEvaluation = None
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -3391,12 +3466,19 @@ class DialogLumensQUES(QtGui.QDialog):
                 outputWatershedModelEvaluation,
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessWatershedModelEvaluation.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -3410,7 +3492,6 @@ class DialogLumensQUES(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessWatershedIndicators.setDisabled(True)
             
             outputInitialYearSubWatershedLevelIndicators = self.main.appSettings[formName]['outputInitialYearSubWatershedLevelIndicators']
@@ -3421,6 +3502,9 @@ class DialogLumensQUES(QtGui.QDialog):
             
             if outputFinalYearSubWatershedLevelIndicators == '__UNSET__':
                 outputFinalYearSubWatershedLevelIndicators = None
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -3434,11 +3518,18 @@ class DialogLumensQUES(QtGui.QDialog):
                 outputFinalYearSubWatershedLevelIndicators,
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessWatershedIndicators.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     

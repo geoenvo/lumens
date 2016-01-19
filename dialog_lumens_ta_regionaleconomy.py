@@ -6,6 +6,7 @@ from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
 from utils import QPlainTextEditLogger
+from dialog_lumens_viewer import DialogLumensViewer
 import resource
 
 
@@ -2833,8 +2834,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -2850,12 +2853,19 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 self.main.appSettings[formName]['period'],
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessDescriptiveAnalysis.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
         # Run multiple period if checked
@@ -2865,8 +2875,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -2887,12 +2899,19 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.main.appSettings[formName]['period2'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessDescriptiveAnalysis.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -2907,8 +2926,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessRegionalEconomicScenarioImpact.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -2928,12 +2949,19 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.main.appSettings[formName]['finalDemandChangeScenario'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessRegionalEconomicScenarioImpact.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
         
         if self.checkBoxRegionalEconomicScenarioImpactGDP.isChecked():
@@ -2942,8 +2970,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                
                 self.buttonProcessRegionalEconomicScenarioImpact.setDisabled(True)
+                
+                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                self.main.setWindowState(QtCore.Qt.WindowMinimized)
                 
                 outputs = general.runalg(
                     algName,
@@ -2963,12 +2993,19 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.main.appSettings[formName]['period'],
                 )
                 
+                # Display ROut file in debug mode
+                if self.main.appSettings['debug']:
+                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                    dialog.exec_()
+                
                 ##print outputs
+                
+                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                self.main.setWindowState(QtCore.Qt.WindowActive)
                 
                 self.outputsMessageBox(algName, outputs, '', '')
                 
                 self.buttonProcessRegionalEconomicScenarioImpact.setEnabled(True)
-                
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -2982,8 +3019,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -3001,12 +3040,19 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 self.main.appSettings[formName]['period'],
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessDescriptiveAnalysis.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     
     
@@ -3020,8 +3066,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-            
             self.buttonProcessDescriptiveAnalysis.setDisabled(True)
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             outputs = general.runalg(
                 algName,
@@ -3040,11 +3088,18 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 self.main.appSettings[formName]['period'],
             )
             
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
             ##print outputs
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessDescriptiveAnalysis.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
     

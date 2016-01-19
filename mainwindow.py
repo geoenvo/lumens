@@ -123,6 +123,7 @@ class MainWindow(QtGui.QMainWindow):
             'debug': False,
             'appDir': os.path.dirname(os.path.realpath(__file__)),
             'appSettingsFile': 'settings.ini',
+            'ROutFile': os.path.join(system.userFolder(), 'processing_script.r.Rout'),
             'dataDir': 'data',
             'basemapDir': 'basemap',
             'vectorDir': 'vector',
