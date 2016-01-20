@@ -68,10 +68,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             self.main.buttonProcessTAOpportunityCostTemplate.setDisabled(True)
         
     
-    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
+    def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
-        templateFilePath = os.path.join(self.settingsPath, fileName)
+        templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
@@ -100,6 +100,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
                     self.lineEditAOCProjectFile.setText(projectFile)
                 else:
                     self.lineEditAOCProjectFile.setText('')
+                
+                self.currentAbacusOpportunityCostTemplate = templateFile
+                self.loadedAbacusOpportunityCostTemplate.setText(templateFile)
+                self.comboBoxAbacusOpportunityCostTemplate.setCurrentIndex(self.comboBoxAbacusOpportunityCostTemplate.findText(templateFile))
+                self.buttonSaveAbacusOpportunityCostTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -141,6 +146,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
                     self.lineEditOCCOutputOpportunityCostReport.setText(outputOpportunityCostReport)
                 else:
                     self.lineEditOCCOutputOpportunityCostReport.setText('')
+                
+                self.currentOpportunityCostCurveTemplate = templateFile
+                self.loadedOpportunityCostCurveTemplate.setText(templateFile)
+                self.comboBoxOpportunityCostCurveTemplate.setCurrentIndex(self.comboBoxOpportunityCostCurveTemplate.findText(templateFile))
+                self.buttonSaveOpportunityCostCurveTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -167,6 +177,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
                     self.lineEditOCMCsvProfitability.setText(csvProfitability)
                 else:
                     self.lineEditOCMCsvProfitability.setText('')
+                
+                self.currentOpportunityCostMapTemplate = templateFile
+                self.loadedOpportunityCostMapTemplate.setText(templateFile)
+                self.comboBoxOpportunityCostMapTemplate.setCurrentIndex(self.comboBoxOpportunityCostMapTemplate.findText(templateFile))
+                self.buttonSaveOpportunityCostMapTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -241,7 +256,13 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             )
             
             if reply == QtGui.QMessageBox.Yes:
-                self.handlerLoadPURTemplate(duplicateTemplate)
+                if tabName == 'Abacus Opportunity Cost':
+                    self.handlerLoadAbacusOpportunityCostTemplate(duplicateTemplate)
+                elif tabName == 'Opportunity Cost Curve':
+                    self.handlerLoadOpportunityCostCurveTemplate(duplicateTemplate)
+                elif tabName == 'Opportunity Cost Map':
+                    self.handlerLoadOpportunityCostMapTemplate(duplicateTemplate)
+                    
                 return True
         
         return False
@@ -314,8 +335,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
         fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
         self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(fh)
         self.historyLogger.addHandler(self.log_box)
         self.historyLogger.setLevel(logging.INFO)
         
@@ -762,10 +783,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Abacus Opportunity Cost', templateFile)
-            self.currentAbacusOpportunityCostTemplate = templateFile
-            self.loadedAbacusOpportunityCostTemplate.setText(templateFile)
-            self.comboBoxAbacusOpportunityCostTemplate.setCurrentIndex(self.comboBoxAbacusOpportunityCostTemplate.findText(templateFile))
-            self.buttonSaveAbacusOpportunityCostTemplate.setEnabled(True)
     
     
     def handlerSaveAbacusOpportunityCostTemplate(self, fileName=None):
@@ -847,10 +864,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Opportunity Cost Curve', templateFile)
-            self.currentOpportunityCostCurveTemplate = templateFile
-            self.loadedOpportunityCostCurveTemplate.setText(templateFile)
-            self.comboBoxOpportunityCostCurveTemplate.setCurrentIndex(self.comboBoxOpportunityCostCurveTemplate.findText(templateFile))
-            self.buttonSaveOpportunityCostCurveTemplate.setEnabled(True)
     
     
     def handlerSaveOpportunityCostCurveTemplate(self, fileName=None):
@@ -954,10 +967,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Opportunity Cost Map', templateFile)
-            self.currentOpportunityCostMapTemplate = templateFile
-            self.loadedOpportunityCostMapTemplate.setText(templateFile)
-            self.comboBoxOpportunityCostMapTemplate.setCurrentIndex(self.comboBoxOpportunityCostMapTemplate.findText(templateFile))
-            self.buttonSaveOpportunityCostMapTemplate.setEnabled(True)
     
     
     def handlerSaveOpportunityCostMapTemplate(self, fileName=None):

@@ -80,10 +80,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             self.main.comboBoxLandUseChangeImpactTemplate.setDisabled(True)
             
     
-    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
+    def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
-        templateFilePath = os.path.join(self.settingsPath, fileName)
+        templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
@@ -195,6 +195,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 else:
                     self.lineEditOtherAreaName.setText('')
             
+            if not returnTemplateSettings:
+                self.currentDescriptiveAnalysisTemplate = templateFile
+                self.loadedDescriptiveAnalysisTemplate.setText(templateFile)
+                self.comboBoxDescriptiveAnalysisTemplate.setCurrentIndex(self.comboBoxDescriptiveAnalysisTemplate.findText(templateFile))
+                self.buttonSaveDescriptiveAnalysisTemplate.setEnabled(True)
+            
             settings.endGroup()
             # /dialog
             
@@ -304,6 +310,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                 else:
                     self.lineEditRegionalEconomicScenarioImpactGDPChangeScenario.setText('')
             
+            if not returnTemplateSettings:
+                self.currentRegionalEconomicScenarioImpactTemplate = templateFile
+                self.loadedRegionalEconomicScenarioImpactTemplate.setText(templateFile)
+                self.comboBoxRegionalEconomicScenarioImpactTemplate.setCurrentIndex(self.comboBoxRegionalEconomicScenarioImpactTemplate.findText(templateFile))
+                self.buttonSaveRegionalEconomicScenarioImpactTemplate.setEnabled(True)
+            
             settings.endGroup()
             # /dialog
             
@@ -384,6 +396,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.spinBoxLandRequirementAnalysisPeriod.setValue(int(period))
                 else:
                     self.spinBoxLandRequirementAnalysisPeriod.setValue(td.year)
+                
+                self.currentLandRequirementAnalysisTemplate = templateFile
+                self.loadedLandRequirementAnalysisTemplate.setText(templateFile)
+                self.comboBoxLandRequirementAnalysisTemplate.setCurrentIndex(self.comboBoxLandRequirementAnalysisTemplate.findText(templateFile))
+                self.buttonSaveLandRequirementAnalysisTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -470,6 +487,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
                     self.spinBoxLandUseChangeImpactPeriod.setValue(int(period))
                 else:
                     self.spinBoxLandUseChangeImpactPeriod.setValue(td.year)
+                
+                self.currentLandUseChangeImpactTemplate = templateFile
+                self.loadedLandUseChangeImpactTemplate.setText(templateFile)
+                self.comboBoxLandUseChangeImpactTemplate.setCurrentIndex(self.comboBoxLandUseChangeImpactTemplate.findText(templateFile))
+                self.buttonSaveLandUseChangeImpactTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -550,7 +572,15 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             )
             
             if reply == QtGui.QMessageBox.Yes:
-                self.handlerLoadPURTemplate(duplicateTemplate)
+                if tabName == 'Descriptive Analysis of Regional Economy':
+                    self.handlerLoadDescriptiveAnalysisTemplate(duplicateTemplate)
+                elif tabName == 'Regional Economic Scenario Impact':
+                    self.handlerLoadRegionalEconomicScenarioImpactTemplate(duplicateTemplate)
+                elif tabName == 'Land Requirement Analysis':
+                    self.handlerLoadLandRequirementAnalysisTemplate(duplicateTemplate)
+                elif tabName == 'Land Use Change Impact':
+                    self.handlerLoadLandUseChangeImpactTemplate(duplicateTemplate)
+                
                 return True
         
         return False
@@ -630,8 +660,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
         fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
         self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(fh)
         self.historyLogger.addHandler(self.log_box)
         self.historyLogger.setLevel(logging.INFO)
         
@@ -1903,10 +1933,6 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Descriptive Analysis of Regional Economy', templateFile)
-            self.currentDescriptiveAnalysisTemplate = templateFile
-            self.loadedDescriptiveAnalysisTemplate.setText(templateFile)
-            self.comboBoxDescriptiveAnalysisTemplate.setCurrentIndex(self.comboBoxDescriptiveAnalysisTemplate.findText(templateFile))
-            self.buttonSaveDescriptiveAnalysisTemplate.setEnabled(True)
     
     
     def handlerSaveDescriptiveAnalysisTemplate(self, fileName=None):
@@ -2098,10 +2124,6 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Regional Economic Scenario Impact', templateFile)
-            self.currentRegionalEconomicScenarioImpactTemplate = templateFile
-            self.loadedRegionalEconomicScenarioImpactTemplate.setText(templateFile)
-            self.comboBoxRegionalEconomicScenarioImpactTemplate.setCurrentIndex(self.comboBoxRegionalEconomicScenarioImpactTemplate.findText(templateFile))
-            self.buttonSaveRegionalEconomicScenarioImpactTemplate.setEnabled(True)
     
     
     def handlerSaveRegionalEconomicScenarioImpactTemplate(self, fileName=None):
@@ -2304,10 +2326,6 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Land Requirement Analysis', templateFile)
-            self.currentLandRequirementAnalysisTemplate = templateFile
-            self.loadedLandRequirementAnalysisTemplate.setText(templateFile)
-            self.comboBoxLandRequirementAnalysisTemplate.setCurrentIndex(self.comboBoxLandRequirementAnalysisTemplate.findText(templateFile))
-            self.buttonSaveLandRequirementAnalysisTemplate.setEnabled(True)
     
     
     def handlerSaveLandRequirementAnalysisTemplate(self, fileName=None):
@@ -2477,10 +2495,6 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Land Use Change Impact', templateFile)
-            self.currentLandUseChangeImpactTemplate = templateFile
-            self.loadedLandUseChangeImpactTemplate.setText(templateFile)
-            self.comboBoxLandUseChangeImpactTemplate.setCurrentIndex(self.comboBoxLandUseChangeImpactTemplate.findText(templateFile))
-            self.buttonSaveLandUseChangeImpactTemplate.setEnabled(True)
     
     
     def handlerSaveLandUseChangeImpactTemplate(self, fileName=None):

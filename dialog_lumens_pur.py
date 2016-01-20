@@ -39,10 +39,10 @@ class DialogLumensPUR(QtGui.QDialog):
             self.main.buttonProcessPURTemplate.setDisabled(True)
     
     
-    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
+    def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
-        templateFilePath = os.path.join(self.settingsPath, fileName)
+        templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
@@ -87,6 +87,11 @@ class DialogLumensPUR(QtGui.QDialog):
                     self.updateReferenceMapping(referenceMapping)
                 if planningUnits:
                     self.updatePlanningUnits(planningUnits)
+                    
+                self.currentPURTemplate = templateFile
+                self.loadedPURTemplate.setText(templateFile)
+                self.comboBoxPURTemplate.setCurrentIndex(self.comboBoxPURTemplate.findText(templateFile))
+                self.buttonSavePURTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -227,8 +232,8 @@ class DialogLumensPUR(QtGui.QDialog):
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
         fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
         self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(fh)
         self.historyLogger.addHandler(self.log_box)
         self.historyLogger.setLevel(logging.INFO)
         
@@ -740,10 +745,6 @@ class DialogLumensPUR(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Setup', templateFile)
-            self.currentPURTemplate = templateFile
-            self.loadedPURTemplate.setText(templateFile)
-            self.comboBoxPURTemplate.setCurrentIndex(self.comboBoxPURTemplate.findText(templateFile))
-            self.buttonSavePURTemplate.setEnabled(True)
     
     
     def handlerSavePURTemplate(self, fileName=None):
@@ -993,6 +994,23 @@ class DialogLumensPUR(QtGui.QDialog):
             QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
         
         return valid
+    
+    
+    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
+        """Display a messagebox based on the processing result
+        """
+        if outputs and outputs['statuscode'] == '1':
+            QtGui.QMessageBox.information(self, 'Success', successMessage)
+            return True
+        else:
+            statusMessage = '"{0}" failed with status message:'.format(algName)
+            
+            if outputs and outputs['statusmessage']:
+                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
+            
+            logging.getLogger(type(self).__name__).error(statusMessage)
+            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
+            return False
     
     
     def handlerProcessSetup(self):

@@ -108,10 +108,10 @@ class DialogLumensQUES(QtGui.QDialog):
             self.main.buttonProcessQUESHTemplate.setDisabled(True)
             
     
-    def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
+    def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
         """Load the value saved in ini template file to the form widget
         """
-        templateFilePath = os.path.join(self.settingsPath, fileName)
+        templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
         
@@ -145,6 +145,11 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.spinBoxPreQUESNodata.setValue(int(nodata))
                 else:
                     self.spinBoxPreQUESNodata.setValue(0)
+                
+                self.currentPreQUESTemplate = templateFile
+                self.loadedPreQUESTemplate.setText(templateFile)
+                self.comboBoxPreQUESTemplate.setCurrentIndex(self.comboBoxPreQUESTemplate.findText(templateFile))
+                self.buttonSavePreQUESTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -210,6 +215,12 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.checkBoxSummarizeMultiplePeriod.setChecked(True)
                 else:
                     self.checkBoxSummarizeMultiplePeriod.setChecked(False)
+            
+            if not returnTemplateSettings:
+                self.currentQUESCTemplate = templateFile
+                self.loadedQUESCTemplate.setText(templateFile)
+                self.comboBoxQUESCTemplate.setCurrentIndex(self.comboBoxQUESCTemplate.findText(templateFile))
+                self.buttonSaveQUESCTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -304,6 +315,11 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.lineEditQUESBOutputRecoveredHabitat.setText(outputRecoveredHabitat)
                 else:
                     self.lineEditQUESBOutputRecoveredHabitat.setText('')
+                
+                self.currentQUESBTemplate = templateFile
+                self.loadedQUESBTemplate.setText(templateFile)
+                self.comboBoxQUESBTemplate.setCurrentIndex(self.comboBoxQUESBTemplate.findText(templateFile))
+                self.buttonSaveQUESBTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -377,6 +393,8 @@ class DialogLumensQUES(QtGui.QDialog):
             settings.endGroup()
             # /dialog
             
+            # NOTE: DialogLumensQUESHDominantLUSSL has same fields as DialogLumensQUESHDominantHRU
+            
             # start dialog
             settings.beginGroup('DialogLumensQUESHMultipleHRU')
             
@@ -398,6 +416,12 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.spinBoxMultipleHRUSlopeThreshold.setValue(int(slopeThreshold))
                 else:
                     self.spinBoxMultipleHRUSlopeThreshold.setValue(0)
+                
+            if not returnTemplateSettings:
+                self.currentHRUDefinitionTemplate = templateFile
+                self.loadedHRUDefinitionTemplate.setText(templateFile)
+                self.comboBoxHRUDefinitionTemplate.setCurrentIndex(self.comboBoxHRUDefinitionTemplate.findText(templateFile))
+                self.buttonSaveHRUDefinitionTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -457,6 +481,11 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.lineEditOutputWatershedModelEvaluation.setText(outputWatershedModelEvaluation)
                 else:
                     self.lineEditOutputWatershedModelEvaluation.setText('')
+                
+                self.currentWatershedModelEvaluationTemplate = templateFile
+                self.loadedWatershedModelEvaluationTemplate.setText(templateFile)
+                self.comboBoxWatershedModelEvaluationTemplate.setCurrentIndex(self.comboBoxWatershedModelEvaluationTemplate.findText(templateFile))
+                self.buttonSaveWatershedModelEvaluationTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -518,6 +547,11 @@ class DialogLumensQUES(QtGui.QDialog):
                     self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText(outputFinalYearSubWatershedLevelIndicators)
                 else:
                     self.lineEditWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.setText('')
+                
+                self.currentWatershedIndicatorsTemplate = templateFile
+                self.loadedWatershedIndicatorsTemplate.setText(templateFile)
+                self.comboBoxWatershedIndicatorsTemplate.setCurrentIndex(self.comboBoxWatershedIndicatorsTemplate.findText(templateFile))
+                self.buttonSaveWatershedIndicatorsTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -608,7 +642,19 @@ class DialogLumensQUES(QtGui.QDialog):
             )
             
             if reply == QtGui.QMessageBox.Yes:
-                self.handlerLoadPURTemplate(duplicateTemplate)
+                if tabName == 'Pre-QUES':
+                    self.handlerLoadPreQUESTemplate(duplicateTemplate)
+                elif tabName == 'QUES-C':
+                    self.handlerLoadQUESCTemplate(duplicateTemplate)
+                elif tabName == 'QUES-B':
+                    self.handlerLoadQUESBTemplate(duplicateTemplate)
+                elif tabName == 'Hydrological Response Unit Definition':
+                    self.handlerLoadHRUDefinitionTemplate(duplicateTemplate)
+                elif tabName == 'Watershed Model Evaluation':
+                    self.handlerLoadWatershedModelEvaluationTemplate(duplicateTemplate)
+                elif tabName == 'Watershed Indicators':
+                    self.handlerLoadWatershedIndicatorsTemplate(duplicateTemplate)
+                
                 return True
         
         return False
@@ -700,8 +746,8 @@ class DialogLumensQUES(QtGui.QDialog):
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
         fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
         self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(fh)
         self.historyLogger.addHandler(self.log_box)
         self.historyLogger.setLevel(logging.INFO)
         
@@ -799,7 +845,7 @@ class DialogLumensQUES(QtGui.QDialog):
         self.tabWidget.addTab(self.tabQUESC, 'QUES-C')
         self.tabWidget.addTab(self.tabQUESB, 'QUES-B')
         self.tabWidget.addTab(self.tabQUESH, 'QUES-H')
-        self.tabWidget.addTab(self.tabReclassification, 'Reclassification')
+        ##self.tabWidget.addTab(self.tabReclassification, 'Reclassification')
         self.tabWidget.addTab(self.tabLog, 'Log')
         
         ##self.layoutTabPreQUES = QtGui.QVBoxLayout()
@@ -2152,10 +2198,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Pre-QUES', templateFile)
-            self.currentPreQUESTemplate = templateFile
-            self.loadedPreQUESTemplate.setText(templateFile)
-            self.comboBoxPreQUESTemplate.setCurrentIndex(self.comboBoxPreQUESTemplate.findText(templateFile))
-            self.buttonSavePreQUESTemplate.setEnabled(True)
     
     
     def handlerSavePreQUESTemplate(self, fileName=None):
@@ -2237,10 +2279,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('QUES-C', templateFile)
-            self.currentQUESCTemplate = templateFile
-            self.loadedQUESCTemplate.setText(templateFile)
-            self.comboBoxQUESCTemplate.setCurrentIndex(self.comboBoxQUESCTemplate.findText(templateFile))
-            self.buttonSaveQUESCTemplate.setEnabled(True)
     
     
     def handlerSaveQUESCTemplate(self, fileName=None):
@@ -2333,10 +2371,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('QUES-B', templateFile)
-            self.currentQUESBTemplate = templateFile
-            self.loadedQUESBTemplate.setText(templateFile)
-            self.comboBoxQUESBTemplate.setCurrentIndex(self.comboBoxQUESBTemplate.findText(templateFile))
-            self.buttonSaveQUESBTemplate.setEnabled(True)
     
     
     def handlerSaveQUESBTemplate(self, fileName=None):
@@ -2518,10 +2552,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Hydrological Response Unit Definition', templateFile)
-            self.currentHRUDefinitionTemplate = templateFile
-            self.loadedHRUDefinitionTemplate.setText(templateFile)
-            self.comboBoxHRUDefinitionTemplate.setCurrentIndex(self.comboBoxHRUDefinitionTemplate.findText(templateFile))
-            self.buttonSaveHRUDefinitionTemplate.setEnabled(True)
     
     
     def handlerSaveHRUDefinitionTemplate(self, fileName=None):
@@ -2679,10 +2709,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Watershed Model Evaluation', templateFile)
-            self.currentWatershedModelEvaluationTemplate = templateFile
-            self.loadedWatershedModelEvaluationTemplate.setText(templateFile)
-            self.comboBoxWatershedModelEvaluationTemplate.setCurrentIndex(self.comboBoxWatershedModelEvaluationTemplate.findText(templateFile))
-            self.buttonSaveWatershedModelEvaluationTemplate.setEnabled(True)
     
     
     def handlerSaveWatershedModelEvaluationTemplate(self, fileName=None):
@@ -2785,10 +2811,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Watershed Indicators', templateFile)
-            self.currentWatershedIndicatorsTemplate = templateFile
-            self.loadedWatershedIndicatorsTemplate.setText(templateFile)
-            self.comboBoxWatershedIndicatorsTemplate.setCurrentIndex(self.comboBoxWatershedIndicatorsTemplate.findText(templateFile))
-            self.buttonSaveWatershedIndicatorsTemplate.setEnabled(True)
     
     
     def handlerSaveWatershedIndicatorsTemplate(self, fileName=None):

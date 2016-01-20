@@ -626,6 +626,17 @@ class MainWindow(QtGui.QMainWindow):
         self.actionDialogLumensSCIENDOSimulateLandUseChange.triggered.connect(self.handlerDialogLumensSCIENDOSimulateLandUseChange)
         self.actionDialogLumensSCIENDOSimulateWithScenario.triggered.connect(self.handlerDialogLumensSCIENDOSimulateWithScenario)
         
+        # Dashboard tab QPushButtons
+        self.buttonProcessPURTemplate.clicked.connect(self.handlerProcessPURTemplate)
+        self.buttonProcessPreQUESTemplate.clicked.connect(self.handlerProcessPreQUESTemplate)
+        self.buttonProcessQUESCTemplate.clicked.connect(self.handlerProcessQUESCTemplate)
+        self.buttonProcessQUESBTemplate.clicked.connect(self.handlerProcessQUESBTemplate)
+        self.buttonProcessQUESHTemplate.clicked.connect(self.handlerProcessQUESHTemplate)
+        self.buttonProcessTAOpportunityCostTemplate.clicked.connect(self.handlerProcessTAOpportunityCostTemplate)
+        self.buttonProcessTARegionalEconomyTemplate.clicked.connect(self.handlerProcessTARegionalEconomyTemplate)
+        self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate)
+        self.buttonProcessSCIENDOLandUseChangeModelingTemplate.clicked.connect(self.handlerProcessSCIENDOLandUseChangeModelingTemplate)
+        
         # About menu
         self.actionDialogLumensAbout.triggered.connect(self.handlerDialogLumensAbout)
         
@@ -1431,6 +1442,20 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutGroupBoxTARegionalEconomyFeatures.addWidget(self.radioTARegionalEconomyLandRequirementAnalysis)
         self.layoutGroupBoxTARegionalEconomyFeatures.addWidget(self.radioTARegionalEconomyLandUseChangeImpact)
         
+        self.groupBoxDescriptiveAnalysisPeriod = QtGui.QGroupBox('Period')
+        self.layoutGroupBoxDescriptiveAnalysisPeriod = QtGui.QVBoxLayout()
+        self.groupBoxDescriptiveAnalysisPeriod.setLayout(self.layoutGroupBoxDescriptiveAnalysisPeriod)
+        
+        self.labelDescriptiveAnalysisPeriod = QtGui.QLabel()
+        self.labelDescriptiveAnalysisPeriod.setText('Lorem ipsum dolot sit amet...')
+        self.layoutGroupBoxDescriptiveAnalysisPeriod.addWidget(self.labelDescriptiveAnalysisPeriod)
+        
+        self.checkBoxDescriptiveAnalysisMultiplePeriod = QtGui.QCheckBox('Multiple Period')
+        self.checkBoxDescriptiveAnalysisMultiplePeriod.setChecked(False)
+        
+        self.layoutGroupBoxDescriptiveAnalysisPeriod.addWidget(self.checkBoxDescriptiveAnalysisMultiplePeriod)
+        self.groupBoxDescriptiveAnalysisPeriod.setDisabled(True)
+        
         self.groupBoxRegionalEconomicScenarioImpactType = QtGui.QGroupBox('Scenario type')
         self.layoutGroupBoxRegionalEconomicScenarioImpactType = QtGui.QVBoxLayout()
         self.groupBoxRegionalEconomicScenarioImpactType.setLayout(self.layoutGroupBoxRegionalEconomicScenarioImpactType)
@@ -1528,6 +1553,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessTARegionalEconomyTemplate.setDisabled(True)
         
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyFeatures)
+        self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxDescriptiveAnalysisPeriod)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyTemplate)
         self.layoutSubtabTARegionalEconomy.addWidget(self.buttonProcessTARegionalEconomyTemplate)
@@ -2039,6 +2065,10 @@ class MainWindow(QtGui.QMainWindow):
             else:
                 return
         
+        # Close the currently opened database first
+        if self.appSettings['DialogLumensOpenDatabase']['projectFile']:
+            self.lumensCloseDatabase()
+        
         logging.getLogger(type(self).__name__).info('start: LUMENS Open Database')
         
         self.actionLumensOpenDatabase.setDisabled(True)
@@ -2298,6 +2328,345 @@ class MainWindow(QtGui.QMainWindow):
         self.contextMenu.show()
     
     
+    def handlerProcessPURTemplate(self):
+        """
+        """
+        templateFile = self.comboBoxPURTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessPURTemplate.setDisabled(True)
+            
+            dialogLumensPUR = self.openDialog(DialogLumensPUR, False)
+            dialogLumensPUR.loadTemplate('Setup', templateFile)
+            dialogLumensPUR.handlerProcessSetup()
+            
+            self.buttonProcessPURTemplate.setEnabled(True)
+    
+    
+    def handlerProcessPreQUESTemplate(self):
+        """
+        """
+        templateFile = self.comboBoxPreQUESTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessPreQUESTemplate.setDisabled(True)
+            
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES.loadTemplate('Pre-QUES', templateFile)
+            dialogLumensQUES.handlerProcessPreQUES()
+            
+            self.buttonProcessPreQUESTemplate.setEnabled(True)
+    
+    
+    def handlerProcessQUESCTemplate(self):
+        """
+        """
+        templateFile = self.comboBoxQUESCTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessQUESCTemplate.setDisabled(True)
+            
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES.loadTemplate('QUES-C', templateFile)
+            
+            # Update the checkbox status in the dialog too
+            if self.checkBoxQUESCCarbonAccounting.isChecked():
+                dialogLumensQUES.checkBoxCarbonAccounting.setChecked(True)
+            
+            if self.checkBoxQUESCPeatlandCarbonAccounting.isChecked():
+                dialogLumensQUES.checkBoxPeatlandCarbonAccounting.setChecked(True)
+            
+            if self.checkBoxQUESCSummarizeMultiplePeriod.isChecked():
+                dialogLumensQUES.checkBoxSummarizeMultiplePeriod.setChecked(True)
+            
+            dialogLumensQUES.handlerProcessQUESC()
+            
+            self.buttonProcessPreQUESTemplate.setEnabled(True)
+    
+    
+    def handlerProcessQUESBTemplate(self):
+        """
+        """
+        templateFile = self.comboBoxQUESBTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessQUESBTemplate.setDisabled(True)
+            
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES.loadTemplate('QUES-B', templateFile)
+            dialogLumensQUES.handlerProcessQUESB()
+            
+            self.buttonProcessQUESBTemplate.setEnabled(True)
+    
+    
+    def handlerProcessQUESHTemplate(self):
+        """
+        """
+        templateFile = None
+        tabName = None
+        QUESHHRUDefinition = QUESHWatershedModelEvaluation = QUESHWatershedIndicators = False
+        
+        if radioQUESHHRUDefinition.isChecked():
+            QUESHHRUDefinition = True
+            tabName = 'Hydrological Response Unit Definition'
+            templateFile = self.comboBoxHRUDefinitionTemplate.currentText()
+        elif radioQUESHWatershedModelEvaluation.isChecked():
+            QUESHWatershedModelEvaluation = True
+            tabName = 'Watershed Model Evaluation'
+            templateFile = self.comboBoxWatershedModelEvaluationTemplate.currentText()
+        elif radioQUESHWatershedIndicators.isChecked():
+            QUESHWatershedIndicators = True
+            tabName = 'Watershed Indicators'
+            templateFile = self.comboBoxWatershedIndicatorsTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessQUESHTemplate.setDisabled(True)
+            
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES.loadTemplate(tabName, templateFile)
+            
+            if QUESHHRUDefinition:
+                # Update the checkbox status in the dialog too
+                if self.checkBoxHRUDefinitionDominantHRU.isChecked():
+                    dialogLumensQUES.checkBoxDominantHRU.setChecked(True)
+                
+                if self.checkBoxHRUDefinitionDominantLUSSL.isChecked():
+                    dialogLumensQUES.checkBoxDominantLUSSL.setChecked(True)
+                
+                if self.checkBoxHRUDefinitionMultipleHRU.isChecked():
+                    dialogLumensQUES.checkBoxMultipleHRU.setChecked(True)
+            
+                dialogLumensQUES.handlerProcessQUESHHRUDefinition()
+            elif QUESHWatershedModelEvaluation:
+                dialogLumensQUES.handlerProcessQUESHWatershedModelEvaluation()
+            elif QUESHWatershedIndicators:
+                dialogLumensQUES.handlerProcessQUESHWatershedIndicators()
+            
+            self.buttonProcessQUESHTemplate.setEnabled(True)
+    
+    
+    def handlerProcessTAOpportunityCostTemplate(self):
+        """
+        """
+        templateFile = None
+        tabName = None
+        TAAbacusOpportunityCost = TAOpportunityCostCurve = TAOpportunityCostMap = False
+        
+        if radioTAOpportunityCostAbacus.isChecked():
+            TAAbacusOpportunityCost = True
+            tabName = 'Abacus Opportunity Cost'
+            templateFile = self.comboBoxAbacusOpportunityCostTemplate.currentText()
+        elif radioTAOpportunityCostCurve.isChecked():
+            TAOpportunityCostCurve = True
+            tabName = 'Opportunity Cost Curve'
+            templateFile = self.comboBoxOpportunityCostCurveTemplate.currentText()
+        elif radioTAOpportunityCostMap.isChecked():
+            TAOpportunityCostMap = True
+            tabName = 'Opportunity Cost Map'
+            templateFile = self.comboBoxOpportunityCostMapTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessTAOpportunityCostTemplate.setDisabled(True)
+            
+            dialogLumensTA = self.openDialog(DialogLumensTAOpportunityCost, False)
+            dialogLumensTA.loadTemplate(tabName, templateFile)
+            
+            if TAAbacusOpportunityCost:
+                dialogLumensTA.handlerProcessAbacusOpportunityCost()
+            elif QUESHWatershedModelEvaluation:
+                dialogLumensTA.handlerProcessOpportunityCostCurve()
+            elif QUESHWatershedIndicators:
+                dialogLumensTA.handlerProcessOpportunityCostMap()
+            
+            self.buttonProcessTAOpportunityCostTemplate.setEnabled(True)
+        
+    
+    def handlerProcessTARegionalEconomyTemplate(self):
+        """
+        """
+        templateFile = None
+        tabName = None
+        TADescriptiveAnalysis = TARegionalEconomicScenarioImpact = TALandRequirementAnalysis = TALandUseChangeImpact = False
+        
+        if radioTARegionalEconomyDescriptiveAnalysis.isChecked():
+            TADescriptiveAnalysis = True
+            tabName = 'Descriptive Analysis of Regional Economy'
+            templateFile = self.comboBoxDescriptiveAnalysisTemplate.currentText()
+        elif radioTARegionalEconomyRegionalEconomicScenarioImpact.isChecked():
+            TARegionalEconomicScenarioImpact = True
+            tabName = 'Regional Economic Scenario Impact'
+            templateFile = self.comboBoxRegionalEconomicScenarioImpactTemplate.currentText()
+        elif radioTARegionalEconomyLandRequirementAnalysis.isChecked():
+            TALandRequirementAnalysis = True
+            tabName = 'Land Requirement Analysis'
+            templateFile = self.comboBoxLandRequirementAnalysisTemplate.currentText()
+        elif radioTARegionalEconomyLandUseChangeImpact.isChecked():
+            TALandUseChangeImpact = True
+            tabName = 'Land Use Change Impact'
+            templateFile = self.comboBoxLandUseChangeImpactTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessTARegionalEconomyTemplate.setDisabled(True)
+            
+            dialogLumensTA = self.openDialog(DialogLumensTARegionalEconomy, False)
+            dialogLumensTA.loadTemplate(tabName, templateFile)
+            
+            if TADescriptiveAnalysis:
+                # Update the checkbox status in the dialog too
+                if self.checkBoxDescriptiveAnalysisMultiplePeriod.isChecked():
+                    dialogLumensTA.checkBoxMultiplePeriod.setChecked(True)
+                
+                dialogLumensTA.handlerProcessDescriptiveAnalysis()
+            elif TARegionalEconomicScenarioImpact:
+                # Update the checkbox status in the dialog too
+                if self.checkBoxRegionalEconomicScenarioImpactFinalDemand.isChecked():
+                    dialogLumensTA.checkBoxRegionalEconomicScenarioImpactFinalDemand.setChecked(True)
+                
+                if self.checkBoxRegionalEconomicScenarioImpactGDP.isChecked():
+                    dialogLumensTA.checkBoxRegionalEconomicScenarioImpactGDP.setChecked(True)
+            
+                dialogLumensTA.handlerProcessRegionalEconomicScenarioImpact()
+            elif TALandRequirementAnalysis:
+                dialogLumensTA.handlerProcessLandRequirementAnalysis()
+            elif TALandUseChangeImpact:
+                dialogLumensTA.handlerProcessLandUseChangeImpact()
+            
+            self.buttonProcessTARegionalEconomyTemplate.setEnabled(True)
+    
+    
+    def handlerProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate(self):
+        """
+        """
+        templateFile = self.comboBoxLowEmissionDevelopmentAnalysisTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
+            
+            dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, False)
+            DialogLumensSCIENDO.loadTemplate('Low Emission Development Analysis', templateFile)
+            
+            # Update the checkbox status in the dialog too
+            if self.checkBoxSCIENDOHistoricalBaselineProjection.isChecked():
+                dialogLumensSCIENDO.checkBoxHistoricalBaselineProjection.setChecked(True)
+            
+            if self.checkBoxSCIENDOHistoricalBaselineAnnualProjection.isChecked():
+                dialogLumensSCIENDO.checkBoxHistoricalBaselineAnnualProjection.setChecked(True)
+            
+            if self.checkBoxSCIENDODriversAnalysis.isChecked():
+                dialogLumensSCIENDO.checkBoxDriversAnalysis.setChecked(True)
+            
+            if self.checkBoxSCIENDOBuildScenario.isChecked():
+                dialogLumensSCIENDO.checkBoxBuildScenario.setChecked(True)
+            
+            dialogLumensSCIENDO.handlerProcessLowEmissionDevelopmentAnalysis()
+            
+            self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+    
+    
+    def handlerProcessSCIENDOLandUseChangeModelingTemplate(self):
+        """
+        """
+        templateFile = self.comboBoxLandUseChangeModelingTemplate.currentText()
+        
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Process Template',
+            'Do you want to process \'{0}\'?'.format(templateFile),
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+            QtGui.QMessageBox.No
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setDisabled(True)
+            
+            dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, False)
+            DialogLumensSCIENDO.loadTemplate('Land Use Change Modeling', templateFile)
+            
+            # Update the checkbox status in the dialog too
+            if self.checkBoxSCIENDOCalculateTransitionMatrix.isChecked():
+                dialogLumensSCIENDO.checkBoxCalculateTransitionMatrix.setChecked(True)
+            
+            if self.checkBoxSCIENDOCreateRasterCubeOfFactors.isChecked():
+                dialogLumensSCIENDO.checkBoxCreateRasterCubeOfFactors.setChecked(True)
+            
+            if self.checkBoxSCIENDOCalculateWeightOfEvidence.isChecked():
+                dialogLumensSCIENDO.checkBoxCalculateWeightOfEvidence.setChecked(True)
+            
+            if self.checkBoxSCIENDOSimulateLandUseChange.isChecked():
+                dialogLumensSCIENDO.checkBoxSimulateLandUseChange.setChecked(True)
+            
+            if self.checkBoxSCIENDOSimulateWithScenario.isChecked():
+                dialogLumensSCIENDO.checkBoxSimulateWithScenario.setChecked(True)
+            
+            dialogLumensSCIENDO.handlerProcessLandUseChangeModeling()
+            
+            self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setEnabled(True)
+    
+    
     def handlerToggleQUESH(self, radio):
         """
         """
@@ -2385,10 +2754,13 @@ class MainWindow(QtGui.QMainWindow):
             item = self.layoutTARegionalEconomyLandUseChangeImpactTemplate.itemAt(i)
             item.widget().setVisible(False)
             
+        self.groupBoxDescriptiveAnalysisPeriod.setDisabled(True)
         self.groupBoxRegionalEconomicScenarioImpactType.setDisabled(True)
         
         if radio.text() == 'Descriptive Analysis of Regional Economy':
             if radio.isChecked():
+                self.groupBoxDescriptiveAnalysisPeriod.setDisabled(False)
+                
                 for i in range(self.layoutTARegionalEconomyDescriptiveAnalysisTemplate.count()):
                     item = self.layoutTARegionalEconomyDescriptiveAnalysisTemplate.itemAt(i)
                     item.widget().setVisible(True)

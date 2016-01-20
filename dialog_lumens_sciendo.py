@@ -163,6 +163,12 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 else:
                     self.lineEditBuildScenarioHistoricalBaselineCar.setText('')
             
+            if not returnTemplateSettings:
+                self.currentLowEmissionDevelopmentAnalysisTemplate = templateFile
+                self.loadedLowEmissionDevelopmentAnalysisTemplate.setText(templateFile)
+                self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setCurrentIndex(self.comboBoxLowEmissionDevelopmentAnalysisTemplate.findText(templateFile))
+                self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
+            
             settings.endGroup()
             # /dialog
             
@@ -203,6 +209,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                     self.lineEditLandUseChangeModelingLocation.setText(location)
                 else:
                     self.lineEditLandUseChangeModelingLocation.setText('location')
+                
+                self.currentLandUseChangeModelingTemplate = templateFile
+                self.loadedLandUseChangeModelingTemplate.setText(templateFile)
+                self.comboBoxLandUseChangeModelingTemplate.setCurrentIndex(self.comboBoxLandUseChangeModelingTemplate.findText(templateFile))
+                self.buttonSaveLandUseChangeModelingTemplate.setEnabled(True)
             
             settings.endGroup()
             # /dialog
@@ -276,7 +287,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             )
             
             if reply == QtGui.QMessageBox.Yes:
-                self.handlerLoadPURTemplate(duplicateTemplate)
+                if tabName == 'Low Emission Development Analysis':
+                    self.handlerLoadLowEmissionDevelopmentAnalysisTemplate(duplicateTemplate)
+                elif tabName == 'Land Use Change Modeling':
+                    self.handlerLoadLandUseChangeModelingTemplate(duplicateTemplate)
+                
                 return True
         
         return False
@@ -348,8 +363,8 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
         fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
         self.log_box.setFormatter(formatter)
+        self.historyLogger.addHandler(fh)
         self.historyLogger.addHandler(self.log_box)
         self.historyLogger.setLevel(logging.INFO)
         
@@ -935,10 +950,6 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Low Emission Development Analysis', templateFile)
-            self.currentLowEmissionDevelopmentAnalysisTemplate = templateFile
-            self.loadedLowEmissionDevelopmentAnalysisTemplate.setText(templateFile)
-            self.comboBoxLowEmissionDevelopmentAnalysisTemplate.setCurrentIndex(self.comboBoxLowEmissionDevelopmentAnalysisTemplate.findText(templateFile))
-            self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.setEnabled(True)
     
     
     def handlerSaveLowEmissionDevelopmentAnalysisTemplate(self, fileName=None):
@@ -1052,10 +1063,6 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
         if reply == QtGui.QMessageBox.Yes or fileName:
             self.loadTemplate('Land Use Change Modeling', templateFile)
-            self.currentLandUseChangeModelingTemplate = templateFile
-            self.loadedLandUseChangeModelingTemplate.setText(templateFile)
-            self.comboBoxLandUseChangeModelingTemplate.setCurrentIndex(self.comboBoxLandUseChangeModelingTemplate.findText(templateFile))
-            self.buttonSaveLandUseChangeModelingTemplate.setEnabled(True)
     
     
     def handlerSaveLandUseChangeModelingTemplate(self, fileName=None):
