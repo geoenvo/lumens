@@ -341,7 +341,6 @@ class DialogLumensQUES(QtGui.QDialog):
             settings.beginGroup('DialogLumensQUESHDominantHRU')
             
             templateSettings['DialogLumensQUESHDominantHRU'] = {}
-            templateSettings['DialogLumensQUESHDominantHRU']['workingDir'] = workingDir = settings.value('workingDir')
             templateSettings['DialogLumensQUESHDominantHRU']['landUseMap'] = landUseMap = settings.value('landUseMap')
             templateSettings['DialogLumensQUESHDominantHRU']['soilMap'] = soilMap = settings.value('soilMap')
             templateSettings['DialogLumensQUESHDominantHRU']['slopeMap'] = slopeMap = settings.value('slopeMap')
@@ -353,10 +352,6 @@ class DialogLumensQUES(QtGui.QDialog):
             templateSettings['DialogLumensQUESHDominantHRU']['period'] = period = settings.value('period')
             
             if not returnTemplateSettings:
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditHRUWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditHRUWorkingDir.setText('')
                 if landUseMap and os.path.exists(landUseMap):
                     self.lineEditHRULandUseMap.setText(landUseMap)
                 else:
@@ -441,7 +436,6 @@ class DialogLumensQUES(QtGui.QDialog):
             settings.beginGroup('DialogLumensQUESHWatershedModelEvaluation')
             
             templateSettings['DialogLumensQUESHWatershedModelEvaluation'] = {}
-            templateSettings['DialogLumensQUESHWatershedModelEvaluation']['workingDir'] = workingDir = settings.value('workingDir')
             templateSettings['DialogLumensQUESHWatershedModelEvaluation']['dateInitial'] = dateInitial = settings.value('dateInitial')
             templateSettings['DialogLumensQUESHWatershedModelEvaluation']['dateFinal'] = dateFinal = settings.value('dateFinal')
             templateSettings['DialogLumensQUESHWatershedModelEvaluation']['SWATModel'] = SWATModel = settings.value('SWATModel')
@@ -451,10 +445,6 @@ class DialogLumensQUES(QtGui.QDialog):
             templateSettings['DialogLumensQUESHWatershedModelEvaluation']['outputWatershedModelEvaluation'] = outputWatershedModelEvaluation = settings.value('outputWatershedModelEvaluation')
             
             if not returnTemplateSettings:
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditWatershedModelEvaluationWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditWatershedModelEvaluationWorkingDir.setText('')
                 if dateInitial:
                     self.dateWatershedModelEvaluationDateInitial.setDate(QtCore.QDate.fromString(dateInitial), 'dd/MM/yyyy')
                 else:
@@ -797,7 +787,6 @@ class DialogLumensQUES(QtGui.QDialog):
         self.checkBoxMultipleHRU.toggled.connect(self.toggleMultipleHRU)
         
         # 'QUES-H' HRU tab buttons
-        self.buttonSelectHRUWorkingDir.clicked.connect(self.handlerSelectHRUWorkingDir)
         self.buttonSelectHRULandUseMap.clicked.connect(self.handlerSelectHRULandUseMap)
         self.buttonSelectHRUSoilMap.clicked.connect(self.handlerSelectHRUSoilMap)
         self.buttonSelectHRUSlopeMap.clicked.connect(self.handlerSelectHRUSlopeMap)
@@ -811,7 +800,6 @@ class DialogLumensQUES(QtGui.QDialog):
         self.buttonSaveAsHRUDefinitionTemplate.clicked.connect(self.handlerSaveAsHRUDefinitionTemplate)
         
         # 'QUES-H' Watershed Model Evaluation tab buttons
-        self.buttonSelectWatershedModelEvaluationWorkingDir.clicked.connect(self.handlerSelectWatershedModelEvaluationWorkingDir)
         self.buttonSelectWatershedModelEvaluationObservedDebitFile.clicked.connect(self.handlerSelectWatershedModelEvaluationObservedDebitFile)
         self.buttonSelectOutputWatershedModelEvaluation.clicked.connect(self.handlerSelectOutputWatershedModelEvaluation)
         self.buttonProcessWatershedModelEvaluation.clicked.connect(self.handlerProcessQUESHWatershedModelEvaluation)
@@ -1490,156 +1478,144 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelHRUParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutHRUParametersInfo.addWidget(self.labelHRUParametersInfo)
         
-        self.labelHRUWorkingDir = QtGui.QLabel()
-        self.labelHRUWorkingDir.setText('Working directory:')
-        self.layoutHRUParameters.addWidget(self.labelHRUWorkingDir, 0, 0)
-        
-        self.lineEditHRUWorkingDir = QtGui.QLineEdit()
-        self.lineEditHRUWorkingDir.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRUWorkingDir, 0, 1)
-        
-        self.buttonSelectHRUWorkingDir = QtGui.QPushButton()
-        self.buttonSelectHRUWorkingDir.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRUWorkingDir, 0, 2)
-        
         self.labelHRULandUseMap = QtGui.QLabel()
         self.labelHRULandUseMap.setText('Land use map:')
-        self.layoutHRUParameters.addWidget(self.labelHRULandUseMap, 1, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRULandUseMap, 0, 0)
         
         self.lineEditHRULandUseMap = QtGui.QLineEdit()
         self.lineEditHRULandUseMap.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRULandUseMap, 1, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRULandUseMap, 0, 1)
         
         self.buttonSelectHRULandUseMap = QtGui.QPushButton()
         self.buttonSelectHRULandUseMap.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRULandUseMap, 1, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRULandUseMap, 0, 2)
         
         self.labelHRUSoilMap = QtGui.QLabel()
         self.labelHRUSoilMap.setText('Soil map:')
-        self.layoutHRUParameters.addWidget(self.labelHRUSoilMap, 2, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUSoilMap, 1, 0)
         
         self.lineEditHRUSoilMap = QtGui.QLineEdit()
         self.lineEditHRUSoilMap.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRUSoilMap, 2, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRUSoilMap, 1, 1)
         
         self.buttonSelectHRUSoilMap = QtGui.QPushButton()
         self.buttonSelectHRUSoilMap.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSoilMap, 2, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSoilMap, 1, 2)
         
         self.labelHRUSlopeMap = QtGui.QLabel()
         self.labelHRUSlopeMap.setText('Slope map:')
-        self.layoutHRUParameters.addWidget(self.labelHRUSlopeMap, 3, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUSlopeMap, 2, 0)
         
         self.lineEditHRUSlopeMap = QtGui.QLineEdit()
         self.lineEditHRUSlopeMap.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRUSlopeMap, 3, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRUSlopeMap, 2, 1)
         
         self.buttonSelectHRUSlopeMap = QtGui.QPushButton()
         self.buttonSelectHRUSlopeMap.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSlopeMap, 3, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSlopeMap, 2, 2)
         
         self.labelHRUSubcatchmentMap = QtGui.QLabel()
         self.labelHRUSubcatchmentMap.setText('Subcatchment map:')
-        self.layoutHRUParameters.addWidget(self.labelHRUSubcatchmentMap, 4, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUSubcatchmentMap, 3, 0)
         
         self.lineEditHRUSubcatchmentMap = QtGui.QLineEdit()
         self.lineEditHRUSubcatchmentMap.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRUSubcatchmentMap, 4, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRUSubcatchmentMap, 3, 1)
         
         self.buttonSelectHRUSubcatchmentMap = QtGui.QPushButton()
         self.buttonSelectHRUSubcatchmentMap.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSubcatchmentMap, 4, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSubcatchmentMap, 3, 2)
         
         self.labelHRULandUseClassification = QtGui.QLabel()
         self.labelHRULandUseClassification.setText('Land use classification:')
-        self.layoutHRUParameters.addWidget(self.labelHRULandUseClassification, 5, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRULandUseClassification, 4, 0)
         
         self.lineEditHRULandUseClassification = QtGui.QLineEdit()
         self.lineEditHRULandUseClassification.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRULandUseClassification, 5, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRULandUseClassification, 4, 1)
         
         self.buttonSelectHRULandUseClassification = QtGui.QPushButton()
         self.buttonSelectHRULandUseClassification.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRULandUseClassification, 5, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRULandUseClassification, 4, 2)
         
         self.labelHRUSoilClassification = QtGui.QLabel()
         self.labelHRUSoilClassification.setText('Soil classification:')
-        self.layoutHRUParameters.addWidget(self.labelHRUSoilClassification, 6, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUSoilClassification, 5, 0)
         
         self.lineEditHRUSoilClassification = QtGui.QLineEdit()
         self.lineEditHRUSoilClassification.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRUSoilClassification, 6, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRUSoilClassification, 5, 1)
         
         self.buttonSelectHRUSoilClassification = QtGui.QPushButton()
         self.buttonSelectHRUSoilClassification.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSoilClassification, 6, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSoilClassification, 5, 2)
         
         self.labelHRUSlopeClassification = QtGui.QLabel()
         self.labelHRUSlopeClassification.setText('Slope classification:')
-        self.layoutHRUParameters.addWidget(self.labelHRUSlopeClassification, 7, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUSlopeClassification, 6, 0)
         
         self.lineEditHRUSlopeClassification = QtGui.QLineEdit()
         self.lineEditHRUSlopeClassification.setReadOnly(True)
-        self.layoutHRUParameters.addWidget(self.lineEditHRUSlopeClassification, 7, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRUSlopeClassification, 6, 1)
         
         self.buttonSelectHRUSlopeClassification = QtGui.QPushButton()
         self.buttonSelectHRUSlopeClassification.setText('&Browse')
-        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSlopeClassification, 7, 2)
+        self.layoutHRUParameters.addWidget(self.buttonSelectHRUSlopeClassification, 6, 2)
         
         self.labelHRUAreaName = QtGui.QLabel()
         self.labelHRUAreaName.setText('&Area name:')
-        self.layoutHRUParameters.addWidget(self.labelHRUAreaName, 8, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUAreaName, 7, 0)
         
         self.lineEditHRUAreaName = QtGui.QLineEdit()
         self.lineEditHRUAreaName.setText('areaname')
-        self.layoutHRUParameters.addWidget(self.lineEditHRUAreaName, 8, 1)
+        self.layoutHRUParameters.addWidget(self.lineEditHRUAreaName, 7, 1)
         self.labelHRUAreaName.setBuddy(self.lineEditHRUAreaName)
         
         self.labelHRUPeriod = QtGui.QLabel()
         self.labelHRUPeriod.setText('Pe&riod:')
-        self.layoutHRUParameters.addWidget(self.labelHRUPeriod, 9, 0)
+        self.layoutHRUParameters.addWidget(self.labelHRUPeriod, 8, 0)
         
         self.spinBoxHRUPeriod = QtGui.QSpinBox()
         self.spinBoxHRUPeriod.setRange(1, 9999)
         td = datetime.date.today()
         self.spinBoxHRUPeriod.setValue(td.year)
-        self.layoutHRUParameters.addWidget(self.spinBoxHRUPeriod, 9, 1)
+        self.layoutHRUParameters.addWidget(self.spinBoxHRUPeriod, 8, 1)
         self.labelHRUPeriod.setBuddy(self.spinBoxHRUPeriod)
         
         self.labelMultipleHRULandUseThreshold = QtGui.QLabel()
         self.labelMultipleHRULandUseThreshold.setDisabled(True)
         self.labelMultipleHRULandUseThreshold.setText('Land use &threshold:')
-        self.layoutHRUParameters.addWidget(self.labelMultipleHRULandUseThreshold, 10, 0)
+        self.layoutHRUParameters.addWidget(self.labelMultipleHRULandUseThreshold, 9, 0)
         
         self.spinBoxMultipleHRULandUseThreshold = QtGui.QSpinBox()
         self.spinBoxMultipleHRULandUseThreshold.setDisabled(True)
         self.spinBoxMultipleHRULandUseThreshold.setRange(0, 99999)
         self.spinBoxMultipleHRULandUseThreshold.setValue(0)
-        self.layoutHRUParameters.addWidget(self.spinBoxMultipleHRULandUseThreshold, 10, 1)
+        self.layoutHRUParameters.addWidget(self.spinBoxMultipleHRULandUseThreshold, 9, 1)
         self.labelMultipleHRULandUseThreshold.setBuddy(self.spinBoxMultipleHRULandUseThreshold)
         
         self.labelMultipleHRUSoilThreshold = QtGui.QLabel()
         self.labelMultipleHRUSoilThreshold.setDisabled(True)
         self.labelMultipleHRUSoilThreshold.setText('Soil t&hreshold:')
-        self.layoutHRUParameters.addWidget(self.labelMultipleHRUSoilThreshold, 11, 0)
+        self.layoutHRUParameters.addWidget(self.labelMultipleHRUSoilThreshold, 10, 0)
         
         self.spinBoxMultipleHRUSoilThreshold = QtGui.QSpinBox()
         self.spinBoxMultipleHRUSoilThreshold.setDisabled(True)
         self.spinBoxMultipleHRUSoilThreshold.setRange(0, 99999)
         self.spinBoxMultipleHRUSoilThreshold.setValue(0)
-        self.layoutHRUParameters.addWidget(self.spinBoxMultipleHRUSoilThreshold, 11, 1)
+        self.layoutHRUParameters.addWidget(self.spinBoxMultipleHRUSoilThreshold, 10, 1)
         self.labelMultipleHRUSoilThreshold.setBuddy(self.spinBoxMultipleHRUSoilThreshold)
         
         self.labelMultipleHRUSlopeThreshold = QtGui.QLabel()
         self.labelMultipleHRUSlopeThreshold.setDisabled(True)
         self.labelMultipleHRUSlopeThreshold.setText('Slope th&reshold:')
-        self.layoutHRUParameters.addWidget(self.labelMultipleHRUSlopeThreshold, 12, 0)
+        self.layoutHRUParameters.addWidget(self.labelMultipleHRUSlopeThreshold, 11, 0)
         
         self.spinBoxMultipleHRUSlopeThreshold = QtGui.QSpinBox()
         self.spinBoxMultipleHRUSlopeThreshold.setDisabled(True)
         self.spinBoxMultipleHRUSlopeThreshold.setRange(0, 99999)
         self.spinBoxMultipleHRUSlopeThreshold.setValue(0)
-        self.layoutHRUParameters.addWidget(self.spinBoxMultipleHRUSlopeThreshold, 12, 1)
+        self.layoutHRUParameters.addWidget(self.spinBoxMultipleHRUSlopeThreshold, 11, 1)
         self.labelMultipleHRUSlopeThreshold.setBuddy(self.spinBoxMultipleHRUSlopeThreshold)
         
         # Process tab button
@@ -1720,39 +1696,27 @@ class DialogLumensQUES(QtGui.QDialog):
         self.labelWatershedModelEvaluationParametersInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutWatershedModelEvaluationParametersInfo.addWidget(self.labelWatershedModelEvaluationParametersInfo)
         
-        self.labelWatershedModelEvaluationWorkingDir = QtGui.QLabel()
-        self.labelWatershedModelEvaluationWorkingDir.setText('Working directory:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationWorkingDir, 0, 0)
-        
-        self.lineEditWatershedModelEvaluationWorkingDir = QtGui.QLineEdit()
-        self.lineEditWatershedModelEvaluationWorkingDir.setReadOnly(True)
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationWorkingDir, 0, 1)
-        
-        self.buttonSelectWatershedModelEvaluationWorkingDir = QtGui.QPushButton()
-        self.buttonSelectWatershedModelEvaluationWorkingDir.setText('&Browse')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectWatershedModelEvaluationWorkingDir, 0, 2)
-        
         self.labelWatershedModelEvaluationDateInitial = QtGui.QLabel()
         self.labelWatershedModelEvaluationDateInitial.setText('Initial date:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateInitial, 1, 0)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateInitial, 0, 0)
         
         self.dateWatershedModelEvaluationDateInitial = QtGui.QDateEdit(QtCore.QDate.currentDate())
         self.dateWatershedModelEvaluationDateInitial.setCalendarPopup(True)
         self.dateWatershedModelEvaluationDateInitial.setDisplayFormat('dd/MM/yyyy')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateInitial, 1, 1)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateInitial, 0, 1)
         
         self.labelWatershedModelEvaluationDateFinal = QtGui.QLabel()
         self.labelWatershedModelEvaluationDateFinal.setText('Final date:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateFinal, 2, 0)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationDateFinal, 1, 0)
         
         self.dateWatershedModelEvaluationDateFinal = QtGui.QDateEdit(QtCore.QDate.currentDate())
         self.dateWatershedModelEvaluationDateFinal.setCalendarPopup(True)
         self.dateWatershedModelEvaluationDateFinal.setDisplayFormat('dd/MM/yyyy')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateFinal, 2, 1)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.dateWatershedModelEvaluationDateFinal, 1, 1)
         
         self.labelWatershedModelEvaluationSWATModel = QtGui.QLabel()
         self.labelWatershedModelEvaluationSWATModel.setText('SWAT &model:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationSWATModel, 3, 0)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationSWATModel, 2, 0)
         
         SWATModel = {
             1: 'Skip',
@@ -1764,39 +1728,39 @@ class DialogLumensQUES(QtGui.QDialog):
         for key, val in SWATModel.iteritems():
             self.comboBoxWatershedModelEvaluationSWATModel.addItem(val, key)
         
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.comboBoxWatershedModelEvaluationSWATModel, 3, 1)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.comboBoxWatershedModelEvaluationSWATModel, 2, 1)
         self.labelWatershedModelEvaluationSWATModel.setBuddy(self.comboBoxWatershedModelEvaluationSWATModel)
         
         self.labelWatershedModelEvaluationLocation = QtGui.QLabel()
         self.labelWatershedModelEvaluationLocation.setText('&Location:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationLocation, 4, 0)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationLocation, 3, 0)
         
         self.lineEditWatershedModelEvaluationLocation = QtGui.QLineEdit()
         self.lineEditWatershedModelEvaluationLocation.setText('location')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationLocation, 4, 1)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationLocation, 3, 1)
         self.labelWatershedModelEvaluationLocation.setBuddy(self.lineEditWatershedModelEvaluationLocation)
         
         self.labelWatershedModelEvaluationOutletReachSubBasinID = QtGui.QLabel()
         self.labelWatershedModelEvaluationOutletReachSubBasinID.setText('Outlet reach/sub-basin ID:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationOutletReachSubBasinID, 5, 0)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationOutletReachSubBasinID, 4, 0)
         
         self.spinBoxWatershedModelEvaluationOutletReachSubBasinID = QtGui.QSpinBox()
         self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setRange(1, 99999)
         self.spinBoxWatershedModelEvaluationOutletReachSubBasinID.setValue(10)
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.spinBoxWatershedModelEvaluationOutletReachSubBasinID, 5, 1)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.spinBoxWatershedModelEvaluationOutletReachSubBasinID, 4, 1)
         self.labelWatershedModelEvaluationOutletReachSubBasinID.setBuddy(self.spinBoxWatershedModelEvaluationOutletReachSubBasinID)
         
         self.labelWatershedModelEvaluationObservedDebitFile = QtGui.QLabel()
         self.labelWatershedModelEvaluationObservedDebitFile.setText('Observed debit file:')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationObservedDebitFile, 6, 0)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.labelWatershedModelEvaluationObservedDebitFile, 5, 0)
         
         self.lineEditWatershedModelEvaluationObservedDebitFile = QtGui.QLineEdit()
         self.lineEditWatershedModelEvaluationObservedDebitFile.setReadOnly(True)
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationObservedDebitFile, 6, 1)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.lineEditWatershedModelEvaluationObservedDebitFile, 5, 1)
         
         self.buttonSelectWatershedModelEvaluationObservedDebitFile = QtGui.QPushButton()
         self.buttonSelectWatershedModelEvaluationObservedDebitFile.setText('&Browse')
-        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectWatershedModelEvaluationObservedDebitFile, 6, 2)
+        self.layoutWatershedModelEvaluationParameters.addWidget(self.buttonSelectWatershedModelEvaluationObservedDebitFile, 5, 2)
         
         # 'Output' GroupBox
         self.groupBoxWatershedModelEvaluationOutput = QtGui.QGroupBox('Output')
@@ -2600,16 +2564,6 @@ class DialogLumensQUES(QtGui.QDialog):
                 self.handlerLoadHRUDefinitionTemplate(fileName)
     
     
-    def handlerSelectHRUWorkingDir(self):
-        """
-        """
-        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
-        
-        if dir:
-            self.lineEditHRUWorkingDir.setText(dir)
-            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
-    
-    
     def handlerSelectHRULandUseMap(self):
         """
         """
@@ -2755,16 +2709,6 @@ class DialogLumensQUES(QtGui.QDialog):
             # Load the newly saved template file
             if fileSaved:
                 self.handlerLoadWatershedModelEvaluationTemplate(fileName)
-    
-    
-    def handlerSelectWatershedModelEvaluationWorkingDir(self):
-        """
-        """
-        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
-        
-        if dir:
-            self.lineEditWatershedModelEvaluationWorkingDir.setText(dir)
-            logging.getLogger(type(self).__name__).info('select working directory: %s', dir)
     
     
     def handlerSelectWatershedModelEvaluationObservedDebitFile(self):
@@ -2991,10 +2935,6 @@ class DialogLumensQUES(QtGui.QDialog):
         self.main.appSettings['DialogLumensQUESBAnalysis']['outputRecoveredHabitat'] = outputRecoveredHabitat
         
         # 'QUES-H' Hydrological Response Unit Definition sub tab fields
-        self.main.appSettings['DialogLumensQUESHDominantHRU']['workingDir'] \
-            = self.main.appSettings['DialogLumensQUESHDominantLUSSL']['workingDir'] \
-            = self.main.appSettings['DialogLumensQUESHMultipleHRU']['workingDir'] \
-            = unicode(self.lineEditHRUWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensQUESHDominantHRU']['landUseMap'] \
             = self.main.appSettings['DialogLumensQUESHDominantLUSSL']['LandUseMap'] \
             = self.main.appSettings['DialogLumensQUESHMultipleHRU']['landUseMap'] \
@@ -3039,7 +2979,6 @@ class DialogLumensQUES(QtGui.QDialog):
             = self.spinBoxMultipleHRUSlopeThreshold.value()
         
         # 'QUES-H' Watershed Model Evaluation sub tab fields
-        self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['workingDir'] = unicode(self.lineEditWatershedModelEvaluationWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['dateInitial'] = self.dateWatershedIndicatorsDateInitial.date().toString('dd/MM/yyyy')
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['dateFinal'] = self.dateWatershedModelEvaluationDateFinal.date().toString('dd/MM/yyyy')
         self.main.appSettings['DialogLumensQUESHWatershedModelEvaluation']['SWATModel'] = self.comboBoxWatershedModelEvaluationSWATModel.itemData(self.comboBoxWatershedModelEvaluationSWATModel.currentIndex())
@@ -3345,7 +3284,6 @@ class DialogLumensQUES(QtGui.QDialog):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
                     self.main.appSettings[formName]['landUseMap'],
                     self.main.appSettings[formName]['soilMap'],
                     self.main.appSettings[formName]['slopeMap'],
@@ -3385,7 +3323,6 @@ class DialogLumensQUES(QtGui.QDialog):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
                     self.main.appSettings[formName]['landUseMap'],
                     self.main.appSettings[formName]['soilMap'],
                     self.main.appSettings[formName]['slopeMap'],
@@ -3425,7 +3362,6 @@ class DialogLumensQUES(QtGui.QDialog):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
                     self.main.appSettings[formName]['landUseMap'],
                     self.main.appSettings[formName]['soilMap'],
                     self.main.appSettings[formName]['slopeMap'],
@@ -3478,7 +3414,6 @@ class DialogLumensQUES(QtGui.QDialog):
             
             outputs = general.runalg(
                 algName,
-                self.main.appSettings[formName]['workingDir'],
                 self.main.appSettings[formName]['period1'],
                 self.main.appSettings[formName]['period2'],
                 self.main.appSettings[formName]['SWATModel'],

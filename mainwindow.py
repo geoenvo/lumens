@@ -251,7 +251,6 @@ class MainWindow(QtGui.QMainWindow):
                 'outputRecoveredHabitat': '',
             },
             'DialogLumensQUESHWatershedModelEvaluation': {
-                'workingDir': '',
                 'dateInitial': '',
                 'dateFinal': '',
                 'SWATModel': '',
@@ -271,7 +270,6 @@ class MainWindow(QtGui.QMainWindow):
                 'outputFinalYearSubWatershedLevelIndicators': '',
             },
             'DialogLumensQUESHDominantHRU': {
-                'workingDir': '',
                 'landUseMap': '',
                 'soilMap': '',
                 'slopeMap': '',
@@ -283,7 +281,6 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensQUESHDominantLUSSL': {
-                'workingDir': '',
                 'landUseMap': '',
                 'soilMap': '',
                 'slopeMap': '',
@@ -295,7 +292,6 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensQUESHMultipleHRU': {
-                'workingDir': '',
                 'landUseMap': '',
                 'soilMap': '',
                 'slopeMap': '',
