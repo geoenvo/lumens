@@ -124,6 +124,7 @@ class MainWindow(QtGui.QMainWindow):
             'appDir': os.path.dirname(os.path.realpath(__file__)),
             'appSettingsFile': 'settings.ini',
             'ROutFile': os.path.join(system.userFolder(), 'processing_script.r.Rout'),
+            'guideFile': 'guide.pdf',
             'dataDir': 'data',
             'basemapDir': 'basemap',
             'vectorDir': 'vector',
@@ -521,6 +522,8 @@ class MainWindow(QtGui.QMainWindow):
         
         # App action handlers
         self.actionQuit.triggered.connect(self.close)
+        self.actionToggleSidebar.triggered.connect(self.handlerToggleSidebar)
+        self.actionToggleToolbar.triggered.connect(self.handlerToggleToolbar)
         self.actionZoomIn.triggered.connect(self.handlerZoomIn)
         self.actionZoomOut.triggered.connect(self.handlerZoomOut)
         self.actionZoomFull.triggered.connect(self.handlerZoomFull)
@@ -634,6 +637,7 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessSCIENDOLandUseChangeModelingTemplate.clicked.connect(self.handlerProcessSCIENDOLandUseChangeModelingTemplate)
         
         # About menu
+        self.actionDialogLumensGuide.triggered.connect(self.handlerDialogLumensGuide)
         self.actionDialogLumensAbout.triggered.connect(self.handlerDialogLumensAbout)
         
         # Tools menu
@@ -643,7 +647,7 @@ class MainWindow(QtGui.QMainWindow):
     def setupUi(self):
         """
         """
-        self.setWindowTitle('LUMENS: Beta')
+        self.setWindowTitle('LUMENS v {0}'.format(__version__))
 
         self.centralWidget = QtGui.QWidget(self)
         self.centralWidget.setMinimumSize(1024, 600)
@@ -681,6 +685,14 @@ class MainWindow(QtGui.QMainWindow):
         # Create the actions and assigned them to the menus
         self.actionQuit = QtGui.QAction('Quit', self)
         self.actionQuit.setShortcut(QtGui.QKeySequence.Quit)
+        
+        self.actionToggleSidebar = QtGui.QAction('Sidebar', self)
+        self.actionToggleSidebar.setCheckable(True)
+        self.actionToggleSidebar.setChecked(True)
+        
+        self.actionToggleToolbar = QtGui.QAction('Toolbar', self)
+        self.actionToggleToolbar.setCheckable(True)
+        self.actionToggleToolbar.setChecked(True)
         
         icon = QtGui.QIcon(':/ui/icons/iconActionZoomIn.png')
         self.actionZoomIn = QtGui.QAction(icon, 'Zoom In', self)
@@ -755,6 +767,9 @@ class MainWindow(QtGui.QMainWindow):
         
         self.fileMenu.addAction(self.actionQuit)
         
+        self.viewMenu.addAction(self.actionToggleSidebar)
+        self.viewMenu.addAction(self.actionToggleToolbar)
+        self.viewMenu.addSeparator()
         self.viewMenu.addAction(self.actionZoomIn)
         self.viewMenu.addAction(self.actionZoomOut)
         self.viewMenu.addAction(self.actionPanSelected)
@@ -921,7 +936,10 @@ class MainWindow(QtGui.QMainWindow):
         
         # About menu
         self.actionDialogLumensAbout = QtGui.QAction('About LUMENS', self)
+        self.actionDialogLumensGuide = QtGui.QAction('Open Guide', self)
         
+        self.aboutMenu.addAction(self.actionDialogLumensGuide)
+        self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.actionDialogLumensAbout)
         
         # Tools menu
@@ -3085,6 +3103,18 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensSCIENDOSimulateWithScenario)
     
     
+    def handlerDialogLumensGuide(self):
+        """
+        """
+        filePath = os.path.join(self.appSettings['appDir'], self.appSettings['guideFile'])
+        
+        if os.path.exists(filePath):
+            if sys.platform == 'win32':
+                os.startfile(filePath) # Open the document file in Windows
+        else:
+            QtGui.QMessageBox.critical(self, 'LUMENS Guide Not Found', "Unable to open '{0}'.".format(filePath))
+    
+    
     def handlerDialogLumensAbout(self):
         """
         """
@@ -3102,6 +3132,24 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensToolsREDDAbacusSP)
+    
+    
+    def handlerToggleSidebar(self):
+        """
+        """
+        if not self.actionToggleSidebar.isChecked():
+            self.sidebarTabWidget.setVisible(False)
+        else:
+            self.sidebarTabWidget.setVisible(True)
+    
+    
+    def handlerToggleToolbar(self):
+        """
+        """
+        if not self.actionToggleToolbar.isChecked():
+            self.toolBar.setVisible(False)
+        else:
+            self.toolBar.setVisible(True)
     
     
     def handlerZoomIn(self):
@@ -3215,7 +3263,9 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         layerItemData = self.getSelectedLayerData()
-        dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
+        # Try using QGIS's select feature dialog
+        ##dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
+        dialog = QgsExpressionSelectionDialog(self.qgsLayerList[layerItemData['layer']], '', self)
         dialog.exec_()
     
     
