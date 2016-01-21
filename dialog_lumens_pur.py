@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, glob
+import os, logging, glob, tempfile, csv
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
@@ -1027,14 +1027,35 @@ class DialogLumensPUR(QtGui.QDialog):
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
+            # Pass referenceClasses, referenceMapping, planningUnits as temp csv files
+            referenceClasses = self.main.appSettings[type(self).__name__]['referenceClasses']
+            referenceMapping = self.main.appSettings[type(self).__name__]['referenceMapping']
+            planningUnits = self.main.appSettings[type(self).__name__]['planningUnits']
+            
+            handleReferenceClasses, csvReferenceClasses = tempfile.mkstemp(suffix='.csv')
+            handleReferenceMapping, csvReferenceMapping = tempfile.mkstemp(suffix='.csv')
+            handlePlanningUnits, csvPlanningUnits = tempfile.mkstemp(suffix='.csv')
+            
+            with os.fdopen(handleReferenceClasses, 'w') as f:
+                writer = csv.writer(f)
+                writer.writerows(referenceClasses.items())
+            
+            with os.fdopen(handleReferenceMapping, 'w') as f:
+                writer = csv.writer(f)
+                writer.writerows(referenceMapping.items())
+            
+            with os.fdopen(handlePlanningUnits, 'w') as f:
+                writer = csv.DictWriter(f, planningUnits[0].keys())
+                writer.writerows(planningUnits)
+            
             outputs = general.runalg(
                 algName,
                 self.main.appSettings[type(self).__name__]['shapefile'],
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
                 self.main.appSettings[type(self).__name__]['dataTitle'],
-                self.main.appSettings[type(self).__name__]['referenceClasses'],
-                self.main.appSettings[type(self).__name__]['referenceMapping'],
-                self.main.appSettings[type(self).__name__]['planningUnits'],
+                csvReferenceClasses,
+                csvReferenceMapping,
+                csvPlanningUnits,
             )
             
             # Display ROut file in debug mode
