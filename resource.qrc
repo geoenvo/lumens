@@ -14,7 +14,9 @@
         <file>ui/icons/iconActionPanSelected.png</file>
         <file>ui/icons/iconActionZoomLast.png</file>
         <file>ui/icons/iconActionZoomNext.png</file>
+        <file>ui/icons/iconActionHelp.png</file>
         <file>ui/icons/iconActionLayerAttributeTable.png</file>
+        <file>ui/icons/iconActionLayerProperties.png</file>
         <file>ui/icons/iconActionFeatureSelectExpression.png</file>
         <file>ui/icons/iconActionToggleEdit.png</file>
         <file>ui/icons/iconActionClear.png</file>

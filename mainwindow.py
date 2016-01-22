@@ -48,6 +48,7 @@ from utils import QPlainTextEditLogger, DetailedMessageBox
 from dialog_layer_attribute_table import DialogLayerAttributeTable
 from dialog_feature_selectexpression import DialogFeatureSelectExpression
 from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
+from dialog_layer_properties import DialogLayerProperties
 from dialog_lumens_viewer import DialogLumensViewer
 
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
@@ -543,6 +544,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomNext.triggered.connect(self.handlerZoomNext)
         self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
         self.actionFeatureSelectExpression.triggered.connect(self.handlerFeatureSelectExpression)
+        self.actionLayerProperties.triggered.connect(self.handlerLayerProperties)
         self.layerListView.customContextMenuRequested.connect(self.handlerLayerItemContextMenu)
         
         # Dashboard tab
@@ -765,6 +767,10 @@ class MainWindow(QtGui.QMainWindow):
         self.actionFeatureSelectExpression.setShortcut('Ctrl+E')
         self.actionFeatureSelectExpression.setDisabled(True)
         
+        icon = QtGui.QIcon(':/ui/icons/iconActionLayerProperties.png')
+        self.actionLayerProperties = QtGui.QAction(icon, 'Layer Properties', self)
+        self.actionLayerProperties.setDisabled(True)
+        
         self.fileMenu.addAction(self.actionQuit)
         
         self.viewMenu.addAction(self.actionToggleSidebar)
@@ -799,6 +805,7 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionLayerAttributeTable)
         self.toolBar.addAction(self.actionFeatureSelectExpression)
+        self.toolBar.addAction(self.actionLayerProperties)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPan)
         self.toolBar.addAction(self.actionSelect)
@@ -935,8 +942,9 @@ class MainWindow(QtGui.QMainWindow):
         ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateWithScenario)
         
         # About menu
+        icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
+        self.actionDialogLumensGuide = QtGui.QAction(icon, 'Open Guide', self)
         self.actionDialogLumensAbout = QtGui.QAction('About LUMENS', self)
-        self.actionDialogLumensGuide = QtGui.QAction('Open Guide', self)
         
         self.aboutMenu.addAction(self.actionDialogLumensGuide)
         self.aboutMenu.addSeparator()
@@ -1723,10 +1731,13 @@ class MainWindow(QtGui.QMainWindow):
         
         # Initialize the mapcanvas and map tools
         # Enable on the fly CRS projection
+        # Use PAL labeling engine
         self.mapCanvas = QgsMapCanvas()
         self.mapCanvas.useImageToRender(False)
         self.mapCanvas.mapRenderer().setProjectionsEnabled(True)
         self.mapCanvas.mapRenderer().setDestinationCrs(QgsCoordinateReferenceSystem(self.appSettings['defaultCRS'], QgsCoordinateReferenceSystem.EpsgCrsId))
+        labelingEngine = QgsPalLabeling()
+        self.mapCanvas.mapRenderer().setLabelingEngine(labelingEngine)
         self.mapCanvas.setCanvasColor(QtCore.Qt.white)
         self.mapCanvas.enableAntiAliasing(True)
         ##self.mapCanvas.refresh()
@@ -2337,6 +2348,7 @@ class MainWindow(QtGui.QMainWindow):
         self.contextMenu.addAction(self.actionZoomLayer)
         self.contextMenu.addAction(self.actionLayerAttributeTable)
         self.contextMenu.addAction(self.actionFeatureSelectExpression)
+        self.contextMenu.addAction(self.actionLayerProperties)
         
         parentPosition = self.layerListView.mapToGlobal(QtCore.QPoint(0, 0))
         self.contextMenu.move(parentPosition + pos)
@@ -3243,10 +3255,12 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
             self.actionFeatureSelectExpression.setEnabled(True)
+            self.actionLayerProperties.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
+            self.actionLayerProperties.setDisabled(True)
         
         self.printDebugInfo()
     
@@ -3267,6 +3281,14 @@ class MainWindow(QtGui.QMainWindow):
         # Try using QGIS's select feature dialog
         ##dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
         dialog = QgsExpressionSelectionDialog(self.qgsLayerList[layerItemData['layer']], '', self)
+        dialog.exec_()
+    
+    
+    def handlerLayerProperties(self):
+        """
+        """
+        layerItemData = self.getSelectedLayerData()
+        dialog = DialogLayerProperties(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
     
     
@@ -3352,10 +3374,12 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
             self.actionFeatureSelectExpression.setEnabled(True)
+            self.actionLayerProperties.setEnabled(True)
         else:
             self.actionZoomLayer.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
+            self.actionLayerProperties.setDisabled(True)
     
     
     def handlerRefresh(self):

@@ -93,7 +93,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.labelShapefileAttr.setText('Administrative boundary &attribute:')
         self.layoutDatabaseDetails.addWidget(self.labelShapefileAttr, 3, 0)
         
-        self.comboBoxShapefileAttr = QtGui.QComboBox(parent)
+        self.comboBoxShapefileAttr = QtGui.QComboBox()
         self.comboBoxShapefileAttr.setDisabled(True)
         self.layoutDatabaseDetails.addWidget(self.comboBoxShapefileAttr, 3, 1)
         
@@ -103,7 +103,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.labelProjectDescription.setText('Project &description:')
         self.layoutDatabaseDetails.addWidget(self.labelProjectDescription, 4, 0)
         
-        self.lineEditProjectDescription = QtGui.QLineEdit(parent)
+        self.lineEditProjectDescription = QtGui.QLineEdit()
         self.lineEditProjectDescription.setText('description')
         self.layoutDatabaseDetails.addWidget(self.lineEditProjectDescription, 4, 1)
         
