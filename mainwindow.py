@@ -2276,7 +2276,8 @@ class MainWindow(QtGui.QMainWindow):
             layerItem.setDragEnabled(True)
             layerItem.setDropEnabled(False)
             layerItem.setCheckState(QtCore.Qt.Checked)
-            self.layerListModel.appendRow(layerItem)
+            ##self.layerListModel.appendRow(layerItem)
+            self.layerListModel.insertRow(0, layerItem) # Insert new layers at top of list
             
             QgsMapLayerRegistry.instance().addMapLayer(self.qgsLayerList[layerName])
             # FIX 20151118:
