@@ -74,7 +74,7 @@ class DialogLumensAddData(QtGui.QDialog):
         self.layoutAddLandUseCoverDataInfo.addWidget(self.labelAddLandUseCoverDataInfo)
         
         self.labelAddLandUseCoverDataRasterfile = QtGui.QLabel()
-        self.labelAddLandUseCoverDataRasterfile.setText('Raster file:')
+        self.labelAddLandUseCoverDataRasterfile.setText('Vector/raster file:')
         self.layoutAddLandUseCoverData.addWidget(self.labelAddLandUseCoverDataRasterfile, 0, 0)
         
         self.lineEditAddLandUseCoverDataRasterfile = QtGui.QLineEdit()
@@ -224,7 +224,7 @@ class DialogLumensAddData(QtGui.QDialog):
         self.layoutAddPlanningUnitDataInfo.addWidget(self.labelAddPlanningUnitDataInfo)
         
         self.labelAddPlanningUnitDataRasterfile = QtGui.QLabel()
-        self.labelAddPlanningUnitDataRasterfile.setText('Planning unit:')
+        self.labelAddPlanningUnitDataRasterfile.setText('Planning unit file:')
         self.layoutAddPlanningUnitData.addWidget(self.labelAddPlanningUnitDataRasterfile, 0, 0)
         
         self.lineEditAddPlanningUnitDataRasterfile = QtGui.QLineEdit()
@@ -333,12 +333,12 @@ class DialogLumensAddData(QtGui.QDialog):
         """Select a raster file
         """
         rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Raster File', QtCore.QDir.homePath(), 'Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+            self, 'Select Vector/Raster File', QtCore.QDir.homePath(), 'Vector/Raster File (*{0} *{1})'.format(self.main.appSettings['selectShapefileExt'], self.main.appSettings['selectRasterfileExt'])))
         
         if rasterfile:
             self.lineEditAddLandUseCoverDataRasterfile.setText(rasterfile)
             
-            logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
+            logging.getLogger(type(self).__name__).info('select vector/raster file: %s', rasterfile)
     
     
     def handlerSelectAddPeatDataRasterfile(self):
@@ -369,12 +369,12 @@ class DialogLumensAddData(QtGui.QDialog):
         """Select a raster file
         """
         rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Raster File', QtCore.QDir.homePath(), 'Planning Unit Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
+            self, 'Select Vector/Raster File', QtCore.QDir.homePath(), 'Vector/Raster File (*{0} *{1})'.format(self.main.appSettings['selectShapefileExt'], self.main.appSettings['selectRasterfileExt'])))
         
         if rasterfile:
             self.lineEditAddPlanningUnitDataRasterfile.setText(rasterfile)
             
-            logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
+            logging.getLogger(type(self).__name__).info('select vector/raster file: %s', rasterfile)
     
     
     def handlerSelectAddPlanningUnitCsvfile(self):
