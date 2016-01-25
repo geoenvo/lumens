@@ -375,7 +375,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.contentGroupBoxSetupPlanningUnit.setLayout(self.layoutContentGroupBoxSetupPlanningUnit)
         self.scrollSetupPlanningUnit = QtGui.QScrollArea()
         ##self.scrollSetupPlanningUnit.setStyleSheet('QScrollArea > QWidget > QWidget { background: white; }')
-        self.scrollSetupPlanningUnit.setWidgetResizable(True);
+        self.scrollSetupPlanningUnit.setWidgetResizable(True)
         self.scrollSetupPlanningUnit.setWidget(self.contentGroupBoxSetupPlanningUnit)
         
         self.layoutGroupBoxSetupPlanningUnit.addLayout(self.layoutSetupPlanningUnitInfo)
@@ -486,7 +486,7 @@ class DialogLumensPUR(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(1024, 600)
+        self.setMinimumSize(1024, 700)
         self.resize(parent.sizeHint())
     
     

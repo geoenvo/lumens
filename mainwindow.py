@@ -55,6 +55,7 @@ from dialog_lumens_createdatabase import DialogLumensCreateDatabase
 from dialog_lumens_opendatabase import DialogLumensOpenDatabase
 from dialog_lumens_importdatabase import DialogLumensImportDatabase
 from dialog_lumens_adddata import DialogLumensAddData
+from dialog_lumens_adddata1 import DialogLumensAddData1
 
 from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
 from dialog_lumens_addpeatdata import DialogLumensAddPeatData
@@ -569,6 +570,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensCloseDatabase.triggered.connect(self.handlerLumensCloseDatabase)
         self.actionLumensDatabaseStatus.triggered.connect(self.handlerLumensDatabaseStatus)
         self.actionDialogLumensAddData.triggered.connect(self.handlerDialogLumensAddData)
+        self.actionDialogLumensAddData1.triggered.connect(self.handlerDialogLumensAddData1)
         
         self.actionDialogLumensAddLandcoverRaster.triggered.connect(self.handlerDialogLumensAddLandcoverRaster)
         self.actionDialogLumensAddPeatData.triggered.connect(self.handlerDialogLumensAddPeatData)
@@ -817,6 +819,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensCloseDatabase = QtGui.QAction('Close LUMENS database', self)
         self.actionLumensDatabaseStatus = QtGui.QAction('LUMENS database status', self)
         self.actionDialogLumensAddData = QtGui.QAction('Add data to LUMENS database', self)
+        self.actionDialogLumensAddData1 = QtGui.QAction('NEW! Add data to LUMENS database', self)
         self.actionLumensDeleteData = QtGui.QAction('Delete LUMENS data', self)
         self.actionDialogLumensImportDatabase = QtGui.QAction('Import LUMENS database', self)
         
@@ -830,6 +833,7 @@ class MainWindow(QtGui.QMainWindow):
         self.databaseMenu.addAction(self.actionLumensCloseDatabase)
         self.databaseMenu.addAction(self.actionLumensDatabaseStatus)
         self.databaseMenu.addAction(self.actionDialogLumensAddData)
+        self.databaseMenu.addAction(self.actionDialogLumensAddData1)
         ####self.addDataMenu = self.databaseMenu.addMenu('Add data to LUMENS database')
         ####self.addDataMenu.addAction(self.actionDialogLumensAddLandcoverRaster)
         ####self.addDataMenu.addAction(self.actionDialogLumensAddPeatData)
@@ -1871,6 +1875,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensDatabaseStatus.setEnabled(True)
         self.actionLumensDeleteData.setEnabled(True)
         self.actionDialogLumensAddData.setEnabled(True)
+        self.actionDialogLumensAddData1.setEnabled(True)
         
         self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
         self.actionDialogLumensAddPeatData.setEnabled(True)
@@ -1934,6 +1939,7 @@ class MainWindow(QtGui.QMainWindow):
         # Database menu
         self.actionLumensDatabaseStatus.setDisabled(True)
         self.actionDialogLumensAddData.setDisabled(True)
+        self.actionDialogLumensAddData1.setDisabled(True)
         self.actionLumensDeleteData.setDisabled(True)
         
         self.actionDialogLumensAddLandcoverRaster.setDisabled(True)
@@ -2856,6 +2862,12 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         self.openDialog(DialogLumensAddData)
+    
+    
+    def handlerDialogLumensAddData1(self):
+        """
+        """
+        self.openDialog(DialogLumensAddData1)
     
     
     def handlerDialogLumensAddLandcoverRaster(self):
