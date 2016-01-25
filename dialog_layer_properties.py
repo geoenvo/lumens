@@ -14,7 +14,7 @@ class DialogLayerProperties(QtGui.QDialog):
         self.layer = layer
         self.main = parent
         self.dialogTitle = 'LUMENS Layer Properties - ' + self.layer.name()
-        self.labelColor = QtGui.QColor(0, 0, 0) # black
+        self.layerSymbolFillColor = self.labelColor = QtGui.QColor(0, 0, 0) # black
         
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLayerProperties init'
@@ -29,15 +29,56 @@ class DialogLayerProperties(QtGui.QDialog):
             self.logger.setLevel(logging.DEBUG)
         
         self.setupUi(self)
-        self.loadLayerSettings()
         
+        self.sliderLayerTransparency.sliderMoved.connect(self.handlerSliderLayerTransparencyMoved)
+        self.spinBoxLayerTransparency.valueChanged.connect(self.handlerSpinBoxLayerTransparencyValueChanged)
+        self.buttonLayerSymbolFillColor.clicked.connect(self.handlerSelectLayerSymbolFillColor)
         self.buttonLabelColor.clicked.connect(self.handlerSelectLabelColor)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+        
+        self.loadLayerSettings()
     
     
     def setupUi(self, parent):
         self.dialogLayout = QtGui.QVBoxLayout()
+        
+        self.groupBoxLayerStyle = QtGui.QGroupBox('Style')
+        self.layoutGroupBoxLayerStyle = QtGui.QVBoxLayout()
+        self.layoutGroupBoxLayerStyle.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxLayerStyle.setLayout(self.layoutGroupBoxLayerStyle)
+        self.layoutLayerStyleInfo = QtGui.QVBoxLayout()
+        self.layoutLayerStyle = QtGui.QGridLayout()
+        self.layoutGroupBoxLayerStyle.addLayout(self.layoutLayerStyleInfo)
+        self.layoutGroupBoxLayerStyle.addLayout(self.layoutLayerStyle)
+        
+        self.labelLayerStyleInfo = QtGui.QLabel()
+        self.labelLayerStyleInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutLayerStyleInfo.addWidget(self.labelLayerStyleInfo)
+        
+        self.labelLayerTransparency = QtGui.QLabel()
+        self.labelLayerTransparency.setText('Transparency:')
+        self.layoutLayerStyle.addWidget(self.labelLayerTransparency, 0, 0)
+        
+        self.sliderLayerTransparency = QtGui.QSlider()
+        self.sliderLayerTransparency.setRange(0, 100)
+        self.sliderLayerTransparency.setOrientation(QtCore.Qt.Horizontal)
+        self.layoutLayerStyle.addWidget(self.sliderLayerTransparency, 0, 1)
+        
+        self.spinBoxLayerTransparency = QtGui.QSpinBox()
+        self.spinBoxLayerTransparency.setRange(0, 100)
+        self.layoutLayerStyle.addWidget(self.spinBoxLayerTransparency, 0, 2)
+        
+        self.labelLayerSymbolFillColor = QtGui.QLabel()
+        self.labelLayerSymbolFillColor.setText('Fill color:')
+        self.layoutLayerStyle.addWidget(self.labelLayerSymbolFillColor, 1, 0)
+        
+        self.buttonLayerSymbolFillColor = QtGui.QPushButton()
+        self.buttonLayerSymbolFillColor.setFixedWidth(50)
+        self.buttonLayerSymbolFillColor.setStyleSheet('background-color: {0};'.format(self.layerSymbolFillColor.name()))
+        self.layoutLayerStyle.addWidget(self.buttonLayerSymbolFillColor, 1, 1)
+        
+        ######################################################################
         
         self.groupBoxLayerLabel = QtGui.QGroupBox('Label')
         self.layoutGroupBoxLayerLabel = QtGui.QVBoxLayout()
@@ -84,11 +125,13 @@ class DialogLayerProperties(QtGui.QDialog):
         self.layoutLayerLabel.addWidget(self.labelLayerLabelColor, 3, 0)
         
         self.buttonLabelColor = QtGui.QPushButton()
+        self.buttonLabelColor.setFixedWidth(50)
         self.buttonLabelColor.setStyleSheet('background-color: {0};'.format(self.labelColor.name()))
         self.layoutLayerLabel.addWidget(self.buttonLabelColor, 3, 1)
         
         self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
         
+        self.dialogLayout.addWidget(self.groupBoxLayerStyle)
         self.dialogLayout.addWidget(self.groupBoxLayerLabel)
         self.dialogLayout.addWidget(self.buttonBox)
         
@@ -101,9 +144,7 @@ class DialogLayerProperties(QtGui.QDialog):
     def loadLayerSettings(self):
         """
         """
-        self.p = QgsPalLayerSettings()
-        self.p.readFromLayer(self.layer)
-        
+        # Get layer attributes
         provider = self.layer.dataProvider()
         
         if not provider.isValid():
@@ -118,6 +159,19 @@ class DialogLayerProperties(QtGui.QDialog):
         self.comboBoxLayerAttribute.addItems(sorted(attributes))
         self.comboBoxLayerAttribute.setEnabled(True)
         
+        # Get layer transparency setting
+        self.sliderLayerTransparency.setValue(self.layer.layerTransparency())
+        self.spinBoxLayerTransparency.setValue(self.layer.layerTransparency())
+        
+        # Get layer symbol fill color
+        symbols = self.layer.rendererV2().symbols()
+        self.layerSymbolFillColor = symbols[0].color()
+        self.buttonLayerSymbolFillColor.setStyleSheet('background-color: {0};'.format(self.layerSymbolFillColor.name()))
+        
+        # Get layer label settings
+        self.p = QgsPalLayerSettings()
+        self.p.readFromLayer(self.layer)
+        
         if self.p.enabled:
             self.checkBoxLayerLabelEnabled.setChecked(True)
             self.comboBoxLayerAttribute.setCurrentIndex(self.comboBoxLayerAttribute.findText(self.p.fieldName))
@@ -129,6 +183,28 @@ class DialogLayerProperties(QtGui.QDialog):
     #***********************************************************
     # 'Layer Properties' QPushButton handlers
     #***********************************************************
+    def handlerSliderLayerTransparencyMoved(self, newPosition):
+        """
+        """
+        self.spinBoxLayerTransparency.setValue(newPosition)
+    
+    
+    def handlerSpinBoxLayerTransparencyValueChanged(self, newValue):
+        """
+        """
+        self.sliderLayerTransparency.setValue(newValue)
+    
+    
+    def handlerSelectLayerSymbolFillColor(self):
+        """
+        """
+        dialog = QtGui.QColorDialog(self.layerSymbolFillColor)
+        
+        if dialog.exec_():
+            self.layerSymbolFillColor = dialog.selectedColor()
+            self.buttonLayerSymbolFillColor.setStyleSheet('background-color: {0};'.format(self.layerSymbolFillColor.name()))
+    
+    
     def handlerSelectLabelColor(self):
         """
         """
@@ -147,11 +223,16 @@ class DialogLayerProperties(QtGui.QDialog):
     def accept(self):
         """
         """
+        # Process layer transparency setting
+        self.layer.setLayerTransparency(self.sliderLayerTransparency.value())
+        
+        # Process layer symbol fill color
+        symbols = self.layer.rendererV2().symbols()
+        symbol = symbols[0]
+        symbol.setColor(self.layerSymbolFillColor)
+        
+        # Process layer label settings
         if self.checkBoxLayerLabelEnabled.isChecked():
-            ##symbol = QgsSymbolV2.defaultSymbol(self.layer.geometryType())
-            ##renderer = QgsRuleBasedRendererV2(symbol)
-            ##self.layer.setRendererV2(renderer)
-            
             self.p.enabled = True
             
             self.p.fieldName = self.comboBoxLayerAttribute.currentText()
@@ -167,6 +248,7 @@ class DialogLayerProperties(QtGui.QDialog):
         
         self.p.writeToLayer(self.layer)
         
+        # Finally fresh the MapCanvas and close the dialog
         self.main.mapCanvas.refresh()
         
         QtGui.QDialog.accept(self)
