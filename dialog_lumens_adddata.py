@@ -16,6 +16,8 @@ class DialogLumensAddData(QtGui.QDialog):
         
         self.main = parent
         self.dialogTitle = 'LUMENS Add Data'
+        self.tableAddDataRowCount = 0
+        self.tableAddData = []
         
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLumensAddData init'
@@ -31,243 +33,56 @@ class DialogLumensAddData(QtGui.QDialog):
         
         self.setupUi(self)
         
-        # 'Add Data' checkboxes
-        self.checkBoxAddLandUseCoverData.toggled.connect(self.toggleAddLandUseCoverData)
-        self.checkBoxAddPeatData.toggled.connect(self.toggleAddPeatData)
-        self.checkBoxAddFactorData.toggled.connect(self.toggleAddFactorData)
-        self.checkBoxAddPlanningUnitData.toggled.connect(self.toggleAddPlanningUnitData)
-        
-        # 'Add Data' buttons
-        self.buttonSelectAddLandUseCoverDataRasterfile.clicked.connect(self.handlerSelectAddLandUseCoverDataRasterfile)
-        self.buttonSelectAddPeatDataRasterfile.clicked.connect(self.handlerSelectAddPeatDataRasterfile)
-        self.buttonSelectAddFactorDataRasterfile.clicked.connect(self.handlerSelectAddFactorDataRasterfile)
-        self.buttonSelectAddPlanningUnitDataRasterfile.clicked.connect(self.handlerSelectAddPlanningUnitRasterfile)
-        self.buttonSelectAddPlanningUnitDataCsvfile.clicked.connect(self.handlerSelectAddPlanningUnitCsvfile)
+        self.buttonAddDataRow.clicked.connect(self.handlerButtonAddDataRow)
         self.buttonProcessAddData.clicked.connect(self.handlerProcessAddData)
     
     
     def setupUi(self, parent):
         self.dialogLayout = QtGui.QVBoxLayout()
         
-        # 'Land use/cover data' GroupBox
-        self.groupBoxAddLandUseCoverData = QtGui.QGroupBox('Land use/cover data')
-        self.layoutGroupBoxAddLandUseCoverData = QtGui.QHBoxLayout()
-        self.groupBoxAddLandUseCoverData.setLayout(self.layoutGroupBoxAddLandUseCoverData)
-        self.layoutOptionsAddLandUseCoverData = QtGui.QVBoxLayout()
-        self.layoutOptionsAddLandUseCoverData.setContentsMargins(5, 0, 5, 0)
-        self.contentOptionsAddLandUseCoverData = QtGui.QWidget()
-        self.contentOptionsAddLandUseCoverData.setLayout(self.layoutOptionsAddLandUseCoverData)
-        self.layoutOptionsAddLandUseCoverData.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.checkBoxAddLandUseCoverData = QtGui.QCheckBox()
-        self.checkBoxAddLandUseCoverData.setChecked(False)
-        self.contentOptionsAddLandUseCoverData.setDisabled(True)
-        self.layoutGroupBoxAddLandUseCoverData.addWidget(self.checkBoxAddLandUseCoverData)
-        self.layoutGroupBoxAddLandUseCoverData.addWidget(self.contentOptionsAddLandUseCoverData)
-        self.layoutGroupBoxAddLandUseCoverData.setAlignment(self.checkBoxAddLandUseCoverData, QtCore.Qt.AlignTop)
-        self.layoutAddLandUseCoverDataInfo = QtGui.QVBoxLayout()
-        self.layoutAddLandUseCoverData = QtGui.QGridLayout()
-        self.layoutOptionsAddLandUseCoverData.addLayout(self.layoutAddLandUseCoverDataInfo)
-        self.layoutOptionsAddLandUseCoverData.addLayout(self.layoutAddLandUseCoverData)
+        self.groupBoxAddData = QtGui.QGroupBox('Add data')
+        self.layoutGroupBoxAddData = QtGui.QVBoxLayout()
+        self.layoutGroupBoxAddData.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxAddData.setLayout(self.layoutGroupBoxAddData)
+        self.layoutAddDataInfo = QtGui.QVBoxLayout()
+        self.layoutAddData = QtGui.QVBoxLayout()
+        self.layoutGroupBoxAddData.addLayout(self.layoutAddDataInfo)
+        self.layoutGroupBoxAddData.addLayout(self.layoutAddData)
         
-        self.labelAddLandUseCoverDataInfo = QtGui.QLabel()
-        self.labelAddLandUseCoverDataInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutAddLandUseCoverDataInfo.addWidget(self.labelAddLandUseCoverDataInfo)
-        
-        self.labelAddLandUseCoverDataRasterfile = QtGui.QLabel()
-        self.labelAddLandUseCoverDataRasterfile.setText('Vector/raster file:')
-        self.layoutAddLandUseCoverData.addWidget(self.labelAddLandUseCoverDataRasterfile, 0, 0)
-        
-        self.lineEditAddLandUseCoverDataRasterfile = QtGui.QLineEdit()
-        self.lineEditAddLandUseCoverDataRasterfile.setReadOnly(True)
-        self.layoutAddLandUseCoverData.addWidget(self.lineEditAddLandUseCoverDataRasterfile, 0, 1)
-        
-        self.buttonSelectAddLandUseCoverDataRasterfile = QtGui.QPushButton()
-        self.buttonSelectAddLandUseCoverDataRasterfile.setText('&Browse')
-        self.layoutAddLandUseCoverData.addWidget(self.buttonSelectAddLandUseCoverDataRasterfile, 0, 2)
-        
-        self.labelAddLandUseCoverDataPeriod = QtGui.QLabel()
-        self.labelAddLandUseCoverDataPeriod.setText('&Period:')
-        self.layoutAddLandUseCoverData.addWidget(self.labelAddLandUseCoverDataPeriod, 1, 0)
-        
-        self.spinBoxAddLandUseCoverDataPeriod = QtGui.QSpinBox()
-        self.spinBoxAddLandUseCoverDataPeriod.setRange(1, 9999)
-        td = datetime.date.today()
-        self.spinBoxAddLandUseCoverDataPeriod.setValue(td.year)
-        self.layoutAddLandUseCoverData.addWidget(self.spinBoxAddLandUseCoverDataPeriod, 1, 1)
-        
-        self.labelAddLandUseCoverDataPeriod.setBuddy(self.spinBoxAddLandUseCoverDataPeriod)
-        
-        self.labelAddLandUseCoverDataDescription = QtGui.QLabel()
-        self.labelAddLandUseCoverDataDescription.setText('&Description:')
-        self.layoutAddLandUseCoverData.addWidget(self.labelAddLandUseCoverDataDescription, 2, 0)
-        
-        self.lineEditAddLandUseCoverDataDescription = QtGui.QLineEdit()
-        self.lineEditAddLandUseCoverDataDescription.setText('description')
-        self.layoutAddLandUseCoverData.addWidget(self.lineEditAddLandUseCoverDataDescription, 2, 1)
-        
-        self.labelAddLandUseCoverDataDescription.setBuddy(self.lineEditAddLandUseCoverDataDescription)
-        
-        # 'Peat data' GroupBox
-        self.groupBoxAddPeatData = QtGui.QGroupBox('Peat data')
-        self.layoutGroupBoxAddPeatData = QtGui.QHBoxLayout()
-        self.groupBoxAddPeatData.setLayout(self.layoutGroupBoxAddPeatData)
-        self.layoutOptionsAddPeatData = QtGui.QVBoxLayout()
-        self.layoutOptionsAddPeatData.setContentsMargins(5, 0, 5, 0)
-        self.contentOptionsAddPeatData = QtGui.QWidget()
-        self.contentOptionsAddPeatData.setLayout(self.layoutOptionsAddPeatData)
-        self.layoutOptionsAddPeatData.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.checkBoxAddPeatData = QtGui.QCheckBox()
-        self.checkBoxAddPeatData.setChecked(False)
-        self.contentOptionsAddPeatData.setDisabled(True)
-        self.layoutGroupBoxAddPeatData.addWidget(self.checkBoxAddPeatData)
-        self.layoutGroupBoxAddPeatData.addWidget(self.contentOptionsAddPeatData)
-        self.layoutGroupBoxAddPeatData.setAlignment(self.checkBoxAddPeatData, QtCore.Qt.AlignTop)
-        self.layoutAddPeatDataInfo = QtGui.QVBoxLayout()
-        self.layoutAddPeatData = QtGui.QGridLayout()
-        self.layoutOptionsAddPeatData.addLayout(self.layoutAddPeatDataInfo)
-        self.layoutOptionsAddPeatData.addLayout(self.layoutAddPeatData)
-        
-        self.labelAddPeatDataInfo = QtGui.QLabel()
-        self.labelAddPeatDataInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutAddPeatDataInfo.addWidget(self.labelAddPeatDataInfo)
-        
-        self.labelAddPeatDataRasterfile = QtGui.QLabel()
-        self.labelAddPeatDataRasterfile.setText('Raster file:')
-        self.layoutAddPeatData.addWidget(self.labelAddPeatDataRasterfile, 0, 0)
-        
-        self.lineEditAddPeatDataRasterfile = QtGui.QLineEdit()
-        self.lineEditAddPeatDataRasterfile.setReadOnly(True)
-        self.layoutAddPeatData.addWidget(self.lineEditAddPeatDataRasterfile, 0, 1)
-        
-        self.buttonSelectAddPeatDataRasterfile = QtGui.QPushButton()
-        self.buttonSelectAddPeatDataRasterfile.setText('&Browse')
-        self.layoutAddPeatData.addWidget(self.buttonSelectAddPeatDataRasterfile, 0, 2)
-        
-        self.labelAddPeatDataDescription = QtGui.QLabel()
-        self.labelAddPeatDataDescription.setText('&Description:')
-        self.layoutAddPeatData.addWidget(self.labelAddPeatDataDescription, 1, 0)
-        
-        self.lineEditAddPeatDataDescription = QtGui.QLineEdit()
-        self.lineEditAddPeatDataDescription.setText('description')
-        self.layoutAddPeatData.addWidget(self.lineEditAddPeatDataDescription, 1, 1)
-        
-        self.labelAddPeatDataDescription.setBuddy(self.lineEditAddPeatDataDescription)
-        
-        # 'Factor data' GroupBox
-        self.groupBoxAddFactorData = QtGui.QGroupBox('Factor data')
-        self.layoutGroupBoxAddFactorData = QtGui.QHBoxLayout()
-        self.groupBoxAddFactorData.setLayout(self.layoutGroupBoxAddFactorData)
-        self.layoutOptionsAddFactorData = QtGui.QVBoxLayout()
-        self.layoutOptionsAddFactorData.setContentsMargins(5, 0, 5, 0)
-        self.contentOptionsAddFactorData = QtGui.QWidget()
-        self.contentOptionsAddFactorData.setLayout(self.layoutOptionsAddFactorData)
-        self.layoutOptionsAddFactorData.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.checkBoxAddFactorData = QtGui.QCheckBox()
-        self.checkBoxAddFactorData.setChecked(False)
-        self.contentOptionsAddFactorData.setDisabled(True)
-        self.layoutGroupBoxAddFactorData.addWidget(self.checkBoxAddFactorData)
-        self.layoutGroupBoxAddFactorData.addWidget(self.contentOptionsAddFactorData)
-        self.layoutGroupBoxAddFactorData.setAlignment(self.checkBoxAddFactorData, QtCore.Qt.AlignTop)
-        self.layoutAddFactorDataInfo = QtGui.QVBoxLayout()
-        self.layoutAddFactorData = QtGui.QGridLayout()
-        self.layoutOptionsAddFactorData.addLayout(self.layoutAddFactorDataInfo)
-        self.layoutOptionsAddFactorData.addLayout(self.layoutAddFactorData)
-        
-        self.labelAddFactorDataInfo = QtGui.QLabel()
-        self.labelAddFactorDataInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutAddFactorDataInfo.addWidget(self.labelAddFactorDataInfo)
-        
-        self.labelAddFactorDataRasterfile = QtGui.QLabel()
-        self.labelAddFactorDataRasterfile.setText('Raster file:')
-        self.layoutAddFactorData.addWidget(self.labelAddFactorDataRasterfile, 0, 0)
-        
-        self.lineEditAddFactorDataRasterfile = QtGui.QLineEdit()
-        self.lineEditAddFactorDataRasterfile.setReadOnly(True)
-        self.layoutAddFactorData.addWidget(self.lineEditAddFactorDataRasterfile, 0, 1)
-        
-        self.buttonSelectAddFactorDataRasterfile = QtGui.QPushButton()
-        self.buttonSelectAddFactorDataRasterfile.setText('&Browse')
-        self.layoutAddFactorData.addWidget(self.buttonSelectAddFactorDataRasterfile, 0, 2)
-        
-        self.labelAddFactorDataDescription = QtGui.QLabel()
-        self.labelAddFactorDataDescription.setText('&Description:')
-        self.layoutAddFactorData.addWidget(self.labelAddFactorDataDescription, 1, 0)
-        
-        self.lineEditAddFactorDataDescription = QtGui.QLineEdit()
-        self.lineEditAddFactorDataDescription.setText('description')
-        self.layoutAddFactorData.addWidget(self.lineEditAddFactorDataDescription, 1, 1)
-        
-        self.labelAddFactorDataDescription.setBuddy(self.lineEditAddFactorDataDescription)
-        
-        # 'Planning unit data' GroupBox
-        self.groupBoxAddPlanningUnitData = QtGui.QGroupBox('Planning unit data')
-        self.layoutGroupBoxAddPlanningUnitData = QtGui.QHBoxLayout()
-        self.groupBoxAddPlanningUnitData.setLayout(self.layoutGroupBoxAddPlanningUnitData)
-        self.layoutOptionsAddPlanningUnitData = QtGui.QVBoxLayout()
-        self.layoutOptionsAddPlanningUnitData.setContentsMargins(5, 0, 5, 0)
-        self.contentOptionsAddPlanningUnitData = QtGui.QWidget()
-        self.contentOptionsAddPlanningUnitData.setLayout(self.layoutOptionsAddPlanningUnitData)
-        self.layoutOptionsAddPlanningUnitData.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
-        self.checkBoxAddPlanningUnitData = QtGui.QCheckBox()
-        self.checkBoxAddPlanningUnitData.setChecked(False)
-        self.contentOptionsAddPlanningUnitData.setDisabled(True)
-        self.layoutGroupBoxAddPlanningUnitData.addWidget(self.checkBoxAddPlanningUnitData)
-        self.layoutGroupBoxAddPlanningUnitData.addWidget(self.contentOptionsAddPlanningUnitData)
-        self.layoutGroupBoxAddPlanningUnitData.setAlignment(self.checkBoxAddPlanningUnitData, QtCore.Qt.AlignTop)
-        self.layoutAddPlanningUnitDataInfo = QtGui.QVBoxLayout()
-        self.layoutAddPlanningUnitData = QtGui.QGridLayout()
-        self.layoutOptionsAddPlanningUnitData.addLayout(self.layoutAddPlanningUnitDataInfo)
-        self.layoutOptionsAddPlanningUnitData.addLayout(self.layoutAddPlanningUnitData)
-        
-        self.labelAddPlanningUnitDataInfo = QtGui.QLabel()
-        self.labelAddPlanningUnitDataInfo.setText('Lorem ipsum dolor sit amet...\n')
-        self.layoutAddPlanningUnitDataInfo.addWidget(self.labelAddPlanningUnitDataInfo)
-        
-        self.labelAddPlanningUnitDataRasterfile = QtGui.QLabel()
-        self.labelAddPlanningUnitDataRasterfile.setText('Planning unit file:')
-        self.layoutAddPlanningUnitData.addWidget(self.labelAddPlanningUnitDataRasterfile, 0, 0)
-        
-        self.lineEditAddPlanningUnitDataRasterfile = QtGui.QLineEdit()
-        self.lineEditAddPlanningUnitDataRasterfile.setReadOnly(True)
-        self.layoutAddPlanningUnitData.addWidget(self.lineEditAddPlanningUnitDataRasterfile, 0, 1)
-        
-        self.buttonSelectAddPlanningUnitDataRasterfile = QtGui.QPushButton()
-        self.buttonSelectAddPlanningUnitDataRasterfile.setText('&Browse')
-        self.layoutAddPlanningUnitData.addWidget(self.buttonSelectAddPlanningUnitDataRasterfile, 0, 2)
-        
-        self.labelAddPlanningUnitDataCsvfile = QtGui.QLabel()
-        self.labelAddPlanningUnitDataCsvfile.setText('Planning unit lookup table:')
-        self.layoutAddPlanningUnitData.addWidget(self.labelAddPlanningUnitDataCsvfile, 1, 0)
-        
-        self.lineEditAddPlanningUnitDataCsvfile = QtGui.QLineEdit()
-        self.lineEditAddPlanningUnitDataCsvfile.setReadOnly(True)
-        self.layoutAddPlanningUnitData.addWidget(self.lineEditAddPlanningUnitDataCsvfile, 1, 1)
-        
-        self.buttonSelectAddPlanningUnitDataCsvfile = QtGui.QPushButton()
-        self.buttonSelectAddPlanningUnitDataCsvfile.setText('&Browse')
-        self.layoutAddPlanningUnitData.addWidget(self.buttonSelectAddPlanningUnitDataCsvfile, 1, 2)
-        
-        self.labelAddPlanningUnitDataDescription = QtGui.QLabel()
-        self.labelAddPlanningUnitDataDescription.setText('&Description:')
-        self.layoutAddPlanningUnitData.addWidget(self.labelAddPlanningUnitDataDescription, 2, 0)
-        
-        self.lineEditAddPlanningUnitDataDescription = QtGui.QLineEdit()
-        self.lineEditAddPlanningUnitDataDescription.setText('planning_unit')
-        self.layoutAddPlanningUnitData.addWidget(self.lineEditAddPlanningUnitDataDescription, 2, 1)
-        
-        self.labelAddPlanningUnitDataDescription.setBuddy(self.lineEditAddPlanningUnitDataDescription)
+        self.labelAddDataInfo = QtGui.QLabel()
+        self.labelAddDataInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.layoutAddDataInfo.addWidget(self.labelAddDataInfo)
         
         self.layoutButtonAddData = QtGui.QHBoxLayout()
+        self.layoutButtonAddData.setContentsMargins(0, 0, 0, 0)
+        self.layoutButtonAddData.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.buttonAddDataRow = QtGui.QPushButton()
+        self.buttonAddDataRow.setText('Add Data')
+        self.buttonAddDataRow.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
+        self.layoutButtonAddData.addWidget(self.buttonAddDataRow)
+        
+        self.layoutContentAddData = QtGui.QVBoxLayout()
+        self.layoutContentAddData.setContentsMargins(5, 5, 5, 5)
+        self.contentAddData = QtGui.QWidget()
+        self.contentAddData.setLayout(self.layoutContentAddData)
+        self.scrollAddData = QtGui.QScrollArea()
+        self.scrollAddData.setWidgetResizable(True);
+        self.scrollAddData.setWidget(self.contentAddData)
+        self.layoutTableAddData = QtGui.QVBoxLayout()
+        self.layoutTableAddData.setAlignment(QtCore.Qt.AlignTop)
+        self.layoutContentAddData.addLayout(self.layoutTableAddData)
+        
+        self.layoutAddData.addLayout(self.layoutButtonAddData)
+        self.layoutAddData.addWidget(self.scrollAddData)
+        
+        self.layoutButtonProcessAddData = QtGui.QHBoxLayout()
         self.buttonProcessAddData = QtGui.QPushButton()
         self.buttonProcessAddData.setText('&Process')
-        self.layoutButtonAddData.setAlignment(QtCore.Qt.AlignRight)
-        self.layoutButtonAddData.addWidget(self.buttonProcessAddData)
+        self.layoutButtonProcessAddData.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonProcessAddData.addWidget(self.buttonProcessAddData)
         
-        self.dialogLayout.addWidget(self.groupBoxAddLandUseCoverData)
-        self.dialogLayout.addWidget(self.groupBoxAddPeatData)
-        self.dialogLayout.addWidget(self.groupBoxAddFactorData)
-        self.dialogLayout.addWidget(self.groupBoxAddPlanningUnitData)
-        self.dialogLayout.addLayout(self.layoutButtonAddData)
+        self.dialogLayout.addWidget(self.groupBoxAddData)
+        self.dialogLayout.addLayout(self.layoutButtonProcessAddData)
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -287,106 +102,100 @@ class DialogLumensAddData(QtGui.QDialog):
         super(DialogLumensAddData, self).closeEvent(event)
     
     
-    #***********************************************************
-    # 'Add Data' QGroupBox toggle handlers
-    #***********************************************************
-    def toggleAddLandUseCoverData(self, checked):
+    def clearLayout(self, layout):
+        """Clear a layout and all its child widgets
         """
-        """
-        if checked:
-            self.contentOptionsAddLandUseCoverData.setEnabled(True)
-        else:
-            self.contentOptionsAddLandUseCoverData.setDisabled(True)
+        for i in reversed(range(layout.count())):
+            item = layout.itemAt(i)
+
+            if isinstance(item, QtGui.QWidgetItem):
+                item.widget().deleteLater() # use this to properly delete the widget
+            elif isinstance(item, QtGui.QSpacerItem):
+                pass
+            else:
+                self.clearLayout(item.layout())
+            
+            layout.removeItem(item)
     
     
-    def toggleAddPeatData(self, checked):
+    def addDataRow(self):
+        """Add a data row
         """
-        """
-        if checked:
-            self.contentOptionsAddPeatData.setEnabled(True)
-        else:
-            self.contentOptionsAddPeatData.setDisabled(True)
-    
-    
-    def toggleAddFactorData(self, checked):
-        """
-        """
-        if checked:
-            self.contentOptionsAddFactorData.setEnabled(True)
-        else:
-            self.contentOptionsAddFactorData.setDisabled(True)
-    
-    
-    def toggleAddPlanningUnitData(self, checked):
-        """
-        """
-        if checked:
-            self.contentOptionsAddPlanningUnitData.setEnabled(True)
-        else:
-            self.contentOptionsAddPlanningUnitData.setDisabled(True)
+        self.tableAddDataRowCount = self.tableAddDataRowCount + 1
+        
+        layoutDataRow = QtGui.QHBoxLayout()
+        
+        buttonDeleteDataRow = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionClear.png')
+        buttonDeleteDataRow.setIcon(icon)
+        buttonDeleteDataRow.setObjectName('buttonDeleteDataRow_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(buttonDeleteDataRow)
+        
+        comboBoxDataType = QtGui.QComboBox()
+        comboBoxDataType.addItems(['Land Use/Cover', 'Planning Unit', 'Factor'])
+        comboBoxDataType.setObjectName('comboBoxDataType_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(comboBoxDataType)
+        
+        lineEditDataFile = QtGui.QLineEdit()
+        lineEditDataFile.setReadOnly(True)
+        lineEditDataFile.setObjectName('lineEditDataFile_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(lineEditDataFile)
+        
+        buttonSelectDataFile = QtGui.QPushButton()
+        buttonSelectDataFile.setText('Select File')
+        buttonSelectDataFile.setObjectName('buttonSelectDataFile_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(buttonSelectDataFile)
+        
+        spinBoxDataPeriod = QtGui.QSpinBox()
+        spinBoxDataPeriod.setRange(1, 9999)
+        td = datetime.date.today()
+        spinBoxDataPeriod.setValue(td.year)
+        spinBoxDataPeriod.setObjectName('spinBoxDataPeriod_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(spinBoxDataPeriod)
+        
+        lineEditDataDescription = QtGui.QLineEdit()
+        lineEditDataDescription.setText('description')
+        lineEditDataDescription.setObjectName('lineEditDataDescription_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(lineEditDataDescription)
+        
+        self.layoutTableAddData.addLayout(layoutDataRow)
+        
+        buttonSelectDataFile.clicked.connect(self.handlerSelectDataFile)
+        buttonDeleteDataRow.clicked.connect(self.handlerDeleteDataRow)
     
     
     #***********************************************************
     # 'Add Data' QPushButton handlers
     #***********************************************************
-    def handlerSelectAddLandUseCoverDataRasterfile(self):
-        """Select a raster file
+    def handlerButtonAddDataRow(self):
         """
-        rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Vector/Raster File', QtCore.QDir.homePath(), 'Vector/Raster File (*{0} *{1})'.format(self.main.appSettings['selectShapefileExt'], self.main.appSettings['selectRasterfileExt'])))
-        
-        if rasterfile:
-            self.lineEditAddLandUseCoverDataRasterfile.setText(rasterfile)
-            
-            logging.getLogger(type(self).__name__).info('select vector/raster file: %s', rasterfile)
-    
-    
-    def handlerSelectAddPeatDataRasterfile(self):
-        """Select a raster file
         """
-        rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Raster File', QtCore.QDir.homePath(), 'Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
-        
-        if rasterfile:
-            self.lineEditAddPeatDataRasterfile.setText(rasterfile)
-            
-            logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
+        self.addDataRow()
     
     
-    def handlerSelectAddFactorDataRasterfile(self):
-        """Select a raster file
+    def handlerSelectDataFile(self):
         """
-        rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Raster File', QtCore.QDir.homePath(), 'Raster File (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
-        
-        if rasterfile:
-            self.lineEditAddFactorDataRasterfile.setText(rasterfile)
-            
-            logging.getLogger(type(self).__name__).info('select rasterfile: %s', rasterfile)
-    
-    
-    def handlerSelectAddPlanningUnitRasterfile(self):
-        """Select a raster file
         """
-        rasterfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Vector/Raster File', QtCore.QDir.homePath(), 'Vector/Raster File (*{0} *{1})'.format(self.main.appSettings['selectShapefileExt'], self.main.appSettings['selectRasterfileExt'])))
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select File', QtCore.QDir.homePath(), 'File (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
         
-        if rasterfile:
-            self.lineEditAddPlanningUnitDataRasterfile.setText(rasterfile)
+        if file:        
+            buttonSender = self.sender()
+            objectName = buttonSender.objectName()
+            tableRow = objectName.split('_')[1]
             
-            logging.getLogger(type(self).__name__).info('select vector/raster file: %s', rasterfile)
+            lineEditDataFile = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataFile_' + tableRow)
+            lineEditDataFile.setText(file)
     
     
-    def handlerSelectAddPlanningUnitCsvfile(self):
-        """Select a csv file
+    def handlerDeleteDataRow(self):
         """
-        csvfile = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Lookup Table', QtCore.QDir.homePath(), 'Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
-        
-        if csvfile:
-            self.lineEditAddPlanningUnitDataCsvfile.setText(csvfile)
-            
-            logging.getLogger(type(self).__name__).info('select csvfile: %s', csvfile)
+        """
+        buttonSender = self.sender()
+        objectName = buttonSender.objectName()
+        tableRow = objectName.split('_')[1]
+        layoutRow = self.layoutTableAddData.itemAt(int(tableRow) - 1).layout()
+        self.clearLayout(layoutRow)
     
     
     #***********************************************************
@@ -395,53 +204,51 @@ class DialogLumensAddData(QtGui.QDialog):
     def setAppSettings(self):
         """Set the required values from the form widgets
         """
-        # 'Land use/cover data' groupbox fields
-        self.main.appSettings['DialogLumensAddLandcoverRaster']['rasterfile'] \
-            = unicode(self.lineEditAddLandUseCoverDataRasterfile.text())
-        self.main.appSettings['DialogLumensAddLandcoverRaster']['period'] \
-            = self.spinBoxAddLandUseCoverDataPeriod.value()
-        self.main.appSettings['DialogLumensAddLandcoverRaster']['description'] \
-            = unicode(self.lineEditAddLandUseCoverDataDescription.text())
+        completeData = True
+        self.tableAddData = []
         
-        # 'Peat data' groupbox fields
-        self.main.appSettings['DialogLumensAddPeatData']['rasterfile'] \
-            = unicode(self.lineEditAddPeatDataRasterfile.text())
-        self.main.appSettings['DialogLumensAddPeatData']['description'] \
-            = unicode(self.lineEditAddPeatDataDescription.text())
-        
-        # 'Factor data' groupbox fields
-        self.main.appSettings['DialogLumensAddFactorData']['rasterfile'] \
-            = unicode(self.lineEditAddFactorDataRasterfile.text())
-        self.main.appSettings['DialogLumensAddFactorData']['description'] \
-            = unicode(self.lineEditAddFactorDataDescription.text())
-        
-        # 'Planning unit data' groupbox fields
-        self.main.appSettings['DialogLumensAddPlanningUnitData']['rasterfile'] \
-            = unicode(self.lineEditAddPlanningUnitDataRasterfile.text())
-        self.main.appSettings['DialogLumensAddPlanningUnitData']['csvfile'] \
-            = unicode(self.lineEditAddPlanningUnitDataCsvfile.text())
-        self.main.appSettings['DialogLumensAddPlanningUnitData']['description'] \
-            = unicode(self.lineEditAddPlanningUnitDataDescription.text())
-        
-    
-    def validForm(self, formName):
-        """
-        """
-        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
-        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
-        
-        valid = True
-        
-        for key, val in self.main.appSettings[formName].iteritems():
-            if val == 0: # for values set specific to 0
+        for tableRow in range(1, self.tableAddDataRowCount + 1):
+            lineEditDataFile = self.findChild(QtGui.QLineEdit, 'lineEditDataFile_' + str(tableRow))
+            
+            if not lineEditDataFile: # Row has been deleted
+                print 'DEBUG: skipping a deleted row.'
                 continue
-            elif not val:
-                valid = False
+            
+            comboBoxDataType = self.findChild(QtGui.QComboBox, 'comboBoxDataType_' + str(tableRow))
+            spinBoxDataPeriod = self.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + str(tableRow))
+            lineEditDataDescription = self.findChild(QtGui.QLineEdit, 'lineEditDataDescription_' + str(tableRow))
+            
+            dataFile = unicode(lineEditDataFile.text())
+            dataType = unicode(comboBoxDataType.currentText())
+            dataPeriod = spinBoxDataPeriod.value()
+            dataDescription = unicode(lineEditDataDescription.text())
+            
+            if dataFile and dataType and dataPeriod and dataDescription:
+                if dataType == 'Land Use/Cover':
+                    dataType = 0
+                elif dataType == 'Planning Unit':
+                    dataType = 1
+                elif dataType == 'Factor':
+                    dataType = 2
+                else:
+                    dataType = 0
+                
+                tableRowData = {
+                    'dataFile': dataFile,
+                    'dataType': dataType,
+                    'dataPeriod': dataPeriod,
+                    'dataDescription': dataDescription,
+                }
+                
+                self.tableAddData.append(tableRowData)
+            else:
+                completeData = False
         
-        if not valid:
+        if not len(self.tableAddData):
+            completeData = False
             QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
         
-        return valid
+        return completeData
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
@@ -464,135 +271,46 @@ class DialogLumensAddData(QtGui.QDialog):
     def handlerProcessAddData(self):
         """
         """
-        self.setAppSettings()
+        completeData = self.setAppSettings()
         
-        if self.checkBoxAddLandUseCoverData.isChecked():
-            formName = 'DialogLumensAddLandcoverRaster'
-            algName = 'modeler:lumens_add_landcover_raster'
+        if completeData:
+            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
+            self.buttonProcessAddData.setDisabled(True)
             
-            if self.validForm(formName):
-                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                self.buttonProcessAddData.setDisabled(True)
-                
-                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
-                self.main.setWindowState(QtCore.Qt.WindowMinimized)
+            algName = None
+            outputs = None
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
+            
+            for tableRowData in self.tableAddData:
+                # The algName to be used depends on the type of the dataFile (vector or raster)
+                algName = 'r:lumensaddrasterdata1'
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['rasterfile'],
-                    self.main.appSettings[formName]['period'],
-                    self.main.appSettings[formName]['description'],
+                    tableRowData['dataType'],
+                    tableRowData['dataFile'],
+                    tableRowData['dataPeriod'],
+                    tableRowData['dataDescription'],
+                    None,
+                    None,
+                    None,
                 )
+                
+                print 'DEBUG'
+                print outputs
                 
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:
                     dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
                     dialog.exec_()
-                
-                ##print outputs
-                
-                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
-                self.main.setWindowState(QtCore.Qt.WindowActive)
-                
-                self.outputsMessageBox(algName, outputs, '', '')
-                
-                self.buttonProcessAddData.setEnabled(True)
-                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-        
-        if self.checkBoxAddPeatData.isChecked():
-            formName = 'DialogLumensAddPeatData'
-            algName = 'modeler:lumens_add_peat'
             
-            if self.validForm(formName):
-                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                self.buttonProcessAddData.setDisabled(True)
-                
-                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
-                self.main.setWindowState(QtCore.Qt.WindowMinimized)
-                
-                outputs = general.runalg(
-                    algName,
-                    self.main.appSettings[formName]['rasterfile'],
-                    self.main.appSettings[formName]['description'],
-                )
-                
-                # Display ROut file in debug mode
-                if self.main.appSettings['debug']:
-                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
-                    dialog.exec_()
-                
-                ##print outputs
-                
-                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
-                self.main.setWindowState(QtCore.Qt.WindowActive)
-                
-                self.outputsMessageBox(algName, outputs, '', '')
-                
-                self.buttonProcessAddData.setEnabled(True)
-                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-        
-        if self.checkBoxAddFactorData.isChecked():
-            formName = 'DialogLumensAddFactorData'
-            algName = 'modeler:lumens_add_factor_data'
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            if self.validForm(formName):
-                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                self.buttonProcessAddData.setDisabled(True)
-                
-                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
-                self.main.setWindowState(QtCore.Qt.WindowMinimized)
-                
-                outputs = general.runalg(
-                    algName,
-                    self.main.appSettings[formName]['rasterfile'],
-                    self.main.appSettings[formName]['description'],
-                )
-                
-                # Display ROut file in debug mode
-                if self.main.appSettings['debug']:
-                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
-                    dialog.exec_()
-                
-                ##print outputs
-                
-                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
-                self.main.setWindowState(QtCore.Qt.WindowActive)
-                
-                self.outputsMessageBox(algName, outputs, '', '')
-                
-                self.buttonProcessAddData.setEnabled(True)
-                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-        
-        if self.checkBoxAddPlanningUnitData.isChecked():
-            formName = 'DialogLumensAddPlanningUnitData'
-            algName = 'modeler:lumens_add_planning_unit'
+            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
             
-            if self.validForm(formName):
-                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                self.buttonProcessAddData.setDisabled(True)
-                
-                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
-                self.main.setWindowState(QtCore.Qt.WindowMinimized)
-                
-                outputs = general.runalg(
-                    algName,
-                    self.main.appSettings[formName]['rasterfile'],
-                    self.main.appSettings[formName]['csvfile'],
-                    self.main.appSettings[formName]['description'],
-                )
-                
-                # Display ROut file in debug mode
-                if self.main.appSettings['debug']:
-                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
-                    dialog.exec_()
-                
-                ##print outputs
-                
-                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
-                self.main.setWindowState(QtCore.Qt.WindowActive)
-                
-                self.outputsMessageBox(algName, outputs, '', '')
-                
-                self.buttonProcessAddData.setEnabled(True)
-                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-        
+            self.buttonProcessAddData.setEnabled(True)
+            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
+            

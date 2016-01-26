@@ -14,10 +14,6 @@ QgsApplication.initQgis()
 
 app = QtGui.QApplication(sys.argv)
 
-##splashLabel = QtGui.QLabel('<font color=blue size=72><b>{0}</b></font>'.format('Loading'))
-##splashLabel.setWindowFlags(QtCore.Qt.SplashScreen|QtCore.Qt.WindowStaysOnTopHint)
-##splashLabel.show()
-
 splashImage = QtGui.QPixmap('ui/images/splash.png')
 splashScreen = QtGui.QSplashScreen(splashImage, QtCore.Qt.WindowStaysOnTopHint)
 splashScreen.setMask(splashImage.mask())
@@ -42,72 +38,20 @@ ProcessingConfig.setSettingValue('R_SCRIPTS_FOLDER', os.environ['RSCRIPTS'])
 Processing.initialize()
 from processing.tools import *
 
-##splashLabel.close()
-
 from utils import QPlainTextEditLogger, DetailedMessageBox
-from dialog_layer_attribute_table import DialogLayerAttributeTable
-from dialog_feature_selectexpression import DialogFeatureSelectExpression
 from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
 from dialog_layer_properties import DialogLayerProperties
 from dialog_lumens_viewer import DialogLumensViewer
 
 from dialog_lumens_createdatabase import DialogLumensCreateDatabase
-from dialog_lumens_opendatabase import DialogLumensOpenDatabase
 from dialog_lumens_importdatabase import DialogLumensImportDatabase
 from dialog_lumens_adddata import DialogLumensAddData
-from dialog_lumens_adddata1 import DialogLumensAddData1
-
-from dialog_lumens_addlandcoverraster import DialogLumensAddLandcoverRaster
-from dialog_lumens_addpeatdata import DialogLumensAddPeatData
-from dialog_lumens_addfactordata import DialogLumensAddFactorData
-from dialog_lumens_addplanningunitdata import DialogLumensAddPlanningUnitData
 
 from dialog_lumens_pur import DialogLumensPUR
-
-from dialog_lumens_pur_createreferencedata import DialogLumensPURCreateReferenceData
-from dialog_lumens_pur_prepareplanningunit import DialogLumensPURPreparePlanningUnit
-from dialog_lumens_pur_reconcileplanningunit import DialogLumensPURReconcilePlanningUnit
-from dialog_lumens_pur_finalization import DialogLumensPURFinalization
-from dialog_lumens_preques_landcoverchangeanalysis import DialogLumensPreQUESLandcoverChangeAnalysis
-from dialog_lumens_preques_landcovertrajectoriesanalysis import DialogLumensPreQUESLandcoverTrajectoriesAnalysis
-
 from dialog_lumens_ques import DialogLumensQUES
-
-from dialog_lumens_quesc_carbonaccounting import DialogLumensQUESCCarbonAccounting
-from dialog_lumens_quesc_peatlandcarbonaccounting import DialogLumensQUESCPeatlandCarbonAccounting
-from dialog_lumens_quesc_summarizemultipleperiod import DialogLumensQUESCSummarizeMultiplePeriod
-from dialog_lumens_quesb_analysis import DialogLumensQUESBAnalysis
-from dialog_lumens_quesh_watershedmodelevaluation import DialogLumensQUESHWatershedModelEvaluation
-from dialog_lumens_quesh_watershedindicators import DialogLumensQUESHWatershedIndicators
-from dialog_lumens_quesh_dominanthru import DialogLumensQUESHDominantHRU
-from dialog_lumens_quesh_multiplehru import DialogLumensQUESHMultipleHRU
-from dialog_lumens_quesh_dominantlussl import DialogLumensQUESHDominantLUSSL
-
 from dialog_lumens_ta_opportunitycost import DialogLumensTAOpportunityCost
 from dialog_lumens_ta_regionaleconomy import DialogLumensTARegionalEconomy
-
-from dialog_lumens_ta_abacusopportunitycostcurve import DialogLumensTAAbacusOpportunityCostCurve
-from dialog_lumens_ta_opportunitycostcurve import DialogLumensTAOpportunityCostCurve
-from dialog_lumens_ta_opportunitycostmap import DialogLumensTAOpportunityCostMap
-from dialog_lumens_ta_resioda import DialogLumensTARegionalEconomySingleIODescriptiveAnalysis
-from dialog_lumens_ta_retsioda import DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis
-from dialog_lumens_ta_landdistribreq import DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis
-from dialog_lumens_ta_impactlanduse import DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis
-from dialog_lumens_ta_finaldemandscenario import DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis
-from dialog_lumens_ta_gdpscenario import DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis
-
 from dialog_lumens_sciendo import DialogLumensSCIENDO
-
-from dialog_lumens_sciendo_driversanalysis import DialogLumensSCIENDODriversAnalysis
-from dialog_lumens_sciendo_buildscenario import DialogLumensSCIENDOBuildScenario
-from dialog_lumens_sciendo_historicalbaselineproj import DialogLumensSCIENDOHistoricalBaselineProjection
-from dialog_lumens_sciendo_historicalbaselineannualproj import DialogLumensSCIENDOHistoricalBaselineAnnualProjection
-from dialog_lumens_sciendo_calctransitionmatrix import DialogLumensSCIENDOCalculateTransitionMatrix
-from dialog_lumens_sciendo_createrastercube import DialogLumensSCIENDOCreateRasterCube
-from dialog_lumens_sciendo_calcweightevidence import DialogLumensSCIENDOCalculateWeightofEvidence
-from dialog_lumens_sciendo_simulatelandusechange import DialogLumensSCIENDOSimulateLandUseChange
-from dialog_lumens_sciendo_simulatewithscenario import DialogLumensSCIENDOSimulateWithScenario
-from dialog_lumens_tools_reddabacussp import DialogLumensToolsREDDAbacusSP
 
 
 #############################################################################
@@ -152,7 +96,7 @@ class MainWindow(QtGui.QMainWindow):
             'acceptedWebFormats': ('.html', '.htm'),
             'acceptedSpatialFormats': ('.shp', '.tif'),
             
-            'DialogFeatureSelectExpression': {
+            'DialogFeatureSelectExpression': { # OBSOLETE
                 'expression': '',
             },
             'DialogLumensCreateDatabase': {
@@ -166,7 +110,7 @@ class MainWindow(QtGui.QMainWindow):
                 'projectCountry': '',
                 'projectSpatialRes': '',
             },
-            'DialogLumensOpenDatabase': {
+            'DialogLumensOpenDatabase': { # OBSOLETE
                 'projectFile': '',
                 'projectFolder': '',
             },
@@ -457,7 +401,7 @@ class MainWindow(QtGui.QMainWindow):
                 'baseYear': '',
                 'location': '',
             },
-            'DialogLumensToolsREDDAbacusSP': {
+            'DialogLumensToolsREDDAbacusSP': { # OBSOLETE
                 'carfile': '',
             },
         }
@@ -570,64 +514,19 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensCloseDatabase.triggered.connect(self.handlerLumensCloseDatabase)
         self.actionLumensDatabaseStatus.triggered.connect(self.handlerLumensDatabaseStatus)
         self.actionDialogLumensAddData.triggered.connect(self.handlerDialogLumensAddData)
-        self.actionDialogLumensAddData1.triggered.connect(self.handlerDialogLumensAddData1)
-        
-        self.actionDialogLumensAddLandcoverRaster.triggered.connect(self.handlerDialogLumensAddLandcoverRaster)
-        self.actionDialogLumensAddPeatData.triggered.connect(self.handlerDialogLumensAddPeatData)
-        self.actionDialogLumensAddFactorData.triggered.connect(self.handlerDialogLumensAddFactorData)
-        self.actionDialogLumensAddPlanningUnitData.triggered.connect(self.handlerDialogLumensAddPlanningUnitData)
-        self.actionLumensDeleteData.triggered.connect(self.handlerLumensDeleteData)
-        self.actionDialogLumensImportDatabase.triggered.connect(self.handlerDialogLumensImportDatabase)
         
         # PUR menu
         self.actionDialogLumensPUR.triggered.connect(self.handlerDialogLumensPUR)
         
-        self.actionDialogLumensPURCreateReferenceData.triggered.connect(self.handlerDialogLumensPURCreateReferenceData)
-        self.actionDialogLumensPURPreparePlanningUnit.triggered.connect(self.handlerDialogLumensPURPreparePlanningUnit)
-        self.actionDialogLumensPURReconcilePlanningUnit.triggered.connect(self.handlerDialogLumensPURReconcilePlanningUnit)
-        self.actionDialogLumensPURFinalization.triggered.connect(self.handlerDialogLumensPURFinalization)
-        
         # QUES menu
         self.actionDialogLumensQUES.triggered.connect(self.handlerDialogLumensQUES)
-        
-        self.actionDialogLumensPreQUESLandcoverChangeAnalysis.triggered.connect(self.handlerDialogLumensPreQUESLandcoverChangeAnalysis)
-        self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.triggered.connect(self.handlerDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
-        self.actionDialogLumensQUESCCarbonAccounting.triggered.connect(self.handlerDialogLumensQUESCCarbonAccounting)
-        self.actionDialogLumensQUESCPeatlandCarbonAccounting.triggered.connect(self.handlerDialogLumensQUESCPeatlandCarbonAccounting)
-        self.actionDialogLumensQUESCSummarizeMultiplePeriod.triggered.connect(self.handlerDialogLumensQUESCSummarizeMultiplePeriod)
-        self.actionDialogLumensQUESBAnalysis.triggered.connect(self.handlerDialogLumensQUESBAnalysis)
-        self.actionDialogLumensQUESHWatershedModelEvaluation.triggered.connect(self.handlerDialogLumensQUESHWatershedModelEvaluation)
-        self.actionDialogLumensQUESHWatershedIndicators.triggered.connect(self.handlerDialogLumensQUESHWatershedIndicators)
-        self.actionDialogLumensQUESHDominantHRU.triggered.connect(self.handlerDialogLumensQUESHDominantHRU)
-        self.actionDialogLumensQUESHDominantLUSSL.triggered.connect(self.handlerDialogLumensQUESHDominantLUSSL)
-        self.actionDialogLumensQUESHMultipleHRU.triggered.connect(self.handlerDialogLumensQUESHMultipleHRU)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost.triggered.connect(self.handlerDialogLumensTAOpportunityCost)
         self.actionDialogLumensTARegionalEconomy.triggered.connect(self.handlerDialogLumensTARegionalEconomy)
         
-        self.actionDialogLumensTAAbacusOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAAbacusOpportunityCostCurve)
-        self.actionDialogLumensTAOpportunityCostCurve.triggered.connect(self.handlerDialogLumensTAOpportunityCostCurve)
-        self.actionDialogLumensTAOpportunityCostMap.triggered.connect(self.handlerDialogLumensTAOpportunityCostMap)
-        self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
-        self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
-        self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
-        self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.triggered.connect(self.handlerDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
-        self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
-        self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.triggered.connect(self.handlerDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
-        
         # SCIENDO menu
         self.actionDialogLumensSCIENDO.triggered.connect(self.handlerDialogLumensSCIENDO)
-        
-        self.actionDialogLumensSCIENDODriversAnalysis.triggered.connect(self.handlerDialogLumensSCIENDODriversAnalysis)
-        self.actionDialogLumensSCIENDOBuildScenario.triggered.connect(self.handlerDialogLumensSCIENDOBuildScenario)
-        self.actionDialogLumensSCIENDOHistoricalBaselineProjection.triggered.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineProjection)
-        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection.triggered.connect(self.handlerDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
-        self.actionDialogLumensSCIENDOCalculateTransitionMatrix.triggered.connect(self.handlerDialogLumensSCIENDOCalculateTransitionMatrix)
-        self.actionDialogLumensSCIENDOCreateRasterCube.triggered.connect(self.handlerDialogLumensSCIENDOCreateRasterCube)
-        self.actionDialogLumensSCIENDOCalculateWeightofEvidence.triggered.connect(self.handlerDialogLumensSCIENDOCalculateWeightofEvidence)
-        self.actionDialogLumensSCIENDOSimulateLandUseChange.triggered.connect(self.handlerDialogLumensSCIENDOSimulateLandUseChange)
-        self.actionDialogLumensSCIENDOSimulateWithScenario.triggered.connect(self.handlerDialogLumensSCIENDOSimulateWithScenario)
         
         # Dashboard tab QPushButtons
         self.buttonProcessPURTemplate.clicked.connect(self.handlerProcessPURTemplate)
@@ -643,9 +542,6 @@ class MainWindow(QtGui.QMainWindow):
         # About menu
         self.actionDialogLumensGuide.triggered.connect(self.handlerDialogLumensGuide)
         self.actionDialogLumensAbout.triggered.connect(self.handlerDialogLumensAbout)
-        
-        # Tools menu
-        self.actionDialogLumensToolsREDDAbacusSP.triggered.connect(self.handlerDialogLumensToolsREDDAbacusSP)
     
     
     def setupUi(self):
@@ -668,7 +564,6 @@ class MainWindow(QtGui.QMainWindow):
         self.taMenu = self.menubar.addMenu('&TA')
         self.sciendoMenu = self.menubar.addMenu('&SCIENDO')
         self.aboutMenu = self.menubar.addMenu('&About')
-        ###self.toolsMenu = self.menubar.addMenu('T&ools')
 
         self.toolBar = QtGui.QToolBar(self)
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
@@ -819,131 +714,38 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensCloseDatabase = QtGui.QAction('Close LUMENS database', self)
         self.actionLumensDatabaseStatus = QtGui.QAction('LUMENS database status', self)
         self.actionDialogLumensAddData = QtGui.QAction('Add data to LUMENS database', self)
-        self.actionDialogLumensAddData1 = QtGui.QAction('NEW! Add data to LUMENS database', self)
         self.actionLumensDeleteData = QtGui.QAction('Delete LUMENS data', self)
         self.actionDialogLumensImportDatabase = QtGui.QAction('Import LUMENS database', self)
-        
-        self.actionDialogLumensAddLandcoverRaster = QtGui.QAction('Add land use/cover data', self)
-        self.actionDialogLumensAddPeatData = QtGui.QAction('Add peat data', self)
-        self.actionDialogLumensAddFactorData = QtGui.QAction('Add factor data', self)
-        self.actionDialogLumensAddPlanningUnitData = QtGui.QAction('Add planning unit data', self)
         
         self.databaseMenu.addAction(self.actionDialogLumensCreateDatabase)
         self.databaseMenu.addAction(self.actionLumensOpenDatabase)
         self.databaseMenu.addAction(self.actionLumensCloseDatabase)
         self.databaseMenu.addAction(self.actionLumensDatabaseStatus)
         self.databaseMenu.addAction(self.actionDialogLumensAddData)
-        self.databaseMenu.addAction(self.actionDialogLumensAddData1)
-        ####self.addDataMenu = self.databaseMenu.addMenu('Add data to LUMENS database')
-        ####self.addDataMenu.addAction(self.actionDialogLumensAddLandcoverRaster)
-        ####self.addDataMenu.addAction(self.actionDialogLumensAddPeatData)
-        ####self.addDataMenu.addAction(self.actionDialogLumensAddFactorData)
-        ####self.addDataMenu.addAction(self.actionDialogLumensAddPlanningUnitData)
         self.databaseMenu.addAction(self.actionLumensDeleteData)
         self.databaseMenu.addAction(self.actionDialogLumensImportDatabase)
         
         # PUR menu
         self.actionDialogLumensPUR = QtGui.QAction('Planning Unit Reconciliation', self)
         
-        self.actionDialogLumensPURCreateReferenceData = QtGui.QAction('Create reference data', self)
-        self.actionDialogLumensPURPreparePlanningUnit = QtGui.QAction('Prepare planning unit', self)
-        self.actionDialogLumensPURReconcilePlanningUnit = QtGui.QAction('Reconcile planning unit', self)
-        self.actionDialogLumensPURFinalization = QtGui.QAction('Finalization', self)
-        
-        ####self.functionsBasedReconciliationMenu = self.purMenu.addMenu('Functions-based Reconciliation')
         self.purMenu.addAction(self.actionDialogLumensPUR)
-        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURCreateReferenceData)
-        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURPreparePlanningUnit)
-        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURReconcilePlanningUnit)
-        ####self.functionsBasedReconciliationMenu.addAction(self.actionDialogLumensPURFinalization)
         
         # QUES menu
         self.actionDialogLumensQUES = QtGui.QAction('Quantification Environmental Services', self)
         
-        self.actionDialogLumensPreQUESLandcoverChangeAnalysis = QtGui.QAction('Land cover change analysis', self)
-        self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis = QtGui.QAction('Land cover trajectories analysis', self)
-        self.actionDialogLumensQUESCCarbonAccounting = QtGui.QAction('Carbon accounting', self)
-        self.actionDialogLumensQUESCPeatlandCarbonAccounting = QtGui.QAction('Peatland carbon accounting', self)
-        self.actionDialogLumensQUESCSummarizeMultiplePeriod = QtGui.QAction('Summarize multiple period', self)
-        self.actionDialogLumensQUESBAnalysis = QtGui.QAction('QUES-B Analysis', self)
-        self.actionDialogLumensQUESHWatershedModelEvaluation = QtGui.QAction('Watershed model evaluation', self)
-        self.actionDialogLumensQUESHWatershedIndicators = QtGui.QAction('Watershed indicators', self)
-        self.actionDialogLumensQUESHDominantHRU = QtGui.QAction('Dominant HRU', self)
-        self.actionDialogLumensQUESHDominantLUSSL = QtGui.QAction('Dominant land use, soil, and slope', self)
-        self.actionDialogLumensQUESHMultipleHRU = QtGui.QAction('Multiple HRU', self)
-        
-        ####self.preQUESMenu = self.quesMenu.addMenu('Pre-QUES')
-        ####self.QUESCMenu = self.quesMenu.addMenu('QUES-C')
-        ####self.QUESBMenu = self.quesMenu.addMenu('QUES-B')
-        ####self.QUESHMenu = self.quesMenu.addMenu('QUES-H')
         self.quesMenu.addAction(self.actionDialogLumensQUES)
-        ####self.HRUDefMenu = self.QUESHMenu.addMenu('Hydrological Response Unit Definition')
-        ####self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverChangeAnalysis)
-        ####self.preQUESMenu.addAction(self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis)
-        ####self.QUESCMenu.addAction(self.actionDialogLumensQUESCCarbonAccounting)
-        ####self.QUESCMenu.addAction(self.actionDialogLumensQUESCPeatlandCarbonAccounting)
-        ####self.QUESCMenu.addAction(self.actionDialogLumensQUESCSummarizeMultiplePeriod)
-        ####self.QUESBMenu.addAction(self.actionDialogLumensQUESBAnalysis)
-        ####self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedModelEvaluation)
-        ####self.QUESHMenu.addAction(self.actionDialogLumensQUESHWatershedIndicators)
-        ####self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantHRU)
-        ####self.HRUDefMenu.addAction(self.actionDialogLumensQUESHDominantLUSSL)
-        ####self.HRUDefMenu.addAction(self.actionDialogLumensQUESHMultipleHRU)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost = QtGui.QAction('Trade-off Analysis [Opportunity Cost]', self)
         self.actionDialogLumensTARegionalEconomy = QtGui.QAction('Trade-off Analysis [Regional Economy]', self)
         
-        self.actionDialogLumensTAAbacusOpportunityCostCurve = QtGui.QAction('Abacus opportunity cost curve', self)
-        self.actionDialogLumensTAOpportunityCostCurve = QtGui.QAction('Opportunity cost curve', self)
-        self.actionDialogLumensTAOpportunityCostMap = QtGui.QAction('Opportunity cost map', self)
-        self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis = QtGui.QAction('Descriptive analysis of regional economy (single time series)', self)
-        self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis = QtGui.QAction('Descriptive analysis of regional economy (multiple time series)', self)
-        self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis = QtGui.QAction('Land requirement analysis', self)
-        self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis = QtGui.QAction('Impact of land use change to regional economy', self)
-        self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis = QtGui.QAction('Impact of regional economic scenario to land use change (final demand scenario)', self)
-        self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis = QtGui.QAction('Impact of regional economic scenario to land use change (GDP scenario)', self)
-        
-        ####self.opportunityCostMenu = self.taMenu.addMenu('Opportunity cost')
-        ####self.regionalEconomyMenu = self.taMenu.addMenu('Regional economy')
         self.taMenu.addAction(self.actionDialogLumensTAOpportunityCost)
         self.taMenu.addAction(self.actionDialogLumensTARegionalEconomy)
-        ####self.opportunityCostMenu.addAction(self.actionDialogLumensTAAbacusOpportunityCostCurve)
-        ####self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostCurve)
-        ####self.opportunityCostMenu.addAction(self.actionDialogLumensTAOpportunityCostMap)
-        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
-        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
-        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
-        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
-        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
-        ####self.regionalEconomyMenu.addAction(self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
         
         # SCIENDO menu
         self.actionDialogLumensSCIENDO = QtGui.QAction('SCIENDO', self)
         
-        self.actionDialogLumensSCIENDODriversAnalysis = QtGui.QAction('Drivers analysis', self)
-        self.actionDialogLumensSCIENDOBuildScenario = QtGui.QAction('Build scenario', self)
-        self.actionDialogLumensSCIENDOHistoricalBaselineProjection = QtGui.QAction('Historical baseline projection', self)
-        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection = QtGui.QAction('Historical baseline annual projection', self)
-        self.actionDialogLumensSCIENDOCalculateTransitionMatrix = QtGui.QAction('Calculate transition matrix', self)
-        self.actionDialogLumensSCIENDOCreateRasterCube = QtGui.QAction('Create raster cube of factors', self)
-        self.actionDialogLumensSCIENDOCalculateWeightofEvidence = QtGui.QAction('Calculate weight of evidence', self)
-        self.actionDialogLumensSCIENDOSimulateLandUseChange = QtGui.QAction('Simulate land use change', self)
-        self.actionDialogLumensSCIENDOSimulateWithScenario = QtGui.QAction('Simulate with scenario', self)
-        
-        ####self.lowEmissionDevelopmentMenu = self.sciendoMenu.addMenu('Low emission development analysis')
-        ####self.landUseChangeModelingMenu = self.sciendoMenu.addMenu('Land use change modeling')
         self.sciendoMenu.addAction(self.actionDialogLumensSCIENDO)
-        ####self.historicalBaselineMenu = self.lowEmissionDevelopmentMenu.addMenu('Historical baseline')
-        ####self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineProjection)
-        ####self.historicalBaselineMenu.addAction(self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection)
-        ####self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDODriversAnalysis)
-        ####self.lowEmissionDevelopmentMenu.addAction(self.actionDialogLumensSCIENDOBuildScenario)
-        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateTransitionMatrix)
-        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCreateRasterCube)
-        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOCalculateWeightofEvidence)
-        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateLandUseChange)
-        ####self.landUseChangeModelingMenu.addAction(self.actionDialogLumensSCIENDOSimulateWithScenario)
         
         # About menu
         icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
@@ -953,11 +755,6 @@ class MainWindow(QtGui.QMainWindow):
         self.aboutMenu.addAction(self.actionDialogLumensGuide)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.actionDialogLumensAbout)
-        
-        # Tools menu
-        self.actionDialogLumensToolsREDDAbacusSP = QtGui.QAction('REDD Abacus SP', self)
-        
-        ###self.toolsMenu.addAction(self.actionDialogLumensToolsREDDAbacusSP)
         
         # Create the app window layouts
         self.layoutActiveProject = QtGui.QHBoxLayout()
@@ -1756,8 +1553,7 @@ class MainWindow(QtGui.QMainWindow):
 
         self.infoTool = InfoTool(self)
         self.infoTool.setAction(self.actionInfo)
-
-        self.setMinimumSize(1024, 600)
+        
         self.resize(self.sizeHint())
     
     
@@ -1875,62 +1671,19 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensDatabaseStatus.setEnabled(True)
         self.actionLumensDeleteData.setEnabled(True)
         self.actionDialogLumensAddData.setEnabled(True)
-        self.actionDialogLumensAddData1.setEnabled(True)
-        
-        self.actionDialogLumensAddLandcoverRaster.setEnabled(True)
-        self.actionDialogLumensAddPeatData.setEnabled(True)
-        self.actionDialogLumensAddFactorData.setEnabled(True)
-        self.actionDialogLumensAddPlanningUnitData.setEnabled(True)
         
         # PUR menu
         self.actionDialogLumensPUR.setEnabled(True)
         
-        self.actionDialogLumensPURCreateReferenceData.setEnabled(True)
-        self.actionDialogLumensPURPreparePlanningUnit.setEnabled(True)
-        self.actionDialogLumensPURReconcilePlanningUnit.setEnabled(True)
-        self.actionDialogLumensPURFinalization.setEnabled(True)
-        
         # QUES menu
         self.actionDialogLumensQUES.setEnabled(True)
-        
-        self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setEnabled(True)
-        self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setEnabled(True)
-        self.actionDialogLumensQUESCCarbonAccounting.setEnabled(True)
-        self.actionDialogLumensQUESCPeatlandCarbonAccounting.setEnabled(True)
-        self.actionDialogLumensQUESCSummarizeMultiplePeriod.setEnabled(True)
-        self.actionDialogLumensQUESBAnalysis.setEnabled(True)
-        self.actionDialogLumensQUESHWatershedModelEvaluation.setEnabled(True)
-        self.actionDialogLumensQUESHWatershedIndicators.setEnabled(True)
-        self.actionDialogLumensQUESHDominantHRU.setEnabled(True)
-        self.actionDialogLumensQUESHDominantLUSSL.setEnabled(True)
-        self.actionDialogLumensQUESHMultipleHRU.setEnabled(True)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost.setEnabled(True)
         self.actionDialogLumensTARegionalEconomy.setEnabled(True)
         
-        self.actionDialogLumensTAAbacusOpportunityCostCurve.setEnabled(True)
-        self.actionDialogLumensTAOpportunityCostCurve.setEnabled(True)
-        self.actionDialogLumensTAOpportunityCostMap.setEnabled(True)
-        self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setEnabled(True)
-        self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setEnabled(True)
-        self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setEnabled(True)
-        self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setEnabled(True)
-        self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setEnabled(True)
-        self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setEnabled(True)
-        
         # SCIENDO menu
         self.actionDialogLumensSCIENDO.setEnabled(True)
-        
-        self.actionDialogLumensSCIENDODriversAnalysis.setEnabled(True)
-        self.actionDialogLumensSCIENDOBuildScenario.setEnabled(True)
-        self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setEnabled(True)
-        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection.setEnabled(True)
-        self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setEnabled(True)
-        self.actionDialogLumensSCIENDOCreateRasterCube.setEnabled(True)
-        self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setEnabled(True)
-        self.actionDialogLumensSCIENDOSimulateLandUseChange.setEnabled(True)
-        self.actionDialogLumensSCIENDOSimulateWithScenario.setEnabled(True)
     
     
     def lumensDisableMenus(self):
@@ -1939,63 +1692,20 @@ class MainWindow(QtGui.QMainWindow):
         # Database menu
         self.actionLumensDatabaseStatus.setDisabled(True)
         self.actionDialogLumensAddData.setDisabled(True)
-        self.actionDialogLumensAddData1.setDisabled(True)
         self.actionLumensDeleteData.setDisabled(True)
-        
-        self.actionDialogLumensAddLandcoverRaster.setDisabled(True)
-        self.actionDialogLumensAddPeatData.setDisabled(True)
-        self.actionDialogLumensAddFactorData.setDisabled(True)
-        self.actionDialogLumensAddPlanningUnitData.setDisabled(True)
         
         # PUR menu
         self.actionDialogLumensPUR.setDisabled(True)
         
-        self.actionDialogLumensPURCreateReferenceData.setDisabled(True)
-        self.actionDialogLumensPURPreparePlanningUnit.setDisabled(True)
-        self.actionDialogLumensPURReconcilePlanningUnit.setDisabled(True)
-        self.actionDialogLumensPURFinalization.setDisabled(True)
-        
         # QUES menu
         self.actionDialogLumensQUES.setDisabled(True)
-        
-        self.actionDialogLumensPreQUESLandcoverChangeAnalysis.setDisabled(True)
-        self.actionDialogLumensPreQUESLandcoverTrajectoriesAnalysis.setDisabled(True)
-        self.actionDialogLumensQUESCCarbonAccounting.setDisabled(True)
-        self.actionDialogLumensQUESCPeatlandCarbonAccounting.setDisabled(True)
-        self.actionDialogLumensQUESCSummarizeMultiplePeriod.setDisabled(True)
-        self.actionDialogLumensQUESBAnalysis.setDisabled(True)
-        self.actionDialogLumensQUESHWatershedModelEvaluation.setDisabled(True)
-        self.actionDialogLumensQUESHWatershedIndicators.setDisabled(True)
-        self.actionDialogLumensQUESHDominantHRU.setDisabled(True)
-        self.actionDialogLumensQUESHDominantLUSSL.setDisabled(True)
-        self.actionDialogLumensQUESHMultipleHRU.setDisabled(True)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost.setDisabled(True)
         self.actionDialogLumensTARegionalEconomy.setDisabled(True)
         
-        self.actionDialogLumensTAAbacusOpportunityCostCurve.setDisabled(True)
-        self.actionDialogLumensTAOpportunityCostCurve.setDisabled(True)
-        self.actionDialogLumensTAOpportunityCostMap.setDisabled(True)
-        self.actionDialogLumensTARegionalEconomySingleIODescriptiveAnalysis.setDisabled(True)
-        self.actionDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis.setDisabled(True)
-        self.actionDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis.setDisabled(True)
-        self.actionDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis.setDisabled(True)
-        self.actionDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis.setDisabled(True)
-        self.actionDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis.setDisabled(True)
-        
         # SCIENDO menu
         self.actionDialogLumensSCIENDO.setDisabled(True)
-        
-        self.actionDialogLumensSCIENDODriversAnalysis.setDisabled(True)
-        self.actionDialogLumensSCIENDOBuildScenario.setDisabled(True)
-        self.actionDialogLumensSCIENDOHistoricalBaselineProjection.setDisabled(True)
-        self.actionDialogLumensSCIENDOHistoricalBaselineAnnualProjection.setDisabled(True)
-        self.actionDialogLumensSCIENDOCalculateTransitionMatrix.setDisabled(True)
-        self.actionDialogLumensSCIENDOCreateRasterCube.setDisabled(True)
-        self.actionDialogLumensSCIENDOCalculateWeightofEvidence.setDisabled(True)
-        self.actionDialogLumensSCIENDOSimulateLandUseChange.setDisabled(True)
-        self.actionDialogLumensSCIENDOSimulateWithScenario.setDisabled(True)
     
     
     def loadModuleTemplates(self):
@@ -2822,12 +2532,6 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensCreateDatabase)
     
     
-    def handlerDialogLumensOpenDatabase(self):
-        """
-        """
-        self.openDialog(DialogLumensOpenDatabase)
-    
-    
     def handlerLumensOpenDatabase(self):
         """Select a .lpj database file and open it
         """
@@ -2864,36 +2568,6 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensAddData)
     
     
-    def handlerDialogLumensAddData1(self):
-        """
-        """
-        self.openDialog(DialogLumensAddData1)
-    
-    
-    def handlerDialogLumensAddLandcoverRaster(self):
-        """
-        """
-        self.openDialog(DialogLumensAddLandcoverRaster)
-    
-    
-    def handlerDialogLumensAddPeatData(self):
-        """
-        """
-        self.openDialog(DialogLumensAddPeatData)
-    
-    
-    def handlerDialogLumensAddFactorData(self):
-        """
-        """
-        self.openDialog(DialogLumensAddFactorData)
-    
-    
-    def handlerDialogLumensAddPlanningUnitData(self):
-        """
-        """
-        self.openDialog(DialogLumensAddPlanningUnitData)
-    
-    
     def handlerDialogLumensImportDatabase(self):
         """
         """
@@ -2906,100 +2580,10 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensPUR)
     
     
-    def handlerDialogLumensPURCreateReferenceData(self):
-        """
-        """
-        self.openDialog(DialogLumensPURCreateReferenceData)
-    
-    
-    def handlerDialogLumensPURPreparePlanningUnit(self):
-        """
-        """
-        self.openDialog(DialogLumensPURPreparePlanningUnit)
-    
-    
-    def handlerDialogLumensPURReconcilePlanningUnit(self):
-        """
-        """
-        self.openDialog(DialogLumensPURReconcilePlanningUnit)
-    
-    
-    def handlerDialogLumensPURFinalization(self):
-        """
-        """
-        self.openDialog(DialogLumensPURFinalization)
-    
-    
     def handlerDialogLumensQUES(self):
         """
         """
         self.openDialog(DialogLumensQUES)
-    
-    
-    def handlerDialogLumensPreQUESLandcoverChangeAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensPreQUESLandcoverChangeAnalysis)
-    
-    
-    def handlerDialogLumensPreQUESLandcoverTrajectoriesAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensPreQUESLandcoverTrajectoriesAnalysis)
-    
-    
-    def handlerDialogLumensQUESCCarbonAccounting(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESCCarbonAccounting)
-    
-    
-    def handlerDialogLumensQUESCPeatlandCarbonAccounting(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESCPeatlandCarbonAccounting)
-    
-    
-    def handlerDialogLumensQUESCSummarizeMultiplePeriod(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESCSummarizeMultiplePeriod)
-    
-    
-    def handlerDialogLumensQUESBAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESBAnalysis)
-    
-    
-    def handlerDialogLumensQUESHWatershedModelEvaluation(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESHWatershedModelEvaluation)
-    
-    
-    def handlerDialogLumensQUESHWatershedIndicators(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESHWatershedIndicators)
-    
-    
-    def handlerDialogLumensQUESHDominantHRU(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESHDominantHRU)
-    
-    
-    def handlerDialogLumensQUESHDominantLUSSL(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESHDominantLUSSL)
-    
-    
-    def handlerDialogLumensQUESHMultipleHRU(self):
-        """
-        """
-        self.openDialog(DialogLumensQUESHMultipleHRU)
     
     
     def handlerDialogLumensTAOpportunityCost(self):
@@ -3014,118 +2598,10 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensTARegionalEconomy)
     
     
-    def handlerDialogLumensTAAbacusOpportunityCostCurve(self):
-        """
-        """
-        self.openDialog(DialogLumensTAAbacusOpportunityCostCurve)
-    
-    
-    def handlerDialogLumensTAOpportunityCostCurve(self):
-        """
-        """
-        self.openDialog(DialogLumensTAOpportunityCostCurve)
-    
-    
-    def handlerDialogLumensTAOpportunityCostMap(self):
-        """
-        """
-        self.openDialog(DialogLumensTAOpportunityCostMap)
-    
-    
-    def handlerDialogLumensTARegionalEconomySingleIODescriptiveAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensTARegionalEconomySingleIODescriptiveAnalysis)
-    
-    
-    def handlerDialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensTARegionalEconomyTimeSeriesIODescriptiveAnalysis)
-    
-    
-    def handlerDialogLumensTARegionalEconomyLandDistributionRequirementAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis)
-    
-    
-    def handlerDialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis)
-    
-    
-    def handlerDialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis)
-    
-    
-    def handlerDialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensTARegionalEconomyGDPChangeMultiplierAnalysis)
-    
-    
     def handlerDialogLumensSCIENDO(self):
         """
         """
         self.openDialog(DialogLumensSCIENDO)
-    
-    
-    def handlerDialogLumensSCIENDODriversAnalysis(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDODriversAnalysis)
-    
-    
-    def handlerDialogLumensSCIENDOBuildScenario(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOBuildScenario)
-    
-    
-    def handlerDialogLumensSCIENDOHistoricalBaselineProjection(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOHistoricalBaselineProjection)
-    
-    
-    def handlerDialogLumensSCIENDOHistoricalBaselineAnnualProjection(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOHistoricalBaselineAnnualProjection)
-    
-    
-    def handlerDialogLumensSCIENDOCalculateTransitionMatrix(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOCalculateTransitionMatrix)
-    
-    
-    def handlerDialogLumensSCIENDOCreateRasterCube(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOCreateRasterCube)
-    
-    
-    def handlerDialogLumensSCIENDOCalculateWeightofEvidence(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOCalculateWeightofEvidence)
-    
-    
-    def handlerDialogLumensSCIENDOSimulateLandUseChange(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOSimulateLandUseChange)
-    
-    
-    def handlerDialogLumensSCIENDOSimulateWithScenario(self):
-        """
-        """
-        self.openDialog(DialogLumensSCIENDOSimulateWithScenario)
     
     
     def handlerDialogLumensGuide(self):
@@ -3151,12 +2627,6 @@ class MainWindow(QtGui.QMainWindow):
             __version__, platform.python_version(),
             QtCore.QT_VERSION_STR, QtCore.PYQT_VERSION_STR,
             platform.system()))
-    
-    
-    def handlerDialogLumensToolsREDDAbacusSP(self):
-        """
-        """
-        self.openDialog(DialogLumensToolsREDDAbacusSP)
     
     
     def handlerToggleSidebar(self):
@@ -3281,7 +2751,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         layerItemData = self.getSelectedLayerData()
-        ##dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
+        
+        # Try using QGIS's attribute widget
         dialog = DialogLayerAttributeDualView(self.qgsLayerList[layerItemData['layer']], self)
         dialog.exec_()
     
@@ -3290,8 +2761,8 @@ class MainWindow(QtGui.QMainWindow):
         """
         """
         layerItemData = self.getSelectedLayerData()
+        
         # Try using QGIS's select feature dialog
-        ##dialog = DialogFeatureSelectExpression(self.qgsLayerList[layerItemData['layer']], self)
         dialog = QgsExpressionSelectionDialog(self.qgsLayerList[layerItemData['layer']], '', self)
         dialog.exec_()
     
