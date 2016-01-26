@@ -176,14 +176,14 @@ class DialogLumensAddData(QtGui.QDialog):
     def handlerSelectDataFile(self):
         """
         """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select File', QtCore.QDir.homePath(), 'File (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
+        buttonSender = self.sender()
+        objectName = buttonSender.objectName()
+        tableRow = objectName.split('_')[1]
         
-        if file:        
-            buttonSender = self.sender()
-            objectName = buttonSender.objectName()
-            tableRow = objectName.split('_')[1]
-            
+        file = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select File', QtCore.QDir.homePath(), 'File (*{0} *{1})'.format(self.main.appSettings['selectRasterfileExt'], self.main.appSettings['selectShapefileExt'])))
+        
+        if file:
             lineEditDataFile = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataFile_' + tableRow)
             lineEditDataFile.setText(file)
     
@@ -285,21 +285,45 @@ class DialogLumensAddData(QtGui.QDialog):
             
             for tableRowData in self.tableAddData:
                 # The algName to be used depends on the type of the dataFile (vector or raster)
-                algName = 'r:lumensaddrasterdata1'
                 
-                outputs = general.runalg(
-                    algName,
-                    tableRowData['dataType'],
-                    tableRowData['dataFile'],
-                    tableRowData['dataPeriod'],
-                    tableRowData['dataDescription'],
-                    None,
-                    None,
-                    None,
-                )
-                
-                print 'DEBUG'
-                print outputs
+                if tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectRasterfileExt']):
+                    algName = 'r:lumensaddrasterdata1'
+                    
+                    outputs = general.runalg(
+                        algName,
+                        tableRowData['dataType'],
+                        tableRowData['dataFile'],
+                        tableRowData['dataPeriod'],
+                        tableRowData['dataDescription'],
+                        None,
+                        None,
+                        None,
+                    )
+                    
+                    # Display ROut file in debug mode
+                    if self.main.appSettings['debug']:
+                        dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                        dialog.exec_()
+                    
+                    algName = 'r:lumensaddrasterdata2'
+                    
+                    if outputs and outputs['attribute_table']:
+                        dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['attribute_table'], True)
+                        dialog.exec_()
+                        
+                        # Create a temp csv file from the csv dialog
+                        tableData = dialog.getTableData()
+                        tableCsv = dialog.getTableCsv(tableData)
+                        
+                        outputs = general.runalg(
+                            algName,
+                            tableRowData['dataType'],
+                            tableCsv,
+                            None,
+                            None,
+                        )
+                elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
+                    algName = 'r:lumensaddvectordata'
                 
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:
