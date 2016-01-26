@@ -5,6 +5,7 @@ import os, logging, datetime
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
+from dialog_lumens_viewer import DialogLumensViewer
 
 
 class DialogLumensAddData1(QtGui.QDialog):
@@ -276,14 +277,16 @@ class DialogLumensAddData1(QtGui.QDialog):
             logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             self.buttonProcessAddData.setDisabled(True)
             
-            algName = 'r:addrasterdata1'
+            algName = None
+            outputs = None
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
-            outputs = None
-            
             for tableRowData in self.tableAddData:
+                # The algName to be used depends on the type of the dataFile (vector or raster)
+                algName = 'r:lumensaddrasterdata1'
+                
                 outputs = general.runalg(
                     algName,
                     tableRowData['dataType'],
@@ -292,7 +295,11 @@ class DialogLumensAddData1(QtGui.QDialog):
                     tableRowData['dataDescription'],
                     None,
                     None,
+                    None,
                 )
+                
+                print 'DEBUG'
+                print outputs
                 
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:
