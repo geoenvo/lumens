@@ -6,6 +6,7 @@ from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
 from dialog_lumens_viewer import DialogLumensViewer
+from dialog_lumens_adddata_vectorattributes import DialogLumensAddDataVectorAttributes
 
 
 class DialogLumensAddData(QtGui.QDialog):
@@ -289,10 +290,11 @@ class DialogLumensAddData(QtGui.QDialog):
                 if tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectRasterfileExt']):
                     algName = 'r:lumensaddrasterdata1'
                     
+                    # Step 1 of add raster data
                     outputs = general.runalg(
                         algName,
                         tableRowData['dataType'],
-                        tableRowData['dataFile'],
+                        tableRowData['dataFile'].replace(os.path.sep, '/'),
                         tableRowData['dataPeriod'],
                         tableRowData['dataDescription'],
                         None,
@@ -300,6 +302,7 @@ class DialogLumensAddData(QtGui.QDialog):
                         None,
                     )
                     
+                    # Step 2 of add raster data
                     if outputs and os.path.exists(outputs['attribute_table']):
                         dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['attribute_table'], True)
                         dialog.exec_()
@@ -318,7 +321,24 @@ class DialogLumensAddData(QtGui.QDialog):
                             None,
                         )
                 elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
-                    algName = 'r:lumensaddvectordata'
+                    dialog = DialogLumensAddDataVectorAttributes(self, tableRowData['dataFile'])
+                    
+                    if dialog.exec_():
+                        vectorIDField, vectorNameField = dialog.getVectorAttributes()
+                        
+                        algName = 'r:lumensaddvectordata'
+                        
+                        outputs = general.runalg(
+                            algName,
+                            tableRowData['dataType'],
+                            tableRowData['dataFile'].replace(os.path.sep, '/'),
+                            vectorIDField,
+                            vectorNameField,
+                            tableRowData['dataPeriod'],
+                            tableRowData['dataDescription'],
+                            None,
+                            None,
+                        )
                 
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:

@@ -30,14 +30,14 @@ class DialogLayerProperties(QtGui.QDialog):
         
         self.setupUi(self)
         
+        self.loadLayerSettings()
+        
         self.sliderLayerTransparency.sliderMoved.connect(self.handlerSliderLayerTransparencyMoved)
         self.spinBoxLayerTransparency.valueChanged.connect(self.handlerSpinBoxLayerTransparencyValueChanged)
         self.buttonLayerSymbolFillColor.clicked.connect(self.handlerSelectLayerSymbolFillColor)
         self.buttonLabelColor.clicked.connect(self.handlerSelectLabelColor)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-        
-        self.loadLayerSettings()
     
     
     def setupUi(self, parent):
@@ -218,8 +218,6 @@ class DialogLayerProperties(QtGui.QDialog):
     #***********************************************************
     # Process dialog
     #***********************************************************
-    
-    
     def accept(self):
         """
         """
