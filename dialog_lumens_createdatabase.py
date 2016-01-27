@@ -368,8 +368,6 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                 "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectProjectfileExt'])
             )
             
-            algName = 'r:lumenscreatedatabase2'
-            
             if outputs and outputs['p.admin.df_ALG2']:
                 dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['p.admin.df_ALG2'], True)
                 dialog.exec_()
@@ -378,10 +376,12 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                 tableData = dialog.getTableData()
                 tableCsv = dialog.getTableCsv(tableData)
                 
+                algName = 'r:lumenscreatedatabase2'
+                
                 outputs = general.runalg(
                     algName,
-                    lumensDatabase,
-                    tableCsv,
+                    lumensDatabase.replace(os.path.sep, '/'), # R alg needs forward slash as dir separator
+                    tableCsv.replace(os.path.sep, '/'),
                 )
                 
                 # Display ROut file in debug mode
