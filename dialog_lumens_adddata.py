@@ -300,20 +300,15 @@ class DialogLumensAddData(QtGui.QDialog):
                         None,
                     )
                     
-                    # Display ROut file in debug mode
-                    if self.main.appSettings['debug']:
-                        dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
-                        dialog.exec_()
-                    
-                    algName = 'r:lumensaddrasterdata2'
-                    
-                    if outputs and outputs['attribute_table']:
+                    if outputs and os.path.exists(outputs['attribute_table']):
                         dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['attribute_table'], True)
                         dialog.exec_()
                         
                         # Create a temp csv file from the csv dialog
                         tableData = dialog.getTableData()
-                        tableCsv = dialog.getTableCsv(tableData)
+                        tableCsv = dialog.getTableCsv(tableData, True)
+                        
+                        algName = 'r:lumensaddrasterdata2'
                         
                         outputs = general.runalg(
                             algName,

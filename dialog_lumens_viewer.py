@@ -52,7 +52,7 @@ class DialogLumensViewer(QtGui.QDialog):
         return tableData
     
     
-    def getTableCsv(self, tableData):
+    def getTableCsv(self, tableData, forwardDirSeparator=False):
         """Write the table data to a temp csv file
         """
         handle, csvFilePath = tempfile.mkstemp(suffix='.csv')
@@ -61,6 +61,9 @@ class DialogLumensViewer(QtGui.QDialog):
             writer = csv.writer(f)
             for dataRow in tableData:
                 writer.writerow(dataRow)
+        
+        if forwardDirSeparator:
+            return csvFilePath.replace(os.path.sep, '/')
         
         return csvFilePath
     
