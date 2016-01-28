@@ -60,7 +60,19 @@ __version__ = '1.0.0'
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, parent=None):
-        """
+        """Constructor method for initializing the LUMENS main window instance.
+        
+        Global application settings "appSettings" are declared in this method.
+        The global settings also holds the input field parameters for each of the module dialogs.
+        LUMENS main window signal handlers are also declared here.
+        Other important variables that are declared:
+        1. "openDialogs" a list to reference opened dialog windows.
+        2. "recentProjects" a list of previously opened LUMENS project files.
+        3. "qgsLayerList" a dict of QgsVectorLayer and QgsRasterLayer instances in the layer list.
+        4. "layerListModel" the model for the layer list on the sidebar.
+        
+        Args:
+            parent: the main window's parent instance.
         """
         super(MainWindow, self).__init__(parent)
         
@@ -545,7 +557,19 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def setupUi(self):
-        """
+        """Method for building the LUMENS main window UI.
+        
+        List of UI elements declared here:
+        1. Menubar (and menus)
+        2. Toolbar
+        3. Statusbar
+        4. Active project
+        5. Sidebar tabs (layer list, dashboard, project tree)
+        6. Body content spiltter (between sidebar and map canvas)
+        7. Main content splitter (between body content and scrolling log)
+        8. Scrolling log (only visible in debug mode)
+        9. QgsMapCanvas instance
+        10. Map tools
         """
         self.setWindowTitle('LUMENS v {0}'.format(__version__))
 
@@ -639,10 +663,12 @@ class MainWindow(QtGui.QMainWindow):
         icon = QtGui.QIcon(':/ui/icons/iconActionZoomSelected.png')
         self.actionZoomSelected = QtGui.QAction(icon, 'Zoom to Selected', self)
         self.actionZoomSelected.setShortcut('Ctrl+S')
+        self.actionZoomSelected.setDisabled(True)
         
         icon = QtGui.QIcon(':/ui/icons/iconActionPanSelected.png')
         self.actionPanSelected = QtGui.QAction(icon, 'Pan to Selected', self)
         self.actionPanSelected.setShortcut('Ctrl+P')
+        self.actionPanSelected.setDisabled(True)
         
         icon = QtGui.QIcon(':/ui/icons/iconActionZoomLast.png')
         self.actionZoomLast = QtGui.QAction(icon, 'Zoom Last', self)
@@ -1558,7 +1584,13 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def eventFilter(self, source, event):
-        """
+        """Overload method that is called on defined events.
+        
+        This method is called every time on the defined events in the LUMENS main window.
+        
+        Args:
+            source (QObject): the source widget of the event.
+            event (QEvent): the event that is triggered.
         """
         if event.type() == QtCore.QEvent.WindowActivate:
             print 'widget window has gained focus'
@@ -1580,7 +1612,10 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def closeEvent(self, event):
-        """Save app settings on window close
+        """Save LUMENS application settings on window close event.
+        
+        Method that is called on main window closing. Stores the "recentProjects" list
+        to the default .ini settings file in the app directory.
         """
         settings = QtCore.QSettings(self.appSettings['appSettingsFile'], QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
@@ -1588,7 +1623,13 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def addRecentProject(self, projectFile):
-        """Add a project file to the recent project list
+        """Add a project file to the "recentProjects" list.
+        
+        Method that is called when a LUMENS project file (*.lpj) is opened. Limited to 10
+        recently opened projects.
+        
+        Args:
+            projectFile (str): a file path to a LUMENS project file.
         """
         if projectFile is None:
             return
@@ -1599,7 +1640,9 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def loadSettings(self):
-        """Load app settings from .ini file
+        """Load LUMENS application settings from the default settings file
+        
+        Loads the values from the default .ini settings file in the app directory.
         """
         settings = QtCore.QSettings(self.appSettings['appSettingsFile'], QtCore.QSettings.IniFormat)
         settings.setFallbacksEnabled(True) # only use ini files
@@ -1609,7 +1652,9 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def updateFileMenu(self):
-        """Handle updating the file menu actions
+        """Slot method for updating the visible actions in the file menu.
+        
+        Updating is perform each time the file menu is clicked.
         """
         recentProjects = []
         
@@ -1635,7 +1680,14 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def openDialog(self, DialogClass, showDialog=True):
-        """Keep track of already opened dialog instances instead of creating new ones
+        """Method for opening and keeping track of opened module dialogs instances.
+        
+        Open and keep track of already opened dialog instances instead of creating new ones.
+        This allow input fields that have been set to persist when the dialog window is reopened.
+        
+        Args:
+            DialogClass (str): class name of the dialog.
+            showDialog (bool): show the dialog or return the dialog instance instead.
         """
         dialog = None
         
@@ -1655,7 +1707,10 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def closeDialogs(self):
-        """Close all opened dialogs and mark for deletion by Qt
+        """Method for closing all opened dialogs and mark for deletion by Qt.
+        
+        All dialogs in "openDialogs" list are marked for deletion and cleared.
+        This is called when a LUMENS project is closed.
         """
         for dlg in self.openDialogs:
             dlg.deleteLater()
@@ -1664,7 +1719,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensEnableMenus(self):
-        """Enable menus that require an open project database
+        """Method for enabling menus that require an open LUMENS project.
         """
         # Database menu
         self.actionLumensCloseDatabase.setEnabled(True)
@@ -1687,7 +1742,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensDisableMenus(self):
-        """Disable menus that require an open project database
+        """Method for disabling menus that require an open LUMENS project.
         """
         # Database menu
         self.actionLumensDatabaseStatus.setDisabled(True)
@@ -1709,7 +1764,11 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def loadModuleTemplates(self):
-        """
+        """Method for loading the list of all the module templates of a LUMENS project.
+        
+        Module template files exist in the module subfolder of the project folder.
+        This is called when a LUMENS project is opened so that the module
+        templates are listed on the main window's dashboard tab.
         """
         dialogLumensPUR = self.openDialog(DialogLumensPUR, False)
         dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
@@ -1725,7 +1784,9 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def clearModuleTemplates(self):
-        """
+        """Method for clearing the list of all modules templates on the main window's dashboard tab
+        
+        This is called when a LUMENS project is closed.
         """
         # PUR
         self.comboBoxPURTemplate.clear()
@@ -1797,7 +1858,15 @@ class MainWindow(QtGui.QMainWindow):
         
     
     def lumensOpenDatabase(self, lumensDatabase=False):
-        """Open a LUMENS project database
+        """Slot method for opening a LUMENS project database.
+        
+        Opens a LUMENS project database file (*.lpj) using "modeler:lumens_open_database" R algorithm.
+        This is called when opening a recent project from the file menu or the "Open LUMENS database" menu.
+        When a LUMENS project is opened, menus that depend on an open project will be enabled and all
+        of the project's module templates will be listed on the main window's dashboard tab.
+        
+        Args:
+            lumensDatabase (bool): if true then open the LUMENS project from the "recentProjects" list.
         """
         if lumensDatabase is False: # Recent projects
             action = self.sender()
@@ -1840,7 +1909,11 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensCloseDatabase(self):
-        """Close a LUMENS project database
+        """Slot method for closing a LUMENS project database.
+        
+        Closes an open LUMENS project using "modeler:lumens_close_database" R algorithm.
+        When a LUMENS project is closed, menus that depend on an open project will be disabled and all
+        of the project's module templates will be unlisted from the main window's dashboard tab.
         """
         logging.getLogger(type(self).__name__).info('start: LUMENS Close Database')
         
@@ -1862,11 +1935,14 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensDatabaseStatus(self):
-        """Display the project database stats in a popup dialog
+        """Method for display the project database stats in a popup dialog.
+        
+        Shows the database status of the current active LUMENS project in a
+        dialog window using the "r:lumensdatabasestatus" R algorithm.
         """
         logging.getLogger(type(self).__name__).info('start: lumensdatabasestatus')
-        
         self.actionLumensDatabaseStatus.setDisabled(True)
+        
         outputs = general.runalg('r:lumensdatabasestatus', None)
         
         if outputs:
@@ -1874,24 +1950,23 @@ class MainWindow(QtGui.QMainWindow):
             dialog.exec_()
         
         self.actionLumensDatabaseStatus.setEnabled(True)
-        
         logging.getLogger(type(self).__name__).info('end: lumensdatabasestatus')
     
     
     def lumensDeleteData(self):
-        """
+        """Method for calling the "r:lumensdeletedata" R algorithm.
         """
         logging.getLogger(type(self).__name__).info('start: lumensdeletedata')
-        
         self.actionLumensDeleteData.setDisabled(True)
-        outputs = general.runalg('r:lumensdeletedata')
-        self.actionLumensDeleteData.setEnabled(True)
         
+        outputs = general.runalg('r:lumensdeletedata')
+        
+        self.actionLumensDeleteData.setEnabled(True)
         logging.getLogger(type(self).__name__).info('end: lumensdeletedata')
     
     
     def checkDefaultBasemap(self):
-        """
+        """Method for checking the default basemap file.
         """
         if os.path.isfile(self.appSettings['defaultBasemapFilePath']):
             return True
@@ -1900,7 +1975,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def checkDefaultVector(self):
-        """
+        """Method for checking the default vector file.
         """
         if os.path.isfile(self.appSettings['defaultVectorFilePath']):
             return True
@@ -1909,7 +1984,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def loadDefaultLayers(self):
-        """Replaces loadMap()
+        """Replaces loadMap(), load the display default basemap layer on the map canvas.
         """
         self.addLayer(self.appSettings['defaultBasemapFilePath'])
         ##self.addLayer(self.appSettings['defaultVectorFilePath'])
@@ -1921,7 +1996,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def loadMapCanvas(self):
-        """
+        """Method for adding the map canvas widget to main window's body content.
         """
         self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
         ##self.layoutBody.addWidget(self.mapCanvas)
@@ -1956,7 +2031,14 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def addLayer(self, layerFile):
-        """Add a spatial data file to the layer list and display it
+        """Method for adding a spatial format file to the layer list and show it on the map canvas.
+        
+        Adds a spatial format file (vector or raster) to the layer list and show it as a new layer on the
+        top level of the map canvas. All layers on the layer list are unique, no duplicate files can be added.
+        A reference to the QgsVectorLayer or QgsRasterLayer instance is also maintained in "qgsLayerList".
+        
+        Args:
+            layerFile (str): a file path to a spatial  format file (having a file extesion of .shp or .tif).
         """
         if os.path.isfile(layerFile):
             layerName = os.path.basename(layerFile)
@@ -2016,7 +2098,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def getSelectedLayerData(self):
-        """Get the data of the selected layer
+        """Method for getting the layer item data of the currently selected layer on the layer list.
         """
         layerItemIndex = self.layerListView.selectedIndexes()[0]
         layerItem = self.layerListModel.itemFromIndex(layerItemIndex)
@@ -2025,7 +2107,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def printDebugInfo(self):
-        """
+        """Method for printing debug info to the logger.
         """
         layerItemData = self.getSelectedLayerData()
         
@@ -2037,7 +2119,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def showVisibleLayers(self):
-        """Find checked layers in layerlistmodel and add them to the mapcanvas layerset
+        """Find checked layers in "layerListModel" and add them to the map canvas layerset.
         """
         layers = []
         i = 0
@@ -2045,9 +2127,12 @@ class MainWindow(QtGui.QMainWindow):
         while self.layerListModel.item(i):
             layerItem = self.layerListModel.item(i)
             layerItemData = layerItem.data()
+            
             if layerItem.checkState():
-                logging.getLogger(type(self).__name__).info('showing layer: %s', layerItem.text())
                 layers.append(QgsMapCanvasLayer(self.qgsLayerList[layerItemData['layer']]))
+                
+                logging.getLogger(type(self).__name__).info('showing layer: %s', layerItem.text())
+            
             i += 1
         
         if i > 0:
@@ -2057,13 +2142,18 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerLayerItemContextMenu(self, pos):
-        """Construct the layer item context menu
+        """Method for constructing the custom context menu when clicking on a layer item on the layer list.
+        
+        Args:
+            pos (QPoint): the coordinate of the click.
         """
         self.contextMenu = QtGui.QMenu()
-        self.contextMenu.addAction(self.actionDeleteLayer)
+        self.contextMenu.addAction(self.actionPanSelected)
         self.contextMenu.addAction(self.actionZoomLayer)
+        self.contextMenu.addAction(self.actionZoomSelected)
         self.contextMenu.addAction(self.actionLayerAttributeTable)
         self.contextMenu.addAction(self.actionFeatureSelectExpression)
+        self.contextMenu.addAction(self.actionDeleteLayer)
         self.contextMenu.addAction(self.actionLayerProperties)
         
         parentPosition = self.layerListView.mapToGlobal(QtCore.QPoint(0, 0))
@@ -2072,7 +2162,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessPURTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = self.comboBoxPURTemplate.currentText()
         
@@ -2095,7 +2185,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessPreQUESTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = self.comboBoxPreQUESTemplate.currentText()
         
@@ -2118,7 +2208,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessQUESCTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = self.comboBoxQUESCTemplate.currentText()
         
@@ -2152,7 +2242,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessQUESBTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = self.comboBoxQUESBTemplate.currentText()
         
@@ -2175,7 +2265,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessQUESHTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = None
         tabName = None
@@ -2229,7 +2319,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessTAOpportunityCostTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = None
         tabName = None
@@ -2273,7 +2363,7 @@ class MainWindow(QtGui.QMainWindow):
         
     
     def handlerProcessTARegionalEconomyTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = None
         tabName = None
@@ -2334,7 +2424,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = self.comboBoxLowEmissionDevelopmentAnalysisTemplate.currentText()
         
@@ -2371,7 +2461,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerProcessSCIENDOLandUseChangeModelingTemplate(self):
-        """
+        """Slot method for processing a template.
         """
         templateFile = self.comboBoxLandUseChangeModelingTemplate.currentText()
         
@@ -2411,7 +2501,10 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerToggleQUESH(self, radio):
-        """
+        """Slot method for toggling a radio button.
+        
+        Args:
+            radio (QRadioButton): the clicked radio button.
         """
         for i in range(self.layoutQUESHHRUDefinitionTemplate.count()):
             item = self.layoutQUESHHRUDefinitionTemplate.itemAt(i)
@@ -2447,7 +2540,10 @@ class MainWindow(QtGui.QMainWindow):
         
     
     def handlerToggleTAOpportunityCost(self, radio):
-        """
+        """Slot method for toggling a radio button.
+        
+        Args:
+            radio (QRadioButton): the clicked radio button.
         """
         for i in range(self.layoutTAAbacusOpportunityCostTemplate.count()):
             item = self.layoutTAAbacusOpportunityCostTemplate.itemAt(i)
@@ -2479,7 +2575,10 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerToggleTARegionalEconomy(self, radio):
-        """
+        """Slot method for toggling a radio button.
+        
+        Args:
+            radio (QRadioButton): the clicked radio button.
         """
         for i in range(self.layoutTARegionalEconomyDescriptiveAnalysisTemplate.count()):
             item = self.layoutTARegionalEconomyDescriptiveAnalysisTemplate.itemAt(i)
@@ -2527,13 +2626,13 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerDialogLumensCreateDatabase(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensCreateDatabase)
     
     
     def handlerLumensOpenDatabase(self):
-        """Select a .lpj database file and open it
+        """Slot method for a file select dialog to open a LUMENS .lpj project database file.
         """
         lumensDatabase = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
@@ -2545,67 +2644,67 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerLumensDeleteData(self):
-        """
+        """Slot method for triggering the delete data operation.
         """
         self.lumensDeleteData()
     
     
     def handlerLumensCloseDatabase(self):
-        """
+        """Slot method for triggering the close database operation.
         """
         self.lumensCloseDatabase()
     
     
     def handlerLumensDatabaseStatus(self):
-        """
+        """Slot method for triggering the show database status operation.
         """
         self.lumensDatabaseStatus()
     
     
     def handlerDialogLumensAddData(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensAddData)
     
     
     def handlerDialogLumensImportDatabase(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensImportDatabase)
     
     
     def handlerDialogLumensPUR(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensPUR)
     
     
     def handlerDialogLumensQUES(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensQUES)
     
     
     def handlerDialogLumensTAOpportunityCost(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensTAOpportunityCost)
     
     
     def handlerDialogLumensTARegionalEconomy(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensTARegionalEconomy)
     
     
     def handlerDialogLumensSCIENDO(self):
-        """
+        """Slot method for opening a dialog window.
         """
         self.openDialog(DialogLumensSCIENDO)
     
     
     def handlerDialogLumensGuide(self):
-        """
+        """Slot method for opening the LUMENS application guide document in the app directory.
         """
         filePath = os.path.join(self.appSettings['appDir'], self.appSettings['guideFile'])
         
@@ -2617,7 +2716,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerDialogLumensAbout(self):
-        """
+        """Slot method for showing the LUMENS application About info.
         """
         QtGui.QMessageBox.about(self, 'LUMENS',
             """<b>LUMENS</b> v {0}
@@ -2630,7 +2729,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerToggleSidebar(self):
-        """
+        """Slot method for toggling the sidebar visibility.
         """
         if not self.actionToggleSidebar.isChecked():
             self.sidebarTabWidget.setVisible(False)
@@ -2639,7 +2738,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerToggleToolbar(self):
-        """
+        """Slot method for toggling the toolbar visibility.
         """
         if not self.actionToggleToolbar.isChecked():
             self.toolBar.setVisible(False)
@@ -2648,55 +2747,69 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerZoomIn(self):
-        """
+        """Slot method for zoom in action on the map canvas.
         """
         self.mapCanvas.zoomIn()
     
     
     def handlerZoomOut(self):
-        """
+        """Slot method for zoom out action on the map canvas.
         """
         self.mapCanvas.zoomOut()
     
     
     def handlerZoomFull(self):
-        """
+        """Slot method for zoom to full extent action on the map canvas.
         """
         self.mapCanvas.zoomToFullExtent()
     
     
     def handlerZoomLayer(self):
-        """
+        """Slot method for zoom in action to the selected layer.
         """
         layerItemData = self.getSelectedLayerData()
+        
         ##self.mapCanvas.setExtent(self.qgsLayerList[layerItemData['layer']].extent())
         ##self.mapCanvas.refresh()
-        # Hack to fix blank map canvas from 2 lines above
-        self.qgsLayerList[layerItemData['layer']].selectAll()
-        self.mapCanvas.zoomToSelected()
-        self.qgsLayerList[layerItemData['layer']].removeSelection()
+        
+        # HACK to fix blank map canvas from 2 lines above
+        if layerItemData['layerType'] == 'vector':
+            self.qgsLayerList[layerItemData['layer']].selectAll()
+            self.mapCanvas.zoomToSelected()
+            self.qgsLayerList[layerItemData['layer']].removeSelection()
     
     
     def handlerZoomSelected(self):
-        """
+        """Slot method for zooming to the selected features in a layer.
         """
         layerItemData = self.getSelectedLayerData()
+        
         if layerItemData['layerType'] == 'vector':
             self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
             self.mapCanvas.zoomToSelected()
     
     
     def handlerPanSelected(self):
-        """
+        """Slot method for panning to the selected layer.
         """
         layerItemData = self.getSelectedLayerData()
+        
         if layerItemData['layerType'] == 'vector':
             self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
+            
+            # HACK to get panToSelected working (select 1 feature first)
+            layerFeatures = self.qgsLayerList[layerItemData['layer']].getFeatures()
+            
+            for feature in layerFeatures:
+                self.qgsLayerList[layerItemData['layer']].setSelectedFeatures([feature.id()])
+                break
+            
             self.mapCanvas.panToSelected()
+            self.qgsLayerList[layerItemData['layer']].removeSelection()
     
     
     def handlerSetPanMode(self):
-        """
+        """Slot method to set the desired map tool for the map canvas.
         """
         self.actionPan.setChecked(True)
         self.actionSelect.setChecked(False)
@@ -2705,7 +2818,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerSetSelectMode(self):
-        """
+        """Slot method to set the desired map tool for the map canvas.
         """
         self.actionSelect.setChecked(True)
         self.actionPan.setChecked(False)
@@ -2714,7 +2827,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerSetInfoMode(self):
-        """
+        """Slot method to set the desired map tool for the map canvas.
         """
         self.actionInfo.setChecked(True)
         self.actionPan.setChecked(False)
@@ -2724,7 +2837,10 @@ class MainWindow(QtGui.QMainWindow):
     
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def handlerSelectLayer(self, layerItemIndex):
-        """
+        """Slot method that is called when a layer item in the "layerListModel" is selected.
+        
+        Args:
+            layerItemIndex (QModelIndex): the model index position of the selected layer item.
         """
         self.actionDeleteLayer.setEnabled(True)
         
@@ -2734,21 +2850,26 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.setCurrentLayer(self.qgsLayerList[layerItemData['layer']])
         
         if layerItemData['layerType'] == 'vector':
+            self.actionPanSelected.setEnabled(True)
             self.actionZoomLayer.setEnabled(True)
+            self.actionZoomSelected.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
             self.actionFeatureSelectExpression.setEnabled(True)
             self.actionLayerProperties.setEnabled(True)
         else:
+            self.actionPanSelected.setDisabled(True)
             self.actionZoomLayer.setDisabled(True)
+            self.actionZoomSelected.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
             self.actionLayerProperties.setDisabled(True)
         
-        self.printDebugInfo()
+        if self.appSettings['debug']:
+            self.printDebugInfo()
     
     
     def handlerLayerAttributeTable(self):
-        """
+        """Slot method for opening the layer attribute table dialog.
         """
         layerItemData = self.getSelectedLayerData()
         
@@ -2758,7 +2879,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerFeatureSelectExpression(self):
-        """
+        """Slot method for opening the layer feature selection dialog.
         """
         layerItemData = self.getSelectedLayerData()
         
@@ -2768,7 +2889,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerLayerProperties(self):
-        """
+        """Slot method for opening the layer properties dialog.
         """
         layerItemData = self.getSelectedLayerData()
         dialog = DialogLayerProperties(self.qgsLayerList[layerItemData['layer']], self)
@@ -2776,7 +2897,13 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerDoubleClickProjectTree(self, index):
-        """
+        """Slot method when a double click event is triggered from the project tree.
+        
+        Upon double clicking a file in the project tree, try to process the file
+        if it is supported.
+        
+        Args:
+            index (QModelIndex): the model index position of the selected file.
         """
         indexItem = self.projectTreeView.model().index(index.row(), 0, index.parent())
 
@@ -2798,13 +2925,16 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerDropLayer(self):
-        """On dropping a layer in the layer list
+        """Slot method to handle dropping a layer in the layer list.
         """
         pass
     
     
     def handlerCheckLayer(self, layerItem):
-        """
+        """Slot method for handling when the layer items in the layer list are reordered or un/checked.
+        
+        Args:
+            layerItem (QStandardItem): the layer item being manipulated.
         """
         ##print 'DEBUG rowcount'
         ##print self.layerListModel.rowCount()
@@ -2822,7 +2952,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerAddLayer(self):
-        """
+        """Slot method for a file select dialog to add a spatial file to the layer list.
         """
         layerFormats = [self.appSettings['selectShapefileExt'], self.appSettings['selectRasterfileExt']]
         filterFormats = ' '.join(['*' + ext for ext in layerFormats])
@@ -2835,7 +2965,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerDeleteLayer(self):
-        """
+        """Slot method for handling when a layer is deleted from the layer list.
         """
         layerItemIndex = self.layerListView.selectedIndexes()[0]
         layerItemData = self.getSelectedLayerData()
@@ -2845,46 +2975,56 @@ class MainWindow(QtGui.QMainWindow):
         
         self.showVisibleLayers()
         
+        # No more layer items in the layer list
         if not self.layerListModel.rowCount():
             self.actionDeleteLayer.setDisabled(True)
+            self.actionPanSelected.setDisabled(True)
             self.actionZoomLayer.setDisabled(True)
+            self.actionZoomSelected.setDisabled(True)
+            self.actionLayerAttributeTable.setDisabled(True)
+            self.actionFeatureSelectExpression.setDisabled(True)
+            self.actionLayerProperties.setDisabled(True)
             return
         
         # Check type of next selected item
         layerItemData = self.getSelectedLayerData()
         
         if layerItemData['layerType'] == 'vector':
+            self.actionPanSelected.setEnabled(True)
             self.actionZoomLayer.setEnabled(True)
+            self.actionZoomSelected.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
             self.actionFeatureSelectExpression.setEnabled(True)
             self.actionLayerProperties.setEnabled(True)
         else:
+            self.actionPanSelected.setDisabled(True)
             self.actionZoomLayer.setDisabled(True)
+            self.actionZoomSelected.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
             self.actionLayerProperties.setDisabled(True)
     
     
     def handlerRefresh(self):
-        """
+        """Slot method for refreshing the map canvas.
         """
         self.mapCanvas.refresh()
     
     
     def handlerZoomLast(self):
-        """
+        """Slot method for zooming to the previous extent on the map canvas.
         """
         self.mapCanvas.zoomToPreviousExtent()
     
     
     def handlerZoomNext(self):
-        """
+        """Slot method for zooming to the next extent on the map canvas.
         """
         self.mapCanvas.zoomToNextExtent()
     
     
     def handlerZoomLastStatus(self, status):
-        """
+        """Slot method to handle when the previous zoom extent is available.
         """
         if status:
             self.actionZoomLast.setEnabled(True)
@@ -2893,7 +3033,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerZoomNextStatus(self, status):
-        """
+        """Slot method to handle when the next zoom extent is available.
         """
         if status:
             self.actionZoomNext.setEnabled(True)
@@ -2902,7 +3042,10 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def handlerUpdateCoordinates(self, point):
-        """
+        """Slot method for updating the map coordinates on the cursor position.
+        
+        Args:
+            point (QgsPoint): the map point on the cursor position.
         """
         if self.mapCanvas.mapUnits() == QGis.DegreesMinutesSeconds:
             self.labelMapCanvasCoordinate.setText(point.toDegreesMinutesSeconds(3))
