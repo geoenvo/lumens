@@ -11,10 +11,13 @@ import resource
 
 
 class DialogLumensSCIENDO(QtGui.QDialog):
+    """LUMENS "SCIENDO" module dialog class.
     """
-    """
+    
     def loadTemplateFiles(self):
-        """List available ini template file inside the project folder
+        """Method for loading the list of module template files inside the project folder.
+        
+        This method is also called to load the module template files in the main window dashboard tab.
         """
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
@@ -55,7 +58,12 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def loadTemplate(self, tabName, fileName, returnTemplateSettings=False):
-        """Load the value saved in ini template file to the form widget
+        """Method for loading the values saved in the module template file to the form widgets.
+        
+        Args:
+            tabName (str): the tab where the form widget values will be populated.
+            templateFile (str): a file path to the template file that will be loaded.
+            returnTemplateSettings (bool): if true return a dict of the settings in the template file.
         """
         templateFilePath = os.path.join(self.settingsPath, fileName)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
@@ -237,7 +245,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
-        """
+        """Method for checking whether the new template values to be saved already exists in a saved template file.
+        
+        Args:
+            tabName (str): the tab to be checked.
+            templateToSkip (str): the template file to skip (when saving an existing template file).
         """
         duplicateTemplate = None
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
@@ -298,7 +310,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+        """Method for saving the form values based on the associated tab and dialog to a template file.
+        
+        Args:
+            tabName (str): the tab with the form values to save.
+            fileName (str): the target template file name to create.
         """
         self.setAppSettings()
         
@@ -400,6 +416,11 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         
@@ -863,19 +884,25 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensSCIENDO, self).showEvent(event)
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensSCIENDO, self).closeEvent(event)
     
     
     def loadHistoryLog(self):
-        """Load the history log file
+        """Method for loading the module history log file.
         """
         if os.path.exists(self.historyLogPath):
             logText = open(self.historyLogPath).read()
@@ -883,7 +910,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerTabWidgetChanged(self, index):
-        """
+        """Slot method for scrolling the log to the latest output.
+        
+        Args:
+            index (int): the current tab index.
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
@@ -893,7 +923,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     # 'Low Emission Development Analysis' tab QGroupBox toggle handlers
     #***********************************************************
     def toggleHistoricalBaselineProjection(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsHistoricalBaselineProjection.setEnabled(True)
@@ -902,7 +935,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def toggleHistoricalBaselineAnnualProjection(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsHistoricalBaselineAnnualProjection.setEnabled(True)
@@ -911,7 +947,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def toggleDriversAnalysis(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsDriversAnalysis.setEnabled(True)
@@ -920,7 +959,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def toggleBuildScenario(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsBuildScenario.setEnabled(True)
@@ -932,7 +974,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     # 'Low Emission Development Analysis' tab QPushButton handlers
     #***********************************************************
     def handlerLoadLowEmissionDevelopmentAnalysisTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxLowEmissionDevelopmentAnalysisTemplate.currentText()
         reply = None
@@ -953,7 +998,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSaveLowEmissionDevelopmentAnalysisTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentLowEmissionDevelopmentAnalysisTemplate
         
@@ -976,7 +1024,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSaveAsLowEmissionDevelopmentAnalysisTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -999,7 +1047,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSelectHistoricalBaselineProjectionWorkingDir(self):
-        """
+        """Slot method for a directory select dialog.
         """
         dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
@@ -1009,7 +1057,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSelectHistoricalBaselineProjectionQUESCDatabase(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
@@ -1020,7 +1068,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSelectDriversAnalysisLandUseCoverChangeDrivers(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Use/Cover Change Drivers', QtCore.QDir.homePath(), 'Land Use/Cover Change Drivers (*{0})'.format(self.main.appSettings['selectTextfileExt'])))
@@ -1031,7 +1079,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSelectBuildScenarioHistoricalBaselineCar(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Historical Baseline Car', QtCore.QDir.homePath(), 'Historical Baseline Car (*{0})'.format(self.main.appSettings['selectCarfileExt'])))
@@ -1045,7 +1093,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     # 'Land Use Change Modeling' tab QPushButton handlers
     #***********************************************************
     def handlerLoadLandUseChangeModelingTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxLandUseChangeModelingTemplate.currentText()
         reply = None
@@ -1066,7 +1117,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSaveLandUseChangeModelingTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentLandUseChangeModelingTemplate
         
@@ -1089,7 +1143,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSaveAsLandUseChangeModelingTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -1112,7 +1166,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeModelingFactorsDir(self):
-        """
+        """Slot method for a directory select dialog.
         """
         dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Factors Directory'))
         
@@ -1122,7 +1176,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeModelingLandUseLookup(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Use Lookup Table', QtCore.QDir.homePath(), 'Land Use Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -1136,7 +1190,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     # Process tabs
     #***********************************************************
     def setAppSettings(self):
-        """
+        """Set the required values from the form widgets.
         """
         # 'Historical baseline projection' groupbox fields
         self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['workingDir'] \
@@ -1192,7 +1246,10 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def validForm(self, formName):
-        """
+        """Method for validating the form values.
+        
+        Args:
+            formName (str): the name of the form to validate.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', formName)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
@@ -1212,7 +1269,13 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -1229,7 +1292,13 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerProcessLowEmissionDevelopmentAnalysis(self):
-        """
+        """Slot method to pass the form values and execute the "SCIENDO Low Emission Development Analysis" R algorithms.
+        
+        Depending on the checked groupbox, the "SCIENDO Low Emission Development Analysis" process calls the following algorithms:
+        1. modeler:projection_historical_baseline
+        2. r:historicalbaselineannualprojection
+        3. modeler:drivers_analysis
+        4. r:abacususingabsolutearea
         """
         self.setAppSettings()
         
@@ -1366,7 +1435,14 @@ class DialogLumensSCIENDO(QtGui.QDialog):
     
     
     def handlerProcessLandUseChangeModeling(self):
-        """
+        """Slot method to pass the form values and execute the "SCIENDO Land Use Change Modeling" R algorithms.
+        
+        Depending on the checked groupbox, the "SCIENDO Land Use Change Modeling" process calls the following algorithms:
+        1. modeler:sciendo1_calculate_transition_matrix
+        2. modeler:sciendo1_create_raster_cube
+        3. modeler:sciendo3_calculate_weight_of_evidence
+        4. modeler:sciendo4_simulate_land_use_change
+        5. modeler:sciendo5_simulate_with_scenario
         """
         if self.checkBoxCalculateTransitionMatrix.isChecked():
             formName = 'DialogLumensSCIENDOCalculateTransitionMatrix'

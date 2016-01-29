@@ -9,8 +9,9 @@ from dialog_lumens_viewer import DialogLumensViewer
 
 
 class DialogLumensCreateDatabase(QtGui.QDialog):
+    """LUMENS "Create Database" dialog class.
     """
-    """
+    
     def __init__(self, parent):
         super(DialogLumensCreateDatabase, self).__init__(parent)
         
@@ -39,6 +40,11 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         self.groupBoxDatabaseDetails = QtGui.QGroupBox('Database details')
@@ -166,20 +172,26 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensCreateDatabase, self).showEvent(event)
         self.loadSelectedVectorLayer()
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensCreateDatabase, self).closeEvent(event)
     
     
     def loadSelectedVectorLayer(self):
-        """Load the attributes of the selected layer into the shapefile attribute combobox
+        """Load the attributes of the selected layer in the layer list into the shapefile attribute combobox.
         """
         selectedIndexes = self.main.layerListView.selectedIndexes()
         
@@ -212,7 +224,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     # 'Create Database' QPushButton handlers
     #***********************************************************
     def handlerSelectOutputFolder(self):
-        """Select a folder as output dir
+        """Slot method for a folder select dialog to select a folder as output dir.
         """
         outputFolder = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Output Folder'))
         
@@ -223,7 +235,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     
     
     def handlerSelectShapefile(self):
-        """Select a shp file and load the attributes in the shapefile attribute combobox
+        """Slot method for a file select dialog to select a .shp file and load the attributes in the shapefile attribute combobox.
         """
         shapefile = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Shapefile', QtCore.QDir.homePath(), 'Shapefile (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -253,7 +265,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     # Process dialog
     #***********************************************************
     def setAppSettings(self):
-        """Set the required values from the form widgets
+        """Set the required values from the form widgets.
         """
         self.main.appSettings[type(self).__name__]['projectName'] = unicode(self.lineEditProjectName.text())
         # BUG in R script execution? outputFolder path separator must be forward slash
@@ -268,7 +280,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     
     
     def validForm(self):
-        """
+        """Method for validating the form values.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
@@ -288,7 +300,13 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -305,7 +323,12 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
     
     
     def handlerProcessCreateDatabase(self):
-        """LUMENS Create Database R algorithm
+        """Slot method to pass the form values and execute the "Create Database" R algorithms.
+        
+        Upon successful completion of the algorithms the new project database will be opened
+        and the dialog will close. The "Create Database" process calls the following algorithms:
+        1. modeler:lumens_create_database_1
+        2. r:lumenscreatedatabase2
         """
         self.setAppSettings()
         
@@ -382,6 +405,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                     algName,
                     lumensDatabase.replace(os.path.sep, '/'), # R alg needs forward slash as dir separator
                     tableCsv,
+                    None,
                 )
                 
                 # Display ROut file in debug mode
@@ -395,11 +419,10 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             algSuccess = self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessCreateDatabase.setEnabled(True)
-            
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             # If LUMENS database file exists, open it and close this dialog
-            if algSuccess and os.path.exists(lumensDatabase):
+            if os.path.exists(lumensDatabase):
                 self.main.lumensOpenDatabase(lumensDatabase)
                 self.close()
             else:

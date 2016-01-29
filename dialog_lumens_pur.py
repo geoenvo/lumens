@@ -12,10 +12,13 @@ import resource
 
 
 class DialogLumensPUR(QtGui.QDialog):
+    """LUMENS "PUR" module dialog class.
     """
-    """
+    
     def loadTemplateFiles(self):
-        """List available ini template file inside the project folder
+        """Method for loading the list of module template files inside the project folder.
+        
+        This method is also called to load the module template files in the main window dashboard tab.
         """
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
@@ -40,7 +43,12 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
-        """Load the value saved in ini template file to the form widget
+        """Method for loading the values saved in the module template file to the form widgets.
+        
+        Args:
+            tabName (str): the tab where the form widget values will be populated.
+            templateFile (str): a file path to the template file that will be loaded.
+            returnTemplateSettings (bool): if true return a dict of the settings in the template file.
         """
         templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
@@ -115,7 +123,11 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
-        """
+        """Method for checking whether the new template values to be saved already exists in a saved template file.
+        
+        Args:
+            tabName (str): the tab to be checked.
+            templateToSkip (str): the template file to skip (when saving an existing template file).
         """
         duplicateTemplate = None
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
@@ -165,7 +177,11 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+        """Method for saving the form values based on the associated tab and dialog to a template file.
+        
+        Args:
+            tabName (str): the tab with the form values to save.
+            fileName (str): the target template file name to create.
         """
         self.setAppSettings()
         
@@ -256,6 +272,11 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         
@@ -491,7 +512,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def loadHistoryLog(self):
-        """Load the history log file
+        """Method for loading the module history log file.
         """
         if os.path.exists(self.historyLogPath):
             logText = open(self.historyLogPath).read()
@@ -499,7 +520,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def populateTableReferenceMapping(self, shapefileAttribute):
-        """Populate the reference mapping table from the selected shapefile attribute
+        """Method for populating the reference mapping table from the selected shapefile attribute.
+        
+        Args:
+            shapefileAttribute (str): the selected shapefile attribute.
         """
         # Need to check if shapefileAttribute is set (can be empty when updating comboBoxShapefileAttribute)
         if not shapefileAttribute:
@@ -536,20 +560,26 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensPUR, self).showEvent(event)
         self.loadSelectedVectorLayer()
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensPUR, self).closeEvent(event)
     
     
     def loadSelectedVectorLayer(self):
-        """Load the attributes of the selected layer into the shapefile attribute combobox
+        """Load the attributes of the selected layer in the layer list into the shapefile attribute combobox.
         """
         selectedIndexes = self.main.layerListView.selectedIndexes()
         
@@ -579,7 +609,14 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def addPlanningUnitRow(self, shapefile=None, shapefileAttr=None, planningUnitTitle=None, referenceClassID=None, planningUnitType=None):
-        """Add a planning unit table row
+        """Method for adding a planning unit table row.
+        
+        Args:
+            shapefile (str): a file path to the planning unit shapefile.
+            shapefileAttr (str): the selected attribute of the planning unit shapefile.
+            planningUnitTitle (str): the title of the planning unit.
+            referenceClassID (int): the reference class id associated with the planning unit.
+            planningUnitType (str): the type of the planning unit.
         """
         self.tablePlanningUnitRowCount = self.tablePlanningUnitRowCount + 1
         
@@ -644,7 +681,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def clearPlanningUnitRows(self):
-        """BUG: handlerDeletePlanningUnitShapefile() cannot be triggered after calling clearRow()
+        """Method for clearing all planning unit row.
         """
         """
         for i in reversed(range(self.layoutTablePlanningUnit.count())): 
@@ -663,7 +700,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def clearLayout(self, layout):
-        """Clear a layout and all its child widgets
+        """Method for removing a layout and all its child widgets.
+        
+        Args:
+            layout (QLayout): the layout to be removed.
         """
         for i in reversed(range(layout.count())):
             item = layout.itemAt(i)
@@ -679,7 +719,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def updateReferenceClasses(self, newReferenceClasses):
-        """Reload the Reference Classes comboboxes with the new values
+        """Method for loading the reference classes comboboxes with the new values.
+        
+        Args:
+            newReferenceClasses (dict): the new reference classes.
         """
         self.referenceClasses = newReferenceClasses
         
@@ -698,7 +741,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def updateReferenceMapping(self, referenceMapping):
-        """
+        """Method for loading the mapping in the reference mapping table.
+        
+        Args:
+            referenceMapping (dict): a map between the attributes and the reference classes.
         """
         for tableRow in range(0, self.tableReferenceMapping.rowCount()):
             attributeValue = self.tableReferenceMapping.item(tableRow, 0).text()
@@ -708,7 +754,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def updatePlanningUnits(self, planningUnits):
-        """
+        """Method for loading the planning units to the planning unit table.
+        
+        Args:
+            planningUnits (list of dict): a dict list of planning units.
         """
         self.clearPlanningUnitRows()
         
@@ -720,14 +769,20 @@ class DialogLumensPUR(QtGui.QDialog):
     # 'Setup' tab QPushButton handlers
     #***********************************************************
     def handlerTabWidgetChanged(self, index):
-        """
+        """Slot method for scrolling the log to the latest output.
+        
+        Args:
+            index (int): the current tab index.
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
     
     
     def handlerLoadPURTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxPURTemplate.currentText()
         reply = None
@@ -748,7 +803,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerSavePURTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentPURTemplate
         
@@ -771,7 +829,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerSaveAsPURTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -794,19 +852,24 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerButtonAddPlanningUnitRow(self):
-        """
+        """Slot method for add a planning unit to the planning unit table.
         """
         self.addPlanningUnitRow()
     
     
     def handlerButtonClearAllPlanningUnits(self):
-        """
+        """Slot method for clearing all planning units in the planning unit table.
         """
         self.clearPlanningUnitRows()
     
     
     def handlerSelectPlanningUnitShapefile(self, rowNumber=None, shapefile=None, shapefileAttr=None):
-        """
+        """Slot method for selecting a planning unit shapefile.
+        
+        Args:
+            rowNumber (int): the planning unit table row.
+            shapefile (str): the planning unit shapefile.
+            shapefileAttr (str): the selected attribute from the planning unit shapefile.
         """
         file = None
         tableRow = None
@@ -851,7 +914,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerDeletePlanningUnitShapefile(self):
-        """
+        """Slot method for deleting a planning unit from the planning unit table.
         """
         buttonSender = self.sender()
         objectName = buttonSender.objectName()
@@ -861,7 +924,11 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerSelectShapefile(self, shapefile=None, shapefileAttr=None):
-        """Select a shp file and load the attributes in the shapefile attribute combobox
+        """Slot methof for selecting a .shp file and loading the attributes in the shapefile attribute combobox.
+        
+        Args:
+            shapefile (str): a file path to the shapefile.
+            shapefileAttr (str): the selected attribute from the shapefile.
         """
         file = None
         
@@ -896,14 +963,17 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerChangeShapefileAttribute(self, currentIndex):
-        """
+        """Slot method for updating the reference map combobox when a different attribute is selected.
+        
+        Args:
+            currentIndex (int): the index number of the selected combobox item.
         """
         shapefileAttribute = self.comboBoxShapefileAttribute.currentText()
         self.populateTableReferenceMapping(shapefileAttribute)
     
     
     def handlerEditReferenceClasses(self):
-        """
+        """Slot method for showing the PUR reference class editing dialog.
         """
         dialog = DialogLumensPURReferenceClasses(self)
         
@@ -915,7 +985,7 @@ class DialogLumensPUR(QtGui.QDialog):
     # Process tabs
     #***********************************************************
     def setAppSettings(self):
-        """
+        """Set the required values from the form widgets.
         """
         # 'Setup reference' GroupBox values
         self.main.appSettings[type(self).__name__]['shapefile'] = unicode(self.lineEditShapefile.text())
@@ -977,7 +1047,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def validForm(self):
-        """
+        """Method for validating the form values.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
@@ -997,7 +1067,13 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -1014,7 +1090,10 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerProcessSetup(self):
-        """
+        """Slot method to pass the form values and execute the "PUR" R algorithms.
+        
+        The "PUR" process calls the following algorithms:
+        1. modeler:lumens_pur
         """
         self.setAppSettings()
         

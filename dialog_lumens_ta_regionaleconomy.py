@@ -11,10 +11,13 @@ import resource
 
 
 class DialogLumensTARegionalEconomy(QtGui.QDialog):
+    """LUMENS "TA Regional Economy" module dialog class.
     """
-    """
+    
     def loadTemplateFiles(self):
-        """List available ini template file inside the project folder
+        """Method for loading the list of module template files inside the project folder.
+        
+        This method is also called to load the module template files in the main window dashboard tab.
         """
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
@@ -81,7 +84,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
             
     
     def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
-        """Load the value saved in ini template file to the form widget
+        """Method for loading the values saved in the module template file to the form widgets.
+        
+        Args:
+            tabName (str): the tab where the form widget values will be populated.
+            templateFile (str): a file path to the template file that will be loaded.
+            returnTemplateSettings (bool): if true return a dict of the settings in the template file.
         """
         templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
@@ -515,7 +523,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
-        """
+        """Method for checking whether the new template values to be saved already exists in a saved template file.
+        
+        Args:
+            tabName (str): the tab to be checked.
+            templateToSkip (str): the template file to skip (when saving an existing template file).
         """
         duplicateTemplate = None
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
@@ -587,7 +599,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+        """Method for saving the form values based on the associated tab and dialog to a template file.
+        
+        Args:
+            tabName (str): the tab with the form values to save.
+            fileName (str): the target template file name to create.
         """
         self.setAppSettings()
         
@@ -746,6 +762,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
         
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         
@@ -1853,19 +1874,25 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensTARegionalEconomy, self).showEvent(event)
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensTARegionalEconomy, self).closeEvent(event)
     
     
     def loadHistoryLog(self):
-        """Load the history log file
+        """Method for loading the module history log file.
         """
         if os.path.exists(self.historyLogPath):
             logText = open(self.historyLogPath).read()
@@ -1873,14 +1900,20 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerTabWidgetChanged(self, index):
-        """
+        """Slot method for scrolling the log to the latest output.
+        
+        Args:
+            index (int): the current tab index.
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
     
     
     def toggleMultiplePeriod(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsMultiplePeriod.setEnabled(True)
@@ -1889,7 +1922,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def toggleRegionalEconomicScenarioImpactType(self, widget):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            widget (QCheckBox): the checked widget.
         """
         if widget.text() == 'Final Demand Scenario':
             if widget.isChecked():
@@ -1915,7 +1951,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     # 'Descriptive Analysis of Regional Economy' tab QPushButton handlers
     #***********************************************************
     def handlerLoadDescriptiveAnalysisTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxDescriptiveAnalysisTemplate.currentText()
         reply = None
@@ -1936,7 +1975,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveDescriptiveAnalysisTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentDescriptiveAnalysisTemplate
         
@@ -1959,7 +2001,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveAsDescriptiveAnalysisTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -1982,7 +2024,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectSingleIntermediateConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -1993,7 +2035,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectSingleValueAddedMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2004,7 +2046,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectSingleFinalConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2015,7 +2057,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectSingleLabourRequirement(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2026,7 +2068,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectOtherValueAddedComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2037,7 +2079,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectOtherFinalConsumptionComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2048,7 +2090,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectOtherListOfEconomicSector(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2059,7 +2101,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectMultipleIntermediateConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2070,7 +2112,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectMultipleValueAddedMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2081,7 +2123,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectMultipleFinalConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2092,7 +2134,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectMultipleLabourRequirement(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2106,7 +2148,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     # 'Regional Economic Impact Scenario' tab QPushButton handlers
     #***********************************************************
     def handlerLoadRegionalEconomicScenarioImpactTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxRegionalEconomicScenarioImpactTemplate.currentText()
         reply = None
@@ -2127,7 +2172,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveRegionalEconomicScenarioImpactTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentRegionalEconomicScenarioImpactTemplate
         
@@ -2150,7 +2198,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveAsRegionalEconomicScenarioImpactTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2173,7 +2221,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactFinalDemandChangeScenario(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Demand Change Scenario', QtCore.QDir.homePath(), 'Final Demand Change Scenario (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2184,7 +2232,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactGDPChangeScenario(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select GDP Change Scenario', QtCore.QDir.homePath(), 'Final Demand Change Scenario (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2195,7 +2243,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactIntermediateConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2206,7 +2254,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactValueAddedMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2217,7 +2265,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactFinalConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2228,7 +2276,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactValueAddedComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2239,7 +2287,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactFinalConsumptionComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2250,7 +2298,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactListOfEconomicSector(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2261,7 +2309,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactLandDistributionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2272,7 +2320,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactLandRequirementCoefficientMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Requirement Coefficient Matrix', QtCore.QDir.homePath(), 'Land Requirement Coefficient Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2283,7 +2331,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactLandCoverComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2294,7 +2342,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectRegionalEconomicScenarioImpactLabourRequirement(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2308,7 +2356,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     # 'Land Requirement Analysis' tab QPushButton handlers
     #***********************************************************
     def handlerLoadLandRequirementAnalysisTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxLandRequirementAnalysisTemplate.currentText()
         reply = None
@@ -2329,7 +2380,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveLandRequirementAnalysisTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentLandRequirementAnalysisTemplate
         
@@ -2352,7 +2406,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveAsLandRequirementAnalysisTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2375,7 +2429,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisIntermediateConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2386,7 +2440,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisValueAddedMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2397,7 +2451,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisFinalConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2408,7 +2462,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisValueAddedComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2419,7 +2473,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisFinalConsumptionComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2430,7 +2484,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisListOfEconomicSector(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2441,7 +2495,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisLandDistributionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2452,7 +2506,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisLandCoverComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2463,7 +2517,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandRequirementAnalysisLabourRequirement(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2477,7 +2531,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     # 'Land Use Change Impact' tab QPushButton handlers
     #***********************************************************
     def handlerLoadLandUseChangeImpactTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxLandUseChangeImpactTemplate.currentText()
         reply = None
@@ -2498,7 +2555,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveLandUseChangeImpactTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentLandUseChangeImpactTemplate
         
@@ -2521,7 +2581,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSaveAsLandUseChangeImpactTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2544,7 +2604,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactIntermediateConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Intermediate Consumption Matrix', QtCore.QDir.homePath(), 'Intermediate Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2555,7 +2615,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactValueAddedMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Matrix', QtCore.QDir.homePath(), 'Value Added Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2566,7 +2626,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactFinalConsumptionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Matrix', QtCore.QDir.homePath(), 'Final Consumption Matrix (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2577,7 +2637,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactValueAddedComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Value Added Component', QtCore.QDir.homePath(), 'Value Added Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2588,7 +2648,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactFinalConsumptionComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Final Consumption Component', QtCore.QDir.homePath(), 'Final Consumption Component (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2599,7 +2659,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactListOfEconomicSector(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select List of Economic Sector', QtCore.QDir.homePath(), 'List of Economic Sector (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2611,7 +2671,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactLandDistributionMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Distribution Matrix', QtCore.QDir.homePath(), 'Land Distribution Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2622,7 +2682,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactLandRequirementCoefficientMatrix(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Requirement Coefficient Matrix', QtCore.QDir.homePath(), 'Land Requirement Coefficient Matrix (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2633,7 +2693,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactLandCoverComponent(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Cover Component', QtCore.QDir.homePath(), 'Land Cover Component (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2644,7 +2704,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerSelectLandUseChangeImpactLabourRequirement(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Labour Requirement', QtCore.QDir.homePath(), 'Labour Requirement (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2657,8 +2717,8 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     #***********************************************************
     # Process tabs
     #***********************************************************
-    def setAppSetings(self):
-        """
+    def setAppSettings(self):
+        """Set the required values from the form widgets.
         """
         # 'Descriptive Analysis of Regional Economy' tab fields
         self.main.appSettings['DialogLumensTARegionalEconomySingleIODescriptiveAnalysis']['period'] \
@@ -2802,7 +2862,10 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def validForm(self, formName):
-        """
+        """Method for validating the form values.
+        
+        Args:
+            formName (str): the name of the form to validate.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', formName)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
@@ -2822,7 +2885,13 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -2839,9 +2908,13 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerProcessDescriptiveAnalysis(self):
+        """Slot method to pass the form values and execute the "TA Descriptive Analysis of Regional Economy" R algorithms.
+        
+        Depending on the checked groupbox, the "TA Descriptive Analysis of Regional Economy" process calls the following algorithms:
+        1. modeler:ta_reg_io_da
+        2. modeler:ta_reg_ts_io
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensTARegionalEconomySingleIODescriptiveAnalysis'
         algName = 'modeler:ta_reg_io_da'
@@ -2930,9 +3003,13 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerProcessRegionalEconomicScenarioImpact(self):
+        """Slot method to pass the form values and execute the "TA Regional Economic Scenario Impact" R algorithms.
+        
+        Depending on the checked groupbox, the "TA Regional Economic Scenario Impact" process calls the following algorithms:
+        1. modeler:ta_reg_luc_5a_lcc_fd
+        2. modeler:ta_reg_luc_5a_lcc_gdp
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         if self.checkBoxRegionalEconomicScenarioImpactFinalDemand.isChecked():
             formName = 'DialogLumensTARegionalEconomyFinalDemandChangeMultiplierAnalysis'
@@ -3024,9 +3101,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerProcessLandRequirementAnalysis(self):
+        """Slot method to pass the form values and execute the "TA Land Requirement Analysis" R algorithm.
+        
+        The "TA Land Requirement Analysis" process calls the following algorithm:
+        1. modeler:ta_reg_ld_lr
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensTARegionalEconomyLandDistributionRequirementAnalysis'
         algName = 'modeler:ta_reg_ld_lr'
@@ -3071,9 +3151,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog):
     
     
     def handlerProcessLandUseChangeImpact(self):
+        """Slot method to pass the form values and execute the "TA Land Use Change Impact" R algorithm.
+        
+        The "TA Land Use Change Impact" process calls the following algorithm:
+        1. modeler:ta_reg_luc_gdp_lcc
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensTAImpactofLandUsetoRegionalEconomyIndicatorAnalysis'
         algName = 'modeler:ta_reg_luc_gdp_lcc'

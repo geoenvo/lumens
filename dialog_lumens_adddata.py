@@ -10,8 +10,9 @@ from dialog_lumens_adddata_vectorattributes import DialogLumensAddDataVectorAttr
 
 
 class DialogLumensAddData(QtGui.QDialog):
+    """LUMENS "Add Data" dialog class.
     """
-    """
+    
     def __init__(self, parent):
         super(DialogLumensAddData, self).__init__(parent)
         
@@ -39,6 +40,11 @@ class DialogLumensAddData(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         self.groupBoxAddData = QtGui.QGroupBox('Add data')
@@ -92,19 +98,28 @@ class DialogLumensAddData(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensAddData, self).showEvent(event)
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensAddData, self).closeEvent(event)
     
     
     def clearLayout(self, layout):
-        """Clear a layout and all its child widgets
+        """Method for removing a layout and all its child widgets.
+        
+        Args:
+            layout (QLayout): the layout to be removed.
         """
         for i in reversed(range(layout.count())):
             item = layout.itemAt(i)
@@ -120,7 +135,7 @@ class DialogLumensAddData(QtGui.QDialog):
     
     
     def addDataRow(self):
-        """Add a data row
+        """Method for adding a data row to the input table.
         """
         self.tableAddDataRowCount = self.tableAddDataRowCount + 1
         
@@ -169,13 +184,13 @@ class DialogLumensAddData(QtGui.QDialog):
     # 'Add Data' QPushButton handlers
     #***********************************************************
     def handlerButtonAddDataRow(self):
-        """
+        """Slot method for adding a data row.
         """
         self.addDataRow()
     
     
     def handlerSelectDataFile(self):
-        """
+        """Slot method for a file select dialog to select a spatial file.
         """
         buttonSender = self.sender()
         objectName = buttonSender.objectName()
@@ -190,7 +205,7 @@ class DialogLumensAddData(QtGui.QDialog):
     
     
     def handlerDeleteDataRow(self):
-        """
+        """Slot method for deleting a data row.
         """
         buttonSender = self.sender()
         objectName = buttonSender.objectName()
@@ -203,7 +218,7 @@ class DialogLumensAddData(QtGui.QDialog):
     # Process dialog
     #***********************************************************
     def setAppSettings(self):
-        """Set the required values from the form widgets
+        """Set the required values from the form widgets.
         """
         completeData = True
         self.tableAddData = []
@@ -253,7 +268,13 @@ class DialogLumensAddData(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -270,7 +291,15 @@ class DialogLumensAddData(QtGui.QDialog):
     
     
     def handlerProcessAddData(self):
-        """
+        """Slot method to pass the form values and execute the "Add Data" R algorithms.
+        
+        Depending on the type of the added data file (vector or raster) the appropriate
+        R algorithm is called.
+        
+        The "Add Data" process calls the following algorithms:
+        1. r:lumensaddrasterdata1
+        2. r:lumensaddrasterdata2
+        3. r:lumensaddvectordata
         """
         completeData = self.setAppSettings()
         

@@ -11,10 +11,13 @@ import resource
 
 
 class DialogLumensQUES(QtGui.QDialog):
+    """ LUMENS "QUES" module dialog class.
     """
-    """
+    
     def loadTemplateFiles(self):
-        """List available ini template file inside the project folder
+        """Method for loading the list of module template files inside the project folder.
+        
+        This method is also called to load the module template files in the main window dashboard tab.
         """
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
@@ -109,7 +112,12 @@ class DialogLumensQUES(QtGui.QDialog):
             
     
     def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
-        """Load the value saved in ini template file to the form widget
+        """Method for loading the values saved in the module template file to the form widgets.
+        
+        Args:
+            tabName (str): the tab where the form widget values will be populated.
+            templateFile (str): a file path to the template file that will be loaded.
+            returnTemplateSettings (bool): if true return a dict of the settings in the template file.
         """
         templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
@@ -565,7 +573,11 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
-        """
+        """Method for checking whether the new template values to be saved already exists in a saved template file.
+        
+        Args:
+            tabName (str): the tab to be checked.
+            templateToSkip (str): the template file to skip (when saving an existing template file).
         """
         duplicateTemplate = None
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
@@ -651,7 +663,11 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+        """Method for saving the form values based on the associated tab and dialog to a template file.
+        
+        Args:
+            tabName (str): the tab with the form values to save.
+            fileName (str): the target template file name to create.
         """
         self.setAppSettings()
         
@@ -819,6 +835,11 @@ class DialogLumensQUES(QtGui.QDialog):
         
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         
@@ -2062,19 +2083,25 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensQUES, self).showEvent(event)
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensQUES, self).closeEvent(event)
     
     
     def loadHistoryLog(self):
-        """Load the history log file
+        """Method for loading the module history log file.
         """
         if os.path.exists(self.historyLogPath):
             logText = open(self.historyLogPath).read()
@@ -2082,7 +2109,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerTabWidgetChanged(self, index):
-        """
+        """Slot method for scrolling the log to the latest output.
+        
+        Args:
+            index (int): the current tab index.
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
@@ -2092,7 +2122,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-C' tab QGroupBox toggle handlers
     #***********************************************************
     def toggleCarbonAccounting(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsCarbonAccounting.setEnabled(True)
@@ -2101,7 +2134,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def togglePeatlandCarbonAccounting(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsPeatlandCarbonAccounting.setEnabled(True)
@@ -2110,7 +2146,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def toggleSummarizeMultiplePeriod(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.contentOptionsSummarizeMultiplePeriod.setEnabled(True)
@@ -2122,7 +2161,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-H' tab QGroupBox toggle handlers
     #***********************************************************
     def toggleMultipleHRU(self, checked):
-        """
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
         """
         if checked:
             self.labelMultipleHRULandUseThreshold.setEnabled(True)
@@ -2144,7 +2186,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'Pre-QUES' tab QPushButton handlers
     #***********************************************************
     def handlerLoadPreQUESTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxPreQUESTemplate.currentText()
         reply = None
@@ -2165,7 +2210,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSavePreQUESTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentPreQUESTemplate
         
@@ -2188,7 +2236,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveAsPreQUESTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2211,7 +2259,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectLandCoverCsvLandUse(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Use Lookup Table', QtCore.QDir.homePath(), 'Land Use Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2225,7 +2273,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-C' tab QPushButton handlers
     #***********************************************************
     def handlerLoadQUESCTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxQUESCTemplate.currentText()
         reply = None
@@ -2246,7 +2297,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveQUESCTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentQUESCTemplate
         
@@ -2269,7 +2323,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveAsQUESCTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2292,7 +2346,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectCACsvfile(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Carbon Density Lookup Table', QtCore.QDir.homePath(), 'Carbon Density Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2303,7 +2357,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectPCACsvfile(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Carbon Stock Lookup Table', QtCore.QDir.homePath(), 'Carbon Stock Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2317,7 +2371,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-B' tab QPushButton handlers
     #***********************************************************
     def handlerLoadQUESBTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxQUESBTemplate.currentText()
         reply = None
@@ -2338,7 +2395,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveQUESBTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentQUESBTemplate
         
@@ -2361,7 +2421,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveAsQUESBTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2384,7 +2444,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBCsvLandCover(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Cover Lookup', QtCore.QDir.homePath(), 'Land Cover Lookup (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2395,7 +2455,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBCsvClassDescriptors(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Class Descriptors', QtCore.QDir.homePath(), 'Class Descriptors (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2406,7 +2466,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBCsvEdgeContrast(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Edge Contrast', QtCore.QDir.homePath(), 'Edge Contrast (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2417,7 +2477,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBCsvZoneLookup(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Zone Lookup', QtCore.QDir.homePath(), 'Zone Lookup (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2428,7 +2488,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBOutputTECIInitial(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select TECI Initial Output', QtCore.QDir.homePath(), 'TECI Initial (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2439,7 +2499,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBOutputTECIFinal(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select TECI Final Output', QtCore.QDir.homePath(), 'TECI Final (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2450,7 +2510,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBOutputHabitatLoss(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Habitat Loss Output', QtCore.QDir.homePath(), 'Habitat Loss (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2462,7 +2522,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBOutputDegradedHabitat(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Degraded Habitat', QtCore.QDir.homePath(), 'Degraded Habitat (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2473,7 +2533,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBOutputHabitatGain(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Habitat Gain', QtCore.QDir.homePath(), 'Habitat Gain (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2484,7 +2544,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectQUESBOutputRecoveredHabitat(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Recovered Habitat Output', QtCore.QDir.homePath(), 'Recovered Habitat (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2498,7 +2558,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-H' Hydrological Response Unit Definition tab QPushButton handlers
     #***********************************************************
     def handlerLoadHRUDefinitionTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxHRUDefinitionTemplate.currentText()
         reply = None
@@ -2519,7 +2582,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveHRUDefinitionTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentHRUDefinitionTemplate
         
@@ -2542,7 +2608,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveAsHRUDefinitionTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2565,7 +2631,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRULandUseMap(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Use Map', QtCore.QDir.homePath(), 'Land Use Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2576,7 +2642,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRUSoilMap(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Soil Map', QtCore.QDir.homePath(), 'Soil Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2587,7 +2653,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRUSlopeMap(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Slope Map', QtCore.QDir.homePath(), 'Slope Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2598,7 +2664,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRUSubcatchmentMap(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Subcatchment Map', QtCore.QDir.homePath(), 'Subcatchment Map (*{0})'.format(self.main.appSettings['selectRasterfileExt'])))
@@ -2609,7 +2675,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRULandUseClassification(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Land Use Classification', QtCore.QDir.homePath(), 'Land Use Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2620,7 +2686,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRUSoilClassification(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Soil Classification', QtCore.QDir.homePath(), 'Soil Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2631,7 +2697,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectHRUSlopeClassification(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Slope Classification', QtCore.QDir.homePath(), 'Slope Classification (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -2645,7 +2711,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-H' Watershed Model Evaluation tab QPushButton handlers
     #***********************************************************
     def handlerLoadWatershedModelEvaluationTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxWatershedModelEvaluationTemplate.currentText()
         reply = None
@@ -2666,7 +2735,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveWatershedModelEvaluationTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentWatershedModelEvaluationTemplate
         
@@ -2689,7 +2761,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveAsWatershedModelEvaluationTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2712,7 +2784,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectWatershedModelEvaluationObservedDebitFile(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Observed Debit File', QtCore.QDir.homePath(), 'Observed Debit File (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
@@ -2723,7 +2795,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectOutputWatershedModelEvaluation(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Watershed Model Evaluation Output', QtCore.QDir.homePath(), 'Watershed Model Evaluation (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
@@ -2737,7 +2809,10 @@ class DialogLumensQUES(QtGui.QDialog):
     # 'QUES-H' Watershed Indicators tab QPushButton handlers
     #***********************************************************
     def handlerLoadWatershedIndicatorsTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxWatershedIndicatorsTemplate.currentText()
         reply = None
@@ -2758,7 +2833,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveWatershedIndicatorsTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentWatershedIndicatorsTemplate
         
@@ -2781,7 +2859,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSaveAsWatershedIndicatorsTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -2804,7 +2882,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectWatershedIndicatorsSWATTXTINOUTDir(self):
-        """
+        """Slot method for a directory select dialog.
         """
         dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select SWAT TXTINOUT Directory'))
         
@@ -2814,7 +2892,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectWatershedIndicatorsSubWatershedPolygon(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Sub Watershed Polygon', QtCore.QDir.homePath(), 'Sub Watershed Polygon (*{0})'.format(self.main.appSettings['selectShapefileExt'])))
@@ -2825,7 +2903,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Initial Year Sub Watershed Level Indicators Output', QtCore.QDir.homePath(), 'Initial Year Sub Watershed Level Indicators (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
@@ -2836,7 +2914,7 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Final Year Sub Watershed Level Indicators Output', QtCore.QDir.homePath(), 'Final Year Sub Watershed Level Indicators (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
@@ -2850,7 +2928,7 @@ class DialogLumensQUES(QtGui.QDialog):
     # Process tabs
     #***********************************************************
     def setAppSettings(self):
-        """
+        """Set the required values from the form widgets.
         """
         # 'Pre-QUES' tab fields
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] \
@@ -3015,7 +3093,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def validForm(self, formName):
-        """
+        """Method for validating the form values.
+        
+        Args:
+            formName (str): the name of the form to validate.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', formName)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
@@ -3035,7 +3116,13 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -3052,7 +3139,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerProcessPreQUES(self):
-        """
+        """Slot method to pass the form values and execute the "PreQUES" R algorithms.
+        
+        The "PreQUES" process calls the following algorithms:
+        1. modeler:pre-ques_trajectory
         """
         self.setAppSettings()
         
@@ -3091,7 +3181,12 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerProcessQUESC(self):
-        """
+        """Slot method to pass the form values and execute the "QUES-C" R algorithms.
+        
+        Depending on the checked groupbox, the "QUES-C" process calls the following algorithms:
+        1. modeler:ques-c
+        2. modeler:ques-c_peat
+        3. r:summarizemultipleperiode
         """
         self.setAppSettings()
         
@@ -3192,7 +3287,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerProcessQUESB(self):
-        """
+        """Slot method to pass the form values and execute the "QUES-B" R algorithm.
+        
+        The "QUES-B" process calls the following algorithm:
+        1. modeler:ques-b
         """
         self.setAppSettings()
         
@@ -3267,7 +3365,12 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerProcessQUESHHRUDefinition(self):
-        """
+        """Slot method to pass the form values and execute the "QUES-H HRU Definition" R algorithms.
+        
+        Depending on the checked groupbox, the "QUES-H HRU Definition" process calls the following algorithms:
+        1. modeler:ques-h_dhru
+        2. modeler:ques-h_dlussl
+        3. modeler:ques-h_mhru
         """
         self.setAppSettings()
         
@@ -3393,7 +3496,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerProcessQUESHWatershedModelEvaluation(self):
-        """
+        """Slot method to pass the form values and execute the "QUES-H Watershed Model Evaluation" R algorithm.
+        
+        The "QUES-H Watershed Model Evaluation" process calls the following algorithm:
+        1. modeler:ques-h_watershed_model_evaluation
         """
         self.setAppSettings()
         
@@ -3440,7 +3546,10 @@ class DialogLumensQUES(QtGui.QDialog):
     
     
     def handlerProcessQUESHWatershedIndicators(self):
-        """
+        """Slot method to pass the form values and execute the "QUES-H Watershed Indicators" R algorithm.
+        
+        The "QUES-H Watershed Indicators" process calls the following algorithm:
+        1. modeler:ques-h_watershed_indicators
         """
         self.setAppSettings()
         

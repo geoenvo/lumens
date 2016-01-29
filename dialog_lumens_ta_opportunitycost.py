@@ -11,10 +11,13 @@ import resource
 
 
 class DialogLumensTAOpportunityCost(QtGui.QDialog):
+    """LUMENS "TA Opportunity Cost" module dialog class.
     """
-    """
+    
     def loadTemplateFiles(self):
-        """List available ini template file inside the project folder
+        """Method for loading the list of module template files inside the project folder.
+        
+        This method is also called to load the module template files in the main window dashboard tab.
         """
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
         
@@ -69,7 +72,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
     
     def loadTemplate(self, tabName, templateFile, returnTemplateSettings=False):
-        """Load the value saved in ini template file to the form widget
+        """Method for loading the values saved in the module template file to the form widgets.
+        
+        Args:
+            tabName (str): the tab where the form widget values will be populated.
+            templateFile (str): a file path to the template file that will be loaded.
+            returnTemplateSettings (bool): if true return a dict of the settings in the template file.
         """
         templateFilePath = os.path.join(self.settingsPath, templateFile)
         settings = QtCore.QSettings(templateFilePath, QtCore.QSettings.IniFormat)
@@ -205,7 +213,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
-        """
+        """Method for checking whether the new template values to be saved already exists in a saved template file.
+        
+        Args:
+            tabName (str): the tab to be checked.
+            templateToSkip (str): the template file to skip (when saving an existing template file).
         """
         duplicateTemplate = None
         templateFiles = [os.path.basename(name) for name in glob.glob(os.path.join(self.settingsPath, '*.ini')) if os.path.isfile(os.path.join(self.settingsPath, name))]
@@ -269,7 +281,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def saveTemplate(self, tabName, fileName):
-        """Save form values according to their tab and dialog to a template file
+        """Method for saving the form values based on the associated tab and dialog to a template file.
+        
+        Args:
+            tabName (str): the tab with the form values to save.
+            fileName (str): the target template file name to create.
         """
         self.setAppSettings()
         
@@ -371,6 +387,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         
@@ -735,19 +756,25 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensTAOpportunityCost, self).showEvent(event)
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensTAOpportunityCost, self).closeEvent(event)
     
     
     def loadHistoryLog(self):
-        """Load the history log file
+        """Method for loading the module history log file.
         """
         if os.path.exists(self.historyLogPath):
             logText = open(self.historyLogPath).read()
@@ -755,7 +782,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerTabWidgetChanged(self, index):
-        """
+        """Slot method for scrolling the log to the latest output.
+        
+        Args:
+            index (int): the current tab index.
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
@@ -765,7 +795,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     # 'Abacus Opportunity Cost' tab QPushButton handlers
     #***********************************************************
     def handlerLoadAbacusOpportunityCostTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxAbacusOpportunityCostTemplate.currentText()
         reply = None
@@ -786,7 +819,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSaveAbacusOpportunityCostTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentAbacusOpportunityCostTemplate
         
@@ -809,7 +845,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSaveAsAbacusOpportunityCostTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -832,7 +868,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSelectAOCProjectFile(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Project File', QtCore.QDir.homePath(), 'Project File (*{0})'.format(self.main.appSettings['selectCarfileExt'])))
@@ -846,7 +882,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     # 'Opportunity Cost Curve' tab QPushButton handlers
     #***********************************************************
     def handlerLoadOpportunityCostCurveTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxOpportunityCostCurveTemplate.currentText()
         reply = None
@@ -867,7 +906,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSaveOpportunityCostCurveTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentOpportunityCostCurveTemplate
         
@@ -890,7 +932,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSaveAsOpportunityCostCurveTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -913,7 +955,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSelectOCCCsvNPVTable(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select NPV Table', QtCore.QDir.homePath(), 'NPV Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -924,7 +966,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSelectOCCOutputOpportunityCostDatabase(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Opportunity Cost Database Output', QtCore.QDir.homePath(), 'Opportunity Cost Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
@@ -935,7 +977,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSelectOCCOutputOpportunityCostReport(self):
-        """
+        """Slot method for a file select dialog.
         """
         outputfile = unicode(QtGui.QFileDialog.getSaveFileName(
             self, 'Create/Select Opportunity Cost Report Output', QtCore.QDir.homePath(), 'Opportunity Cost Report (*{0})'.format(self.main.appSettings['selectHTMLfileExt'])))
@@ -949,7 +991,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     # 'Opportunity Cost Map' tab QPushButton handlers
     #***********************************************************
     def handlerLoadOpportunityCostMapTemplate(self, fileName=None):
-        """
+        """Slot method for loading a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.comboBoxOpportunityCostMapTemplate.currentText()
         reply = None
@@ -970,7 +1015,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSaveOpportunityCostMapTemplate(self, fileName=None):
-        """
+        """Slot method for saving a module template.
+        
+        Args:
+            fileName (str): the file name of the module template.
         """
         templateFile = self.currentOpportunityCostMapTemplate
         
@@ -993,7 +1041,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSaveAsOpportunityCostMapTemplate(self):
-        """
+        """Slot method for saving a module template to a new file.
         """
         fileName, ok = QtGui.QInputDialog.getText(self, 'Save As', 'Enter a new template name:')
         fileSaved = False
@@ -1016,7 +1064,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerSelectOCMCsvProfitability(self):
-        """
+        """Slot method for a file select dialog.
         """
         file = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select Profitability Lookup Table', QtCore.QDir.homePath(), 'Profitability Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
@@ -1029,8 +1077,8 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     #***********************************************************
     # Process tabs
     #***********************************************************
-    def setAppSetings(self):
-        """
+    def setAppSettings(self):
+        """Set the required values from the form widgets.
         """
         # 'Abacus Opportunity Cost' tab fields
         self.main.appSettings['DialogLumensTAAbacusOpportunityCostCurve']['projectFile'] = unicode(self.lineEditAOCProjectFile.text())
@@ -1053,7 +1101,10 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
     
     def validForm(self, formName):
-        """
+        """Method for validating the form values.
+        
+        Args:
+            formName (str): the name of the form to validate.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', formName)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
@@ -1073,7 +1124,13 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -1090,9 +1147,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerProcessAbacusOpportunityCost(self):
+        """Slot method to pass the form values and execute the "TA Abacus Opportunity Cost" R algorithm.
+        
+        The "TA Abacus Opportunity Cost" process calls the following algorithm:
+        1. modeler:abacus_opportunity_cost
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensTAAbacusOpportunityCostCurve'
         algName = 'modeler:abacus_opportunity_cost'
@@ -1126,9 +1186,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerProcessOpportunityCostCurve(self):
+        """Slot method to pass the form values and execute the "TA Opportunity Cost Curve" R algorithm.
+        
+        The "TA Opportunity Cost Curve" process calls the following algorithm:
+        1. modeler:opportunity_cost
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensTAOpportunityCostCurve'
         algName = 'modeler:opportunity_cost'
@@ -1174,9 +1237,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
     
     
     def handlerProcessOpportunityCostMap(self):
+        """Slot method to pass the form values and execute the "TA Opportunity Cost Map" R algorithm.
+        
+        The "TA Opportunity Cost Map" process calls the following algorithm:
+        1. modeler:opcost_map
         """
-        """
-        self.setAppSetings()
+        self.setAppSettings()
         
         formName = 'DialogLumensTAOpportunityCostMap'
         algName = 'modeler:opcost_map'

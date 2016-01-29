@@ -9,8 +9,9 @@ from dialog_lumens_viewer import DialogLumensViewer
 
 
 class DialogLumensImportDatabase(QtGui.QDialog):
+    """LUMENS "Import Database" dialog class.
     """
-    """
+    
     def __init__(self, parent):
         super(DialogLumensImportDatabase, self).__init__(parent)
         
@@ -37,6 +38,11 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         self.groupBoxDatabaseDetails = QtGui.QGroupBox('Database details')
@@ -95,7 +101,7 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     # 'Import Database' QPushButton handlers
     #***********************************************************
     def handlerSelectWorkingDir(self):
-        """Select a folder as working dir
+        """Slot method for a folder select dialog to select a folder as working dir.
         """
         workingDir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
         
@@ -106,7 +112,7 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     
     
     def handlerSelectLumensDatabase(self):
-        """Select a .lpj database file
+        """Slot method for a file select dialog to select a LUMENS .lpj project database file.
         """
         projectFile = unicode(QtGui.QFileDialog.getOpenFileName(
             self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.main.appSettings['selectProjectfileExt'])))
@@ -121,7 +127,7 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     # Process dialog
     #***********************************************************
     def setAppSettings(self):
-        """Set the required values from the form widgets
+        """Set the required values from the form widgets.
         """
         # BUG in R script execution? workingDir path separator must be forward slash
         self.main.appSettings[type(self).__name__]['workingDir'] = unicode(self.lineEditWorkingDir.text()).replace(os.path.sep, '/')
@@ -129,7 +135,7 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     
     
     def validForm(self):
-        """
+        """Method for validating the form values.
         """
         logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
         logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
@@ -149,7 +155,13 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     
     
     def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result
+        """Display a messagebox based on the processing result.
+        
+        Args:
+            algName (str): the name of the executed algorithm.
+            outputs (dict): the output of the executed algorithm.
+            successMessage (str): the success message to be display in a message box.
+            errorMessage (str): the error message to be display in a message box.
         """
         if outputs and outputs['statuscode'] == '1':
             QtGui.QMessageBox.information(self, 'Success', successMessage)
@@ -166,7 +178,11 @@ class DialogLumensImportDatabase(QtGui.QDialog):
     
     
     def handlerProcessImportDatabase(self):
-        """LUMENS Import Database
+        """Slot method to pass the form values and execute the "Import Database" R algorithm.
+        
+        Upon successful completion of the algorithms the imported project database will be opened
+        and the dialog will close. The "Import Database" process calls the following algorithms:
+        1. modeler:lumens_import_database
         """
         self.setAppSettings()
         
@@ -193,7 +209,7 @@ class DialogLumensImportDatabase(QtGui.QDialog):
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            self.outputsMessageBox(algName, outputs, '', '')
+            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessImportDatabase.setEnabled(True)
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)

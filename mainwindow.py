@@ -39,6 +39,8 @@ Processing.initialize()
 from processing.tools import *
 
 from utils import QPlainTextEditLogger, DetailedMessageBox
+
+# Import LUMENS dialog classes here
 from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
 from dialog_layer_properties import DialogLayerProperties
 from dialog_lumens_viewer import DialogLumensViewer
@@ -59,24 +61,28 @@ from dialog_lumens_sciendo import DialogLumensSCIENDO
 __version__ = '1.0.0'
 
 class MainWindow(QtGui.QMainWindow):
+    """The main window class of LUMENS application.
+    
+    Attributes:
+        openDialogs (list): a list to reference opened dialog windows.
+        recentProjects (list): a list of previously opened LUMENS project files.
+        qgsLayerList (dict): a dict of QgsVectorLayer and QgsRasterLayer instances in the layer list.
+        layerListModel (QStandardItemModel): the model for the layer list on the sidebar.
+    """
+    
     def __init__(self, parent=None):
         """Constructor method for initializing the LUMENS main window instance.
         
-        Global application settings "appSettings" are declared in this method.
-        The global settings also holds the input field parameters for each of the module dialogs.
-        LUMENS main window signal handlers are also declared here.
-        Other important variables that are declared:
-        1. "openDialogs" a list to reference opened dialog windows.
-        2. "recentProjects" a list of previously opened LUMENS project files.
-        3. "qgsLayerList" a dict of QgsVectorLayer and QgsRasterLayer instances in the layer list.
-        4. "layerListModel" the model for the layer list on the sidebar.
+        Global application settings "appSettings" is declared in this method. The global settings
+        holds the input field parameters for each of the module dialogs. LUMENS main window signal
+        handlers are also declared here.
         
         Args:
             parent: the main window's parent instance.
         """
         super(MainWindow, self).__init__(parent)
         
-        # Default settings for each LUMENS dialog
+        # Default settings for each LUMENS dialog, the class attributes reflect their R algorithm input fields
         self.appSettings = {
             'debug': False,
             'appDir': os.path.dirname(os.path.realpath(__file__)),
@@ -3057,6 +3063,9 @@ class MainWindow(QtGui.QMainWindow):
 
 
 class SelectTool(QgsMapToolIdentify):
+    """QgsMapTool subclass for handling select mode on the map canvas.
+    """
+    
     def __init__(self, window):
         QgsMapToolIdentify.__init__(self, window.mapCanvas)
         self.window = window
@@ -3086,6 +3095,9 @@ class SelectTool(QgsMapToolIdentify):
 
 
 class InfoTool(QgsMapToolIdentify):
+    """QgsMapTool subclass for handling the info mode on the map canvas.
+    """
+    
     def __init__(self, window):
         QgsMapToolIdentify.__init__(self, window.mapCanvas)
         self.window = window
@@ -3125,6 +3137,9 @@ class InfoTool(QgsMapToolIdentify):
 
 
 class PanTool(QgsMapTool):
+    """QgsMapTool subclass for handling the pan mode on the map canvas.
+    """
+    
     def __init__(self, mapCanvas):
         QgsMapTool.__init__(self, mapCanvas)
         self.setCursor(QtCore.Qt.OpenHandCursor)
@@ -3151,6 +3166,9 @@ class PanTool(QgsMapTool):
 
 
 def main():
+    """LUMENS application main entry point.
+    """
+    
     window = MainWindow()
     window.show()
     splashScreen.finish(window)
