@@ -6,17 +6,28 @@ from PyQt4 import QtCore, QtGui, QtWebKit
 
 
 class DialogLumensViewer(QtGui.QDialog):
-    """Dialog class for displaying csv and html content, also provides an editable table that returns tabular data
+    """LUMENS dialog class for displaying csv, html, and text content.
     """
-    def __init__(self, parent, contentTitle, contentType, contentSource, editableTable=False):
+    
+    def __init__(self, parent, contentTitle, contentType, contentSource, editableTable=False, contentMessage=''):
+        """Constructor method for initializing a LUMENS viewer dialog window instance.
+        
+        Args:
+            parent: the dialog's parent instance.
+            contentTitle (str): the title of the dialog window.
+            contentType (str): the type of the content.
+            contentSource (str): a file path to the content file.
+            editableTable (bool): if true allow the table content of the csv to be editable.
+            contentMessage (str): message to be shown on top of the content.
+        """
         super(DialogLumensViewer, self).__init__(parent)
         self.main = parent
+        self.dialogTitle = 'LUMENS Viewer - ' + contentTitle
         
         self.contentType = contentType
         self.contentSource = contentSource
         self.editableTable = editableTable
-        
-        self.dialogTitle = 'LUMENS Viewer - ' + contentTitle
+        self.contentMessage = contentMessage
         
         self.setupUi(self)
         
@@ -24,6 +35,11 @@ class DialogLumensViewer(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         self.setLayout(self.dialogLayout)
@@ -34,7 +50,7 @@ class DialogLumensViewer(QtGui.QDialog):
     
     
     def getTableData(self):
-        """Return table data as list of lists
+        """Method for returning the table data as list of lists.
         """
         tableData = []
         
@@ -53,7 +69,11 @@ class DialogLumensViewer(QtGui.QDialog):
     
     
     def getTableCsv(self, tableData, forwardDirSeparator=False):
-        """Write the table data to a temp csv file
+        """Method for writing the table data to a temp csv file.
+        
+        Args:
+            tableData (list of lists): list of table rows.
+            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
         """
         handle, csvFilePath = tempfile.mkstemp(suffix='.csv')
         
@@ -69,7 +89,10 @@ class DialogLumensViewer(QtGui.QDialog):
     
     
     def closeEvent(self, event):
-        """Called when the widget is closed
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
         super(DialogLumensViewer, self).closeEvent(event)
         
@@ -80,8 +103,16 @@ class DialogLumensViewer(QtGui.QDialog):
     
     
     def loadContent(self):
-        """Load the source content in the relevant widget
+        """Method for loading the source content in the appropriate widget.
+        
+        The supported contents are csv, html, and text files. Content from csv files
+        can be showned in an editable table widget.
         """
+        if len(self.contentMessage):
+            self.labelContentMessage = QtGui.QLabel()
+            self.labelContentMessage.setText(self.contentMessage)
+            self.dialogLayout.addWidget(self.labelContentMessage)
+        
         if self.contentType == 'csv':
             self.tableModel = QtGui.QStandardItemModel()
         

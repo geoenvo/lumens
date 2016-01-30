@@ -8,17 +8,20 @@ from PyQt4 import QtCore, QtGui
 
 
 class DialogLayerAttributeDualView(QtGui.QDialog):
+    """Dialog class for showing the attribute table of a vector layer.
     """
-    """
-    
     
     def __init__(self, vectorLayer, parent):
-        super(DialogLayerAttributeDualView, self).__init__(parent)
-        self.vectorLayer = vectorLayer
-        ##self.vectorLayer.setReadOnly(False)
-        ##self.vectorLayer.startEditing()
-        self.main = parent
+        """Constructor method for initializing a layer attribute dialog window instance.
         
+        Args:
+            vectorLayer (QgsVectorLayer): a vector layer instance.
+            parent: the dialog's parent instance.
+        """
+        super(DialogLayerAttributeDualView, self).__init__(parent)
+        
+        self.vectorLayer = vectorLayer
+        self.main = parent
         self.dialogTitle = 'Attribute Editor - ' + self.vectorLayer.name()
         
         self.setupUi(self)
@@ -29,26 +32,12 @@ class DialogLayerAttributeDualView(QtGui.QDialog):
         self.actionToggleEditLayer.triggered.connect(self.handlerToggleEditLayer)
     
     
-    def closeEvent(self, event):
-        """Called when the widget is closed
-        """
-        ##super(DialogLayerAttributeDualView, self).closeEvent(event)
-        
-        reply = self.confirmSaveLayer()
-        
-        if reply == QtGui.QMessageBox.Save:
-            event.accept()
-        elif reply == QtGui.QMessageBox.No:
-            event.accept()
-        elif reply == QtGui.QMessageBox.Cancel:
-            event.ignore()
-        elif reply == None:
-            # Click toggle edit button => close dialog => (layer was not modified)
-            self.vectorLayer.rollBack()
-            self.vectorLayer.setReadOnly()
-    
-    
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout(parent)
         
         self.toolBar = QtGui.QToolBar(self)
@@ -69,8 +58,30 @@ class DialogLayerAttributeDualView(QtGui.QDialog):
         self.resize(parent.sizeHint())
     
     
-    def confirmSaveLayer(self):
+    def closeEvent(self, event):
+        """Overload method that is called when the dialog widget is closed.
+        
+        Args:
+            event (QCloseEvent): the close widget event.
         """
+        ##super(DialogLayerAttributeDualView, self).closeEvent(event)
+        
+        reply = self.confirmSaveLayer()
+        
+        if reply == QtGui.QMessageBox.Save:
+            event.accept()
+        elif reply == QtGui.QMessageBox.No:
+            event.accept()
+        elif reply == QtGui.QMessageBox.Cancel:
+            event.ignore()
+        elif reply == None:
+            # Click toggle edit button => close dialog => (layer was not modified)
+            self.vectorLayer.rollBack()
+            self.vectorLayer.setReadOnly()
+    
+    
+    def confirmSaveLayer(self):
+        """Method for confirming saving the changes made to the layer.
         """
         reply = None
         
@@ -96,7 +107,7 @@ class DialogLayerAttributeDualView(QtGui.QDialog):
     
     
     def handlerToggleEditLayer(self):
-        """
+        """Slot method when the edit layer button is clicked.
         """
         if self.actionToggleEditLayer.isChecked():
             self.vectorLayer.setReadOnly(False)

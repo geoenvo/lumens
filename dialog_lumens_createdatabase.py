@@ -392,7 +392,9 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             )
             
             if outputs and os.path.exists(outputs['p.admin.df_ALG2']):
-                dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['p.admin.df_ALG2'], True)
+                contentMessage = 'Lorem ipsum dolor sit amet...\n'
+                
+                dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['p.admin.df_ALG2'], True, contentMessage)
                 dialog.exec_()
                 
                 # Create a temp csv file from the csv dialog

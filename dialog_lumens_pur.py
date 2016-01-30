@@ -852,7 +852,7 @@ class DialogLumensPUR(QtGui.QDialog):
     
     
     def handlerButtonAddPlanningUnitRow(self):
-        """Slot method for add a planning unit to the planning unit table.
+        """Slot method for adding a planning unit to the planning unit table.
         """
         self.addPlanningUnitRow()
     

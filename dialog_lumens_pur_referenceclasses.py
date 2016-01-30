@@ -7,11 +7,19 @@ import resource
 
 
 class DialogLumensPURReferenceClasses(QtGui.QDialog):
-    """
-    """
+    """LUMENS dialog class for PUR reference classes edit window.
     
+    Attributes:
+        referenceClasses (dict): a dict of a reference classes. The dict key is the ID while the value is the title.
+        tableRowCount (int): the number of rows in the reference class table.
+    """
     
     def __init__(self, parent):
+        """Constructor method for initializing a LUMENS PUR Reference Classes dialog window instance.
+        
+        Args:
+            parent: the main window's parent instance.
+        """
         super(DialogLumensPURReferenceClasses, self).__init__(parent)
         print 'DEBUG: DialogLumensPURReferenceClasses init'
         
@@ -29,6 +37,11 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         # 'Setup planning unit' GroupBox
@@ -77,13 +90,13 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def getReferenceClasses(self):
-        """
+        """Method for returning the reference classes dict.
         """
         return self.referenceClasses
     
     
     def initReferenceClassesTable(self):
-        """
+        """Method for loading the current PUR reference classes.
         """
         referenceClasses = self.main.referenceClasses
         
@@ -93,13 +106,19 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def showEvent(self, event):
-        """Called when the widget is shown
+        """Overload method that is called when the dialog widget is shown.
+        
+        Args:
+            event (QShowEvent): the show widget event.
         """
         super(DialogLumensPURReferenceClasses, self).showEvent(event)
     
     
     def addRow(self, id=None, title=None):
-        """Add a planning unit table row
+        """Method for adding a reference class table row.
+        
+        id (str): a reference class ID.
+        title (str): a reference class title.
         """
         self.tableRowCount = self.tableRowCount + 1
         
@@ -132,7 +151,10 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def clearLayout(self, layout):
-        """Clear a layout and all its child widgets
+        """Method for removing a layout and all its child widgets.
+        
+        Args:
+            layout (QLayout): the layout to be removed.
         """
         for i in reversed(range(layout.count())):
             item = layout.itemAt(i)
@@ -148,13 +170,13 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def handlerButtonAddRow(self):
-        """
+        """Slot method for adding a reference class to the reference class table.
         """
         self.addRow()
     
     
     def handlerDeleteReferenceClass(self):
-        """
+        """Slot method for deleting a reference class from the reference class table.
         """
         buttonSender = self.sender()
         objectName = buttonSender.objectName()
@@ -164,7 +186,7 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def handlerButtonSave(self):
-        """
+        """Slot method when accepting the dialog and saving the reference classes.
         """
         self.referenceClasses = {}
         
@@ -207,7 +229,7 @@ class DialogLumensPURReferenceClasses(QtGui.QDialog):
     
     
     def handlerButtonCancel(self):
-        """
+        """Slot method when rejecting/closing the dialog.
         """
         self.close()
         self.setResult(QtGui.QDialog.Rejected)

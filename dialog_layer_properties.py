@@ -7,9 +7,16 @@ from PyQt4 import QtCore, QtGui
 
 
 class DialogLayerProperties(QtGui.QDialog):
+    """LUMENS dialog class for editing layer properties. 
     """
-    """
+    
     def __init__(self, layer, parent):
+        """Constructor method for initializing a LUMENS layer properties dialog window instance.
+        
+        Args:
+            layer (QgsVectorLayer): a vector layer instance.
+            parent: the dialog's parent instance.
+        """
         super(DialogLayerProperties, self).__init__(parent)
         self.layer = layer
         self.main = parent
@@ -41,6 +48,11 @@ class DialogLayerProperties(QtGui.QDialog):
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         self.groupBoxLayerStyle = QtGui.QGroupBox('Style')
@@ -142,7 +154,7 @@ class DialogLayerProperties(QtGui.QDialog):
     
     
     def loadLayerSettings(self):
-        """
+        """Method for loading the layer settings and updating the form widgets.
         """
         # Get layer attributes
         provider = self.layer.dataProvider()
@@ -184,19 +196,25 @@ class DialogLayerProperties(QtGui.QDialog):
     # 'Layer Properties' QPushButton handlers
     #***********************************************************
     def handlerSliderLayerTransparencyMoved(self, newPosition):
-        """
+        """Slot method when the transparency slider is moved.
+        
+        Args:
+            newPosition (int): the new position on the slider.
         """
         self.spinBoxLayerTransparency.setValue(newPosition)
     
     
     def handlerSpinBoxLayerTransparencyValueChanged(self, newValue):
-        """
+        """Slot method when the transparency spinbox value is changed.
+        
+        Args:
+            newValue (int): the new spinbox value.
         """
         self.sliderLayerTransparency.setValue(newValue)
     
     
     def handlerSelectLayerSymbolFillColor(self):
-        """
+        """Slot method when the layer color button is clicked.
         """
         dialog = QtGui.QColorDialog(self.layerSymbolFillColor)
         
@@ -206,7 +224,7 @@ class DialogLayerProperties(QtGui.QDialog):
     
     
     def handlerSelectLabelColor(self):
-        """
+        """Slot method when the label color button is clicked.
         """
         dialog = QtGui.QColorDialog(self.labelColor)
         
@@ -219,7 +237,7 @@ class DialogLayerProperties(QtGui.QDialog):
     # Process dialog
     #***********************************************************
     def accept(self):
-        """
+        """Overload method when the dialog is accepted.
         """
         # Process layer transparency setting
         self.layer.setLayerTransparency(self.sliderLayerTransparency.value())
@@ -253,7 +271,7 @@ class DialogLayerProperties(QtGui.QDialog):
     
     
     def reject(self):
-        """
+        """Overload method when the dialog is rejected/closed.
         """
         QtGui.QDialog.reject(self)
     
