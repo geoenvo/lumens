@@ -392,7 +392,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             )
             
             if outputs and os.path.exists(outputs['p.admin.df_ALG2']):
-                contentMessage = 'Lorem ipsum dolor sit amet...\n'
+                contentMessage = 'Lorem ipsum dolor sit amet...'
                 
                 dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['p.admin.df_ALG2'], True, contentMessage)
                 dialog.exec_()
@@ -409,6 +409,14 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                     tableCsv,
                     None,
                 )
+                
+                print 'DEBUG'
+                print outputs
+                if outputs and 'statusoutput' in outputs:
+                  if os.path.exists(outputs['statusoutput']):
+                      print 'found statusoutput'
+                  else:
+                      print 'no statusoutput'
                 
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:
