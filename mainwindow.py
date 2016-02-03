@@ -1872,7 +1872,7 @@ class MainWindow(QtGui.QMainWindow):
         of the project's module templates will be listed on the main window's dashboard tab.
         
         Args:
-            lumensDatabase (bool): if true then open the LUMENS project from the "recentProjects" list.
+            lumensDatabase (bool): if False then open the LUMENS project from the "recentProjects" list.
         """
         if lumensDatabase is False: # Recent projects
             action = self.sender()
@@ -1886,12 +1886,11 @@ class MainWindow(QtGui.QMainWindow):
             self.lumensCloseDatabase()
         
         logging.getLogger(type(self).__name__).info('start: LUMENS Open Database')
-        
         self.actionLumensOpenDatabase.setDisabled(True)
         
         outputs = general.runalg(
             'modeler:lumens_open_database',
-            lumensDatabase,
+            lumensDatabase.replace(os.path.sep, '/'),
             None
         )
         
@@ -1910,7 +1909,6 @@ class MainWindow(QtGui.QMainWindow):
             self.loadModuleTemplates()
         
         self.actionLumensOpenDatabase.setEnabled(True)
-        
         logging.getLogger(type(self).__name__).info('end: LUMENS Open Database')
     
     
