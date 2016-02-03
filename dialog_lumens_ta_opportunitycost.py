@@ -5,12 +5,14 @@ import os, logging, datetime, glob
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
+
 from utils import QPlainTextEditLogger
+from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
 import resource
 
 
-class DialogLumensTAOpportunityCost(QtGui.QDialog):
+class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
     """LUMENS "TA Opportunity Cost" module dialog class.
     """
     
@@ -199,17 +201,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         if returnTemplateSettings:
             return templateSettings
-        
-        """
-        print 'DEBUG'
-        settings.beginGroup(tabName)
-        for dialog in dialogsToLoad:
-            settings.beginGroup(dialog)
-            for key in self.main.appSettings[dialog].keys():
-                print key, settings.value(key)
-            settings.endGroup()
-        settings.endGroup()
-        """
+        else:
+            # Log to history log
+            logging.getLogger(self.historyLog).info('Loaded template: %s', templateFile)
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
@@ -317,6 +311,9 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
                     settings.setValue(key, val)
                 settings.endGroup()
             settings.endGroup()
+            
+            # Log to history log
+            logging.getLogger(self.historyLog).info('Saved template: %s', fileName)
     
     
     def __init__(self, parent):
@@ -346,7 +343,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         self.setupUi(self)
         
         # History log
-        self.historyLog = '{0}{1}'.format('action', type(self).__name__)
+        self.historyLog = '{0}{1}'.format('history', type(self).__name__)
         self.historyLogPath = os.path.join(self.settingsPath, self.historyLog + '.log')
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
@@ -1098,52 +1095,6 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         # 'Opportunity Cost Map' tab fields
         self.main.appSettings['DialogLumensTAOpportunityCostMap']['csvProfitability'] = unicode(self.lineEditOCMCsvProfitability.text())
-        
-    
-    def validForm(self, formName):
-        """Method for validating the form values.
-        
-        Args:
-            formName (str): the name of the form to validate.
-        """
-        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
-        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
-        
-        valid = True
-        
-        for key, val in self.main.appSettings[formName].iteritems():
-            if val == 0: # for values set specific to 0
-                continue
-            elif not val:
-                valid = False
-        
-        if not valid:
-            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
-        
-        return valid
-    
-    
-    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result.
-        
-        Args:
-            algName (str): the name of the executed algorithm.
-            outputs (dict): the output of the executed algorithm.
-            successMessage (str): the success message to be display in a message box.
-            errorMessage (str): the error message to be display in a message box.
-        """
-        if outputs and outputs['statuscode'] == '1':
-            QtGui.QMessageBox.information(self, 'Success', successMessage)
-            return True
-        else:
-            statusMessage = '"{0}" failed with status message:'.format(algName)
-            
-            if outputs and outputs['statusmessage']:
-                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
-            
-            logging.getLogger(type(self).__name__).error(statusMessage)
-            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
-            return False
     
     
     def handlerProcessAbacusOpportunityCost(self):
@@ -1159,6 +1110,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            logging.getLogger(self.historyLog).info('alg start: %s' % formName)
             self.buttonProcessAbacusOpportunityCost.setDisabled(True)
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1183,6 +1135,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
             self.buttonProcessAbacusOpportunityCost.setEnabled(True)
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+            logging.getLogger(self.historyLog).info('alg end: %s' % formName)
     
     
     def handlerProcessOpportunityCostCurve(self):
@@ -1198,6 +1151,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            logging.getLogger(self.historyLog).info('alg start: %s' % formName)
             self.buttonProcessOpportunityCostCurve.setDisabled(True)
             
             outputOpportunityCostDatabase = self.main.appSettings[formName]['outputOpportunityCostDatabase']
@@ -1234,6 +1188,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
             self.buttonProcessOpportunityCostCurve.setEnabled(True)
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+            logging.getLogger(self.historyLog).info('alg end: %s' % formName)
     
     
     def handlerProcessOpportunityCostMap(self):
@@ -1249,6 +1204,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+            logging.getLogger(self.historyLog).info('alg start: %s' % formName)
             self.buttonProcessOpportunityCostMap.setDisabled(True)
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1273,4 +1229,5 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog):
             
             self.buttonProcessOpportunityCostMap.setEnabled(True)
             logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+            logging.getLogger(self.historyLog).info('alg end: %s' % formName)
     

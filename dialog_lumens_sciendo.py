@@ -2,15 +2,17 @@
 #-*- coding:utf-8 -*-
 
 import os, logging, datetime, glob
-##from qgis.core import *
-##from processing.tools import *
+from qgis.core import *
+from processing.tools import *
 from PyQt4 import QtCore, QtGui
+
 from utils import QPlainTextEditLogger
+from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
 import resource
 
 
-class DialogLumensSCIENDO(QtGui.QDialog):
+class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
     """LUMENS "SCIENDO" module dialog class.
     """
     
@@ -231,17 +233,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         
         if returnTemplateSettings:
             return templateSettings
-        
-        """
-        print 'DEBUG'
-        settings.beginGroup(tabName)
-        for dialog in dialogsToLoad:
-            settings.beginGroup(dialog)
-            for key in self.main.appSettings[dialog].keys():
-                print key, settings.value(key)
-            settings.endGroup()
-        settings.endGroup()
-        """
+        else:
+            # Log to history log
+            logging.getLogger(self.historyLog).info('Loaded template: %s', templateFile)
     
     
     def checkForDuplicateTemplates(self, tabName, templateToSkip):
@@ -345,6 +339,9 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                     settings.setValue(key, val)
                 settings.endGroup()
             settings.endGroup()
+            
+            # Log to history log
+            logging.getLogger(self.historyLog).info('Saved template: %s', fileName)
     
     
     def __init__(self, parent):
@@ -374,7 +371,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
         self.setupUi(self)
         
         # History log
-        self.historyLog = '{0}{1}'.format('action', type(self).__name__)
+        self.historyLog = '{0}{1}'.format('history', type(self).__name__)
         self.historyLogPath = os.path.join(self.settingsPath, self.historyLog + '.log')
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
@@ -1245,52 +1242,6 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             = unicode(self.lineEditLandUseChangeModelingLocation.text())
     
     
-    def validForm(self, formName):
-        """Method for validating the form values.
-        
-        Args:
-            formName (str): the name of the form to validate.
-        """
-        logging.getLogger(type(self).__name__).info('form validate: %s', formName)
-        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
-        
-        valid = True
-        
-        for key, val in self.main.appSettings[formName].iteritems():
-            if val == 0: # for values set specific to 0
-                continue
-            elif not val:
-                valid = False
-        
-        if not valid:
-            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
-        
-        return valid
-    
-    
-    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result.
-        
-        Args:
-            algName (str): the name of the executed algorithm.
-            outputs (dict): the output of the executed algorithm.
-            successMessage (str): the success message to be display in a message box.
-            errorMessage (str): the error message to be display in a message box.
-        """
-        if outputs and outputs['statuscode'] == '1':
-            QtGui.QMessageBox.information(self, 'Success', successMessage)
-            return True
-        else:
-            statusMessage = '"{0}" failed with status message:'.format(algName)
-            
-            if outputs and outputs['statusmessage']:
-                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
-            
-            logging.getLogger(type(self).__name__).error(statusMessage)
-            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
-            return False
-    
-    
     def handlerProcessLowEmissionDevelopmentAnalysis(self):
         """Slot method to pass the form values and execute the "SCIENDO Low Emission Development Analysis" R algorithms.
         
@@ -1308,6 +1259,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1336,6 +1288,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         if self.checkBoxHistoricalBaselineAnnualProjection.isChecked():
             formName = 'DialogLumensSCIENDOHistoricalBaselineAnnualProjection'
@@ -1343,6 +1296,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1367,6 +1321,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         
         if self.checkBoxDriversAnalysis.isChecked():
@@ -1375,6 +1330,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1400,6 +1356,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         
         if self.checkBoxBuildScenario.isChecked():
@@ -1408,6 +1365,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1432,6 +1390,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
     
     
     def handlerProcessLandUseChangeModeling(self):
@@ -1450,6 +1409,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLandUseChangeModeling.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1477,6 +1437,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         if self.checkBoxCreateRasterCubeOfFactors.isChecked():
             formName = 'DialogLumensSCIENDOCreateRasterCube'
@@ -1484,6 +1445,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLandUseChangeModeling.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1511,6 +1473,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         if self.checkBoxCalculateWeightOfEvidence.isChecked():
             formName = 'DialogLumensSCIENDOCalculateWeightofEvidence'
@@ -1518,6 +1481,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLandUseChangeModeling.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1545,6 +1509,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         if self.checkBoxSimulateLandUseChange.isChecked():
             formName = 'DialogLumensSCIENDOSimulateLandUseChange'
@@ -1552,6 +1517,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLandUseChangeModeling.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1579,6 +1545,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         if self.checkBoxSimulateWithScenario.isChecked():
             formName = 'DialogLumensSCIENDOSimulateWithScenario'
@@ -1586,6 +1553,7 @@ class DialogLumensSCIENDO(QtGui.QDialog):
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
                 self.buttonProcessLandUseChangeModeling.setDisabled(True)
                 
                 # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1613,4 +1581,5 @@ class DialogLumensSCIENDO(QtGui.QDialog):
                 
                 self.buttonProcessLandUseChangeModeling.setEnabled(True)
                 logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
     

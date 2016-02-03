@@ -13,15 +13,25 @@ class DialogLumensBase:
         self.main = parent
     
     
-    def validForm(self):
+    def validForm(self, formName=False):
         """Method for validating the form values.
+        
+        Args:
+            formName (str): the name of the form to validate. If false then use the class name.
         """
-        logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
-        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
+        settingsIndex = type(self).__name__
+        
+        if formName:
+            settingsIndex = formName
+            logging.getLogger(type(self).__name__).info('form validate: %s', formName)
+            logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[formName])
+        else:
+            logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
+            logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
         
         valid = True
         
-        for key, val in self.main.appSettings[type(self).__name__].iteritems():
+        for key, val in self.main.appSettings[settingsIndex].iteritems():
             if val == 0: # for values set specific to 0
                 continue
             elif not val:
