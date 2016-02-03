@@ -55,8 +55,8 @@ class DialogLumensBase:
                       next(reader)
                   for row in reader: # Just read the first row
                     verb = 'failed'
-                    statusCode = row[1]
-                    statusMessage = row[2]
+                    statusCode = row[0]
+                    statusMessage = row[1]
                     if int(statusCode) == 1:
                         success = True
                         verb = 'succeeded'
