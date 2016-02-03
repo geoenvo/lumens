@@ -5,11 +5,13 @@ import os, logging, datetime
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
+
+from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
 from dialog_lumens_adddata_vectorattributes import DialogLumensAddDataVectorAttributes
 
 
-class DialogLumensAddData(QtGui.QDialog):
+class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
     """LUMENS "Add Data" dialog class.
     """
     
@@ -267,29 +269,6 @@ class DialogLumensAddData(QtGui.QDialog):
         return completeData
     
     
-    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result.
-        
-        Args:
-            algName (str): the name of the executed algorithm.
-            outputs (dict): the output of the executed algorithm.
-            successMessage (str): the success message to be display in a message box.
-            errorMessage (str): the error message to be display in a message box.
-        """
-        if outputs and outputs['statuscode'] == '1':
-            QtGui.QMessageBox.information(self, 'Success', successMessage)
-            return True
-        else:
-            statusMessage = '"{0}" failed with status message:'.format(algName)
-            
-            if outputs and outputs['statusmessage']:
-                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
-            
-            logging.getLogger(type(self).__name__).error(statusMessage)
-            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
-            return False
-    
-    
     def handlerProcessAddData(self):
         """Slot method to pass the form values and execute the "Add Data" R algorithms.
         
@@ -328,7 +307,6 @@ class DialogLumensAddData(QtGui.QDialog):
                         tableRowData['dataDescription'],
                         None,
                         None,
-                        None,
                     )
                     
                     # Step 2 of add raster data
@@ -347,7 +325,6 @@ class DialogLumensAddData(QtGui.QDialog):
                             tableRowData['dataType'],
                             tableCsv,
                             None,
-                            None,
                         )
                 elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
                     dialog = DialogLumensAddDataVectorAttributes(self, tableRowData['dataFile'])
@@ -365,7 +342,6 @@ class DialogLumensAddData(QtGui.QDialog):
                             vectorNameField,
                             tableRowData['dataPeriod'],
                             tableRowData['dataDescription'],
-                            None,
                             None,
                         )
                 

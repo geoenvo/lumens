@@ -5,10 +5,12 @@ import os, logging
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
+
+from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
 
 
-class DialogLumensCreateDatabase(QtGui.QDialog):
+class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
     """LUMENS "Create Database" dialog class.
     """
     
@@ -279,49 +281,6 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
         self.main.appSettings[type(self).__name__]['projectSpatialRes'] = self.spinBoxProjectSpatialRes.value()
     
     
-    def validForm(self):
-        """Method for validating the form values.
-        """
-        logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
-        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
-        
-        valid = True
-        
-        for key, val in self.main.appSettings[type(self).__name__].iteritems():
-            if val == 0: # for values set specific to 0
-                continue
-            elif not val:
-                valid = False
-        
-        if not valid:
-            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
-        
-        return valid
-    
-    
-    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result.
-        
-        Args:
-            algName (str): the name of the executed algorithm.
-            outputs (dict): the output of the executed algorithm.
-            successMessage (str): the success message to be display in a message box.
-            errorMessage (str): the error message to be display in a message box.
-        """
-        if outputs and outputs['statuscode'] == '1':
-            QtGui.QMessageBox.information(self, 'Success', successMessage)
-            return True
-        else:
-            statusMessage = '"{0}" failed with status message:'.format(algName)
-            
-            if outputs and outputs['statusmessage']:
-                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
-            
-            logging.getLogger(type(self).__name__).error(statusMessage)
-            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
-            return False
-    
-    
     def handlerProcessCreateDatabase(self):
         """Slot method to pass the form values and execute the "Create Database" R algorithms.
         
@@ -410,14 +369,6 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
                     None,
                 )
                 
-                print 'DEBUG'
-                print outputs
-                if outputs and 'statusoutput' in outputs:
-                  if os.path.exists(outputs['statusoutput']):
-                      print 'found statusoutput'
-                  else:
-                      print 'no statusoutput'
-                
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:
                     dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
@@ -426,7 +377,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog):
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
+            algSuccess = self.outputsMessageBox(algName, outputs, 'LUMENS database successfully created!', 'Failed to create the LUMENS database.')
             
             self.buttonProcessCreateDatabase.setEnabled(True)
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
