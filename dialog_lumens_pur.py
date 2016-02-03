@@ -5,13 +5,15 @@ import os, logging, glob, tempfile, csv
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
+
 from utils import QPlainTextEditLogger
+from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_pur_referenceclasses import DialogLumensPURReferenceClasses
 from dialog_lumens_viewer import DialogLumensViewer
 import resource
 
 
-class DialogLumensPUR(QtGui.QDialog):
+class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
     """LUMENS "PUR" module dialog class.
     """
     
@@ -100,6 +102,9 @@ class DialogLumensPUR(QtGui.QDialog):
                 self.loadedPURTemplate.setText(templateFile)
                 self.comboBoxPURTemplate.setCurrentIndex(self.comboBoxPURTemplate.findText(templateFile))
                 self.buttonSavePURTemplate.setEnabled(True)
+                
+                # Log to history log
+                logging.getLogger(self.historyLog).info('Loaded template: %s', templateFile)
             
             settings.endGroup()
             # /dialog
@@ -205,6 +210,9 @@ class DialogLumensPUR(QtGui.QDialog):
                     settings.setValue(key, val)
                 settings.endGroup()
             settings.endGroup()
+            
+            # Log to history log
+            logging.getLogger(self.historyLog).info('Saved template: %s', fileName)
     
     
     def __init__(self, parent):
@@ -243,7 +251,7 @@ class DialogLumensPUR(QtGui.QDialog):
         self.setupUi(self)
         
         # History log
-        self.historyLog = '{0}{1}'.format('action', type(self).__name__)
+        self.historyLog = '{0}{1}'.format('history', type(self).__name__)
         self.historyLogPath = os.path.join(self.settingsPath, self.historyLog + '.log')
         self.historyLogger = logging.getLogger(self.historyLog)
         fh = logging.FileHandler(self.historyLogPath)
@@ -1046,49 +1054,6 @@ class DialogLumensPUR(QtGui.QDialog):
         print self.main.appSettings[type(self).__name__]
     
     
-    def validForm(self):
-        """Method for validating the form values.
-        """
-        logging.getLogger(type(self).__name__).info('form validate: %s', type(self).__name__)
-        logging.getLogger(type(self).__name__).info('form values: %s', self.main.appSettings[type(self).__name__])
-        
-        valid = True
-        
-        for key, val in self.main.appSettings[type(self).__name__].iteritems():
-            if val == 0: # for values set specific to 0
-                continue
-            elif not val:
-                valid = False
-        
-        if not valid:
-            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
-        
-        return valid
-    
-    
-    def outputsMessageBox(self, algName, outputs, successMessage, errorMessage):
-        """Display a messagebox based on the processing result.
-        
-        Args:
-            algName (str): the name of the executed algorithm.
-            outputs (dict): the output of the executed algorithm.
-            successMessage (str): the success message to be display in a message box.
-            errorMessage (str): the error message to be display in a message box.
-        """
-        if outputs and outputs['statuscode'] == '1':
-            QtGui.QMessageBox.information(self, 'Success', successMessage)
-            return True
-        else:
-            statusMessage = '"{0}" failed with status message:'.format(algName)
-            
-            if outputs and outputs['statusmessage']:
-                statusMessage = '{0} {1}'.format(statusMessage, outputs['statusmessage'])
-            
-            logging.getLogger(type(self).__name__).error(statusMessage)
-            QtGui.QMessageBox.critical(self, 'Error', errorMessage)
-            return False
-    
-    
     def handlerProcessSetup(self):
         """Slot method to pass the form values and execute the "PUR" R algorithms.
         
@@ -1098,7 +1063,8 @@ class DialogLumensPUR(QtGui.QDialog):
         self.setAppSettings()
         
         if self.validForm():
-            logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
+            logging.getLogger(type(self).__name__).info('Processing PUR start: %s' % self.dialogTitle)
+            logging.getLogger(self.historyLog).info('Processing PUR start: %s' % self.dialogTitle)
             self.buttonProcessSetup.setDisabled(True)
             
             algName = 'modeler:lumens_pur'
@@ -1135,6 +1101,7 @@ class DialogLumensPUR(QtGui.QDialog):
                 csvReferenceClasses,
                 csvReferenceMapping,
                 csvPlanningUnits,
+                None,
             )
             
             # Display ROut file in debug mode
@@ -1150,5 +1117,6 @@ class DialogLumensPUR(QtGui.QDialog):
             self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessSetup.setEnabled(True)
-            logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
+            logging.getLogger(type(self).__name__).info('Processing PUR end: %s' % self.dialogTitle)
+            logging.getLogger(self.historyLog).info('Processing PUR end: %s' % self.dialogTitle)
     
