@@ -532,6 +532,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensCloseDatabase.triggered.connect(self.handlerLumensCloseDatabase)
         self.actionLumensDatabaseStatus.triggered.connect(self.handlerLumensDatabaseStatus)
         self.actionDialogLumensAddData.triggered.connect(self.handlerDialogLumensAddData)
+        self.actionLumensDeleteData.triggered.connect(self.handlerLumensDeleteData)
         
         # PUR menu
         self.actionDialogLumensPUR.triggered.connect(self.handlerDialogLumensPUR)
