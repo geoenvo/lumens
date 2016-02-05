@@ -319,7 +319,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         self.layoutGroupBoxSetupReference.addLayout(self.layoutSetupReferenceOptions)
         
         self.labelSetupReferenceInfo = QtGui.QLabel()
-        self.labelSetupReferenceInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.labelSetupReferenceInfo.setText('Lorem ipsum dolor sit amet...')
         self.layoutSetupReferenceInfo.addWidget(self.labelSetupReferenceInfo)
         
         self.labelShapefile = QtGui.QLabel()
@@ -353,6 +353,18 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         self.layoutSetupReferenceOptions.addWidget(self.lineEditDataTitle, 3, 1)
         self.labelDataTitle.setBuddy(self.lineEditDataTitle)
         
+        #######################################################################
+        # 'Reference Mapping' GroupBox
+        self.groupBoxReferenceMapping = QtGui.QGroupBox('Attribute reference mapping')
+        self.layoutGroupBoxReferenceMapping = QtGui.QVBoxLayout()
+        self.layoutGroupBoxReferenceMapping.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxReferenceMapping.setLayout(self.layoutGroupBoxReferenceMapping)
+        
+        self.layoutReferenceMappingInfo = QtGui.QVBoxLayout()
+        self.labelReferenceMappingInfo = QtGui.QLabel()
+        self.labelReferenceMappingInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutReferenceMappingInfo.addWidget(self.labelReferenceMappingInfo)
+        
         self.tableReferenceMapping = QtGui.QTableWidget()
         self.tableReferenceMapping.setRowCount(1)
         self.tableReferenceMapping.setColumnCount(2)
@@ -370,7 +382,9 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         
         self.tableReferenceMapping.setItem(0, 0, attribute)
         self.tableReferenceMapping.setCellWidget(0, 1, comboBoxReferenceClasses)
-        self.layoutGroupBoxSetupReference.addWidget(self.tableReferenceMapping)
+        
+        self.layoutGroupBoxReferenceMapping.addLayout(self.layoutReferenceMappingInfo)
+        self.layoutGroupBoxReferenceMapping.addWidget(self.tableReferenceMapping)
         
         #######################################################################
         
@@ -382,7 +396,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         
         self.layoutSetupPlanningUnitInfo = QtGui.QVBoxLayout()
         self.labelSetupPlanningUnitInfo = QtGui.QLabel()
-        self.labelSetupPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...\n')
+        self.labelSetupPlanningUnitInfo.setText('Lorem ipsum dolor sit amet...')
         self.layoutSetupPlanningUnitInfo.addWidget(self.labelSetupPlanningUnitInfo)
         
         self.layoutButtonSetupPlanningUnit = QtGui.QHBoxLayout()
@@ -475,9 +489,10 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         
         # Place the GroupBoxes
         self.layoutTabSetup.addWidget(self.groupBoxSetupReference, 0, 0)
-        self.layoutTabSetup.addWidget(self.groupBoxSetupPlanningUnit, 1, 0)
-        self.layoutTabSetup.addLayout(self.layoutButtonSetup, 2, 0, 1, 2, QtCore.Qt.AlignRight)
-        self.layoutTabSetup.addWidget(self.groupBoxPURTemplate, 0, 1, 2, 1)
+        self.layoutTabSetup.addWidget(self.groupBoxReferenceMapping, 1, 0)
+        self.layoutTabSetup.addWidget(self.groupBoxSetupPlanningUnit, 2, 0)
+        self.layoutTabSetup.addLayout(self.layoutButtonSetup, 3, 0, 1, 2, QtCore.Qt.AlignRight)
+        self.layoutTabSetup.addWidget(self.groupBoxPURTemplate, 0, 1, 3, 1)
         self.layoutTabSetup.setColumnStretch(0, 3)
         self.layoutTabSetup.setColumnStretch(1, 1) # Smaller template column
         
