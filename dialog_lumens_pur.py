@@ -354,7 +354,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         self.labelDataTitle.setBuddy(self.lineEditDataTitle)
         
         #######################################################################
-        # 'Reference Mapping' GroupBox
+        # 'Attribute reference mapping' GroupBox
         self.groupBoxReferenceMapping = QtGui.QGroupBox('Attribute reference mapping')
         self.layoutGroupBoxReferenceMapping = QtGui.QVBoxLayout()
         self.layoutGroupBoxReferenceMapping.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)

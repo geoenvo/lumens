@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging
+import os, logging, tempfile, csv
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
@@ -38,6 +38,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         
         self.buttonSelectOutputFolder.clicked.connect(self.handlerSelectOutputFolder)
         self.buttonSelectShapefile.clicked.connect(self.handlerSelectShapefile)
+        self.buttonProcessDissolve.clicked.connect(self.handlerProcessDissolve)
         self.buttonProcessCreateDatabase.clicked.connect(self.handlerProcessCreateDatabase)
     
     
@@ -49,6 +50,8 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         """
         self.dialogLayout = QtGui.QVBoxLayout()
         
+        #######################################################################
+        # 'Database details' GroupBox
         self.groupBoxDatabaseDetails = QtGui.QGroupBox('Database details')
         self.layoutGroupBoxDatabaseDetails = QtGui.QVBoxLayout()
         self.layoutGroupBoxDatabaseDetails.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
@@ -158,14 +161,40 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         
         self.labelProjectSpatialRes.setBuddy(self.spinBoxProjectSpatialRes)
         
-        self.layoutButtonCreateDatabase = QtGui.QHBoxLayout()
+        #######################################################################
+        # 'Dissolved' GroupBox
+        self.groupBoxDissolved = QtGui.QGroupBox('Dissolved')
+        self.layoutGroupBoxDissolved = QtGui.QVBoxLayout()
+        self.layoutGroupBoxDissolved.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxDissolved.setLayout(self.layoutGroupBoxDissolved)
+        
+        self.layoutDissolvedInfo = QtGui.QVBoxLayout()
+        self.labelDissolvedInfo = QtGui.QLabel()
+        self.labelDissolvedInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutDissolvedInfo.addWidget(self.labelDissolvedInfo)
+        
+        self.tableDissolved = QtGui.QTableWidget()
+        self.tableDissolved.setDisabled(True)
+        self.tableDissolved.verticalHeader().setVisible(False)
+        
+        self.layoutGroupBoxDissolved.addLayout(self.layoutDissolvedInfo)
+        self.layoutGroupBoxDissolved.addWidget(self.tableDissolved)
+        
+        #######################################################################
+        # Dialog buttons
+        self.layoutButtonProcess = QtGui.QHBoxLayout()
+        self.buttonProcessDissolve = QtGui.QPushButton()
+        self.buttonProcessDissolve.setText('&Dissolve')
         self.buttonProcessCreateDatabase = QtGui.QPushButton()
+        self.buttonProcessCreateDatabase.setDisabled(True)
         self.buttonProcessCreateDatabase.setText('&Process')
-        self.layoutButtonCreateDatabase.setAlignment(QtCore.Qt.AlignRight)
-        self.layoutButtonCreateDatabase.addWidget(self.buttonProcessCreateDatabase)
+        self.layoutButtonProcess.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonProcess.addWidget(self.buttonProcessDissolve)
+        self.layoutButtonProcess.addWidget(self.buttonProcessCreateDatabase)
         
         self.dialogLayout.addWidget(self.groupBoxDatabaseDetails)
-        self.dialogLayout.addLayout(self.layoutButtonCreateDatabase)
+        self.dialogLayout.addWidget(self.groupBoxDissolved)
+        self.dialogLayout.addLayout(self.layoutButtonProcess)
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -281,45 +310,141 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         self.main.appSettings[type(self).__name__]['projectSpatialRes'] = self.spinBoxProjectSpatialRes.value()
     
     
-    def handlerProcessCreateDatabase(self):
-        """Slot method to pass the form values and execute the "Create Database" R algorithms.
+    def getDissolvedTableCsv(self, forwardDirSeparator=False):
+        """Method for writing the dissolved table to a temp csv file. Inspired from DialogLumensViewer.
         
-        Upon successful completion of the algorithms the new project database will be opened
-        and the dialog will close. The "Create Database" process calls the following algorithms:
-        1. modeler:lumens_create_database_1
-        2. r:lumenscreatedatabase2
+        Args:
+            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
+        """
+        rowCount = self.tableDissolved.rowCount()
+        columnCount = self.tableDissolved.columnCount()
+        
+        # Check table first
+        if not rowCount:
+            QtGui.QMessageBox.critical(self, 'Error', 'Invalid dissolved table!')
+            return False
+        
+        # Now write the table csv
+        handle, csvFilePath = tempfile.mkstemp(suffix='.csv')
+        
+        with os.fdopen(handle, 'w') as f:
+            writer = csv.writer(f)
+            
+            headerItems = []
+            
+            # Loop columns and write table header
+            for tableColumn in range(columnCount):    
+                headerItem = self.tableDissolved.horizontalHeaderItem(tableColumn)
+                headerItems.append(headerItem.text())
+            
+            writer.writerow(headerItems)
+            
+            # Loop rows and write table body
+            for tableRow in range(rowCount):
+                dataRow = []
+                
+                # Loop row columns
+                for tableColumn in range(columnCount):
+                    item = self.tableDissolved.item(tableRow, tableColumn)
+                    dataRow.append(item.text())
+                
+                writer.writerow(dataRow)
+        
+        if forwardDirSeparator:
+            return csvFilePath.replace(os.path.sep, '/')
+        
+        return csvFilePath
+    
+    
+    def handlerProcessDissolve(self):
+        """Slot method to pass the form values and execute the "Dissolve" R algorithm.
+        
+        The "Dissolve" process calls the following algorithm:
+        1. r:lumensdissolve
         """
         self.setAppSettings()
         
         if self.validForm():
+            logging.getLogger(type(self).__name__).info('start: %s' % 'LUMENS Dissolve')
+            
+            self.buttonProcessDissolve.setDisabled(True)
+            
+            algName = 'r:lumensdissolve'
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
+            
+            outputs = general.runalg(
+                algName,
+                self.main.appSettings[type(self).__name__]['shapefile'],
+                self.main.appSettings[type(self).__name__]['shapefileAttr'],
+                None,
+            )
+            
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
+            if outputs and os.path.exists(outputs['admin_output']):
+                registry = QgsProviderRegistry.instance()
+                provider = registry.provider('ogr', outputs['admin_output'])
+                
+                if not provider.isValid():
+                    logging.getLogger(type(self).__name__).error('LUMENS Dissolve: invalid shapefile')
+                    return
+                
+                attributes = []
+                for field in provider.fields():
+                    attributes.append(field.name())
+                
+                features = provider.getFeatures()
+                
+                if features:
+                    self.tableDissolved.setEnabled(True)
+                    self.tableDissolved.setRowCount(provider.featureCount())
+                    self.tableDissolved.setColumnCount(len(attributes))
+                    self.tableDissolved.verticalHeader().setVisible(False)
+                    self.tableDissolved.setHorizontalHeaderLabels(attributes)
+                    
+                    # Need a nicer way than manual looping
+                    tableRow = 0
+                    for feature in features:
+                        tableColumn = 0
+                        for attribute in attributes:
+                            attributeValue = str(feature.attribute(attribute))
+                            attributeTableItem = QtGui.QTableWidgetItem(attributeValue)
+                            self.tableDissolved.setItem(tableRow, tableColumn, attributeTableItem)
+                            tableColumn += 1
+                        tableRow += 1
+                    
+                    self.tableDissolved.resizeColumnsToContents()
+                    self.buttonProcessCreateDatabase.setEnabled(True)
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
+            
+            self.buttonProcessDissolve.setEnabled(True)
+            logging.getLogger(type(self).__name__).info('end: %s' % 'LUMENS Dissolve')
+    
+    
+    def handlerProcessCreateDatabase(self):
+        """Slot method to pass the form values and execute the "Create Database" R algorithms.
+        
+        Upon successful completion of the algorithms the new project database will be opened
+        and the dialog will close. The "Create Database" process calls the following algorithm:
+        1. modeler:lumens_create_database
+        """
+        self.setAppSettings()
+        
+        dissolvedTableCsv = self.getDissolvedTableCsv(True)
+        
+        if self.validForm() and dissolvedTableCsv:
             logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             
             self.buttonProcessCreateDatabase.setDisabled(True)
             
-            ### 20160112 new R scripts
-            ### 1. modeler:lumens_create_database_1(projectname, outputfolder, projectdescription, projectlocation, projectprovince, projectcountry, shapefile, shapefileattribute, projectspatialresolution)
-            ### 2. r:LUMENS_create_database_2(proj.file, p.admin.df)
-            ### replaces: modeler:lumens_create_database
-            
-            """
-            ###OBSOLETE
             algName = 'modeler:lumens_create_database'
-            
-            outputs = general.runalg(
-                algName,
-                self.main.appSettings[type(self).__name__]['projectName'],
-                self.main.appSettings[type(self).__name__]['outputFolder'],
-                self.main.appSettings[type(self).__name__]['projectDescription'],
-                self.main.appSettings[type(self).__name__]['projectLocation'],
-                self.main.appSettings[type(self).__name__]['projectProvince'],
-                self.main.appSettings[type(self).__name__]['projectCountry'],
-                self.main.appSettings[type(self).__name__]['shapefile'],
-                self.main.appSettings[type(self).__name__]['shapefileAttr'],
-                self.main.appSettings[type(self).__name__]['projectSpatialRes']
-            )
-            """
-            
-            algName = 'modeler:lumens_create_database_1'
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)
@@ -335,6 +460,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['shapefile'],
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
                 self.main.appSettings[type(self).__name__]['projectSpatialRes'],
+                dissolvedTableCsv,
                 None,
             )
             
@@ -349,30 +475,6 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['projectName'],
                 "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectProjectfileExt'])
             )
-            
-            if outputs and os.path.exists(outputs['p.admin.df_ALG2']):
-                contentMessage = 'Lorem ipsum dolor sit amet...'
-                
-                dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['p.admin.df_ALG2'], True, contentMessage)
-                dialog.exec_()
-                
-                # Create a temp csv file from the csv dialog
-                tableData = dialog.getTableData()
-                tableCsv = dialog.getTableCsv(tableData, True)
-                
-                algName = 'r:lumenscreatedatabase2'
-                
-                outputs = general.runalg(
-                    algName,
-                    lumensDatabase.replace(os.path.sep, '/'), # R alg needs forward slash as dir separator
-                    tableCsv,
-                    None,
-                )
-                
-                # Display ROut file in debug mode
-                if self.main.appSettings['debug']:
-                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
-                    dialog.exec_()
             
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)

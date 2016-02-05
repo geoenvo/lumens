@@ -59,7 +59,7 @@ class DialogLumensViewer(QtGui.QDialog):
             dataRow = []
             
             # Loop row columns
-            for tableColumn in range (self.tableModel.columnCount()):
+            for tableColumn in range(self.tableModel.columnCount()):
                 item = self.tableModel.item(tableRow, tableColumn)
                 dataRow.append(item.text())
             
