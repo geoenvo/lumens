@@ -8,6 +8,7 @@ from processing.tools import *
 
 from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
+from dialog_lumens_adddata_properties import DialogLumensAddDataProperties
 from dialog_lumens_adddata_vectorattributes import DialogLumensAddDataVectorAttributes
 
 
@@ -150,7 +151,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         layoutDataRow.addWidget(buttonDeleteDataRow)
         
         comboBoxDataType = QtGui.QComboBox()
-        comboBoxDataType.addItems(['Land Use/Cover', 'Planning Unit', 'Factor'])
+        comboBoxDataType.addItems(['Land Use/Cover', 'Planning Unit', 'Factor', 'Table'])
         comboBoxDataType.setObjectName('comboBoxDataType_{0}'.format(str(self.tableAddDataRowCount)))
         layoutDataRow.addWidget(comboBoxDataType)
         
@@ -164,21 +165,16 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         buttonSelectDataFile.setObjectName('buttonSelectDataFile_{0}'.format(str(self.tableAddDataRowCount)))
         layoutDataRow.addWidget(buttonSelectDataFile)
         
-        spinBoxDataPeriod = QtGui.QSpinBox()
-        spinBoxDataPeriod.setRange(1, 9999)
-        td = datetime.date.today()
-        spinBoxDataPeriod.setValue(td.year)
-        spinBoxDataPeriod.setObjectName('spinBoxDataPeriod_{0}'.format(str(self.tableAddDataRowCount)))
-        layoutDataRow.addWidget(spinBoxDataPeriod)
-        
-        lineEditDataDescription = QtGui.QLineEdit()
-        lineEditDataDescription.setText('description')
-        lineEditDataDescription.setObjectName('lineEditDataDescription_{0}'.format(str(self.tableAddDataRowCount)))
-        layoutDataRow.addWidget(lineEditDataDescription)
+        buttonDataProperties = QtGui.QPushButton()
+        buttonDataProperties.setDisabled(True)
+        buttonDataProperties.setText('Properties')
+        buttonDataProperties.setObjectName('buttonDataProperties_{0}'.format(str(self.tableAddDataRowCount)))
+        layoutDataRow.addWidget(buttonDataProperties)
         
         self.layoutTableAddData.addLayout(layoutDataRow)
         
         buttonSelectDataFile.clicked.connect(self.handlerSelectDataFile)
+        buttonDataProperties.clicked.connect(self.handlerDataProperties)
         buttonDeleteDataRow.clicked.connect(self.handlerDeleteDataRow)
     
     
@@ -198,12 +194,48 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         objectName = buttonSender.objectName()
         tableRow = objectName.split('_')[1]
         
+        comboBoxDataType = self.contentAddData.findChild(QtGui.QComboBox, 'comboBoxDataType_' + tableRow)
+        dataType = unicode(comboBoxDataType.currentText())
+        
+        # Land use/cover and planning unit data types can be raster or vector
+        # Factor data types can be raster only
+        # Table data types can be csv only
+        fileFilter = '*{0} *{1}'.format(self.main.appSettings['selectRasterfileExt'], self.main.appSettings['selectShapefileExt'])
+        
+        if dataType == 'Factor':
+            fileFilter = '*{0}'.format(self.main.appSettings['selectRasterfileExt'])
+        elif dataType == 'Table':
+            fileFilter = '*{0}'.format(self.main.appSettings['selectCsvfileExt'])
+        
         file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select File', QtCore.QDir.homePath(), 'File (*{0} *{1})'.format(self.main.appSettings['selectRasterfileExt'], self.main.appSettings['selectShapefileExt'])))
+            self, 'Select File', QtCore.QDir.homePath(), 'File ({0})'.format(fileFilter)))
         
         if file:
+            comboBoxDataType.setDisabled(True)
             lineEditDataFile = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataFile_' + tableRow)
             lineEditDataFile.setText(file)
+            buttonSelectDataFile = self.contentAddData.findChild(QtGui.QPushButton, 'buttonSelectDataFile_' + tableRow)
+            buttonSelectDataFile.setDisabled(True)
+            buttonDataProperties = self.contentAddData.findChild(QtGui.QPushButton, 'buttonDataProperties_' + tableRow)
+            buttonDataProperties.setEnabled(True)
+    
+    
+    def handlerDataProperties(self):
+        """
+        """
+        buttonSender = self.sender()
+        objectName = buttonSender.objectName()
+        tableRow = objectName.split('_')[1]
+        
+        comboBoxDataType = self.contentAddData.findChild(QtGui.QComboBox, 'comboBoxDataType_' + tableRow)
+        dataType = unicode(comboBoxDataType.currentText())
+        lineEditDataFile = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataFile_' + tableRow)
+        dataFile = unicode(lineEditDataFile.text())
+        
+        dialog = DialogLumensAddDataProperties(self, dataType, dataFile)
+        if dialog.exec_():
+            buttonDataProperties = self.contentAddData.findChild(QtGui.QPushButton, 'buttonDataProperties_' + tableRow)
+            buttonDataProperties.setDisabled(True)
     
     
     def handlerDeleteDataRow(self):
@@ -233,13 +265,9 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 continue
             
             comboBoxDataType = self.findChild(QtGui.QComboBox, 'comboBoxDataType_' + str(tableRow))
-            spinBoxDataPeriod = self.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + str(tableRow))
-            lineEditDataDescription = self.findChild(QtGui.QLineEdit, 'lineEditDataDescription_' + str(tableRow))
             
             dataFile = unicode(lineEditDataFile.text())
             dataType = unicode(comboBoxDataType.currentText())
-            dataPeriod = spinBoxDataPeriod.value()
-            dataDescription = unicode(lineEditDataDescription.text())
             
             if dataFile and dataType and dataPeriod and dataDescription:
                 if dataType == 'Land Use/Cover':
@@ -248,6 +276,8 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                     dataType = 1
                 elif dataType == 'Factor':
                     dataType = 2
+                elif dataType == 'Table':
+                    dataType = 4
                 else:
                     dataType = 0
                 
