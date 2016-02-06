@@ -89,6 +89,7 @@ class MainWindow(QtGui.QMainWindow):
             'appSettingsFile': 'settings.ini',
             'ROutFile': os.path.join(system.userFolder(), 'processing_script.r.Rout'),
             'guideFile': 'guide.pdf',
+            'helpFile': 'index.html',
             'dataDir': 'data',
             'basemapDir': 'basemap',
             'vectorDir': 'vector',
@@ -110,6 +111,7 @@ class MainWindow(QtGui.QMainWindow):
             'folderQUES': 'QUES',
             'folderTA': 'TA',
             'folderSCIENDO': 'SCIENDO',
+            'folderHelp': 'help',
             'acceptedDocumentFormats': ('.doc', 'docx', '.rtf', '.xls', '.xlsx', '.txt', '.log', '.csv'),
             'acceptedWebFormats': ('.html', '.htm'),
             'acceptedSpatialFormats': ('.shp', '.tif'),
@@ -559,7 +561,8 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessSCIENDOLandUseChangeModelingTemplate.clicked.connect(self.handlerProcessSCIENDOLandUseChangeModelingTemplate)
         
         # About menu
-        self.actionDialogLumensGuide.triggered.connect(self.handlerDialogLumensGuide)
+        #self.actionDialogLumensGuide.triggered.connect(self.handlerDialogLumensGuide)
+        self.actionDialogLumensHelp.triggered.connect(self.handlerDialogLumensHelp)
         self.actionDialogLumensAbout.triggered.connect(self.handlerDialogLumensAbout)
     
     
@@ -782,10 +785,12 @@ class MainWindow(QtGui.QMainWindow):
         
         # About menu
         icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
-        self.actionDialogLumensGuide = QtGui.QAction(icon, 'Open Guide', self)
+        #self.actionDialogLumensGuide = QtGui.QAction(icon, 'Open Guide', self)
+        self.actionDialogLumensHelp = QtGui.QAction(icon, 'Open Help', self)
         self.actionDialogLumensAbout = QtGui.QAction('About LUMENS', self)
         
-        self.aboutMenu.addAction(self.actionDialogLumensGuide)
+        #self.aboutMenu.addAction(self.actionDialogLumensGuide)
+        self.aboutMenu.addAction(self.actionDialogLumensHelp)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.actionDialogLumensAbout)
         
@@ -2708,8 +2713,22 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensSCIENDO)
     
     
+    def handlerDialogLumensHelp(self):
+        """Slot method for opening the LUMENS html help document.
+        """
+        filePath = os.path.join(self.appSettings['appDir'], self.appSettings['folderHelp'], self.appSettings['helpFile'])
+        
+        if os.path.exists(filePath):
+            dialog = DialogLumensViewer(self, 'LUMENS Help', 'html', filePath)
+            dialog.exec_()
+        else:
+            QtGui.QMessageBox.critical(self, 'LUMENS Help Not Found', "Unable to open '{0}'.".format(filePath))
+    
+    
     def handlerDialogLumensGuide(self):
         """Slot method for opening the LUMENS application guide document in the app directory.
+        
+        OBSOLETE replaced by LUMENS Help.
         """
         filePath = os.path.join(self.appSettings['appDir'], self.appSettings['guideFile'])
         
