@@ -399,6 +399,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectDriversAnalysisLandUseCoverChangeDrivers.clicked.connect(self.handlerSelectDriversAnalysisLandUseCoverChangeDrivers)
         self.buttonSelectBuildScenarioHistoricalBaselineCar.clicked.connect(self.handlerSelectBuildScenarioHistoricalBaselineCar)
         self.buttonProcessLowEmissionDevelopmentAnalysis.clicked.connect(self.handlerProcessLowEmissionDevelopmentAnalysis)
+        self.buttonHelpSCIENDOLowEmissionDevelopmentAnalysis.clicked.connect(lambda:self.handlerDialogHelp('SCIENDO'))
         self.buttonLoadLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerLoadLowEmissionDevelopmentAnalysisTemplate)
         self.buttonSaveLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerSaveLowEmissionDevelopmentAnalysisTemplate)
         self.buttonSaveAsLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerSaveAsLowEmissionDevelopmentAnalysisTemplate)
@@ -407,6 +408,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectLandUseChangeModelingFactorsDir.clicked.connect(self.handlerSelectLandUseChangeModelingFactorsDir)
         self.buttonSelectLandUseChangeModelingLandUseLookup.clicked.connect(self.handlerSelectLandUseChangeModelingLandUseLookup)
         self.buttonProcessLandUseChangeModeling.clicked.connect(self.handlerProcessLandUseChangeModeling)
+        self.buttonHelpSCIENDOLandUseChangeModeling.clicked.connect(lambda:self.handlerDialogHelp('SCIENDO'))
         self.buttonLoadLandUseChangeModelingTemplate.clicked.connect(self.handlerLoadLandUseChangeModelingTemplate)
         self.buttonSaveLandUseChangeModelingTemplate.clicked.connect(self.handlerSaveLandUseChangeModelingTemplate)
         self.buttonSaveAsLandUseChangeModelingTemplate.clicked.connect(self.handlerSaveAsLandUseChangeModelingTemplate)
@@ -645,8 +647,12 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.buttonProcessLowEmissionDevelopmentAnalysis = QtGui.QPushButton()
         self.buttonProcessLowEmissionDevelopmentAnalysis.setSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
         self.buttonProcessLowEmissionDevelopmentAnalysis.setText('&Process')
+        icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
+        self.buttonHelpSCIENDOLowEmissionDevelopmentAnalysis = QtGui.QPushButton()
+        self.buttonHelpSCIENDOLowEmissionDevelopmentAnalysis.setIcon(icon)
         self.layoutButtonLowEmissionDevelopmentAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLowEmissionDevelopmentAnalysis.addWidget(self.buttonProcessLowEmissionDevelopmentAnalysis)
+        self.layoutButtonLowEmissionDevelopmentAnalysis.addWidget(self.buttonHelpSCIENDOLowEmissionDevelopmentAnalysis)
         
         # Template GroupBox
         self.groupBoxLowEmissionDevelopmentAnalysisTemplate = QtGui.QGroupBox('Template')
@@ -794,8 +800,11 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonLandUseChangeModeling = QtGui.QHBoxLayout()
         self.buttonProcessLandUseChangeModeling = QtGui.QPushButton()
         self.buttonProcessLandUseChangeModeling.setText('&Process')
+        self.buttonHelpSCIENDOLandUseChangeModeling = QtGui.QPushButton()
+        self.buttonHelpSCIENDOLandUseChangeModeling.setIcon(icon)
         self.layoutButtonLandUseChangeModeling.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLandUseChangeModeling.addWidget(self.buttonProcessLandUseChangeModeling)
+        self.layoutButtonLandUseChangeModeling.addWidget(self.buttonHelpSCIENDOLandUseChangeModeling)
         
         # Template GroupBox
         self.groupBoxLandUseChangeModelingTemplate = QtGui.QGroupBox('Template')

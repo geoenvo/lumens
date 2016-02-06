@@ -267,6 +267,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         
         self.tabWidget.currentChanged.connect(self.handlerTabWidgetChanged)
         self.buttonProcessSetup.clicked.connect(self.handlerProcessSetup)
+        self.buttonHelp.clicked.connect(lambda:self.handlerDialogHelp('PUR'))
         self.buttonLoadPURTemplate.clicked.connect(self.handlerLoadPURTemplate)
         self.buttonSavePURTemplate.clicked.connect(self.handlerSavePURTemplate)
         self.buttonSaveAsPURTemplate.clicked.connect(self.handlerSaveAsPURTemplate)
@@ -438,8 +439,12 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonSetup = QtGui.QHBoxLayout()
         self.buttonProcessSetup = QtGui.QPushButton()
         self.buttonProcessSetup.setText('&Process')
+        icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
+        self.buttonHelp = QtGui.QPushButton()
+        self.buttonHelp.setIcon(icon)
         self.layoutButtonSetup.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonSetup.addWidget(self.buttonProcessSetup)
+        self.layoutButtonSetup.addWidget(self.buttonHelp)
         
         # Template GroupBox
         self.groupBoxPURTemplate = QtGui.QGroupBox('Template')

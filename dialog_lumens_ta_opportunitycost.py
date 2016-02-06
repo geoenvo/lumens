@@ -362,6 +362,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
         # 'Abacus Opportunity Cost' tab buttons
         self.buttonSelectAOCProjectFile.clicked.connect(self.handlerSelectAOCProjectFile)
         self.buttonProcessAbacusOpportunityCost.clicked.connect(self.handlerProcessAbacusOpportunityCost)
+        self.buttonHelpTAAbacusOpportunityCost.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadAbacusOpportunityCostTemplate.clicked.connect(self.handlerLoadAbacusOpportunityCostTemplate)
         self.buttonSaveAbacusOpportunityCostTemplate.clicked.connect(self.handlerSaveAbacusOpportunityCostTemplate)
         self.buttonSaveAsAbacusOpportunityCostTemplate.clicked.connect(self.handlerSaveAsAbacusOpportunityCostTemplate)
@@ -371,6 +372,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectOCCOutputOpportunityCostDatabase.clicked.connect(self.handlerSelectOCCOutputOpportunityCostDatabase)
         self.buttonSelectOCCOutputOpportunityCostReport.clicked.connect(self.handlerSelectOCCOutputOpportunityCostReport)
         self.buttonProcessOpportunityCostCurve.clicked.connect(self.handlerProcessOpportunityCostCurve)
+        self.buttonHelpTAOpportunityCostCurve.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadOpportunityCostCurveTemplate.clicked.connect(self.handlerLoadOpportunityCostCurveTemplate)
         self.buttonSaveOpportunityCostCurveTemplate.clicked.connect(self.handlerSaveOpportunityCostCurveTemplate)
         self.buttonSaveAsOpportunityCostCurveTemplate.clicked.connect(self.handlerSaveAsOpportunityCostCurveTemplate)
@@ -378,6 +380,7 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
         # 'Opportunity Cost Map' tab buttons
         self.buttonSelectOCMCsvProfitability.clicked.connect(self.handlerSelectOCMCsvProfitability)
         self.buttonProcessOpportunityCostMap.clicked.connect(self.handlerProcessOpportunityCostMap)
+        self.buttonHelpTAOpportunityCostMap.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadOpportunityCostMapTemplate.clicked.connect(self.handlerLoadOpportunityCostMapTemplate)
         self.buttonSaveOpportunityCostMapTemplate.clicked.connect(self.handlerSaveOpportunityCostMapTemplate)
         self.buttonSaveAsOpportunityCostMapTemplate.clicked.connect(self.handlerSaveAsOpportunityCostMapTemplate)
@@ -450,8 +453,12 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonAbacusOpportunityCost = QtGui.QHBoxLayout()
         self.buttonProcessAbacusOpportunityCost = QtGui.QPushButton()
         self.buttonProcessAbacusOpportunityCost.setText('&Process')
+        icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
+        self.buttonHelpTAAbacusOpportunityCost = QtGui.QPushButton()
+        self.buttonHelpTAAbacusOpportunityCost.setIcon(icon)
         self.layoutButtonAbacusOpportunityCost.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonAbacusOpportunityCost.addWidget(self.buttonProcessAbacusOpportunityCost)
+        self.layoutButtonAbacusOpportunityCost.addWidget(self.buttonHelpTAAbacusOpportunityCost)
         
         # Template GroupBox
         self.groupBoxAbacusOpportunityCostTemplate = QtGui.QGroupBox('Template')
@@ -573,8 +580,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonOpportunityCostCurve = QtGui.QHBoxLayout()
         self.buttonProcessOpportunityCostCurve = QtGui.QPushButton()
         self.buttonProcessOpportunityCostCurve.setText('&Process')
+        self.buttonHelpTAOpportunityCostCurve = QtGui.QPushButton()
+        self.buttonHelpTAOpportunityCostCurve.setIcon(icon)
         self.layoutButtonOpportunityCostCurve.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonOpportunityCostCurve.addWidget(self.buttonProcessOpportunityCostCurve)
+        self.layoutButtonOpportunityCostCurve.addWidget(self.buttonHelpTAOpportunityCostCurve)
         
         # Template GroupBox
         self.groupBoxOpportunityCostCurveTemplate = QtGui.QGroupBox('Template')
@@ -667,8 +677,11 @@ class DialogLumensTAOpportunityCost(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonOpportunityCostMap = QtGui.QHBoxLayout()
         self.buttonProcessOpportunityCostMap = QtGui.QPushButton()
         self.buttonProcessOpportunityCostMap.setText('&Process')
+        self.buttonHelpTAOpportunityCostMap = QtGui.QPushButton()
+        self.buttonHelpTAOpportunityCostMap.setIcon(icon)
         self.layoutButtonOpportunityCostMap.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonOpportunityCostMap.addWidget(self.buttonProcessOpportunityCostMap)
+        self.layoutButtonOpportunityCostMap.addWidget(self.buttonHelpTAOpportunityCostMap)
         
         # Template GroupBox
         self.groupBoxOpportunityCostMapTemplate = QtGui.QGroupBox('Template')

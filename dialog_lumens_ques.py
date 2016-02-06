@@ -763,6 +763,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         # 'Pre-QUES' tab buttons
         self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
         self.buttonProcessPreQUES.clicked.connect(self.handlerProcessPreQUES)
+        self.buttonHelpPreQUES.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadPreQUESTemplate.clicked.connect(self.handlerLoadPreQUESTemplate)
         self.buttonSavePreQUESTemplate.clicked.connect(self.handlerSavePreQUESTemplate)
         self.buttonSaveAsPreQUESTemplate.clicked.connect(self.handlerSaveAsPreQUESTemplate)
@@ -776,6 +777,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectCACsvfile.clicked.connect(self.handlerSelectCACsvfile)
         self.buttonSelectPCACsvfile.clicked.connect(self.handlerSelectPCACsvfile)
         self.buttonProcessQUESC.clicked.connect(self.handlerProcessQUESC)
+        self.buttonHelpQUESC.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadQUESCTemplate.clicked.connect(self.handlerLoadQUESCTemplate)
         self.buttonSaveQUESCTemplate.clicked.connect(self.handlerSaveQUESCTemplate)
         self.buttonSaveAsQUESCTemplate.clicked.connect(self.handlerSaveAsQUESCTemplate)
@@ -792,6 +794,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectQUESBOutputHabitatGain.clicked.connect(self.handlerSelectQUESBOutputHabitatGain)
         self.buttonSelectQUESBOutputRecoveredHabitat.clicked.connect(self.handlerSelectQUESBOutputRecoveredHabitat)
         self.buttonProcessQUESB.clicked.connect(self.handlerProcessQUESB)
+        self.buttonHelpQUESB.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadQUESBTemplate.clicked.connect(self.handlerLoadQUESBTemplate)
         self.buttonSaveQUESBTemplate.clicked.connect(self.handlerSaveQUESBTemplate)
         self.buttonSaveAsQUESBTemplate.clicked.connect(self.handlerSaveAsQUESBTemplate)
@@ -808,6 +811,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectHRUSoilClassification.clicked.connect(self.handlerSelectHRUSoilClassification)
         self.buttonSelectHRUSlopeClassification.clicked.connect(self.handlerSelectHRUSlopeClassification)
         self.buttonProcessHRUDefinition.clicked.connect(self.handlerProcessQUESHHRUDefinition)
+        self.buttonHelpQUESHHRUDefinition.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadHRUDefinitionTemplate.clicked.connect(self.handlerLoadHRUDefinitionTemplate)
         self.buttonSaveHRUDefinitionTemplate.clicked.connect(self.handlerSaveHRUDefinitionTemplate)
         self.buttonSaveAsHRUDefinitionTemplate.clicked.connect(self.handlerSaveAsHRUDefinitionTemplate)
@@ -816,6 +820,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectWatershedModelEvaluationObservedDebitFile.clicked.connect(self.handlerSelectWatershedModelEvaluationObservedDebitFile)
         self.buttonSelectOutputWatershedModelEvaluation.clicked.connect(self.handlerSelectOutputWatershedModelEvaluation)
         self.buttonProcessWatershedModelEvaluation.clicked.connect(self.handlerProcessQUESHWatershedModelEvaluation)
+        self.buttonHelpQUESHWatershedModelEvaluation.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadWatershedModelEvaluationTemplate.clicked.connect(self.handlerLoadWatershedModelEvaluationTemplate)
         self.buttonSaveWatershedModelEvaluationTemplate.clicked.connect(self.handlerSaveWatershedModelEvaluationTemplate)
         self.buttonSaveAsWatershedModelEvaluationTemplate.clicked.connect(self.handlerSaveAsWatershedModelEvaluationTemplate)
@@ -826,6 +831,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators.clicked.connect(self.handlerSelectWatershedIndicatorsOutputInitialYearSubWatershedLevelIndicators)
         self.buttonSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators.clicked.connect(self.handlerSelectWatershedIndicatorsOutputFinalYearSubWatershedLevelIndicators)
         self.buttonProcessWatershedIndicators.clicked.connect(self.handlerProcessQUESHWatershedIndicators)
+        self.buttonHelpQUESHWatershedIndicators.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadWatershedIndicatorsTemplate.clicked.connect(self.handlerLoadWatershedIndicatorsTemplate)
         self.buttonSaveWatershedIndicatorsTemplate.clicked.connect(self.handlerSaveWatershedIndicatorsTemplate)
         self.buttonSaveAsWatershedIndicatorsTemplate.clicked.connect(self.handlerSaveAsWatershedIndicatorsTemplate)
@@ -916,8 +922,12 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonPreQUES = QtGui.QHBoxLayout()
         self.buttonProcessPreQUES = QtGui.QPushButton()
         self.buttonProcessPreQUES.setText('&Process')
+        icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
+        self.buttonHelpPreQUES = QtGui.QPushButton()
+        self.buttonHelpPreQUES.setIcon(icon)
         self.layoutButtonPreQUES.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonPreQUES.addWidget(self.buttonProcessPreQUES)
+        self.layoutButtonPreQUES.addWidget(self.buttonHelpPreQUES)
         
         # Template GroupBox
         self.groupBoxPreQUESTemplate = QtGui.QGroupBox('Template')
@@ -1095,8 +1105,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonQUESC = QtGui.QHBoxLayout()
         self.buttonProcessQUESC = QtGui.QPushButton()
         self.buttonProcessQUESC.setText('&Process')
+        self.buttonHelpQUESC = QtGui.QPushButton()
+        self.buttonHelpQUESC.setIcon(icon)
         self.layoutButtonQUESC.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonQUESC.addWidget(self.buttonProcessQUESC)
+        self.layoutButtonQUESC.addWidget(self.buttonHelpQUESC)
         
         # Template GroupBox
         self.groupBoxQUESCTemplate = QtGui.QGroupBox('Template')
@@ -1364,8 +1377,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonQUESB = QtGui.QHBoxLayout()
         self.buttonProcessQUESB = QtGui.QPushButton()
         self.buttonProcessQUESB.setText('&Process')
+        self.buttonHelpQUESB = QtGui.QPushButton()
+        self.buttonHelpQUESB.setIcon(icon)
         self.layoutButtonQUESB.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonQUESB.addWidget(self.buttonProcessQUESB)
+        self.layoutButtonQUESB.addWidget(self.buttonHelpQUESB)
         
         # Template GroupBox
         self.groupBoxQUESBTemplate = QtGui.QGroupBox('Template')
@@ -1640,8 +1656,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonHRUDefinition = QtGui.QHBoxLayout()
         self.buttonProcessHRUDefinition = QtGui.QPushButton()
         self.buttonProcessHRUDefinition.setText('&Process')
+        self.buttonHelpQUESHHRUDefinition = QtGui.QPushButton()
+        self.buttonHelpQUESHHRUDefinition.setIcon(icon)
         self.layoutButtonHRUDefinition.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonHRUDefinition.addWidget(self.buttonProcessHRUDefinition)
+        self.layoutButtonHRUDefinition.addWidget(self.buttonHelpQUESHHRUDefinition)
         
         # Template GroupBox
         self.groupBoxHRUDefinitionTemplate = QtGui.QGroupBox('Template')
@@ -1810,8 +1829,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonWatershedModelEvaluation = QtGui.QHBoxLayout()
         self.buttonProcessWatershedModelEvaluation = QtGui.QPushButton()
         self.buttonProcessWatershedModelEvaluation.setText('&Process')
+        self.buttonHelpQUESHWatershedModelEvaluation = QtGui.QPushButton()
+        self.buttonHelpQUESHWatershedModelEvaluation.setIcon(icon)
         self.layoutButtonWatershedModelEvaluation.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonWatershedModelEvaluation.addWidget(self.buttonProcessWatershedModelEvaluation)
+        self.layoutButtonWatershedModelEvaluation.addWidget(self.buttonHelpQUESHWatershedModelEvaluation)
         
         # Template GroupBox
         self.groupBoxWatershedModelEvaluationTemplate = QtGui.QGroupBox('Template')
@@ -1987,8 +2009,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonWatershedIndicators = QtGui.QHBoxLayout()
         self.buttonProcessWatershedIndicators = QtGui.QPushButton()
         self.buttonProcessWatershedIndicators.setText('&Process')
+        self.buttonHelpQUESHWatershedIndicators = QtGui.QPushButton()
+        self.buttonHelpQUESHWatershedIndicators.setIcon(icon)
         self.layoutButtonWatershedIndicators.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonWatershedIndicators.addWidget(self.buttonProcessWatershedIndicators)
+        self.layoutButtonWatershedIndicators.addWidget(self.buttonHelpQUESHWatershedIndicators)
         
         # Template GroupBox
         self.groupBoxWatershedIndicatorsTemplate = QtGui.QGroupBox('Template')

@@ -89,7 +89,11 @@ class MainWindow(QtGui.QMainWindow):
             'appSettingsFile': 'settings.ini',
             'ROutFile': os.path.join(system.userFolder(), 'processing_script.r.Rout'),
             'guideFile': 'guide.pdf',
-            'helpFile': 'index.html',
+            'helpLUMENSFile': 'index.html',
+            'helpDialogPURFile': 'index_pur.html',
+            'helpDialogQUESFile': 'index_ques.html',
+            'helpDialogTAFile': 'index_ta.html',
+            'helpDialogSCIENDOFile': 'index_sciendo.html',
             'dataDir': 'data',
             'basemapDir': 'basemap',
             'vectorDir': 'vector',
@@ -2716,7 +2720,7 @@ class MainWindow(QtGui.QMainWindow):
     def handlerDialogLumensHelp(self):
         """Slot method for opening the LUMENS html help document.
         """
-        filePath = os.path.join(self.appSettings['appDir'], self.appSettings['folderHelp'], self.appSettings['helpFile'])
+        filePath = os.path.join(self.appSettings['appDir'], self.appSettings['folderHelp'], self.appSettings['helpLUMENSFile'])
         
         if os.path.exists(filePath):
             dialog = DialogLumensViewer(self, 'LUMENS Help', 'html', filePath)

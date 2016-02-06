@@ -13,6 +13,34 @@ class DialogLumensBase:
         self.main = parent
     
     
+    def handlerDialogHelp(self, dialogName):
+        """Slot method for opening the dialog html help document.
+        
+        Args:
+            dialogName (str): the name of the dialog.
+        """
+        helpDialogFile = None
+        
+        if dialogName == 'PUR':
+            helpDialogFile = 'helpDialogPURFile'
+        elif dialogName == 'QUES':
+            helpDialogFile = 'helpDialogQUESFile'
+        elif dialogName == 'TA':
+            helpDialogFile = 'helpDialogTAFile'
+        elif dialogName == 'SCIENDO':
+            helpDialogFile = 'helpDialogSCIENDOFile'
+        else:
+            helpDialogFile = 'helpLUMENSFile'
+        
+        filePath = os.path.join(self.main.appSettings['appDir'], self.main.appSettings['folderHelp'], self.main.appSettings[helpDialogFile])
+        
+        if os.path.exists(filePath):
+            dialog = DialogLumensViewer(self, 'LUMENS Help - {0}'.format(dialogName), 'html', filePath)
+            dialog.exec_()
+        else:
+            QtGui.QMessageBox.critical(self, 'LUMENS Help Not Found', "Unable to open '{0}'.".format(filePath))
+    
+    
     def validForm(self, formName=False):
         """Method for validating the form values.
         

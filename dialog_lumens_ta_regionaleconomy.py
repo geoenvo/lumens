@@ -700,6 +700,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectOtherFinalConsumptionComponent.clicked.connect(self.handlerSelectOtherFinalConsumptionComponent)
         self.buttonSelectOtherListOfEconomicSector.clicked.connect(self.handlerSelectOtherListOfEconomicSector)
         self.buttonProcessDescriptiveAnalysis.clicked.connect(self.handlerProcessDescriptiveAnalysis)
+        self.buttonHelpTADescriptiveAnalysis.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadDescriptiveAnalysisTemplate.clicked.connect(self.handlerLoadDescriptiveAnalysisTemplate)
         self.buttonSaveDescriptiveAnalysisTemplate.clicked.connect(self.handlerSaveDescriptiveAnalysisTemplate)
         self.buttonSaveAsDescriptiveAnalysisTemplate.clicked.connect(self.handlerSaveAsDescriptiveAnalysisTemplate)
@@ -722,6 +723,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectRegionalEconomicScenarioImpactLandCoverComponent.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLandCoverComponent)
         self.buttonSelectRegionalEconomicScenarioImpactLabourRequirement.clicked.connect(self.handlerSelectRegionalEconomicScenarioImpactLabourRequirement)
         self.buttonProcessRegionalEconomicScenarioImpact.clicked.connect(self.handlerProcessRegionalEconomicScenarioImpact)
+        self.buttonHelpTARegionalEconomicScenarioImpact.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadRegionalEconomicScenarioImpactTemplate.clicked.connect(self.handlerLoadRegionalEconomicScenarioImpactTemplate)
         self.buttonSaveRegionalEconomicScenarioImpactTemplate.clicked.connect(self.handlerSaveRegionalEconomicScenarioImpactTemplate)
         self.buttonSaveAsRegionalEconomicScenarioImpactTemplate.clicked.connect(self.handlerSaveAsRegionalEconomicScenarioImpactTemplate)
@@ -737,6 +739,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectLandRequirementAnalysisLandCoverComponent.clicked.connect(self.handlerSelectLandRequirementAnalysisLandCoverComponent)
         self.buttonSelectLandRequirementAnalysisLabourRequirement.clicked.connect(self.handlerSelectLandRequirementAnalysisLabourRequirement)
         self.buttonProcessLandRequirementAnalysis.clicked.connect(self.handlerProcessLandRequirementAnalysis)
+        self.buttonHelpTALandRequirementAnalysis.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadLandRequirementAnalysisTemplate.clicked.connect(self.handlerLoadLandRequirementAnalysisTemplate)
         self.buttonSaveLandRequirementAnalysisTemplate.clicked.connect(self.handlerSaveLandRequirementAnalysisTemplate)
         self.buttonSaveAsLandRequirementAnalysisTemplate.clicked.connect(self.handlerSaveAsLandRequirementAnalysisTemplate)
@@ -753,6 +756,7 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.buttonSelectLandUseChangeImpactLandCoverComponent.clicked.connect(self.handlerSelectLandUseChangeImpactLandCoverComponent)
         self.buttonSelectLandUseChangeImpactLabourRequirement.clicked.connect(self.handlerSelectLandUseChangeImpactLabourRequirement)
         self.buttonProcessLandUseChangeImpact.clicked.connect(self.handlerProcessLandUseChangeImpact)
+        self.buttonHelpTALandUseChangeImpact.clicked.connect(lambda:self.handlerDialogHelp('TA'))
         self.buttonLoadLandUseChangeImpactTemplate.clicked.connect(self.handlerLoadLandUseChangeImpactTemplate)
         self.buttonSaveLandUseChangeImpactTemplate.clicked.connect(self.handlerSaveLandUseChangeImpactTemplate)
         self.buttonSaveAsLandUseChangeImpactTemplate.clicked.connect(self.handlerSaveAsLandUseChangeImpactTemplate)
@@ -1038,8 +1042,12 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonDescriptiveAnalysis = QtGui.QHBoxLayout()
         self.buttonProcessDescriptiveAnalysis = QtGui.QPushButton()
         self.buttonProcessDescriptiveAnalysis.setText('&Process')
+        icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
+        self.buttonHelpTADescriptiveAnalysis = QtGui.QPushButton()
+        self.buttonHelpTADescriptiveAnalysis.setIcon(icon)
         self.layoutButtonDescriptiveAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonDescriptiveAnalysis.addWidget(self.buttonProcessDescriptiveAnalysis)
+        self.layoutButtonDescriptiveAnalysis.addWidget(self.buttonHelpTADescriptiveAnalysis)
         
         # Template GroupBox
         self.groupBoxDescriptiveAnalysisTemplate = QtGui.QGroupBox('Template')
@@ -1324,8 +1332,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonRegionalEconomicScenarioImpact = QtGui.QHBoxLayout()
         self.buttonProcessRegionalEconomicScenarioImpact = QtGui.QPushButton()
         self.buttonProcessRegionalEconomicScenarioImpact.setText('&Process')
+        self.buttonHelpTARegionalEconomicScenarioImpact = QtGui.QPushButton()
+        self.buttonHelpTARegionalEconomicScenarioImpact.setIcon(icon)
         self.layoutButtonRegionalEconomicScenarioImpact.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonRegionalEconomicScenarioImpact.addWidget(self.buttonProcessRegionalEconomicScenarioImpact)
+        self.layoutButtonRegionalEconomicScenarioImpact.addWidget(self.buttonHelpTARegionalEconomicScenarioImpact)
         
         # Template GroupBox
         self.groupBoxRegionalEconomicScenarioImpactTemplate = QtGui.QGroupBox('Template')
@@ -1549,8 +1560,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonLandRequirementAnalysis = QtGui.QHBoxLayout()
         self.buttonProcessLandRequirementAnalysis = QtGui.QPushButton()
         self.buttonProcessLandRequirementAnalysis.setText('&Process')
+        self.buttonHelpTALandRequirementAnalysis = QtGui.QPushButton()
+        self.buttonHelpTALandRequirementAnalysis.setIcon(icon)
         self.layoutButtonLandRequirementAnalysis.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLandRequirementAnalysis.addWidget(self.buttonProcessLandRequirementAnalysis)
+        self.layoutButtonLandRequirementAnalysis.addWidget(self.buttonHelpTALandRequirementAnalysis)
         
         # Template GroupBox
         self.groupBoxLandRequirementAnalysisTemplate = QtGui.QGroupBox('Template')
@@ -1784,8 +1798,11 @@ class DialogLumensTARegionalEconomy(QtGui.QDialog, DialogLumensBase):
         self.layoutButtonLandUseChangeImpact = QtGui.QHBoxLayout()
         self.buttonProcessLandUseChangeImpact = QtGui.QPushButton()
         self.buttonProcessLandUseChangeImpact.setText('&Process')
+        self.buttonHelpTALandUseChangeImpact = QtGui.QPushButton()
+        self.buttonHelpTALandUseChangeImpact.setIcon(icon)
         self.layoutButtonLandUseChangeImpact.setAlignment(QtCore.Qt.AlignRight)
         self.layoutButtonLandUseChangeImpact.addWidget(self.buttonProcessLandUseChangeImpact)
+        self.layoutButtonLandUseChangeImpact.addWidget(self.buttonHelpTALandUseChangeImpact)
         
         # Template GroupBox
         self.groupBoxLandUseChangeImpactTemplate = QtGui.QGroupBox('Template')
