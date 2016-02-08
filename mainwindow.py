@@ -5,7 +5,7 @@ import os, platform, sys, logging, subprocess, argparse
 
 from qgis.core import *
 from qgis.gui import *
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, QtXml
 
 import resource
 
@@ -101,6 +101,7 @@ class MainWindow(QtGui.QMainWindow):
             'defaultBasemapFilePath': '',
             'defaultVectorFile': 'landmarks.shp',
             'defaultVectorFilePath': '',
+            'selectQgsProjectfileExt': '.qgs',
             'selectShapefileExt': '.shp',
             'selectRasterfileExt': '.tif',
             'selectCsvfileExt': '.csv',
@@ -1873,8 +1874,45 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBoxLandUseChangeModelingTemplate.setDisabled(True)
         
     
+    def lumensLoadQgsProjectLayers(self, qgsProject):
+        """Method for loading layers defined in a QGIS project file to the layer list.
+        
+        Args:
+            qgsProject (str): a file path to a QGIS project file (*.qgs).
+        """
+        xml = file(qgsProject).read()
+        doc = QtXml.QDomDocument()
+        doc.setContent(xml)
+        mapLayers = doc.elementsByTagName('maplayer')
+        
+        layerFiles = []
+        
+        if mapLayers.count():
+            for i in range(mapLayers.count()):
+                mapLayer = mapLayers.at(i)
+                if mapLayer.isElement():
+                    dataSource = mapLayer.firstChildElement('datasource')
+                    layerFile = dataSource.text()
+                    if os.path.exists(layerFile):
+                        layerFiles.append(layerFile)
+        
+        if len(layerFiles):
+            reply = QtGui.QMessageBox.question(
+                self,
+                'Load QGIS Project Layers',
+                'Do you want to load the layers in the QGIS project?',
+                QtGui.QMessageBox.Yes|QtGui.QMessageBox.Cancel,
+                QtGui.QMessageBox.Cancel
+            )
+            
+            if reply == QtGui.QMessageBox.Yes:
+                self.sidebarTabWidget.setCurrentWidget(self.tabLayers)
+                for layerFile in layerFiles:
+                    self.addLayer(layerFile)
+    
+    
     def lumensOpenDatabase(self, lumensDatabase=False):
-        """Slot method for opening a LUMENS project database.
+        """Method for opening a LUMENS project database.
         
         Opens a LUMENS project database file (*.lpj) using "modeler:lumens_open_database" R algorithm.
         This is called when opening a recent project from the file menu or the "Open LUMENS database" menu.
@@ -1923,7 +1961,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def lumensCloseDatabase(self):
-        """Slot method for closing a LUMENS project database.
+        """Method for closing a LUMENS project database.
         
         Closes an open LUMENS project using "modeler:lumens_close_database" R algorithm.
         When a LUMENS project is closed, menus that depend on an open project will be disabled and all
@@ -2947,6 +2985,8 @@ class MainWindow(QtGui.QMainWindow):
                 os.startfile(filePath) # Open the document file in Windows
         elif ext in self.appSettings['acceptedSpatialFormats']:
             self.addLayer(filePath) # Add the spatial data file to the layer list
+        elif ext == self.appSettings['selectQgsProjectfileExt']:
+            self.lumensLoadQgsProjectLayers(filePath)
         elif ext in self.appSettings['acceptedWebFormats']: # Open web documents in internal viewer
             dialog = DialogLumensViewer(self, os.path.basename(filePath), 'html', filePath)
             dialog.exec_()
