@@ -83,7 +83,14 @@ class DialogLumensBase:
         success = False
         outputMessage = 'Algorithm "{0}"'.format(algName)
         
-        if outputs and 'statusoutput' in outputs:
+        # R script key
+        statusOutputKey = 'statusoutput'
+        
+        # Modeler script key
+        if algName.lower().startswith('modeler:'):
+            statusOutputKey = 'statusoutput_ALG1'
+        
+        if outputs and statusOutputKey in outputs:
           if os.path.exists(outputs['statusoutput']):
               with open(outputs['statusoutput'], 'rb') as f:
                   hasHeader = csv.Sniffer().has_header(f.read(1024))

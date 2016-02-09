@@ -21,6 +21,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         self.dialogTitle = 'LUMENS Create Database'
         
         self.main.appSettings['DialogLumensCreateDatabase']['outputFolder'] = os.path.join(self.main.appSettings['appDir'], 'output')
+        self.dissolvedShapefile = None # For holding the temporary dissolved shapefile path
         
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLumensCreateDatabase init'
@@ -302,6 +303,11 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         # BUG in R script execution? outputFolder path separator must be forward slash
         self.main.appSettings[type(self).__name__]['outputFolder'] = unicode(self.lineEditOutputFolder.text()).replace(os.path.sep, '/')
         self.main.appSettings[type(self).__name__]['shapefile'] = unicode(self.lineEditShapefile.text())
+        
+        # After dissolving, use dissolved shapefile instead
+        if self.dissolvedShapefile:
+            self.main.appSettings[type(self).__name__]['shapefile'] = self.dissolvedShapefile
+        
         self.main.appSettings[type(self).__name__]['shapefileAttr'] = unicode(self.comboBoxShapefileAttr.currentText())
         self.main.appSettings[type(self).__name__]['projectDescription'] = unicode(self.lineEditProjectDescription.text())
         self.main.appSettings[type(self).__name__]['projectLocation'] = unicode(self.lineEditProjectLocation.text())
@@ -387,6 +393,8 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
                 dialog.exec_()
             
             if outputs and os.path.exists(outputs['admin_output']):
+                self.dissolvedShapefile = outputs['admin_output'] # To be processed in setAppSettings()
+                
                 registry = QgsProviderRegistry.instance()
                 provider = registry.provider('ogr', outputs['admin_output'])
                 
