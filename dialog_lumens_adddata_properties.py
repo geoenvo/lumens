@@ -1,20 +1,44 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, csv, datetime
+import os, logging, csv, datetime
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
 
+from dialog_lumens_viewer import DialogLumensViewer
+
+
 class DialogLumensAddDataProperties(QtGui.QDialog):
+    """LUMENS dialog class for the "Add Data" data properties.
+    
+    Attributes:
+        dataType (str): the type of the added data, can be either raster, vector, or csv files.
+        dataFile (str): the file path of the added data.
+        dataDescription (str): the description of the added data.
+        dataPeriod (int): the period of the added data.
+        dataFieldAttribute (str): the selected attribute of the added shapefile data.
+        dissolvedShapefile (str): the file path of the added shapefile data that has been dissolved.
     """
-    """
+    
     def __init__(self, parent, dataType, dataFile):
+        """Constructor method for initializing a LUMENS "Add Data" data properties dialog window instance.
+        
+        Args:
+            parent: the dialog window's parent instance.
+            dataType: the type of the added data.
+            dataFile: the file path of the added data.
+        """
         super(DialogLumensAddDataProperties, self).__init__(parent)
-        self.dataType = dataType
-        self.dataFile = dataFile
         self.main = parent
         self.dialogTitle = 'LUMENS Data Properties'
+        
+        self.dataType = dataType
+        self.dataFile = dataFile
+        self.dataDescription = None
+        self.dataPeriod = None
+        self.dataFieldAttribute = None
+        self.dissolvedShapefile = None
         
         self.classifiedOptions = {
             1: 'Hutan primer',
@@ -37,19 +61,39 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         elif self.dataFile.lower().endswith(self.main.main.appSettings['selectCsvfileExt']):
             self.isCsvFile = True
         
+        if self.main.main.appSettings['debug']:
+            print 'DEBUG: DialogLumensAddDataProperties init'
+            self.logger = logging.getLogger(type(self).__name__)
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            ch = logging.StreamHandler()
+            ch.setFormatter(formatter)
+            fh = logging.FileHandler(os.path.join(self.main.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh.setFormatter(formatter)
+            self.logger.addHandler(ch)
+            self.logger.addHandler(fh)
+            self.logger.setLevel(logging.DEBUG)
+        
         self.setupUi(self)
         
-        if self.dataFile.lower().endswith(self.main.main.appSettings['selectShapefileExt']):
+        if self.isRasterFile:
+            self.loadRasterDataTable()
+        elif self.isVectorFile:
             self.loadDataFieldAttributes()
         
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
+        self.buttonProcessDissolve.clicked.connect(self.handlerProcessDissolve)
+        self.buttonProcessSave.clicked.connect(self.handlerProcessSave)
     
     
     def setupUi(self, parent):
+        """Method for building the dialog UI.
+        
+        Args:
+            parent: the dialog's parent instance.
+        """
         self.dialogLayout = QtGui.QVBoxLayout()
         
         addFileType = None
+        
         if self.isRasterFile:
             addFileType = 'Add raster data'
         elif self.isVectorFile:
@@ -117,16 +161,25 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
             # Table
             rowCount += 1
             self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 2)
-            
-            if self.isRasterFile:
-                self.loadRasterDataTable()
         
         ######################################################################
         
-        self.buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok|QtGui.QDialogButtonBox.Cancel)
+        self.layoutButtonProcess = QtGui.QHBoxLayout()
+        self.buttonProcessDissolve = QtGui.QPushButton()
+        self.buttonProcessDissolve.setText('&Dissolve')
+        self.buttonProcessDissolve.setVisible(False)
+        self.buttonProcessSave = QtGui.QPushButton()
+        self.buttonProcessSave.setText('&Save')
+        self.layoutButtonProcess.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonProcess.addWidget(self.buttonProcessDissolve)
+        self.layoutButtonProcess.addWidget(self.buttonProcessSave)
+        
+        if self.isVectorFile:
+            self.buttonProcessDissolve.setVisible(True)
+            self.buttonProcessSave.setDisabled(True)
         
         self.dialogLayout.addWidget(self.groupBoxDataProperties)
-        self.dialogLayout.addWidget(self.buttonBox)
+        self.dialogLayout.addLayout(self.layoutButtonProcess)
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
@@ -135,25 +188,34 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
     
     
     def getDataDescription(self):
-        """
+        """Getter method.
         """
         return self.dataDescription
     
     
     def getDataPeriod(self):
-        """
+        """Getter method.
         """
         return self.dataPeriod
     
     
     def getDataFieldAttributes(self):
-        """
+        """Getter method.
         """
         return self.dataFieldAttribute
     
     
-    def loadRasterDataTable(self):
+    def getDissolvedShapefile(self):
+        """Getter method.
         """
+        return self.dissolvedShapefile
+    
+    
+    def loadRasterDataTable(self):
+        """Method for loading the raster properties to the data table.
+        
+        The raster loading process calls the following algorithm:
+        1. r:lumensdatapropertiesraster
         """
         algName = 'r:lumensdatapropertiesraster'
         
@@ -174,9 +236,12 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
               if hasHeader: # Set the column headers
                   headerRow = reader.next()
                   fields = [str(field) for field in headerRow]
+                  
                   fields.append('Legend') # Additional columns ('Classified' only for Land Use/Cover types)
+                  
                   if self.dataType == 'Land Use/Cover':
                       fields.append('Classified')
+                  
                   self.dataTable.setColumnCount(len(fields))
                   self.dataTable.setHorizontalHeaderLabels(fields)
               
@@ -199,8 +264,9 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                       self.dataTable.setItem(tableRow, tableColumn, fieldTableItem)
                       self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
                       tableColumn += 1
+                  
                   # Additional columns ('Classified' only for Land Use/Cover types)
-                  fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(fieldTableItem.text()))
+                  fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(tableRow + 1))
                   columnLegend = tableColumn
                   self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
                   self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
@@ -220,7 +286,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
     
     
     def loadDataFieldAttributes(self):
-        """
+        """Method for loading the shapefile's attributes.
         """
         registry = QgsProviderRegistry.instance()
         provider = registry.provider('ogr', self.dataFile)
@@ -241,33 +307,149 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
     #***********************************************************
     # Process dialog
     #***********************************************************
-    def accept(self):
+    def validForm(self):
+        """Method for validating the form values.
         """
+        valid = False
+        
+        if self.dataType == 'Land Use/Cover' and self.isRasterFile and self.dataDescription and self.dataPeriod:
+            valid = True
+        elif self.dataType == 'Land Use/Cover' and self.isVectorFile and self.dataDescription and self.dataPeriod and self.dataFieldAttribute:
+            valid = True
+        elif self.dataType == 'Planning Unit' and self.isRasterFile and self.dataDescription:
+            valid = True
+        elif self.dataType == 'Planning Unit' and self.isVectorFile and self.dataDescription and self.dataFieldAttribute:
+            valid = True
+        elif self.dataType == 'Factor' and self.isRasterFile and self.dataDescription:
+            valid = True
+        elif self.dataType == 'Table' and self.isCsvFile and self.dataDescription:
+            valid = True
+        else:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
+    
+    
+    def setFormFields(self):
+        """Set the required values from the form widgets.
         """
         self.dataDescription = unicode(self.lineEditDataDescription.text())
         self.dataPeriod = self.spinBoxDataPeriod.value()
         self.dataFieldAttribute = unicode(self.comboBoxDataFieldAttribute.currentText())
         # dataTable
         
-        if self.dataType == 'Land Use/Cover' and self.isRasterFile and self.dataDescription and self.dataPeriod:
-            QtGui.QDialog.accept(self)
-        elif self.dataType == 'Land Use/Cover' and self.isVectorFile and self.dataDescription and self.dataPeriod and self.dataFieldAttribute:
-            QtGui.QDialog.accept(self)
-        elif self.dataType == 'Planning Unit' and self.isRasterFile and self.dataDescription:
-            QtGui.QDialog.accept(self)
-        elif self.dataType == 'Planning Unit' and self.isVectorFile and self.dataDescription and self.dataFieldAttribute:
-            QtGui.QDialog.accept(self)
-        elif self.dataType == 'Factor' and self.isRasterFile and self.dataDescription:
-            QtGui.QDialog.accept(self)
-        elif self.dataType == 'Table' and self.isCsvFile and self.dataDescription:
-            QtGui.QDialog.accept(self)
-        else:
-            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
-            return
+    
+    def handlerProcessDissolve(self):
+        """Slot method to pass the form values and execute the "Dissolve" R algorithm.
+        
+        The "Dissolve" process calls the following algorithm:
+        1. r:lumensdissolve
+        """
+        self.setFormFields()
+        
+        if self.validForm():
+            logging.getLogger(type(self).__name__).info('start: %s' % 'LUMENS Dissolve')
+            self.buttonProcessDissolve.setDisabled(True)
+                
+            algName = 'r:lumensdissolve'
+            
+            outputs = general.runalg(
+                algName,
+                self.dataFile,
+                self.dataFieldAttribute,
+                None,
+            )
+            
+            # Display ROut file in debug mode
+            if self.main.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
+            outputsKey = 'admin_output'
+            
+            if outputs and outputsKey in outputs and os.path.exists(outputs[outputsKey]):
+                self.dissolvedShapefile = outputs[outputsKey]
+                
+                registry = QgsProviderRegistry.instance()
+                provider = registry.provider('ogr', outputs[outputsKey])
+                
+                if not provider.isValid():
+                    logging.getLogger(type(self).__name__).error('LUMENS Dissolve: invalid shapefile')
+                    return
+                
+                attributes = []
+                for field in provider.fields():
+                    attributes.append(field.name())
+                
+                attributes.append('Legend') # Additional columns ('Classified' only for Land Use/Cover types)
+                
+                if self.dataType == 'Land Use/Cover':
+                    attributes.append('Classified')
+                
+                features = provider.getFeatures()
+                
+                if features:
+                    self.dataTable.setEnabled(True)
+                    self.dataTable.setRowCount(provider.featureCount())
+                    self.dataTable.setColumnCount(len(attributes))
+                    self.dataTable.verticalHeader().setVisible(False)
+                    self.dataTable.setHorizontalHeaderLabels(attributes)
+                    
+                    # Need a nicer way than manual looping
+                    tableRow = 0
+                    for feature in features:
+                        tableColumn = 0
+                        for attribute in attributes:
+                            if attribute == 'Legend' or attribute == 'Classified': # Skip the additional column
+                                continue
+                            attributeValue = str(feature.attribute(attribute))
+                            attributeValueTableItem = QtGui.QTableWidgetItem(attributeValue)
+                            attributeValueTableItem.setFlags(attributeValueTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
+                            self.dataTable.setItem(tableRow, tableColumn, attributeValueTableItem)
+                            self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
+                            tableColumn += 1
+                        
+                        # Additional columns ('Classified' only for Land Use/Cover types)
+                        fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(tableRow + 1))
+                        columnLegend = tableColumn
+                        self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
+                        self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
+                        
+                        if self.dataType == 'Land Use/Cover':
+                            tableColumn += 1
+                            columnClassified = tableColumn
+                            comboBoxClassified = QtGui.QComboBox()
+                            for key, val in self.classifiedOptions.iteritems():
+                                comboBoxClassified.addItem(val, key)
+                            self.dataTable.setCellWidget(tableRow, tableColumn, comboBoxClassified)
+                            self.dataTable.horizontalHeader().setResizeMode(columnClassified, QtGui.QHeaderView.ResizeToContents)
+                        
+                        tableRow += 1
+                    
+                    self.dataTable.resizeColumnsToContents()
+                    self.buttonProcessSave.setEnabled(True)
+            
+            self.buttonProcessDissolve.setEnabled(True)
+            logging.getLogger(type(self).__name__).info('end: %s' % 'LUMENS Dissolve')
+        
+    
+    def handlerProcessSave(self):
+        """Slot method for saving the form values before closing the dialog.
+        """
+        self.setFormFields()
+        
+        if self.validForm():
+            self.accept()
+    
+    
+    def accept(self):
+        """Overload method that is called when the dialog is accepted.
+        """
+        QtGui.QDialog.accept(self)
     
     
     def reject(self):
-        """
+        """Overload method that is called when the dialog is rejected (canceled).
         """
         QtGui.QDialog.reject(self)
     

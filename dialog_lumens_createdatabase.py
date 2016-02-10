@@ -421,8 +421,8 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
                         tableColumn = 0
                         for attribute in attributes:
                             attributeValue = str(feature.attribute(attribute))
-                            attributeTableItem = QtGui.QTableWidgetItem(attributeValue)
-                            self.tableDissolved.setItem(tableRow, tableColumn, attributeTableItem)
+                            attributeValueTableItem = QtGui.QTableWidgetItem(attributeValue)
+                            self.tableDissolved.setItem(tableRow, tableColumn, attributeValueTableItem)
                             tableColumn += 1
                         tableRow += 1
                     
