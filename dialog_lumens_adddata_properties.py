@@ -174,7 +174,9 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
               if hasHeader: # Set the column headers
                   headerRow = reader.next()
                   fields = [str(field) for field in headerRow]
-                  fields.extend(['Legend', 'Classified']) # Additional columns
+                  fields.append('Legend') # Additional columns ('Classified' only for Land Use/Cover types)
+                  if self.dataType == 'Land Use/Cover':
+                      fields.append('Classified')
                   self.dataTable.setColumnCount(len(fields))
                   self.dataTable.setHorizontalHeaderLabels(fields)
               
@@ -183,6 +185,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
               for row in reader:
                   dataRow = [QtGui.QTableWidgetItem(field) for field in row]
                   dataTable.append(dataRow)
+              
               self.dataTable.setRowCount(len(dataTable))
               
               tableRow = 0
@@ -192,23 +195,27 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
               for dataRow in dataTable:
                   tableColumn = 0
                   for fieldTableItem in dataRow:
+                      fieldTableItem.setFlags(fieldTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
                       self.dataTable.setItem(tableRow, tableColumn, fieldTableItem)
                       self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
                       tableColumn += 1
-                  # Additional columns
+                  # Additional columns ('Classified' only for Land Use/Cover types)
                   fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(fieldTableItem.text()))
                   columnLegend = tableColumn
                   self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
-                  tableColumn += 1
-                  columnClassified = tableColumn
-                  comboBoxClassified = QtGui.QComboBox()
-                  for key, val in self.classifiedOptions.iteritems():
-                      comboBoxClassified.addItem(val, key)
-                  self.dataTable.setCellWidget(tableRow, tableColumn, comboBoxClassified)
+                  self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
+                  
+                  if self.dataType == 'Land Use/Cover':
+                      tableColumn += 1
+                      columnClassified = tableColumn
+                      comboBoxClassified = QtGui.QComboBox()
+                      for key, val in self.classifiedOptions.iteritems():
+                          comboBoxClassified.addItem(val, key)
+                      self.dataTable.setCellWidget(tableRow, tableColumn, comboBoxClassified)
+                      self.dataTable.horizontalHeader().setResizeMode(columnClassified, QtGui.QHeaderView.ResizeToContents)
+                  
                   tableRow += 1
               
-              self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
-              self.dataTable.horizontalHeader().setResizeMode(columnClassified, QtGui.QHeaderView.ResizeToContents)
               self.dataTable.setEnabled(True)
     
     
