@@ -91,8 +91,8 @@ class DialogLumensBase:
             statusOutputKey = 'statusoutput_ALG1'
         
         if outputs and statusOutputKey in outputs:
-          if os.path.exists(outputs['statusoutput']):
-              with open(outputs['statusoutput'], 'rb') as f:
+          if os.path.exists(outputs[statusOutputKey]):
+              with open(outputs[statusOutputKey], 'rb') as f:
                   hasHeader = csv.Sniffer().has_header(f.read(1024))
                   f.seek(0)
                   reader = csv.reader(f)
