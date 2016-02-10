@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import datetime
+import os, csv, datetime
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
-
+from processing.tools import *
 
 class DialogLumensAddDataProperties(QtGui.QDialog):
     """
@@ -16,6 +16,16 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.main = parent
         self.dialogTitle = 'LUMENS Data Properties'
         
+        self.classifiedOptions = {
+            1: 'Hutan primer',
+            2: 'Hutan sekunder',
+            3: 'Tanaman pohon monokultur',
+            4: 'Tanaman pohon campuran',
+            5: 'Tanaman pertanian semusim',
+            6: 'Semak, rumput dan lahan terbuka',
+            7: 'Pemukiman',
+            8: 'Lain-lain',
+        }
         self.isRasterFile = False
         self.isVectorFile = False
         self.isCsvFile = False
@@ -107,6 +117,9 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
             # Table
             rowCount += 1
             self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 2)
+            
+            if self.isRasterFile:
+                self.loadRasterDataTable()
         
         ######################################################################
         
@@ -117,7 +130,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(400, 200)
+        self.setMinimumSize(800, 600)
         self.resize(parent.sizeHint())
     
     
@@ -137,6 +150,66 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         """
         """
         return self.dataFieldAttribute
+    
+    
+    def loadRasterDataTable(self):
+        """
+        """
+        algName = 'r:lumensdatapropertiesraster'
+        
+        outputs = general.runalg(
+            algName,
+            self.dataFile,
+            None,
+        )
+        
+        outputsKey = 'data_table'
+        
+        if outputs and outputsKey in outputs and os.path.exists(outputs[outputsKey]):  
+            with open(outputs[outputsKey], 'rb') as f:
+              hasHeader = csv.Sniffer().has_header(f.read(1024))
+              f.seek(0)
+              reader = csv.reader(f)
+              
+              if hasHeader: # Set the column headers
+                  headerRow = reader.next()
+                  fields = [str(field) for field in headerRow]
+                  fields.extend(['Legend', 'Classified']) # Additional columns
+                  self.dataTable.setColumnCount(len(fields))
+                  self.dataTable.setHorizontalHeaderLabels(fields)
+              
+              dataTable = []
+              
+              for row in reader:
+                  dataRow = [QtGui.QTableWidgetItem(field) for field in row]
+                  dataTable.append(dataRow)
+              self.dataTable.setRowCount(len(dataTable))
+              
+              tableRow = 0
+              columnLegend = 0
+              columnClassified = 0
+              
+              for dataRow in dataTable:
+                  tableColumn = 0
+                  for fieldTableItem in dataRow:
+                      self.dataTable.setItem(tableRow, tableColumn, fieldTableItem)
+                      self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
+                      tableColumn += 1
+                  # Additional columns
+                  fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(fieldTableItem.text()))
+                  columnLegend = tableColumn
+                  self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
+                  tableColumn += 1
+                  columnClassified = tableColumn
+                  comboBoxClassified = QtGui.QComboBox()
+                  for key, val in self.classifiedOptions.iteritems():
+                      comboBoxClassified.addItem(val, key)
+                  self.dataTable.setCellWidget(tableRow, tableColumn, comboBoxClassified)
+                  tableRow += 1
+              
+              self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
+              self.dataTable.horizontalHeader().setResizeMode(columnClassified, QtGui.QHeaderView.ResizeToContents)
+              self.dataTable.setEnabled(True)
     
     
     def loadDataFieldAttributes(self):
