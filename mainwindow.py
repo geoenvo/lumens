@@ -1947,11 +1947,18 @@ class MainWindow(QtGui.QMainWindow):
             # outputs['overview_ALG0'] => temporary raster file
             
             self.appSettings['DialogLumensOpenDatabase']['projectFile'] = lumensDatabase
-            self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = os.path.dirname(lumensDatabase)
+            self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = projectFolder = os.path.dirname(lumensDatabase)
             
             self.lineEditActiveProject.setText(os.path.normpath(lumensDatabase))
             self.projectTreeView.setRootIndex(self.projectModel.index(self.appSettings['DialogLumensOpenDatabase']['projectFolder']))
             self.addRecentProject(lumensDatabase)
+            
+            # Offer to load the QGIS project file in the project folder (if any)
+            qgsProjectFile = os.path.splitext(lumensDatabase)[0] + self.appSettings['selectQgsProjectfileExt']
+            qgsProjectFilePath = os.path.join(projectFolder, qgsProjectFile)
+            
+            if os.path.exists(qgsProjectFilePath):
+                self.lumensLoadQgsProjectLayers(qgsProjectFilePath)
             
             self.lumensEnableMenus()
             self.loadModuleTemplates()
