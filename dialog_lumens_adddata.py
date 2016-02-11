@@ -171,6 +171,23 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         buttonDataProperties.setObjectName('buttonDataProperties_{0}'.format(str(self.tableAddDataRowCount)))
         layoutDataRow.addWidget(buttonDataProperties)
         
+        # Hidden fields set from the data properties dialog
+        lineEditDataDescription = QtGui.QLineEdit()
+        lineEditDataDescription.setObjectName('lineEditDataDescription_{0}'.format(str(self.tableAddDataRowCount)))
+        lineEditDataDescription.setVisible(False)
+        layoutDataRow.addWidget(lineEditDataDescription)
+        
+        spinBoxDataPeriod = QtGui.QSpinBox()
+        spinBoxDataPeriod.setRange(1, 9999)
+        spinBoxDataPeriod.setObjectName('spinBoxDataPeriod_{0}'.format(str(self.tableAddDataRowCount)))
+        spinBoxDataPeriod.setVisible(False)
+        layoutDataRow.addWidget(spinBoxDataPeriod)
+        
+        lineEditDataTableCsv = QtGui.QLineEdit()
+        lineEditDataTableCsv.setObjectName('lineEditDataTableCsv_{0}'.format(str(self.tableAddDataRowCount)))
+        lineEditDataTableCsv.setVisible(False)
+        layoutDataRow.addWidget(lineEditDataTableCsv)
+        
         self.layoutTableAddData.addLayout(layoutDataRow)
         
         buttonSelectDataFile.clicked.connect(self.handlerSelectDataFile)
@@ -236,6 +253,13 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         if dialog.exec_():
             buttonDataProperties = self.contentAddData.findChild(QtGui.QPushButton, 'buttonDataProperties_' + tableRow)
             buttonDataProperties.setDisabled(True)
+            # Set the hidden fields
+            lineEditDataDescription = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataDescription_' + tableRow)
+            lineEditDataDescription.setText(dialog.getDataDescription())
+            spinBoxDataPeriod = self.contentAddData.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + tableRow)
+            spinBoxDataPeriod.setValue(dialog.getDataPeriod())
+            lineEditDataTableCsv = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataTableCsv_' + tableRow)
+            lineEditDataTableCsv.setText(dialog.getDataTableCsv())
     
     
     def handlerDeleteDataRow(self):
@@ -251,10 +275,16 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
     #***********************************************************
     # Process dialog
     #***********************************************************
+    def validForm(self):
+        """
+        """
+        # Check tableAddData
+        return True
+    
+    
     def setAppSettings(self):
         """Set the required values from the form widgets.
         """
-        completeData = True
         self.tableAddData = []
         
         for tableRow in range(1, self.tableAddDataRowCount + 1):
@@ -265,38 +295,35 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 continue
             
             comboBoxDataType = self.findChild(QtGui.QComboBox, 'comboBoxDataType_' + str(tableRow))
+            lineEditDataDescription = self.findChild(QtGui.QLineEdit, 'lineEditDataDescription_' + str(tableRow))
+            spinBoxDataPeriod = self.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + str(tableRow))
+            lineEditDataTableCsv = self.findChild(QtGui.QLineEdit, 'lineEditDataTableCsv_' + str(tableRow))
+            
             
             dataFile = unicode(lineEditDataFile.text())
             dataType = unicode(comboBoxDataType.currentText())
+            dataDescription = unicode(lineEditDataDescription.text())
+            dataPeriod = spinBoxDataPeriod.value()
+            dataTableCsv = unicode(lineEditDataTableCsv.text())
             
-            if dataFile and dataType and dataPeriod and dataDescription:
-                if dataType == 'Land Use/Cover':
-                    dataType = 0
-                elif dataType == 'Planning Unit':
-                    dataType = 1
-                elif dataType == 'Factor':
-                    dataType = 2
-                elif dataType == 'Table':
-                    dataType = 4
-                else:
-                    dataType = 0
-                
-                tableRowData = {
-                    'dataFile': dataFile,
-                    'dataType': dataType,
-                    'dataPeriod': dataPeriod,
-                    'dataDescription': dataDescription,
-                }
-                
-                self.tableAddData.append(tableRowData)
-            else:
-                completeData = False
-        
-        if not len(self.tableAddData):
-            completeData = False
-            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
-        
-        return completeData
+            if dataType == 'Land Use/Cover':
+                dataType = 0
+            elif dataType == 'Planning Unit':
+                dataType = 1
+            elif dataType == 'Factor':
+                dataType = 2
+            elif dataType == 'Table':
+                dataType = 3
+            
+            tableRowData = {
+                'dataFile': dataFile,
+                'dataType': dataType,
+                'dataPeriod': dataPeriod,
+                'dataDescription': dataDescription,
+                'dataTableCsv': dataTableCsv,
+            }
+            
+            self.tableAddData.append(tableRowData)
     
     
     def handlerProcessAddData(self):
@@ -306,13 +333,12 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         R algorithm is called.
         
         The "Add Data" process calls the following algorithms:
-        1. r:lumensaddrasterdata1
-        2. r:lumensaddrasterdata2
-        3. r:lumensaddvectordata
+        1. r:lumensaddrasterdata
+        2. r:lumensaddvectordata
         """
-        completeData = self.setAppSettings()
+        self.setAppSettings()
         
-        if completeData:
+        if self.validForm():
             logging.getLogger(type(self).__name__).info('start: %s' % self.dialogTitle)
             self.buttonProcessAddData.setDisabled(True)
             
@@ -326,36 +352,20 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 # The algName to be used depends on the type of the dataFile (vector or raster)
                 
                 if tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectRasterfileExt']):
-                    algName = 'r:lumensaddrasterdata1'
+                    algName = 'r:lumensaddrasterdata'
                     
-                    # Step 1 of add raster data
+                    print 'DEBUG'
+                    print tableRowData
+                    
                     outputs = general.runalg(
                         algName,
                         tableRowData['dataType'],
                         tableRowData['dataFile'].replace(os.path.sep, '/'),
                         tableRowData['dataPeriod'],
                         tableRowData['dataDescription'],
-                        None,
+                        tableRowData['dataTableCsv'],
                         None,
                     )
-                    
-                    # Step 2 of add raster data
-                    if outputs and os.path.exists(outputs['attribute_table']):
-                        dialog = DialogLumensViewer(self, 'Attribute Table', 'csv', outputs['attribute_table'], True)
-                        dialog.exec_()
-                        
-                        # Create a temp csv file from the csv dialog
-                        tableData = dialog.getTableData()
-                        tableCsv = dialog.getTableCsv(tableData, True)
-                        
-                        algName = 'r:lumensaddrasterdata2'
-                        
-                        outputs = general.runalg(
-                            algName,
-                            tableRowData['dataType'],
-                            tableCsv,
-                            None,
-                        )
                 elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
                     dialog = DialogLumensAddDataVectorAttributes(self, tableRowData['dataFile'])
                     

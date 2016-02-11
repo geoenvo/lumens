@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, csv, datetime
+import os, logging, csv, tempfile, datetime
 from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
@@ -36,7 +36,8 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.dataType = dataType
         self.dataFile = dataFile
         self.dataDescription = None
-        self.dataPeriod = None
+        self.dataPeriod = 0
+        self.dataTableCsv = None
         self.dataFieldAttribute = None
         self.dissolvedShapefile = None
         
@@ -75,7 +76,8 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         self.setupUi(self)
         
-        if self.isRasterFile:
+        # Raster data table is loaded only for 'Land Use/Cover' and 'Planning Unit'
+        if self.isRasterFile and self.dataType in ('Land Use/Cover', 'Planning Unit'):
             self.loadRasterDataTable()
         elif self.isVectorFile:
             self.loadDataFieldAttributes()
@@ -199,6 +201,12 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         return self.dataPeriod
     
     
+    def getDataTableCsv(self):
+        """Getter method.
+        """
+        return self.dataTableCsv
+    
+    
     def getDataFieldAttributes(self):
         """Getter method.
         """
@@ -304,6 +312,53 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.comboBoxDataFieldAttribute.setEnabled(True)
     
     
+    def writeDataTableCsv(self, forwardDirSeparator=False):
+        """Method for writing the table data to a temp csv file.
+        
+        Args:
+            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
+        """
+        dataTable = []
+        
+        # Loop rows
+        for tableRow in range(self.dataTable.rowCount()):
+            dataRow = []
+            
+            # Loop row columns
+            for tableColumn in range(self.dataTable.columnCount()):
+                item = self.dataTable.item(tableRow, tableColumn)
+                widget = self.dataTable.cellWidget(tableRow, tableColumn)
+                
+                # Check if cell is a combobox widget
+                if widget and isinstance(widget, QtGui.QComboBox):
+                    dataRow.append(widget.currentText())
+                else:
+                    itemText = item.text()
+                    
+                    if itemText:
+                        dataRow.append(itemText)
+                    else:
+                        return '' # Cell is empty!
+                
+                dataTable.append(dataRow)
+          
+        if dataTable:
+            handle, dataTableCsvFilePath = tempfile.mkstemp(suffix='.csv')
+        
+            with os.fdopen(handle, 'w') as f:
+                writer = csv.writer(f)
+                for dataRow in dataTable:
+                    writer.writerow(dataRow)
+            
+            if forwardDirSeparator:
+                return dataTableCsvFilePath.replace(os.path.sep, '/')
+            
+            return dataTableCsvFilePath
+        
+        # Table unused, or something wrong with the table
+        return ''
+    
+    
     #***********************************************************
     # Process dialog
     #***********************************************************
@@ -312,13 +367,13 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         """
         valid = False
         
-        if self.dataType == 'Land Use/Cover' and self.isRasterFile and self.dataDescription and self.dataPeriod:
+        if self.dataType == 'Land Use/Cover' and self.isRasterFile and self.dataDescription and self.dataPeriod and self.dataTableCsv:
             valid = True
-        elif self.dataType == 'Land Use/Cover' and self.isVectorFile and self.dataDescription and self.dataPeriod and self.dataFieldAttribute:
+        elif self.dataType == 'Land Use/Cover' and self.isVectorFile and self.dataDescription and self.dataPeriod and self.dataFieldAttribute and self.dataTableCsv:
             valid = True
-        elif self.dataType == 'Planning Unit' and self.isRasterFile and self.dataDescription:
+        elif self.dataType == 'Planning Unit' and self.isRasterFile and self.dataDescription and self.dataTableCsv:
             valid = True
-        elif self.dataType == 'Planning Unit' and self.isVectorFile and self.dataDescription and self.dataFieldAttribute:
+        elif self.dataType == 'Planning Unit' and self.isVectorFile and self.dataDescription and self.dataFieldAttribute and self.dataTableCsv:
             valid = True
         elif self.dataType == 'Factor' and self.isRasterFile and self.dataDescription:
             valid = True
@@ -336,7 +391,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.dataDescription = unicode(self.lineEditDataDescription.text())
         self.dataPeriod = self.spinBoxDataPeriod.value()
         self.dataFieldAttribute = unicode(self.comboBoxDataFieldAttribute.currentText())
-        # dataTable
+        self.dataTableCsv = self.writeDataTableCsv(True)
         
     
     def handlerProcessDissolve(self):
