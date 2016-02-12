@@ -207,7 +207,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         return self.dataTableCsv
     
     
-    def getDataFieldAttributes(self):
+    def getDataFieldAttribute(self):
         """Getter method.
         """
         return self.dataFieldAttribute

@@ -183,6 +183,11 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         spinBoxDataPeriod.setVisible(False)
         layoutDataRow.addWidget(spinBoxDataPeriod)
         
+        lineEditDataFieldAttribute = QtGui.QLineEdit()
+        lineEditDataFieldAttribute.setObjectName('lineEditDataFieldAttribute_{0}'.format(str(self.tableAddDataRowCount)))
+        lineEditDataFieldAttribute.setVisible(False)
+        layoutDataRow.addWidget(lineEditDataFieldAttribute)
+        
         lineEditDataTableCsv = QtGui.QLineEdit()
         lineEditDataTableCsv.setObjectName('lineEditDataTableCsv_{0}'.format(str(self.tableAddDataRowCount)))
         lineEditDataTableCsv.setVisible(False)
@@ -238,7 +243,9 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
     
     
     def handlerDataProperties(self):
-        """
+        """Slot method for setting the data's properties.
+        
+        Opens a DialogLumensAddDataProperties dialog instance.
         """
         buttonSender = self.sender()
         objectName = buttonSender.objectName()
@@ -258,6 +265,8 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             lineEditDataDescription.setText(dialog.getDataDescription())
             spinBoxDataPeriod = self.contentAddData.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + tableRow)
             spinBoxDataPeriod.setValue(dialog.getDataPeriod())
+            lineEditDataFieldAttribute = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataFieldAttribute_' + tableRow)
+            lineEditDataFieldAttribute.setText(dialog.getDataFieldAttribute())
             lineEditDataTableCsv = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataTableCsv_' + tableRow)
             lineEditDataTableCsv.setText(dialog.getDataTableCsv())
     
@@ -275,13 +284,6 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
     #***********************************************************
     # Process dialog
     #***********************************************************
-    def validForm(self):
-        """
-        """
-        # Check tableAddData
-        return True
-    
-    
     def setAppSettings(self):
         """Set the required values from the form widgets.
         """
@@ -297,13 +299,14 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             comboBoxDataType = self.findChild(QtGui.QComboBox, 'comboBoxDataType_' + str(tableRow))
             lineEditDataDescription = self.findChild(QtGui.QLineEdit, 'lineEditDataDescription_' + str(tableRow))
             spinBoxDataPeriod = self.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + str(tableRow))
+            lineEditDataFieldAttribute = self.findChild(QtGui.QLineEdit, 'lineEditDataFieldAttribute_' + str(tableRow))
             lineEditDataTableCsv = self.findChild(QtGui.QLineEdit, 'lineEditDataTableCsv_' + str(tableRow))
-            
             
             dataFile = unicode(lineEditDataFile.text())
             dataType = unicode(comboBoxDataType.currentText())
             dataDescription = unicode(lineEditDataDescription.text())
             dataPeriod = spinBoxDataPeriod.value()
+            dataFieldAttribute = unicode(lineEditDataFieldAttribute.text())
             dataTableCsv = unicode(lineEditDataTableCsv.text())
             
             if dataType == 'Land Use/Cover':
@@ -320,10 +323,59 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 'dataType': dataType,
                 'dataPeriod': dataPeriod,
                 'dataDescription': dataDescription,
+                'dataFieldAttribute': dataFieldAttribute,
                 'dataTableCsv': dataTableCsv,
             }
             
             self.tableAddData.append(tableRowData)
+    
+    
+    def validForm(self):
+        """Method for validating the form values.
+        """
+        valid = False
+        
+        # Data type ids
+        landUseCover = 0
+        planningUnit = 1
+        factor = 2
+        table = 3
+        
+        for tableRowData in self.tableAddData:
+            isRasterfile = False
+            isVectorFile = False
+            isCsvfile = False
+            
+            dataFile = tableRowData['dataFile']
+            dataType = tableRowData['dataType']
+            dataPeriod = tableRowData['dataPeriod']
+            dataDescription = tableRowData['dataDescription']
+            dataFieldAttribute = tableRowData['dataFieldAttribute']
+            dataTableCsv = tableRowData['dataTableCsv']
+            
+            if dataFile.lower().endswith(self.main.appSettings['selectRasterfileExt']):
+                isRasterFile = True
+            elif dataFile.lower().endswith(self.main.appSettings['selectShapefileExt']):
+                isVectorFile = True
+            elif dataFile.lower().endswith(self.main.appSettings['selectCsvfileExt']):
+                isCsvFile = True
+            
+            if dataType == landUseCover and isRasterFile and dataDescription and dataPeriod and dataTableCsv:
+                valid = True
+            elif dataType == landUseCover and isVectorFile and dataDescription and dataPeriod and dataFieldAttribute and dataTableCsv:
+                valid = True
+            elif dataType == planningUnit and isRasterFile and dataDescription and dataTableCsv:
+                valid = True
+            elif dataType == planningUnit and isVectorFile and dataDescription and dataFieldAttribute and dataTableCsv:
+                valid = True
+            elif dataType == factor and isRasterFile and dataDescription:
+                valid = True
+            elif dataType == table and isCsvFile and dataDescription:
+                valid = True
+            else:
+                QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
     
     
     def handlerProcessAddData(self):
