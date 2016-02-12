@@ -340,8 +340,8 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                     else:
                         return '' # Cell is empty!
                 
-                dataTable.append(dataRow)
-          
+            dataTable.append(dataRow)
+        
         if dataTable:
             handle, dataTableCsvFilePath = tempfile.mkstemp(suffix='.csv')
         
