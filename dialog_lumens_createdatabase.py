@@ -423,10 +423,10 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
                             attributeValue = str(feature.attribute(attribute))
                             attributeValueTableItem = QtGui.QTableWidgetItem(attributeValue)
                             self.tableDissolved.setItem(tableRow, tableColumn, attributeValueTableItem)
+                            self.tableDissolved.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
                             tableColumn += 1
                         tableRow += 1
                     
-                    self.tableDissolved.resizeColumnsToContents()
                     self.buttonProcessCreateDatabase.setEnabled(True)
             
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
