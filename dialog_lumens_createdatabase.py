@@ -290,6 +290,10 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
             self.comboBoxShapefileAttr.addItems(sorted(attributes))
             self.comboBoxShapefileAttr.setEnabled(True)
             
+            # If dissolve has been run but the shapefile is change, disable the create database button
+            if self.dissolvedShapefile:
+                self.buttonProcessCreateDatabase.setDisabled(True)
+            
             logging.getLogger(type(self).__name__).info('select shapefile: %s', shapefile)
     
     
@@ -306,7 +310,9 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
         
         # After dissolving, use dissolved shapefile instead
         if self.dissolvedShapefile:
-            self.main.appSettings[type(self).__name__]['shapefile'] = self.dissolvedShapefile
+            self.main.appSettings[type(self).__name__]['dissolvedShapefile'] = self.dissolvedShapefile
+        else:
+            self.main.appSettings[type(self).__name__]['dissolvedShapefile'] = 'UNSET'
         
         self.main.appSettings[type(self).__name__]['shapefileAttr'] = unicode(self.comboBoxShapefileAttr.currentText())
         self.main.appSettings[type(self).__name__]['projectDescription'] = unicode(self.lineEditProjectDescription.text())
@@ -465,7 +471,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
                 self.main.appSettings[type(self).__name__]['projectLocation'],
                 self.main.appSettings[type(self).__name__]['projectProvince'],
                 self.main.appSettings[type(self).__name__]['projectCountry'],
-                self.main.appSettings[type(self).__name__]['shapefile'],
+                self.main.appSettings[type(self).__name__]['dissolvedShapefile'],
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
                 self.main.appSettings[type(self).__name__]['projectSpatialRes'],
                 dissolvedTableCsv,

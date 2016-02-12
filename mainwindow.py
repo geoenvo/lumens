@@ -135,6 +135,7 @@ class MainWindow(QtGui.QMainWindow):
                 'projectProvince': '',
                 'projectCountry': '',
                 'projectSpatialRes': '',
+                'dissolvedShapefile': '', # New field
             },
             'DialogLumensOpenDatabase': { # OBSOLETE
                 'projectFile': '',
