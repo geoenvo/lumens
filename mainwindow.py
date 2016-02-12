@@ -116,6 +116,7 @@ class MainWindow(QtGui.QMainWindow):
             'folderQUES': 'QUES',
             'folderTA': 'TA',
             'folderSCIENDO': 'SCIENDO',
+            'folderDATA': 'DATA',
             'folderHelp': 'help',
             'acceptedDocumentFormats': ('.doc', 'docx', '.rtf', '.xls', '.xlsx', '.txt', '.log', '.csv'),
             'acceptedWebFormats': ('.html', '.htm'),
@@ -1955,7 +1956,7 @@ class MainWindow(QtGui.QMainWindow):
             
             # Offer to load the QGIS project file in the project folder (if any)
             qgsProjectFile = os.path.splitext(lumensDatabase)[0] + self.appSettings['selectQgsProjectfileExt']
-            qgsProjectFilePath = os.path.join(projectFolder, qgsProjectFile)
+            qgsProjectFilePath = os.path.join(projectFolder, self.appSettings['folderDATA'], qgsProjectFile)
             
             if os.path.exists(qgsProjectFilePath):
                 self.lumensLoadQgsProjectLayers(qgsProjectFilePath)
