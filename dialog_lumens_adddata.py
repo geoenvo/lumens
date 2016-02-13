@@ -406,9 +406,6 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 if tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectRasterfileExt']):
                     algName = 'r:lumensaddrasterdata'
                     
-                    print 'DEBUG'
-                    print tableRowData
-                    
                     outputs = general.runalg(
                         algName,
                         tableRowData['dataType'],
@@ -419,23 +416,28 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                         None,
                     )
                 elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
-                    dialog = DialogLumensAddDataVectorAttributes(self, tableRowData['dataFile'])
+                    algName = 'r:lumensaddvectordata'
                     
-                    if dialog.exec_():
-                        vectorIDField, vectorNameField = dialog.getVectorAttributes()
-                        
-                        algName = 'r:lumensaddvectordata'
-                        
-                        outputs = general.runalg(
-                            algName,
-                            tableRowData['dataType'],
-                            tableRowData['dataFile'].replace(os.path.sep, '/'),
-                            vectorIDField,
-                            vectorNameField,
-                            tableRowData['dataPeriod'],
-                            tableRowData['dataDescription'],
-                            None,
-                        )
+                    outputs = general.runalg(
+                        algName,
+                        tableRowData['dataType'],
+                        tableRowData['dataFile'].replace(os.path.sep, '/'),
+                        tableRowData['dataFieldAttribute'],
+                        tableRowData['dataPeriod'],
+                        tableRowData['dataDescription'],
+                        tableRowData['dataTableCsv'],
+                        None,
+                    )
+                elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectCsvfileExt']):
+                    algName = 'r:lumensaddlookuptable'
+                    
+                    outputs = general.runalg(
+                        algName,
+                        tableRowData['dataDescription'],
+                        tableRowData['dataFile'].replace(os.path.sep, '/'),
+                        tableRowData['dataTableCsv'],
+                        None,
+                    )
                 
                 # Display ROut file in debug mode
                 if self.main.appSettings['debug']:
@@ -445,8 +447,11 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
+            algSuccess = self.outputsMessageBox(algName, outputs, 'Data successfully added to LUMENS database!', 'Failed to add data to LUMENS database.')
             
             self.buttonProcessAddData.setEnabled(True)
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
+            if algSuccess:
+                self.close()
+        
