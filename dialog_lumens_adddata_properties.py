@@ -362,6 +362,21 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
     #***********************************************************
     # Process dialog
     #***********************************************************
+    def validDissolved(self):
+        """Method for validating the form values before dissolving.
+        """
+        valid = False
+        
+        if self.dataType == 'Land Use/Cover' and self.isVectorFile and self.dataDescription and self.dataPeriod and self.dataFieldAttribute:
+            valid = True
+        elif self.dataType == 'Planning Unit' and self.isVectorFile and self.dataDescription and self.dataFieldAttribute:
+            valid = True
+        else:
+            QtGui.QMessageBox.critical(self, 'Error', 'Missing some input. Please complete the fields.')
+        
+        return valid
+    
+    
     def validForm(self):
         """Method for validating the form values.
         """
@@ -402,7 +417,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         """
         self.setFormFields()
         
-        if self.validForm():
+        if self.validDissolved():
             logging.getLogger(type(self).__name__).info('start: %s' % 'LUMENS Dissolve')
             self.buttonProcessDissolve.setDisabled(True)
                 

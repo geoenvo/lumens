@@ -342,9 +342,9 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         table = 3
         
         for tableRowData in self.tableAddData:
-            isRasterfile = False
+            isRasterFile = False
             isVectorFile = False
-            isCsvfile = False
+            isCsvFile = False
             
             dataFile = tableRowData['dataFile']
             dataType = tableRowData['dataType']
