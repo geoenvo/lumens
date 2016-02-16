@@ -18,7 +18,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         dataDescription (str): the description of the added data.
         dataPeriod (int): the period of the added data.
         dataFieldAttribute (str): the selected attribute of the added shapefile data.
-        dissolvedShapefile (str): the file path of the added shapefile data that has been dissolved.
+        dataDissolvedShapefile (str): the file path of the added shapefile data that has been dissolved.
     """
     
     def __init__(self, parent, dataType, dataFile):
@@ -39,7 +39,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.dataPeriod = 0
         self.dataTableCsv = None
         self.dataFieldAttribute = None
-        self.dissolvedShapefile = None
+        self.dataDissolvedShapefile = None
         
         self.classifiedOptions = {
             1: 'Hutan primer',
@@ -213,10 +213,10 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         return self.dataFieldAttribute
     
     
-    def getDissolvedShapefile(self):
+    def getDataDissolvedShapefile(self):
         """Getter method.
         """
-        return self.dissolvedShapefile
+        return self.dataDissolvedShapefile
     
     
     def loadRasterDataTable(self):
@@ -438,7 +438,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
             outputsKey = 'admin_output'
             
             if outputs and outputsKey in outputs and os.path.exists(outputs[outputsKey]):
-                self.dissolvedShapefile = outputs[outputsKey]
+                self.dataDissolvedShapefile = outputs[outputsKey]
                 
                 registry = QgsProviderRegistry.instance()
                 provider = registry.provider('ogr', outputs[outputsKey])

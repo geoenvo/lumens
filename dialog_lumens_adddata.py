@@ -188,6 +188,11 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         lineEditDataFieldAttribute.setVisible(False)
         layoutDataRow.addWidget(lineEditDataFieldAttribute)
         
+        lineEditDataDissolvedShapefile = QtGui.QLineEdit()
+        lineEditDataDissolvedShapefile.setObjectName('lineEditDataDissolvedShapefile_{0}'.format(str(self.tableAddDataRowCount)))
+        lineEditDataDissolvedShapefile.setVisible(False)
+        layoutDataRow.addWidget(lineEditDataDissolvedShapefile)
+        
         lineEditDataTableCsv = QtGui.QLineEdit()
         lineEditDataTableCsv.setObjectName('lineEditDataTableCsv_{0}'.format(str(self.tableAddDataRowCount)))
         lineEditDataTableCsv.setVisible(False)
@@ -267,6 +272,8 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             spinBoxDataPeriod.setValue(dialog.getDataPeriod())
             lineEditDataFieldAttribute = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataFieldAttribute_' + tableRow)
             lineEditDataFieldAttribute.setText(dialog.getDataFieldAttribute())
+            lineEditDataDissolvedShapefile = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataDissolvedShapefile_' + tableRow)
+            lineEditDataDissolvedShapefile.setText(dialog.getDataDissolvedShapefile())
             lineEditDataTableCsv = self.contentAddData.findChild(QtGui.QLineEdit, 'lineEditDataTableCsv_' + tableRow)
             lineEditDataTableCsv.setText(dialog.getDataTableCsv())
     
@@ -300,6 +307,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             lineEditDataDescription = self.findChild(QtGui.QLineEdit, 'lineEditDataDescription_' + str(tableRow))
             spinBoxDataPeriod = self.findChild(QtGui.QSpinBox, 'spinBoxDataPeriod_' + str(tableRow))
             lineEditDataFieldAttribute = self.findChild(QtGui.QLineEdit, 'lineEditDataFieldAttribute_' + str(tableRow))
+            lineEditDataDissolvedShapefile = self.findChild(QtGui.QLineEdit, 'lineEditDataDissolvedShapefile_' + str(tableRow))
             lineEditDataTableCsv = self.findChild(QtGui.QLineEdit, 'lineEditDataTableCsv_' + str(tableRow))
             
             dataFile = unicode(lineEditDataFile.text())
@@ -307,6 +315,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             dataDescription = unicode(lineEditDataDescription.text())
             dataPeriod = spinBoxDataPeriod.value()
             dataFieldAttribute = unicode(lineEditDataFieldAttribute.text())
+            dataDissolvedShapefile = unicode(lineEditDataDissolvedShapefile.text())
             dataTableCsv = unicode(lineEditDataTableCsv.text())
             
             if dataType == 'Land Use/Cover':
@@ -324,6 +333,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 'dataPeriod': dataPeriod,
                 'dataDescription': dataDescription,
                 'dataFieldAttribute': dataFieldAttribute,
+                'dataDissolvedShapefile': dataDissolvedShapefile,
                 'dataTableCsv': dataTableCsv,
             }
             
@@ -351,6 +361,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             dataPeriod = tableRowData['dataPeriod']
             dataDescription = tableRowData['dataDescription']
             dataFieldAttribute = tableRowData['dataFieldAttribute']
+            dataDissolvedShapefile = tableRowData['dataDissolvedShapefile']
             dataTableCsv = tableRowData['dataTableCsv']
             
             if dataFile.lower().endswith(self.main.appSettings['selectRasterfileExt']):
@@ -362,11 +373,11 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             
             if dataType == landUseCover and isRasterFile and dataDescription and dataPeriod and dataTableCsv:
                 valid = True
-            elif dataType == landUseCover and isVectorFile and dataDescription and dataPeriod and dataFieldAttribute and dataTableCsv:
+            elif dataType == landUseCover and isVectorFile and dataDescription and dataPeriod and dataFieldAttribute and dataDissolvedShapefile and dataTableCsv:
                 valid = True
             elif dataType == planningUnit and isRasterFile and dataDescription and dataTableCsv:
                 valid = True
-            elif dataType == planningUnit and isVectorFile and dataDescription and dataFieldAttribute and dataTableCsv:
+            elif dataType == planningUnit and isVectorFile and dataDescription and dataFieldAttribute and dataDissolvedShapefile and dataTableCsv:
                 valid = True
             elif dataType == factor and isRasterFile and dataDescription:
                 valid = True
@@ -418,10 +429,13 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                 elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
                     algName = 'r:lumensaddvectordata'
                     
+                    print 'DEBUG'
+                    print tableRowData
+                    
                     outputs = general.runalg(
                         algName,
                         tableRowData['dataType'],
-                        tableRowData['dataFile'].replace(os.path.sep, '/'),
+                        tableRowData['dataDissolvedShapefile'].replace(os.path.sep, '/'),
                         tableRowData['dataFieldAttribute'],
                         tableRowData['dataPeriod'],
                         tableRowData['dataDescription'],
