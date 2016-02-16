@@ -451,9 +451,9 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                 for field in provider.fields():
                     attributes.append(field.name())
                 
-                attributes.append('Legend') # Additional columns ('Classified' only for Land Use/Cover types)
-                
+                # Additional columns ('Legend', 'Classified' only for Land Use/Cover types)
                 if self.dataType == 'Land Use/Cover':
+                    attributes.append('Legend')
                     attributes.append('Classified')
                 
                 features = provider.getFeatures()
@@ -474,18 +474,21 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                                 continue
                             attributeValue = str(feature.attribute(attribute))
                             attributeValueTableItem = QtGui.QTableWidgetItem(attributeValue)
-                            attributeValueTableItem.setFlags(attributeValueTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
+                            if tableColumn == 0 and self.dataType == 'Planning Unit': # Editable first column for Vector Planning Units
+                                pass
+                            else:
+                                attributeValueTableItem.setFlags(attributeValueTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
                             self.dataTable.setItem(tableRow, tableColumn, attributeValueTableItem)
                             self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
                             tableColumn += 1
                         
-                        # Additional columns ('Classified' only for Land Use/Cover types)
-                        fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(tableRow + 1))
-                        columnLegend = tableColumn
-                        self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
-                        self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
-                        
+                        # Additional columns ('Legend', 'Classified' only for Land Use/Cover types)
                         if self.dataType == 'Land Use/Cover':
+                            fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(tableRow + 1))
+                            columnLegend = tableColumn
+                            self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
+                            self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
+                            
                             tableColumn += 1
                             columnClassified = tableColumn
                             comboBoxClassified = QtGui.QComboBox()
