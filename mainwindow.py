@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, platform, sys, logging, subprocess, argparse
+import os, platform, sys, logging, subprocess, argparse, csv
 
 from qgis.core import *
 from qgis.gui import *
@@ -68,6 +68,7 @@ class MainWindow(QtGui.QMainWindow):
         recentProjects (list): a list of previously opened LUMENS project files.
         qgsLayerList (dict): a dict of QgsVectorLayer and QgsRasterLayer instances in the layer list.
         layerListModel (QStandardItemModel): the model for the layer list on the sidebar.
+        dataLandUseCover, dataPlanningUnit, dataFactor, dataTable (dict): info about added data.
     """
     
     def __init__(self, parent=None):
@@ -441,6 +442,9 @@ class MainWindow(QtGui.QMainWindow):
         
         # Recently opened LUMENS project databases
         self.recentProjects = []
+        
+        # For keeping track of data added to the project
+        self.dataLandUseCover = self.dataPlanningUnit = self.dataFactor = self.dataTable = {}
         
         # Process app arguments
         parser = argparse.ArgumentParser()
@@ -1803,7 +1807,7 @@ class MainWindow(QtGui.QMainWindow):
     
     
     def clearModuleTemplates(self):
-        """Method for clearing the list of all modules templates on the main window's dashboard tab
+        """Method for clearing the list of all modules templates on the main window's dashboard tab.
         
         This is called when a LUMENS project is closed.
         """
@@ -1913,6 +1917,102 @@ class MainWindow(QtGui.QMainWindow):
                     self.addLayer(layerFile)
     
     
+    def loadAddedDataInfo(self, projectDataDir):
+        """Method for loading the list of added data.
+        
+        Args:
+            projectDataDir (str): a dir path to the data directory of the open project.
+        """
+        self.dataLandUseCover = {}
+        self.dataPlanningUnit = {}
+        self.dataFactor = {}
+        self.dataTable = {}
+        
+        csvDataLandUseCover = os.path.join(projectDataDir, 'csv_land_use_cover.csv')
+        csvDataPlanningUnit = os.path.join(projectDataDir, 'csv_planning_unit.csv')
+        csvDataFactor = os.path.join(projectDataDir, 'csv_factor_data.csv')
+        csvDataTable = os.path.join(projectDataDir, 'csv_lookup_table.csv')
+        
+        if os.path.exists(csvDataLandUseCover):
+            with open(csvDataLandUseCover, 'rb') as f:
+              hasHeader = csv.Sniffer().has_header(f.read(1024))
+              f.seek(0)
+              reader = csv.reader(f)
+              
+              # Must have header
+              if hasHeader:
+                  headerRow = reader.next()
+                  headerColumns = [str(column) for column in headerRow]
+                  
+                  for row in reader:
+                      self.dataLandUseCover[row[0]] = {
+                          'RST_DATA': row[0],
+                          'RST_NAME': row[1],
+                          'PERIOD': row[2],
+                          'LUT_NAME': row[3],
+                      }
+        
+        if os.path.exists(csvDataPlanningUnit):
+            with open(csvDataPlanningUnit, 'rb') as f:
+              hasHeader = csv.Sniffer().has_header(f.read(1024))
+              f.seek(0)
+              reader = csv.reader(f)
+              
+              # Must have header
+              if hasHeader:
+                  headerRow = reader.next()
+                  headerColumns = [str(column) for column in headerRow]
+                  
+                  for row in reader:
+                      self.dataPlanningUnit[row[0]] = {
+                          'RST_DATA': row[0],
+                          'RST_NAME': row[1],
+                          'LUT_NAME': row[2],
+                      }
+        
+        if os.path.exists(csvDataFactor):
+            with open(csvDataFactor, 'rb') as f:
+              hasHeader = csv.Sniffer().has_header(f.read(1024))
+              f.seek(0)
+              reader = csv.reader(f)
+              
+              # Must have header
+              if hasHeader:
+                  headerRow = reader.next()
+                  headerColumns = [str(column) for column in headerRow]
+                  
+                  for row in reader:
+                      self.dataFactor[row[0]] = {
+                          'RST_DATA': row[0],
+                          'RST_NAME': row[1],
+                      }
+        
+        if os.path.exists(csvDataTable):
+            with open(csvDataTable, 'rb') as f:
+              hasHeader = csv.Sniffer().has_header(f.read(1024))
+              f.seek(0)
+              reader = csv.reader(f)
+              
+              # Must have header
+              if hasHeader:
+                  headerRow = reader.next()
+                  headerColumns = [str(column) for column in headerRow]
+                  
+                  for row in reader:
+                      self.dataTable[row[0]] = {
+                          'TBL_DATA': row[0],
+                          'TBL_NAME': row[1],
+                      }
+    
+    
+    def clearAddedDataInfo(self):
+        """Method for clearing the list of added data info.
+        
+        This is called when a LUMENS project is closed.
+        """
+        self.dataLandUseCover = self.dataPlanningUnit = self.dataFactor = self.dataTable = {}
+    
+    
     def lumensOpenDatabase(self, lumensDatabase=False):
         """Method for opening a LUMENS project database.
         
@@ -1962,8 +2062,15 @@ class MainWindow(QtGui.QMainWindow):
             if os.path.exists(qgsProjectFilePath):
                 self.lumensLoadQgsProjectLayers(qgsProjectFilePath)
             
-            self.lumensEnableMenus()
+            # Keep track of added data stored in the open project's DATA dir
+            projectDataDir = os.path.join(projectFolder, self.appSettings['folderDATA'])
+            self.loadAddedDataInfo(projectDataDir)
+            
+            # Load all module templates in the open project
             self.loadModuleTemplates()
+            
+            # Enable the menus
+            self.lumensEnableMenus()
         
         self.actionLumensOpenDatabase.setEnabled(True)
         logging.getLogger(type(self).__name__).info('end: LUMENS Open Database')
@@ -1988,9 +2095,11 @@ class MainWindow(QtGui.QMainWindow):
         self.lineEditActiveProject.clear()
         self.projectTreeView.setRootIndex(self.projectModel.index(QtCore.QDir.rootPath()))
         
+        # Unset everything
         self.closeDialogs()
-        self.lumensDisableMenus()
         self.clearModuleTemplates()
+        self.clearAddedDataInfo()
+        self.lumensDisableMenus()
         
         logging.getLogger(type(self).__name__).info('end: LUMENS Close Database')
     
