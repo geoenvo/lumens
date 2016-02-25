@@ -9,7 +9,6 @@ from processing.tools import *
 from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
 from dialog_lumens_adddata_properties import DialogLumensAddDataProperties
-from dialog_lumens_adddata_vectorattributes import DialogLumensAddDataVectorAttributes
 
 
 class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
