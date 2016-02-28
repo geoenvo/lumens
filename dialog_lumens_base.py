@@ -13,6 +13,19 @@ class DialogLumensBase:
         self.main = parent
     
     
+    def populateAddedDataComboBox(self, addedData, comboBox):
+        """Method for populating a combobox with data previously added to the project.
+        """
+        if len(addedData):
+            comboBox.clear()
+            
+            # Sort by key name
+            for key in sorted(addedData):
+                comboBox.addItem(key, addedData[key])
+            
+            comboBox.setEnabled(True)
+    
+    
     def handlerDialogHelp(self, dialogName):
         """Slot method for opening the dialog html help document.
         

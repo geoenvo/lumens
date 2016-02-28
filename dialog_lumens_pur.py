@@ -636,8 +636,68 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             self.comboBoxShapefileAttribute.setEnabled(True)
     
     
-    def addPlanningUnitRow(self, shapefile=None, shapefileAttr=None, planningUnitTitle=None, referenceClassID=None, planningUnitType=None):
+    def addPlanningUnitRow(self, RST_DATA=None, referenceClassID=None, planningUnitType=None):
         """Method for adding a planning unit table row.
+        
+        Args:
+            RST_DATA (str): the RST_DATA key of an added planning unit shapefile.
+            referenceClassID (int): the reference class id associated with the planning unit.
+            planningUnitType (str): the type of the planning unit.
+        """
+        self.tablePlanningUnitRowCount = self.tablePlanningUnitRowCount + 1
+        
+        layoutRow = QtGui.QHBoxLayout()
+        
+        buttonDeletePlanningUnitShapefile = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionClear.png')
+        buttonDeletePlanningUnitShapefile.setIcon(icon)
+        buttonDeletePlanningUnitShapefile.setObjectName('buttonDeletePlanningUnitShapefile_{0}'.format(str(self.tablePlanningUnitRowCount)))
+        layoutRow.addWidget(buttonDeletePlanningUnitShapefile)
+        
+        buttonDeletePlanningUnitShapefile.clicked.connect(self.handlerDeletePlanningUnitShapefile)
+        
+        comboBoxPlanningUnitShapefile = QtGui.QComboBox()
+        comboBoxPlanningUnitShapefile.setDisabled(True)
+        comboBoxPlanningUnitShapefile.setObjectName('comboBoxPlanningUnitShapefile_{0}'.format(str(self.tablePlanningUnitRowCount)))
+        layoutRow.addWidget(comboBoxPlanningUnitShapefile)
+        
+        comboBoxPlanningUnitShapefile.currentIndexChanged.connect(self.handlerChangePlanningUnitShapefile)
+        
+        lineEditPlanningUnitTitle = QtGui.QLineEdit()
+        lineEditPlanningUnitTitle.setDisabled(True)
+        lineEditPlanningUnitTitle.setObjectName('lineEditPlanningUnitTitle_{0}'.format(str(self.tablePlanningUnitRowCount)))
+        layoutRow.addWidget(lineEditPlanningUnitTitle)
+        
+        comboBoxReferenceClasses = QtGui.QComboBox()
+        for key, val in self.referenceClasses.iteritems():
+            comboBoxReferenceClasses.addItem(val, key)
+        comboBoxReferenceClasses.setObjectName('comboBoxReferenceClasses_{0}'.format(str(self.tablePlanningUnitRowCount)))
+        layoutRow.addWidget(comboBoxReferenceClasses)
+        
+        comboBoxPlanningUnitType = QtGui.QComboBox()
+        comboBoxPlanningUnitType.addItems(['Reconciliation', 'Additional'])
+        comboBoxPlanningUnitType.setObjectName('comboBoxPlanningUnitType_{0}'.format(str(self.tablePlanningUnitRowCount)))
+        layoutRow.addWidget(comboBoxPlanningUnitType)
+        
+        self.layoutTablePlanningUnit.addLayout(layoutRow)
+        
+        self.populateAddedDataComboBox(self.main.dataPlanningUnit, comboBoxPlanningUnitShapefile)
+        
+        if RST_DATA:
+            self.handlerChangePlanningUnitShapefile(rowNumber=self.tablePlanningUnitRowCount, RST_DATA=RST_DATA)
+            
+        if referenceClassID:
+            comboBoxReferenceClasses.setCurrentIndex(comboBoxReferenceClasses.findData(referenceClassID))
+        
+        if planningUnitType != None:
+            if planningUnitType == 0:
+                comboBoxPlanningUnitType.setCurrentIndex(comboBoxPlanningUnitType.findText('Reconciliation'))
+            elif planningUnitType == 1:
+                comboBoxPlanningUnitType.setCurrentIndex(comboBoxPlanningUnitType.findText('Additional'))
+    
+    
+    def OLD_addPlanningUnitRow(self, shapefile=None, shapefileAttr=None, planningUnitTitle=None, referenceClassID=None, planningUnitType=None):
+        """DEPRECATED: Method for adding a planning unit table row.
         
         Args:
             shapefile (str): a file path to the planning unit shapefile.
@@ -889,6 +949,36 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         """Slot method for clearing all planning units in the planning unit table.
         """
         self.clearPlanningUnitRows()
+    
+    
+    def handlerChangePlanningUnitShapefile(self, currentIndex=None, rowNumber=None, RST_DATA=None):
+        """Slot method for changing a planning unit shapefile.
+        
+        Args:
+            rowNumber (int): the planning unit table row.
+            RST_DATA (str): the RST_DATA key of an added planning unit shapefile.
+        """
+        rst_data = None
+        tableRow = None
+        
+        if not rowNumber:
+            buttonSender = self.sender()
+            objectName = buttonSender.objectName()
+            tableRow = objectName.split('_')[1]
+        else:
+            tableRow = str(rowNumber)
+        
+        comboBoxPlanningUnitShapefile = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QComboBox, 'comboBoxPlanningUnitShapefile_' + tableRow)
+        
+        if RST_DATA:
+            rst_data = RST_DATA
+        else:
+            rst_data = comboBoxPlanningUnitShapefile.currentText()
+        
+        addedPlanningUnit = comboBoxPlanningUnitShapefile.itemData(comboBoxPlanningUnitShapefile.findText(rst_data))
+        
+        lineEditPlanningUnitTitle = self.contentGroupBoxSetupPlanningUnit.findChild(QtGui.QLineEdit, 'lineEditPlanningUnitTitle_' + tableRow)
+        lineEditPlanningUnitTitle.setText(addedPlanningUnit['RST_NAME'])
     
     
     def handlerSelectPlanningUnitShapefile(self, rowNumber=None, shapefile=None, shapefileAttr=None):
