@@ -448,7 +448,6 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                         algName,
                         tableRowData['dataDescription'],
                         tableRowData['dataFile'].replace(os.path.sep, '/'),
-                        tableRowData['dataTableCsv'],
                         None,
                     )
                 
@@ -467,4 +466,3 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             
             if algSuccess:
                 self.close()
-        
