@@ -466,5 +466,6 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             if algSuccess:
+                self.main.loadAddedDataInfo()
                 self.close()
         

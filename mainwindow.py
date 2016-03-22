@@ -1917,16 +1917,15 @@ class MainWindow(QtGui.QMainWindow):
                     self.addLayer(layerFile)
     
     
-    def loadAddedDataInfo(self, projectDataDir):
+    def loadAddedDataInfo(self):
         """Method for loading the list of added data.
         
-        Args:
-            projectDataDir (str): a dir path to the data directory of the open project.
+        Looks in the DATA dir of the currently open project.
         """
-        self.dataLandUseCover = {}
-        self.dataPlanningUnit = {}
-        self.dataFactor = {}
-        self.dataTable = {}
+        self.clearAddedDataInfo()
+        
+        projectFolder = self.appSettings['DialogLumensOpenDatabase']['projectFolder']
+        projectDataDir = os.path.join(projectFolder, self.appSettings['folderDATA'])
         
         csvDataLandUseCover = os.path.join(projectDataDir, 'csv_land_use_cover.csv')
         csvDataPlanningUnit = os.path.join(projectDataDir, 'csv_planning_unit.csv')
@@ -1935,74 +1934,62 @@ class MainWindow(QtGui.QMainWindow):
         
         if os.path.exists(csvDataLandUseCover):
             with open(csvDataLandUseCover, 'rb') as f:
-              hasHeader = csv.Sniffer().has_header(f.read(1024))
-              f.seek(0)
               reader = csv.reader(f)
               
-              # Must have header
-              if hasHeader:
-                  headerRow = reader.next()
-                  headerColumns = [str(column) for column in headerRow]
-                  
-                  for row in reader:
-                      self.dataLandUseCover[row[0]] = {
-                          'RST_DATA': row[0],
-                          'RST_NAME': row[1],
-                          'PERIOD': row[2],
-                          'LUT_NAME': row[3],
-                      }
+              # Skip header row
+              headerRow = reader.next()
+              headerColumns = [str(column) for column in headerRow]
+              
+              for row in reader:
+                  self.dataLandUseCover[row[0]] = {
+                      'RST_DATA': row[0],
+                      'RST_NAME': row[1],
+                      'PERIOD': row[2],
+                      'LUT_NAME': row[3],
+                  }
         
         if os.path.exists(csvDataPlanningUnit):
             with open(csvDataPlanningUnit, 'rb') as f:
-              hasHeader = csv.Sniffer().has_header(f.read(1024))
-              f.seek(0)
               reader = csv.reader(f)
               
-              # Must have header
-              if hasHeader:
-                  headerRow = reader.next()
-                  headerColumns = [str(column) for column in headerRow]
-                  
-                  for row in reader:
-                      self.dataPlanningUnit[row[0]] = {
-                          'RST_DATA': row[0],
-                          'RST_NAME': row[1],
-                          'LUT_NAME': row[2],
-                      }
+              # Skip header row
+              headerRow = reader.next()
+              headerColumns = [str(column) for column in headerRow]
+              
+              for row in reader:
+                  self.dataPlanningUnit[row[0]] = {
+                      'RST_DATA': row[0],
+                      'RST_NAME': row[1],
+                      'LUT_NAME': row[2],
+                  }
         
         if os.path.exists(csvDataFactor):
             with open(csvDataFactor, 'rb') as f:
-              hasHeader = csv.Sniffer().has_header(f.read(1024))
-              f.seek(0)
               reader = csv.reader(f)
               
-              # Must have header
-              if hasHeader:
-                  headerRow = reader.next()
-                  headerColumns = [str(column) for column in headerRow]
-                  
-                  for row in reader:
-                      self.dataFactor[row[0]] = {
-                          'RST_DATA': row[0],
-                          'RST_NAME': row[1],
-                      }
+              # Skip header row
+              headerRow = reader.next()
+              headerColumns = [str(column) for column in headerRow]
+              
+              for row in reader:
+                  self.dataFactor[row[0]] = {
+                      'RST_DATA': row[0],
+                      'RST_NAME': row[1],
+                  }
         
         if os.path.exists(csvDataTable):
             with open(csvDataTable, 'rb') as f:
-              hasHeader = csv.Sniffer().has_header(f.read(1024))
-              f.seek(0)
               reader = csv.reader(f)
               
-              # Must have header
-              if hasHeader:
-                  headerRow = reader.next()
-                  headerColumns = [str(column) for column in headerRow]
-                  
-                  for row in reader:
-                      self.dataTable[row[0]] = {
-                          'TBL_DATA': row[0],
-                          'TBL_NAME': row[1],
-                      }
+              # Skip header row
+              headerRow = reader.next()
+              headerColumns = [str(column) for column in headerRow]
+              
+              for row in reader:
+                  self.dataTable[row[0]] = {
+                      'TBL_DATA': row[0],
+                      'TBL_NAME': row[1],
+                  }
     
     
     def clearAddedDataInfo(self):
@@ -2063,8 +2050,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.lumensLoadQgsProjectLayers(qgsProjectFilePath)
             
             # Keep track of added data stored in the open project's DATA dir
-            projectDataDir = os.path.join(projectFolder, self.appSettings['folderDATA'])
-            self.loadAddedDataInfo(projectDataDir)
+            self.loadAddedDataInfo()
             
             # Load all module templates in the open project
             self.loadModuleTemplates()
