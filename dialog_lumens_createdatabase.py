@@ -493,13 +493,13 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            algSuccess = self.outputsMessageBox(algName, outputs, 'LUMENS database successfully created!', 'Failed to create the LUMENS database.')
+            algSuccess = self.outputsMessageBox(algName, outputs, 'LUMENS database successfully created!\nClick OK to open the database.', 'Failed to create the LUMENS database.')
             
             self.buttonProcessCreateDatabase.setEnabled(True)
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
             
             # If LUMENS database file exists, open it and close this dialog
-            if os.path.exists(lumensDatabase):
+            if algSuccess and os.path.exists(lumensDatabase):
                 self.main.lumensOpenDatabase(lumensDatabase)
                 self.close()
             else:
