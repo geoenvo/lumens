@@ -474,7 +474,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                                 continue
                             attributeValue = str(feature.attribute(attribute))
                             attributeValueTableItem = QtGui.QTableWidgetItem(attributeValue)
-                            if tableColumn == 0 and self.dataType == 'Planning Unit': # Editable first column for Vector Planning Units
+                            if tableColumn == 1 and self.dataType == 'Planning Unit': # Editable second column for Vector Planning Units
                                 pass
                             else:
                                 attributeValueTableItem.setFlags(attributeValueTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
@@ -525,4 +525,3 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         """Overload method that is called when the dialog is rejected (canceled).
         """
         QtGui.QDialog.reject(self)
-    
