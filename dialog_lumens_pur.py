@@ -506,6 +506,30 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         #***********************************************************
         # Setup 'Reconcile' tab
         #***********************************************************
+        self.groupBoxReconcile = QtGui.QGroupBox('Reconcile unresolved cases')
+        self.layoutGroupBoxReconcile = QtGui.QVBoxLayout()
+        self.layoutGroupBoxReconcile.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.groupBoxReconcile.setLayout(self.layoutGroupBoxReconcile)
+        
+        self.labelReconcileInfo = QtGui.QLabel()
+        self.labelReconcileInfo.setText('Lorem ipsum dolor sit amet...')
+        self.layoutGroupBoxReconcile.addWidget(self.labelReconcileInfo)
+        
+        self.reconcileTable = QtGui.QTableWidget()
+        self.reconcileTable.setDisabled(True)
+        self.reconcileTable.verticalHeader().setVisible(False)
+        self.layoutGroupBoxReconcile.addWidget(self.reconcileTable)
+        
+        self.layoutButtonReconcile = QtGui.QHBoxLayout()
+        self.buttonProcessReconcile = QtGui.QPushButton()
+        self.buttonProcessReconcile.setText('&Reconcile')
+        self.buttonProcessReconcile.setDisabled(True)
+        self.layoutButtonReconcile.setAlignment(QtCore.Qt.AlignRight)
+        self.layoutButtonReconcile.addWidget(self.buttonProcessReconcile)
+        
+        self.layoutTabReconcile.addWidget(self.groupBoxReconcile)
+        self.layoutTabReconcile.addLayout(self.layoutButtonReconcile)
+        
         self.tabReconcile.setLayout(self.layoutTabReconcile)
         
         #***********************************************************
@@ -967,6 +991,111 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             self.updateReferenceClasses(dialog.getReferenceClasses())
         
     
+    def reconcileUnresolvedCases(self, outputs):
+        """Method for dealing with unresolved cases found after PUR setup algorithm.
+        
+        Loads the unresolved cases CSV output from PUR setup algorithm to the
+        table in the reconcile tab where the user can select an action to resolve
+        the case.
+        
+        Args:
+            outputs (dict): the output dict of the executed algorithm.
+        """
+        unresolvedCases = False
+        unresolvedCasesKey = 'database_unresolved_out_ALG0'
+        attributeKey = 'data_attribute_ALG0'
+        
+        if outputs and (unresolvedCasesKey in outputs) and (attributeKey in outputs):
+            if os.path.exists(outputs[unresolvedCasesKey]):
+                with open(outputs[unresolvedCasesKey], 'rb') as f:
+                    hasHeader = csv.Sniffer().has_header(f.read(1024))
+                    f.seek(0)
+                    reader = csv.reader(f)
+                    if hasHeader: # Skip the header
+                        next(reader)
+                    for row in reader: # Just read the first row
+                        # Look for "There are no unresolved area in this analysis session"
+                        statusMessage = str(row[1])
+                        if 'no unresolved' not in statusMessage:
+                            unresolvedCases = True
+                        break
+                if unresolvedCases:
+                    # Confirm if user wants to process unresolved cases
+                    reply = QtGui.QMessageBox.question(
+                        self,
+                        'Reconcile Unresolved Cases',
+                        'Found unresolved cases.\nDo you want to manually reconcile them?',
+                        QtGui.QMessageBox.Yes|QtGui.QMessageBox.No,
+                        QtGui.QMessageBox.No
+                    )
+                    
+                    if reply == QtGui.QMessageBox.Yes:
+                        attributes = []
+                        
+                        # Options for reconcile action
+                        with open(outputs[attributeKey], 'rb') as f:
+                            hasHeader = csv.Sniffer().has_header(f.read(1024))
+                            f.seek(0)
+                            reader = csv.reader(f)
+                            if hasHeader: # Skip the header
+                                next(reader)
+                            for row in reader:
+                                attribute = str(row[2])
+                                # Don't add "unresolved_caseN"
+                                if 'unresolved_' not in attribute:
+                                    attributes.append(attribute)
+                        
+                        sortedAttributes = sorted(attributes)
+                        
+                        # Populate the reconcile table
+                        with open(outputs[unresolvedCasesKey], 'rb') as f:
+                            hasHeader = csv.Sniffer().has_header(f.read(1024))
+                            f.seek(0)
+                            reader = csv.reader(f)
+                            
+                            if hasHeader: # Set the column headers
+                                headerRow = reader.next()
+                                fields = [str(field) for field in headerRow]
+                                
+                                fields.append('Reconcile Action')
+                                
+                                self.reconcileTable.setColumnCount(len(fields))
+                                self.reconcileTable.setHorizontalHeaderLabels(fields)
+                            
+                            dataTable = []
+                            
+                            for row in reader:
+                                dataRow = [QtGui.QTableWidgetItem(field) for field in row]
+                                dataTable.append(dataRow)
+                            
+                            self.reconcileTable.setRowCount(len(dataTable))
+                            
+                            tableRow = 0
+                            
+                            for dataRow in dataTable:
+                                tableColumn = 0
+                                
+                                for fieldTableItem in dataRow:
+                                    fieldTableItem.setFlags(fieldTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
+                                    self.reconcileTable.setItem(tableRow, tableColumn, fieldTableItem)
+                                    self.reconcileTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
+                                    tableColumn += 1
+                                
+                                comboBoxAction = QtGui.QComboBox()
+                                comboBoxAction.addItems(sortedAttributes)
+                                
+                                self.reconcileTable.setCellWidget(tableRow, tableColumn, comboBoxAction)
+                                self.reconcileTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
+                                
+                                tableRow += 1
+                            
+                            self.reconcileTable.setEnabled(True)
+                            self.buttonProcessReconcile.setEnabled(True)
+                            
+                            # Switch to reconcile tab
+                            self.tabWidget.setCurrentWidget(self.tabReconcile)
+    
+    
     #***********************************************************
     # Process tabs
     #***********************************************************
@@ -1070,12 +1199,14 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             
             outputs = general.runalg(
                 algName,
-                self.main.appSettings[type(self).__name__]['shapefile'],
+                self.main.appSettings[type(self).__name__]['shapefile'].replace(os.path.sep, '/'),
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
                 self.main.appSettings[type(self).__name__]['dataTitle'],
-                csvReferenceClasses,
-                csvReferenceMapping,
-                csvPlanningUnits,
+                csvReferenceClasses.replace(os.path.sep, '/'),
+                csvReferenceMapping.replace(os.path.sep, '/'),
+                csvPlanningUnits.replace(os.path.sep, '/'),
+                None,
+                None,
                 None,
                 None,
             )
@@ -1085,14 +1216,14 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
                 dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
                 dialog.exec_()
             
-            ##print outputs
-            
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            self.outputsMessageBox(algName, outputs, '', '')
+            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
             
             self.buttonProcessSetup.setEnabled(True)
             logging.getLogger(type(self).__name__).info('Processing PUR end: %s' % self.dialogTitle)
             logging.getLogger(self.historyLog).info('Processing PUR end: %s' % self.dialogTitle)
-    
+            
+            # Check for and offer to reconcile unresolved cases
+            self.reconcileUnresolvedCases(outputs)

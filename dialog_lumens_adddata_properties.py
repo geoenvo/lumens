@@ -17,6 +17,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         dataFile (str): the file path of the added data.
         dataDescription (str): the description of the added data.
         dataPeriod (int): the period of the added data.
+        dataTableCsv (str): the path to the table csv temporary file
         dataFieldAttribute (str): the selected attribute of the added shapefile data.
         dataDissolvedShapefile (str): the file path of the added shapefile data that has been dissolved.
     """
@@ -35,12 +36,14 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         self.dataType = dataType
         self.dataFile = dataFile
-        self.dataDescription = None
+        # Use file name without extension as data description
+        self.dataDescription = os.path.splitext(os.path.basename(dataFile))[0]
         self.dataPeriod = 0
         self.dataTableCsv = None
         self.dataFieldAttribute = None
         self.dataDissolvedShapefile = None
         
+        # The classification of the data to be added
         self.classifiedOptions = {
             1: 'Hutan primer',
             2: 'Hutan sekunder',
@@ -121,7 +124,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.labelDataDescription = QtGui.QLabel()
         self.labelDataDescription.setText('&Description:')
         self.lineEditDataDescription = QtGui.QLineEdit()
-        self.lineEditDataDescription.setText('description')
+        self.lineEditDataDescription.setText(self.dataDescription)
         self.labelDataDescription.setBuddy(self.lineEditDataDescription)
         
         td = datetime.date.today()
@@ -237,60 +240,60 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         if outputs and outputsKey in outputs and os.path.exists(outputs[outputsKey]):  
             with open(outputs[outputsKey], 'rb') as f:
-              hasHeader = csv.Sniffer().has_header(f.read(1024))
-              f.seek(0)
-              reader = csv.reader(f)
-              
-              if hasHeader: # Set the column headers
-                  headerRow = reader.next()
-                  fields = [str(field) for field in headerRow]
-                  
-                  fields.append('Legend') # Additional columns ('Classified' only for Land Use/Cover types)
-                  
-                  if self.dataType == 'Land Use/Cover':
-                      fields.append('Classified')
-                  
-                  self.dataTable.setColumnCount(len(fields))
-                  self.dataTable.setHorizontalHeaderLabels(fields)
-              
-              dataTable = []
-              
-              for row in reader:
-                  dataRow = [QtGui.QTableWidgetItem(field) for field in row]
-                  dataTable.append(dataRow)
-              
-              self.dataTable.setRowCount(len(dataTable))
-              
-              tableRow = 0
-              columnLegend = 0
-              columnClassified = 0
-              
-              for dataRow in dataTable:
-                  tableColumn = 0
-                  for fieldTableItem in dataRow:
-                      fieldTableItem.setFlags(fieldTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
-                      self.dataTable.setItem(tableRow, tableColumn, fieldTableItem)
-                      self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
-                      tableColumn += 1
-                  
-                  # Additional columns ('Classified' only for Land Use/Cover types)
-                  fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(tableRow + 1))
-                  columnLegend = tableColumn
-                  self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
-                  self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
-                  
-                  if self.dataType == 'Land Use/Cover':
-                      tableColumn += 1
-                      columnClassified = tableColumn
-                      comboBoxClassified = QtGui.QComboBox()
-                      for key, val in self.classifiedOptions.iteritems():
-                          comboBoxClassified.addItem(val, key)
-                      self.dataTable.setCellWidget(tableRow, tableColumn, comboBoxClassified)
-                      self.dataTable.horizontalHeader().setResizeMode(columnClassified, QtGui.QHeaderView.ResizeToContents)
-                  
-                  tableRow += 1
-              
-              self.dataTable.setEnabled(True)
+                hasHeader = csv.Sniffer().has_header(f.read(1024))
+                f.seek(0)
+                reader = csv.reader(f)
+                
+                if hasHeader: # Set the column headers
+                    headerRow = reader.next()
+                    fields = [str(field) for field in headerRow]
+                    
+                    fields.append('Legend') # Additional columns ('Classified' only for Land Use/Cover types)
+                    
+                    if self.dataType == 'Land Use/Cover':
+                        fields.append('Classified')
+                    
+                    self.dataTable.setColumnCount(len(fields))
+                    self.dataTable.setHorizontalHeaderLabels(fields)
+                
+                dataTable = []
+                
+                for row in reader:
+                    dataRow = [QtGui.QTableWidgetItem(field) for field in row]
+                    dataTable.append(dataRow)
+                
+                self.dataTable.setRowCount(len(dataTable))
+                
+                tableRow = 0
+                columnLegend = 0
+                columnClassified = 0
+                
+                for dataRow in dataTable:
+                    tableColumn = 0
+                    for fieldTableItem in dataRow:
+                        fieldTableItem.setFlags(fieldTableItem.flags() & ~QtCore.Qt.ItemIsEnabled)
+                        self.dataTable.setItem(tableRow, tableColumn, fieldTableItem)
+                        self.dataTable.horizontalHeader().setResizeMode(tableColumn, QtGui.QHeaderView.ResizeToContents)
+                        tableColumn += 1
+                    
+                    # Additional columns ('Classified' only for Land Use/Cover types)
+                    fieldLegend = QtGui.QTableWidgetItem('Unidentified Landuse {0}'.format(tableRow + 1))
+                    columnLegend = tableColumn
+                    self.dataTable.setItem(tableRow, tableColumn, fieldLegend)
+                    self.dataTable.horizontalHeader().setResizeMode(columnLegend, QtGui.QHeaderView.ResizeToContents)
+                    
+                    if self.dataType == 'Land Use/Cover':
+                        tableColumn += 1
+                        columnClassified = tableColumn
+                        comboBoxClassified = QtGui.QComboBox()
+                        for key, val in self.classifiedOptions.iteritems():
+                            comboBoxClassified.addItem(val, key)
+                        self.dataTable.setCellWidget(tableRow, tableColumn, comboBoxClassified)
+                        self.dataTable.horizontalHeader().setResizeMode(columnClassified, QtGui.QHeaderView.ResizeToContents)
+                    
+                    tableRow += 1
+                
+                self.dataTable.setEnabled(True)
     
     
     def loadDataFieldAttributes(self):

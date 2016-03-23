@@ -4,6 +4,8 @@
 import os, logging, csv
 from PyQt4 import QtGui
 
+from dialog_lumens_viewer import DialogLumensViewer
+
 
 class DialogLumensBase:
     """Base class for LUMENS dialogs.
@@ -112,14 +114,14 @@ class DialogLumensBase:
                   if hasHeader: # Skip the header
                       next(reader)
                   for row in reader: # Just read the first row
-                    verb = 'failed'
-                    statusCode = row[0]
-                    statusMessage = row[1]
-                    if int(statusCode) == 1:
-                        success = True
-                        verb = 'succeeded'
-                    outputMessage = '{0} {1} with status message: {2}'.format(outputMessage, verb, statusMessage)
-                    break
+                      verb = 'failed'
+                      statusCode = row[0]
+                      statusMessage = row[1]
+                      if int(statusCode) == 1:
+                          success = True
+                          verb = 'succeeded'
+                      outputMessage = '{0} {1} with status message: {2}'.format(outputMessage, verb, statusMessage)
+                      break
           else:
               outputMessage = '{0} failed.'.format(outputMessage)
         
