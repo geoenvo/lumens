@@ -1021,7 +1021,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
                         next(reader)
                     for row in reader: # Just read the first row
                         # Look for "There are no unresolved area in this analysis session"
-                        statusMessage = str(row[1])
+                        statusMessage = str(row[0])
                         if 'no unresolved' not in statusMessage:
                             unresolvedCases = True
                         break
@@ -1047,7 +1047,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
                             if hasHeader: # Skip the header
                                 next(reader)
                             for row in reader:
-                                attribute = str(row[2])
+                                attribute = str(row[1])
                                 # Don't add "unresolved_caseN"
                                 if 'unresolved_' not in attribute:
                                     attributes.append(attribute)
