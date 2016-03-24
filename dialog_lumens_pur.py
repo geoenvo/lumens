@@ -796,6 +796,63 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             self.addPlanningUnitRow(planningUnit['planningUnitData'], planningUnit['referenceClassID'], planningUnit['planningUnitType'])
         
     
+    @staticmethod
+    def writeTableCsv(tableWidget, forwardDirSeparator=False):
+        """Method for writing the table data to a temp csv file.
+        
+        Args:
+            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
+        """
+        dataTable = []
+        
+        headerRow = []
+        
+        # Write table header too
+        for headerColumn in range(tableWidget.columnCount()):
+            headerItem = tableWidget.horizontalHeaderItem(headerColumn)
+            headerRow.append(headerItem.text())
+        
+        dataTable.append(headerRow)
+        
+        # Loop rows
+        for tableRow in range(tableWidget.rowCount()):
+            dataRow = []
+            
+            # Loop row columns
+            for tableColumn in range(tableWidget.columnCount()):
+                item = tableWidget.item(tableRow, tableColumn)
+                widget = tableWidget.cellWidget(tableRow, tableColumn)
+                
+                # Check if cell is a combobox widget
+                if widget and isinstance(widget, QtGui.QComboBox):
+                    dataRow.append(widget.currentText())
+                else:
+                    itemText = item.text()
+                    
+                    if itemText:
+                        dataRow.append(itemText)
+                    else:
+                        return '' # Cell is empty!
+                
+            dataTable.append(dataRow)
+        
+        if dataTable:
+            handle, tableCsvFilePath = tempfile.mkstemp(suffix='.csv')
+        
+            with os.fdopen(handle, 'w') as f:
+                writer = csv.writer(f)
+                for dataRow in dataTable:
+                    writer.writerow(dataRow)
+            
+            if forwardDirSeparator:
+                return tableCsvFilePath.replace(os.path.sep, '/')
+            
+            return tableCsvFilePath
+        
+        # Table unused, or something wrong with the table
+        return ''
+    
+    
     #***********************************************************
     # 'Setup' tab QPushButton handlers
     #***********************************************************
@@ -1255,7 +1312,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             logging.getLogger(self.historyLog).info('Reconcile PUR start')
             self.buttonProcessReconcile.setDisabled(True)
             
-            reconcileTableCsv = DialogLumensBase.writeTableCsv(self.reconcileTable, True)
+            reconcileTableCsv = DialogLumensPUR.writeTableCsv(self.reconcileTable, True)
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)
