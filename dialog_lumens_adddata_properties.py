@@ -6,6 +6,7 @@ from qgis.core import *
 from PyQt4 import QtCore, QtGui
 from processing.tools import *
 
+from dialog_lumens_base import DialogLumensBase
 from dialog_lumens_viewer import DialogLumensViewer
 
 
@@ -315,53 +316,6 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.comboBoxDataFieldAttribute.setEnabled(True)
     
     
-    def writeDataTableCsv(self, forwardDirSeparator=False):
-        """Method for writing the table data to a temp csv file.
-        
-        Args:
-            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
-        """
-        dataTable = []
-        
-        # Loop rows
-        for tableRow in range(self.dataTable.rowCount()):
-            dataRow = []
-            
-            # Loop row columns
-            for tableColumn in range(self.dataTable.columnCount()):
-                item = self.dataTable.item(tableRow, tableColumn)
-                widget = self.dataTable.cellWidget(tableRow, tableColumn)
-                
-                # Check if cell is a combobox widget
-                if widget and isinstance(widget, QtGui.QComboBox):
-                    dataRow.append(widget.currentText())
-                else:
-                    itemText = item.text()
-                    
-                    if itemText:
-                        dataRow.append(itemText)
-                    else:
-                        return '' # Cell is empty!
-                
-            dataTable.append(dataRow)
-        
-        if dataTable:
-            handle, dataTableCsvFilePath = tempfile.mkstemp(suffix='.csv')
-        
-            with os.fdopen(handle, 'w') as f:
-                writer = csv.writer(f)
-                for dataRow in dataTable:
-                    writer.writerow(dataRow)
-            
-            if forwardDirSeparator:
-                return dataTableCsvFilePath.replace(os.path.sep, '/')
-            
-            return dataTableCsvFilePath
-        
-        # Table unused, or something wrong with the table
-        return ''
-    
-    
     #***********************************************************
     # Process dialog
     #***********************************************************
@@ -409,7 +363,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.dataDescription = unicode(self.lineEditDataDescription.text())
         self.dataPeriod = self.spinBoxDataPeriod.value()
         self.dataFieldAttribute = unicode(self.comboBoxDataFieldAttribute.currentText())
-        self.dataTableCsv = self.writeDataTableCsv(True)
+        self.dataTableCsv = DialogLumensBase.writeTableCsv(self.dataTable, True)
         
     
     def handlerProcessDissolve(self):
