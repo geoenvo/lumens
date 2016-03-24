@@ -278,6 +278,8 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         # 'Setup planning unit' buttons
         self.buttonAddPlanningUnitRow.clicked.connect(self.handlerButtonAddPlanningUnitRow)
         self.buttonClearAllPlanningUnits.clicked.connect(self.handlerButtonClearAllPlanningUnits)
+        # 'Reconcile' tab button
+        self.buttonProcessReconcile.clicked.connect(self.handlerProcessReconcile)
     
     
     def setupUi(self, parent):
@@ -989,9 +991,9 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         
         if dialog.exec_() == QtGui.QDialog.Accepted:
             self.updateReferenceClasses(dialog.getReferenceClasses())
-        
     
-    def reconcileUnresolvedCases(self, outputs):
+    
+    def reconcileUnresolvedCases(self):
         """Method for dealing with unresolved cases found after PUR setup algorithm.
         
         Loads the unresolved cases CSV output from PUR setup algorithm to the
@@ -1001,9 +1003,13 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         Args:
             outputs (dict): the output dict of the executed algorithm.
         """
+        outputs = self.outputsPURSetup
         unresolvedCases = False
         unresolvedCasesKey = 'database_unresolved_out_ALG0'
         attributeKey = 'data_attribute_ALG0'
+        
+        print 'DEBUG'
+        print outputs
         
         if outputs and (unresolvedCasesKey in outputs) and (attributeKey in outputs):
             if os.path.exists(outputs[unresolvedCasesKey]):
@@ -1019,6 +1025,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
                         if 'no unresolved' not in statusMessage:
                             unresolvedCases = True
                         break
+                
                 if unresolvedCases:
                     # Confirm if user wants to process unresolved cases
                     reply = QtGui.QMessageBox.question(
@@ -1094,6 +1101,9 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
                             
                             # Switch to reconcile tab
                             self.tabWidget.setCurrentWidget(self.tabReconcile)
+        else:
+            logging.getLogger(type(self).__name__).error('Reconcile PUR error')
+            logging.getLogger(self.historyLog).info('Reconcile PUR error')
     
     
     #***********************************************************
@@ -1197,7 +1207,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
                 writer = csv.DictWriter(f, planningUnits[0].keys())
                 writer.writerows(planningUnits)
             
-            outputs = general.runalg(
+            self.outputsPURSetup = general.runalg(
                 algName,
                 self.main.appSettings[type(self).__name__]['shapefile'].replace(os.path.sep, '/'),
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
@@ -1219,11 +1229,61 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
             self.main.setWindowState(QtCore.Qt.WindowActive)
             
-            algSuccess = self.outputsMessageBox(algName, outputs, '', '')
+            algSuccess = self.outputsMessageBox(algName, self.outputsPURSetup, 'PUR setup completed successfully!', 'Something happened.')
             
             self.buttonProcessSetup.setEnabled(True)
             logging.getLogger(type(self).__name__).info('Processing PUR end: %s' % self.dialogTitle)
             logging.getLogger(self.historyLog).info('Processing PUR end: %s' % self.dialogTitle)
             
             # Check for and offer to reconcile unresolved cases
-            self.reconcileUnresolvedCases(outputs)
+            self.reconcileUnresolvedCases()
+    
+    
+    def handlerProcessReconcile(self):
+        """Slot method to handle reconciling unresolved cases in the reconcile tab.
+        
+        The Reconcile process calls the following algorithms:
+        1. r:purfinalizereconciliation
+        """
+        algName = 'r:purfinalizereconciliation'
+        
+        outputs = self.outputsPURSetup
+        reconKey = 'OUTPUT_ALG1'
+        
+        if outputs and (reconKey in outputs):
+            logging.getLogger(type(self).__name__).info('Reconcile PUR start')
+            logging.getLogger(self.historyLog).info('Reconcile PUR start')
+            self.buttonProcessReconcile.setDisabled(True)
+            
+            reconcileTableCsv = DialogLumensBase.writeTableCsv(self.reconcileTable, True)
+            
+            # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+            self.main.setWindowState(QtCore.Qt.WindowMinimized)
+            
+            print 'DEBUG'
+            print reconcileTableCsv
+            print outputs[reconKey]
+            
+            outputsReconcile = general.runalg(
+                algName,
+                outputs[reconKey].replace(os.path.sep, '/'),
+                reconcileTableCsv.replace(os.path.sep, '/'),
+                None,
+            )
+            
+            # Display ROut file in debug mode
+            if self.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                dialog.exec_()
+            
+            # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+            self.main.setWindowState(QtCore.Qt.WindowActive)
+            
+            algSuccess = self.outputsMessageBox(algName, outputsReconcile, 'PUR reconciliation completed successfully!', 'Something happened.')
+            
+            self.buttonProcessReconcile.setEnabled(True)
+            logging.getLogger(type(self).__name__).info('Reconcile PUR end')
+            logging.getLogger(self.historyLog).info('Reconcile PUR end')
+        else:
+            logging.getLogger(type(self).__name__).error('Reconcile PUR error')
+            logging.getLogger(self.historyLog).info('Reconcile PUR error')

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, csv
+import os, logging, csv, tempfile
 from PyQt4 import QtGui
 
 from dialog_lumens_viewer import DialogLumensViewer
@@ -104,6 +104,8 @@ class DialogLumensBase:
         # Modeler script key
         if algName.lower().startswith('modeler:'):
             statusOutputKey = 'statusoutput_ALG1'
+            if statusOutputKey not in outputs:
+                statusOutputKey = 'statusoutput_ALG0'
         
         if outputs and statusOutputKey in outputs:
           if os.path.exists(outputs[statusOutputKey]):
@@ -134,3 +136,50 @@ class DialogLumensBase:
         QtGui.QMessageBox.critical(self, 'Error', errorMessage)
         return False
     
+    
+    @staticmethod
+    def writeTableCsv(tableWidget, forwardDirSeparator=False):
+        """Method for writing the table data to a temp csv file.
+        
+        Args:
+            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
+        """
+        dataTable = []
+        
+        # Loop rows
+        for tableRow in range(tableWidget.rowCount()):
+            dataRow = []
+            
+            # Loop row columns
+            for tableColumn in range(tableWidget.columnCount()):
+                item = tableWidget.item(tableRow, tableColumn)
+                widget = tableWidget.cellWidget(tableRow, tableColumn)
+                
+                # Check if cell is a combobox widget
+                if widget and isinstance(widget, QtGui.QComboBox):
+                    dataRow.append(widget.currentText())
+                else:
+                    itemText = item.text()
+                    
+                    if itemText:
+                        dataRow.append(itemText)
+                    else:
+                        return '' # Cell is empty!
+                
+            dataTable.append(dataRow)
+        
+        if dataTable:
+            handle, tableCsvFilePath = tempfile.mkstemp(suffix='.csv')
+        
+            with os.fdopen(handle, 'w') as f:
+                writer = csv.writer(f)
+                for dataRow in dataTable:
+                    writer.writerow(dataRow)
+            
+            if forwardDirSeparator:
+                return tableCsvFilePath.replace(os.path.sep, '/')
+            
+            return tableCsvFilePath
+        
+        # Table unused, or something wrong with the table
+        return ''
