@@ -28,11 +28,11 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         Args:
             parent: the dialog window's parent instance.
-            dataType: the type of the added data.
-            dataFile: the file path of the added data.
+            dataType (str): the type of the added data.
+            dataFile (str): the file path of the added data.
         """
         super(DialogLumensAddDataProperties, self).__init__(parent)
-        self.main = parent
+        self.parent = parent
         self.dialogTitle = 'LUMENS Data Properties'
         
         self.dataType = dataType
@@ -59,20 +59,20 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.isVectorFile = False
         self.isCsvFile = False
         
-        if self.dataFile.lower().endswith(self.main.main.appSettings['selectRasterfileExt']):
+        if self.dataFile.lower().endswith(self.parent.main.appSettings['selectRasterfileExt']):
             self.isRasterFile = True
-        elif self.dataFile.lower().endswith(self.main.main.appSettings['selectShapefileExt']):
+        elif self.dataFile.lower().endswith(self.parent.main.appSettings['selectShapefileExt']):
             self.isVectorFile = True
-        elif self.dataFile.lower().endswith(self.main.main.appSettings['selectCsvfileExt']):
+        elif self.dataFile.lower().endswith(self.parent.main.appSettings['selectCsvfileExt']):
             self.isCsvFile = True
         
-        if self.main.main.appSettings['debug']:
+        if self.parent.main.appSettings['debug']:
             print 'DEBUG: DialogLumensAddDataProperties init'
             self.logger = logging.getLogger(type(self).__name__)
             formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
             ch = logging.StreamHandler()
             ch.setFormatter(formatter)
-            fh = logging.FileHandler(os.path.join(self.main.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
+            fh = logging.FileHandler(os.path.join(self.parent.main.appSettings['appDir'], 'logs', type(self).__name__ + '.log'))
             fh.setFormatter(formatter)
             self.logger.addHandler(ch)
             self.logger.addHandler(fh)
@@ -88,6 +88,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         self.buttonProcessDissolve.clicked.connect(self.handlerProcessDissolve)
         self.buttonProcessSave.clicked.connect(self.handlerProcessSave)
+        self.buttonSelectDataMapping.clicked.connect(self.handlerSelectDataMapping)
     
     
     def setupUi(self, parent):
@@ -163,9 +164,24 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         self.dataTable.setDisabled(True)
         self.dataTable.verticalHeader().setVisible(False)
         
+        self.labelDataMapping = QtGui.QLabel()
+        self.labelDataMapping.setText('Data mapping:')
+        self.lineEditDataMapping = QtGui.QLineEdit()
+        self.lineEditDataMapping.setReadOnly(True)
+        self.buttonSelectDataMapping = QtGui.QPushButton()
+        self.buttonSelectDataMapping.setText('&Browse')
+        self.buttonSelectDataMapping.setDisabled(True)
+        
+        rowCount += 1
+        
         if self.dataType == 'Land Use/Cover' or self.dataType == 'Planning Unit':
+            self.layoutDataProperties.addWidget(self.labelDataMapping, rowCount, 0)
+            self.layoutDataProperties.addWidget(self.lineEditDataMapping, rowCount, 1)
+            self.layoutDataProperties.addWidget(self.buttonSelectDataMapping, rowCount, 2)
             # Table
             rowCount += 1
+            self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 3)
+        elif self.dataType == 'Planning Unit':
             self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 2)
         
         ######################################################################
@@ -388,8 +404,8 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
             )
             
             # Display ROut file in debug mode
-            if self.main.main.appSettings['debug']:
-                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.main.appSettings['ROutFile'])
+            if self.parent.main.appSettings['debug']:
+                dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.parent.main.appSettings['ROutFile'])
                 dialog.exec_()
             
             outputsKey = 'admin_output'
@@ -459,6 +475,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                     self.dataTable.resizeColumnsToContents()
                     self.buttonProcessSave.setEnabled(True)
             
+            self.buttonSelectDataMapping.setEnabled(True)
             self.buttonProcessDissolve.setEnabled(True)
             logging.getLogger(type(self).__name__).info('end: %s' % 'LUMENS Dissolve')
         
@@ -470,6 +487,63 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         if self.validForm():
             self.accept()
+    
+    
+    def handlerSelectDataMapping(self):
+        """Slot method for selecting a data mapping file in CSV format.
+        """
+        dataMappingFile = unicode(QtGui.QFileDialog.getOpenFileName(
+            self, 'Select Data Mapping File', QtCore.QDir.homePath(), 'Data Mapping File (*{0})'.format(self.parent.main.appSettings['selectCsvfileExt'])))
+        
+        if dataMappingFile:
+            logging.getLogger(type(self).__name__).info('select data mapping file: %s', dataMappingFile)
+            
+            self.lineEditDataMapping.setText(dataMappingFile)
+            
+            self.processDataMapping(dataMappingFile)
+    
+    
+    def processDataMapping(self, dataMappingFile):
+        """Method for processing the data mapping file and mapping the data
+        in the data table.
+        
+        Args:
+            dataMappingFile (str): the file path of a data mapping file.
+        """
+        dataMapping = {}
+        
+        with open(dataMappingFile, 'rb') as f:
+            hasHeader = csv.Sniffer().has_header(f.read(1024))
+            f.seek(0)
+            reader = csv.reader(f)
+            
+            if hasHeader: # Skip the header
+                next(reader)
+            
+            for row in reader:
+                dataMapping[str(row[0]).lower()] = str(row[1]).lower()
+            
+            fieldColumn = classifiedColumn = 0
+            
+            for headerColumn in range(self.dataTable.columnCount()):
+                headerItem = self.dataTable.horizontalHeaderItem(headerColumn)
+                headerText = headerItem.text()
+                if headerText == unicode(self.comboBoxDataFieldAttribute.currentText()):
+                    fieldColumn = headerColumn
+                elif headerText == 'Classified':
+                    classifiedColumn = headerColumn
+            
+            for tableRow in range(self.dataTable.rowCount()):
+                fieldItem = self.dataTable.item(tableRow, fieldColumn)
+                classifiedWidget = self.dataTable.cellWidget(tableRow, classifiedColumn)
+                fieldItemText = fieldItem.text().lower()
+                if fieldItemText in dataMapping:
+                    classification = dataMapping[fieldItemText]
+                    # Perform case insensitive search of the ComboBox
+                    classifiedOptionIndex = classifiedWidget.findText(classification, QtCore.Qt.MatchFixedString)
+                    # Found a data mapping match!
+                    if classifiedOptionIndex >= 0:
+                        classifiedWidget.setCurrentIndex(classifiedOptionIndex)
     
     
     def accept(self):
