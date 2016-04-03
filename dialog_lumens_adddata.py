@@ -413,6 +413,9 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             for tableRowData in self.tableAddData:
                 # The algName to be used depends on the type of the dataFile (vector or raster)
                 
+                print 'DEBUG'
+                print tableRowData
+                
                 if tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectRasterfileExt']):
                     algName = 'r:lumensaddrasterdata'
                     
@@ -427,9 +430,6 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                     )
                 elif tableRowData['dataFile'].lower().endswith(self.main.appSettings['selectShapefileExt']):
                     algName = 'r:lumensaddvectordata'
-                    
-                    print 'DEBUG'
-                    print tableRowData
                     
                     outputs = general.runalg(
                         algName,

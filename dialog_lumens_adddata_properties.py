@@ -174,13 +174,15 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         rowCount += 1
         
-        if self.dataType == 'Land Use/Cover' or self.dataType == 'Planning Unit':
-            self.layoutDataProperties.addWidget(self.labelDataMapping, rowCount, 0)
-            self.layoutDataProperties.addWidget(self.lineEditDataMapping, rowCount, 1)
-            self.layoutDataProperties.addWidget(self.buttonSelectDataMapping, rowCount, 2)
-            # Table
-            rowCount += 1
-            self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 3)
+        if self.dataType == 'Land Use/Cover':
+            dataTableColumnSpan = 2
+            if self.isVectorFile:
+                self.layoutDataProperties.addWidget(self.labelDataMapping, rowCount, 0)
+                self.layoutDataProperties.addWidget(self.lineEditDataMapping, rowCount, 1)
+                self.layoutDataProperties.addWidget(self.buttonSelectDataMapping, rowCount, 2)
+                dataTableColumnSpan = 3
+                rowCount += 1
+            self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, dataTableColumnSpan)
         elif self.dataType == 'Planning Unit':
             self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 2)
         
