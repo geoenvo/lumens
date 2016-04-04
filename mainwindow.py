@@ -195,7 +195,11 @@ class MainWindow(QtGui.QMainWindow):
                 'nodata': '',
             },
             'DialogLumensPreQUESLandcoverTrajectoriesAnalysis': {
+                'landUse1': '',
+                'landUse2': '',
                 'csvLandUse': '',
+                'planningUnit': '',
+                'analysisOption': '',
                 'nodata': '',
             },
             'DialogLumensQUESCCarbonAccounting': {
@@ -444,7 +448,10 @@ class MainWindow(QtGui.QMainWindow):
         self.recentProjects = []
         
         # For keeping track of data added to the project
-        self.dataLandUseCover = self.dataPlanningUnit = self.dataFactor = self.dataTable = {}
+        self.dataLandUseCover = {}
+        self.dataPlanningUnit = {}
+        self.dataFactor = {}
+        self.dataTable = {}
         
         # Process app arguments
         parser = argparse.ArgumentParser()
@@ -1940,13 +1947,17 @@ class MainWindow(QtGui.QMainWindow):
               headerRow = reader.next()
               headerColumns = [str(column) for column in headerRow]
               
+              dataLandUseCover = {}
+              
               for row in reader:
-                  self.dataLandUseCover[row[0]] = {
+                  dataLandUseCover[row[0]] = {
                       'RST_DATA': row[0],
                       'RST_NAME': row[1],
                       'PERIOD': row[2],
                       'LUT_NAME': row[3],
                   }
+                  
+              self.dataLandUseCover = dataLandUseCover
         
         if os.path.exists(csvDataPlanningUnit):
             with open(csvDataPlanningUnit, 'rb') as f:
@@ -1956,12 +1967,16 @@ class MainWindow(QtGui.QMainWindow):
               headerRow = reader.next()
               headerColumns = [str(column) for column in headerRow]
               
+              dataPlanningUnit = {}
+              
               for row in reader:
-                  self.dataPlanningUnit[row[0]] = {
+                  dataPlanningUnit[row[0]] = {
                       'RST_DATA': row[0],
                       'RST_NAME': row[1],
                       'LUT_NAME': row[2],
                   }
+              
+              self.dataPlanningUnit = dataPlanningUnit
         
         if os.path.exists(csvDataFactor):
             with open(csvDataFactor, 'rb') as f:
@@ -1971,11 +1986,15 @@ class MainWindow(QtGui.QMainWindow):
               headerRow = reader.next()
               headerColumns = [str(column) for column in headerRow]
               
+              dataFactor = {}
+              
               for row in reader:
-                  self.dataFactor[row[0]] = {
+                  dataFactor[row[0]] = {
                       'RST_DATA': row[0],
                       'RST_NAME': row[1],
                   }
+              
+              self.dataFactor = dataFactor
         
         if os.path.exists(csvDataTable):
             with open(csvDataTable, 'rb') as f:
@@ -1985,11 +2004,15 @@ class MainWindow(QtGui.QMainWindow):
               headerRow = reader.next()
               headerColumns = [str(column) for column in headerRow]
               
+              dataTable = {}
+              
               for row in reader:
                   self.dataTable[row[0]] = {
                       'TBL_DATA': row[0],
                       'TBL_NAME': row[1],
                   }
+              
+              self.dataTable = dataTable
     
     
     def clearAddedDataInfo(self):
@@ -1997,7 +2020,10 @@ class MainWindow(QtGui.QMainWindow):
         
         This is called when a LUMENS project is closed.
         """
-        self.dataLandUseCover = self.dataPlanningUnit = self.dataFactor = self.dataTable = {}
+        self.dataLandUseCover = {}
+        self.dataPlanningUnit = {}
+        self.dataFactor = {}
+        self.dataTable = {}
     
     
     def lumensOpenDatabase(self, lumensDatabase=False):

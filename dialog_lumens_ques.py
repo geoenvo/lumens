@@ -143,14 +143,40 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             settings.beginGroup('DialogLumensPreQUESLandcoverTrajectoriesAnalysis')
             
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis'] = {}
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse1'] = landUse1 = settings.value('landUse1')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse2'] = landUse2 = settings.value('landUse2')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] = csvLandUse = settings.value('csvLandUse')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] = planningUnit = settings.value('planningUnit')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['analysisOption'] = analysisOption = settings.value('analysisOption')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['nodata'] = nodata = settings.value('nodata')
             
             if not returnTemplateSettings:
+                if landUse1:
+                    indexLandCoverLandUse1 = self.comboBoxLandCoverLandUse1.findText(landUse1)
+                    
+                    if indexLandCoverLandUse1 != -1:
+                        self.comboBoxLandCoverLandUse1.setCurrentIndex(indexLandCoverLandUse1)
+                
+                if landUse2:
+                    indexLandCoverLandUse2 = self.comboBoxLandCoverLandUse2.findText(landUse2)
+                    
+                    if indexLandCoverLandUse2 != -1:
+                        self.comboBoxLandCoverLandUse2.setCurrentIndex(indexLandCoverLandUse2)
+                
+                if planningUnit:
+                    indexLandCoverPlanningUnit = self.comboBoxLandCoverPlanningUnit.findText(planningUnit)
+                    
+                    if indexLandCoverPlanningUnit != -1:
+                        self.comboBoxLandCoverPlanningUnit.setCurrentIndex(indexLandCoverPlanningUnit)
+                
+                if analysisOption:
+                    self.comboBoxLandCoverAnalysisOption.setCurrentIndex(int(analysisOption))
+                
                 if csvLandUse and os.path.exists(csvLandUse):
                     self.lineEditLandCoverCsvLandUse.setText(csvLandUse)
                 else:
                     self.lineEditLandCoverCsvLandUse.setText('')
+                
                 if nodata:
                     self.spinBoxPreQUESNodata.setValue(int(nodata))
                 else:
@@ -895,24 +921,70 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         
         self.layoutLandCoverOptions = QtGui.QGridLayout()
         self.layoutLandCoverOptions.setContentsMargins(0, 0, 0, 0)
+        
+        self.labelLandCoverLandUse1 = QtGui.QLabel()
+        self.labelLandCoverLandUse1.setText('Land use 1:')
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverLandUse1, 0, 0)
+        
+        self.comboBoxLandCoverLandUse1 = QtGui.QComboBox()
+        self.comboBoxLandCoverLandUse1.setDisabled(True)
+        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverLandUse1, 0, 1)
+        
+        self.populateAddedDataComboBox(self.main.dataLandUseCover, self.comboBoxLandCoverLandUse1)
+        
+        self.labelLandCoverLandUse2 = QtGui.QLabel()
+        self.labelLandCoverLandUse2.setText('Land use 2:')
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverLandUse2, 1, 0)
+        
+        self.comboBoxLandCoverLandUse2 = QtGui.QComboBox()
+        self.comboBoxLandCoverLandUse2.setDisabled(True)
+        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverLandUse2, 1, 1)
+        
+        self.populateAddedDataComboBox(self.main.dataLandUseCover, self.comboBoxLandCoverLandUse2)
+        
         self.labelLandCoverCsvLandUse = QtGui.QLabel()
         self.labelLandCoverCsvLandUse.setText('Land use lookup table:')
-        self.layoutLandCoverOptions.addWidget(self.labelLandCoverCsvLandUse, 0, 0)
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverCsvLandUse, 2, 0)
+        
         self.lineEditLandCoverCsvLandUse = QtGui.QLineEdit()
         self.lineEditLandCoverCsvLandUse.setReadOnly(True)
-        self.layoutLandCoverOptions.addWidget(self.lineEditLandCoverCsvLandUse, 0, 1)
+        self.layoutLandCoverOptions.addWidget(self.lineEditLandCoverCsvLandUse, 2, 1)
         self.buttonSelectLandCoverCsvLandUse = QtGui.QPushButton()
         self.buttonSelectLandCoverCsvLandUse.setText('&Browse')
-        self.layoutLandCoverOptions.addWidget(self.buttonSelectLandCoverCsvLandUse, 0, 2)
+        self.layoutLandCoverOptions.addWidget(self.buttonSelectLandCoverCsvLandUse, 2, 2)
+        
+        self.labelLandCoverPlanningUnit = QtGui.QLabel()
+        self.labelLandCoverPlanningUnit.setText('Planning unit:')
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverPlanningUnit, 3, 0)
+        
+        self.comboBoxLandCoverPlanningUnit = QtGui.QComboBox()
+        self.comboBoxLandCoverPlanningUnit.setDisabled(True)
+        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverPlanningUnit, 3, 1)
+        
+        self.populateAddedDataComboBox(self.main.dataPlanningUnit, self.comboBoxLandCoverPlanningUnit)
+        
+        self.labelLandCoverAnalysisOption = QtGui.QLabel()
+        self.labelLandCoverAnalysisOption.setText('Analysis option:')
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverAnalysisOption, 4, 0)
+        
+        analysisOptions = [
+            'All analysis',
+            'Perubahan dominan di tiap zona',
+            'Dinamika perubahan di tiap zona (Alpha-Beta)',
+            'Analisis alur perubahan (Trajectory)',
+        ]
+        self.comboBoxLandCoverAnalysisOption = QtGui.QComboBox()
+        self.comboBoxLandCoverAnalysisOption.addItems(analysisOptions)
+        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverAnalysisOption, 4, 1)
         
         self.labelPreQUESNodata = QtGui.QLabel()
         self.labelPreQUESNodata.setText('&No data value:')
-        self.layoutLandCoverOptions.addWidget(self.labelPreQUESNodata, 1, 0)
+        self.layoutLandCoverOptions.addWidget(self.labelPreQUESNodata, 5, 0)
         
         self.spinBoxPreQUESNodata = QtGui.QSpinBox()
         self.spinBoxPreQUESNodata.setRange(-9999, 9999)
         self.spinBoxPreQUESNodata.setValue(0)
-        self.layoutLandCoverOptions.addWidget(self.spinBoxPreQUESNodata, 1, 1)
+        self.layoutLandCoverOptions.addWidget(self.spinBoxPreQUESNodata, 5, 1)
         self.labelPreQUESNodata.setBuddy(self.spinBoxPreQUESNodata)
         
         self.layoutGroupBoxLandCover.addLayout(self.layoutLandCoverInfo)
@@ -2953,8 +3025,25 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         """Set the required values from the form widgets.
         """
         # 'Pre-QUES' tab fields
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse1'] \
+            = unicode(self.comboBoxLandCoverLandUse1.currentText())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse2'] \
+            = unicode(self.comboBoxLandCoverLandUse2.currentText())
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] \
             = unicode(self.lineEditLandCoverCsvLandUse.text())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] \
+            = unicode(self.comboBoxLandCoverPlanningUnit.currentText())
+        analysisOption = unicode(self.comboBoxLandCoverAnalysisOption.currentText())
+        if analysisOption == 'All analysis':
+            analysisOption = 0
+        elif analysisOption == 'Perubahan dominan di tiap zona':
+            analysisOption = 1
+        elif analysisOption == 'Dinamika perubahan di tiap zona (Alpha-Beta)':
+            analysisOption = 2
+        else:
+            analysisOption = 3
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['analysisOption'] \
+            = analysisOption
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['nodata'] \
             = self.spinBoxPreQUESNodata.value()
         
@@ -3123,7 +3212,8 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.setAppSettings()
         
         formName = 'DialogLumensPreQUESLandcoverTrajectoriesAnalysis'
-        algName = 'modeler:pre-ques_trajectory'
+        # algName = 'modeler:pre-ques_trajectory'
+        algName = 'r:pre-quesanalysis'
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -3135,7 +3225,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             
             outputs = general.runalg(
                 algName,
+                self.main.appSettings[formName]['landUse1'],
+                self.main.appSettings[formName]['landUse2'],
+                self.main.appSettings[formName]['planningUnit'],
                 self.main.appSettings[formName]['csvLandUse'],
+                self.main.appSettings[formName]['analysisOption'],
                 self.main.appSettings[formName]['nodata'],
                 None, # statusoutput
             )
