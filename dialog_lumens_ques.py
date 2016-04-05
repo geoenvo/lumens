@@ -145,7 +145,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis'] = {}
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse1'] = landUse1 = settings.value('landUse1')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse2'] = landUse2 = settings.value('landUse2')
-            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] = csvLandUse = settings.value('csvLandUse')
+            templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUseTable'] = landUseTable = settings.value('landUseTable')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] = planningUnit = settings.value('planningUnit')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['analysisOption'] = analysisOption = settings.value('analysisOption')
             templateSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['nodata'] = nodata = settings.value('nodata')
@@ -169,14 +169,15 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
                     if indexLandCoverPlanningUnit != -1:
                         self.comboBoxLandCoverPlanningUnit.setCurrentIndex(indexLandCoverPlanningUnit)
                 
+                if landUseTable:
+                    indexLandCoverTable = self.comboBoxLandCoverTable.findText(landUseTable)
+                    
+                    if indexLandCoverTable != -1:
+                        self.comboBoxLandCoverTable.setCurrentIndex(indexLandCoverTable)                    
+                
                 if analysisOption:
                     self.comboBoxLandCoverAnalysisOption.setCurrentIndex(int(analysisOption))
-                
-                if csvLandUse and os.path.exists(csvLandUse):
-                    self.lineEditLandCoverCsvLandUse.setText(csvLandUse)
-                else:
-                    self.lineEditLandCoverCsvLandUse.setText('')
-                
+                  
                 if nodata:
                     self.spinBoxPreQUESNodata.setValue(int(nodata))
                 else:
@@ -787,7 +788,6 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.tabWidget.currentChanged.connect(self.handlerTabWidgetChanged)
         
         # 'Pre-QUES' tab buttons
-        self.buttonSelectLandCoverCsvLandUse.clicked.connect(self.handlerSelectLandCoverCsvLandUse)
         self.buttonProcessPreQUES.clicked.connect(self.handlerProcessPreQUES)
         self.buttonHelpPreQUES.clicked.connect(lambda:self.handlerDialogHelp('QUES'))
         self.buttonLoadPreQUESTemplate.clicked.connect(self.handlerLoadPreQUESTemplate)
@@ -923,45 +923,44 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.layoutLandCoverOptions.setContentsMargins(0, 0, 0, 0)
         
         self.labelLandCoverLandUse1 = QtGui.QLabel()
-        self.labelLandCoverLandUse1.setText('Land use 1:')
+        self.labelLandCoverLandUse1.setText('Earlier land use/cover:')
         self.layoutLandCoverOptions.addWidget(self.labelLandCoverLandUse1, 0, 0)
         
         self.comboBoxLandCoverLandUse1 = QtGui.QComboBox()
         self.comboBoxLandCoverLandUse1.setDisabled(True)
         self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverLandUse1, 0, 1)
         
-        self.populateAddedDataComboBox(self.main.dataLandUseCover, self.comboBoxLandCoverLandUse1)
+        self.handlerPopulateNameFromLookupData(self.main.dataLandUseCover, self.comboBoxLandCoverLandUse1)
         
         self.labelLandCoverLandUse2 = QtGui.QLabel()
-        self.labelLandCoverLandUse2.setText('Land use 2:')
+        self.labelLandCoverLandUse2.setText('Later land use/cover:')
         self.layoutLandCoverOptions.addWidget(self.labelLandCoverLandUse2, 1, 0)
         
         self.comboBoxLandCoverLandUse2 = QtGui.QComboBox()
         self.comboBoxLandCoverLandUse2.setDisabled(True)
         self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverLandUse2, 1, 1)
         
-        self.populateAddedDataComboBox(self.main.dataLandUseCover, self.comboBoxLandCoverLandUse2)
-        
-        self.labelLandCoverCsvLandUse = QtGui.QLabel()
-        self.labelLandCoverCsvLandUse.setText('Land use lookup table:')
-        self.layoutLandCoverOptions.addWidget(self.labelLandCoverCsvLandUse, 2, 0)
-        
-        self.lineEditLandCoverCsvLandUse = QtGui.QLineEdit()
-        self.lineEditLandCoverCsvLandUse.setReadOnly(True)
-        self.layoutLandCoverOptions.addWidget(self.lineEditLandCoverCsvLandUse, 2, 1)
-        self.buttonSelectLandCoverCsvLandUse = QtGui.QPushButton()
-        self.buttonSelectLandCoverCsvLandUse.setText('&Browse')
-        self.layoutLandCoverOptions.addWidget(self.buttonSelectLandCoverCsvLandUse, 2, 2)
+        self.handlerPopulateNameFromLookupData(self.main.dataLandUseCover, self.comboBoxLandCoverLandUse2)
         
         self.labelLandCoverPlanningUnit = QtGui.QLabel()
         self.labelLandCoverPlanningUnit.setText('Planning unit:')
-        self.layoutLandCoverOptions.addWidget(self.labelLandCoverPlanningUnit, 3, 0)
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverPlanningUnit, 2, 0)
         
         self.comboBoxLandCoverPlanningUnit = QtGui.QComboBox()
         self.comboBoxLandCoverPlanningUnit.setDisabled(True)
-        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverPlanningUnit, 3, 1)
+        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverPlanningUnit, 2, 1)
         
-        self.populateAddedDataComboBox(self.main.dataPlanningUnit, self.comboBoxLandCoverPlanningUnit)
+        self.handlerPopulateNameFromLookupData(self.main.dataPlanningUnit, self.comboBoxLandCoverPlanningUnit)        
+        
+        self.labelLandCoverTable = QtGui.QLabel()
+        self.labelLandCoverTable.setText('Land use/cover lookup table:')
+        self.layoutLandCoverOptions.addWidget(self.labelLandCoverTable, 3, 0)
+        
+        self.comboBoxLandCoverTable = QtGui.QComboBox()
+        self.comboBoxLandCoverTable.setDisabled(True)
+        self.layoutLandCoverOptions.addWidget(self.comboBoxLandCoverTable, 3, 1)
+        
+        self.handlerPopulateNameFromLookupData(self.main.dataTable, self.comboBoxLandCoverTable) 
         
         self.labelLandCoverAnalysisOption = QtGui.QLabel()
         self.labelLandCoverAnalysisOption.setText('Analysis option:')
@@ -2210,7 +2209,16 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
-    
+
+    def handlerPopulateNameFromLookupData(self, lookupData, comboBox):
+        """Populate name or description from a spesific lookup table
+        """
+        if len(lookupData):
+            comboBox.clear()
+            for value in lookupData.values():
+                comboBox.addItem(value[list(value)[0]]) # value.values()[0] <-- only support in python 2
+            comboBox.setEnabled(True)
+                    
     
     #***********************************************************
     # 'QUES-C' tab QGroupBox toggle handlers
@@ -2351,18 +2359,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             if fileSaved:
                 self.handlerLoadPreQUESTemplate(fileName)
     
-    
-    def handlerSelectLandCoverCsvLandUse(self):
-        """Slot method for a file select dialog.
-        """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select Land Use Lookup Table', QtCore.QDir.homePath(), 'Land Use Lookup Table (*{0})'.format(self.main.appSettings['selectCsvfileExt'])))
-        
-        if file:
-            self.lineEditLandCoverCsvLandUse.setText(file)
-            logging.getLogger(type(self).__name__).info('select file: %s', file)
-    
-    
+
     #***********************************************************
     # 'QUES-C' tab QPushButton handlers
     #***********************************************************
@@ -3029,8 +3026,8 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             = unicode(self.comboBoxLandCoverLandUse1.currentText())
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse2'] \
             = unicode(self.comboBoxLandCoverLandUse2.currentText())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['csvLandUse'] \
-            = unicode(self.lineEditLandCoverCsvLandUse.text())
+        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUseTable'] \
+            = unicode(self.comboBoxLandCoverTable.currentText())
         self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] \
             = unicode(self.comboBoxLandCoverPlanningUnit.currentText())
         analysisOption = unicode(self.comboBoxLandCoverAnalysisOption.currentText())
@@ -3228,7 +3225,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
                 self.main.appSettings[formName]['landUse1'],
                 self.main.appSettings[formName]['landUse2'],
                 self.main.appSettings[formName]['planningUnit'],
-                self.main.appSettings[formName]['csvLandUse'],
+                self.main.appSettings[formName]['landUseTable'],
                 self.main.appSettings[formName]['analysisOption'],
                 self.main.appSettings[formName]['nodata'],
                 None, # statusoutput

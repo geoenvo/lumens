@@ -197,8 +197,8 @@ class MainWindow(QtGui.QMainWindow):
             'DialogLumensPreQUESLandcoverTrajectoriesAnalysis': {
                 'landUse1': '',
                 'landUse2': '',
-                'csvLandUse': '',
                 'planningUnit': '',
+                'landUseTable': '',
                 'analysisOption': '',
                 'nodata': '',
             },
@@ -1995,7 +1995,7 @@ class MainWindow(QtGui.QMainWindow):
                   }
               
               self.dataFactor = dataFactor
-        
+      
         if os.path.exists(csvDataTable):
             with open(csvDataTable, 'rb') as f:
               reader = csv.reader(f)
@@ -2007,7 +2007,7 @@ class MainWindow(QtGui.QMainWindow):
               dataTable = {}
               
               for row in reader:
-                  self.dataTable[row[0]] = {
+                  dataTable[row[0]] = {
                       'TBL_DATA': row[0],
                       'TBL_NAME': row[1],
                   }
