@@ -3210,7 +3210,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         
         formName = 'DialogLumensPreQUESLandcoverTrajectoriesAnalysis'
         # algName = 'modeler:pre-ques_trajectory'
-        algName = 'r:pre-quesanalysis'
+        algName = 'r:prequesanalysis'
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
