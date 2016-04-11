@@ -616,20 +616,22 @@ class MainWindow(QtGui.QMainWindow):
         self.taMenu = self.menubar.addMenu('&TA')
         self.sciendoMenu = self.menubar.addMenu('&SCIENDO')
         self.aboutMenu = self.menubar.addMenu('&About')
-
+        
+        # Floating toolbar
         self.toolBar = QtGui.QToolBar(self)
-        self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolBar)
+        self.toolBar.setOrientation(QtCore.Qt.Vertical)
+        self.toolBar.setAllowedAreas(QtCore.Qt.NoToolBarArea)
+        self.toolBar.setFixedWidth(40)
+        self.toolBar.setFixedHeight(550)
         
         self.statusBar = QtGui.QStatusBar(self)
         self.statusBar.setSizeGripEnabled(False)
-        ##self.statusBar.setStyleSheet('QStatusBar { background: green; } QStatusBar::item { background: blue; margin-right: 11px; }')
-        ##self.statusBar.setFixedHeight(10)
-        ##self.labelLayerCRS = QtGui.QLabel(self)
-        ##self.labelLayerCRS.setText('...')
-        ##self.statusBar.addPermanentWidget(self.labelLayerCRS)
+        
         self.labelMapCanvasCoordinate = QtGui.QLabel(self)
-        self.labelMapCanvasCoordinate.setStyleSheet('QLabel { margin-right: 11px; }')
+        self.labelMapCanvasCoordinate.setStyleSheet('QLabel { margin-right: 7px; }')
         self.labelMapCanvasCoordinate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
+        
         self.statusBar.addPermanentWidget(self.labelMapCanvasCoordinate)
         self.setStatusBar(self.statusBar)
         
@@ -803,11 +805,11 @@ class MainWindow(QtGui.QMainWindow):
         
         # About menu
         icon = QtGui.QIcon(':/ui/icons/iconActionHelp.png')
-        #self.actionDialogLumensGuide = QtGui.QAction(icon, 'Open Guide', self)
+        ##self.actionDialogLumensGuide = QtGui.QAction(icon, 'Open Guide', self)
         self.actionDialogLumensHelp = QtGui.QAction(icon, 'Open Help', self)
         self.actionDialogLumensAbout = QtGui.QAction('About LUMENS', self)
         
-        #self.aboutMenu.addAction(self.actionDialogLumensGuide)
+        ##self.aboutMenu.addAction(self.actionDialogLumensGuide)
         self.aboutMenu.addAction(self.actionDialogLumensHelp)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.actionDialogLumensAbout)
@@ -822,10 +824,6 @@ class MainWindow(QtGui.QMainWindow):
         self.lineEditActiveProject.setReadOnly(True)
         self.layoutActiveProject.addWidget(self.lineEditActiveProject)
         
-        ##self.contentSidebar = QtGui.QWidget()
-        ##self.layoutSidebar = QtGui.QVBoxLayout()
-        ##self.contentSidebar.setLayout(self.layoutSidebar)
-        
         self.layerListView = QtGui.QListView(self)
         self.layerListView.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
         ##self.layerListView.setMovement(QtGui.QListView.Snap)
@@ -839,13 +837,6 @@ class MainWindow(QtGui.QMainWindow):
         
         self.layerListView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
-        ##self.layoutSidebar.setContentsMargins(0, 0, 0, 0)
-        ##self.layoutSidebar.addWidget(self.layerListView)
-        
-        ##self.scrollSidebar = QtGui.QScrollArea()
-        ##self.scrollSidebar.setFixedWidth(200)
-        ##self.scrollSidebar.setWidget(self.contentSidebar)
-        
         self.projectModel = QtGui.QFileSystemModel()
         self.projectModel.setRootPath(QtCore.QDir.rootPath())
         
@@ -857,7 +848,7 @@ class MainWindow(QtGui.QMainWindow):
         self.projectTreeView.hideColumn(3)
         
         self.sidebarTabWidget = QtGui.QTabWidget()
-        self.sidebarTabWidget.setTabPosition(QtGui.QTabWidget.West)
+        self.sidebarTabWidget.setTabPosition(QtGui.QTabWidget.North)
         
         self.dashboardTabWidget = QtGui.QTabWidget()
         
@@ -1543,46 +1534,40 @@ class MainWindow(QtGui.QMainWindow):
         self.layoutTabDashboard.addWidget(self.dashboardTabWidget)
         self.layoutTabProject.addWidget(self.projectTreeView)
         
-        self.splitterBody = QtGui.QSplitter(self)
-        self.splitterBody.setOrientation(QtCore.Qt.Horizontal)
-        
-        self.splitterBody.setStretchFactor(0, 1)
-        self.splitterBody.setStretchFactor(1, 5)
-        
-        self.splitterBody.addWidget(self.sidebarTabWidget)
-        self.splitterBody.setCollapsible(0, False)
+        # Floating sidebar
+        self.sidebarDockWidget = QtGui.QDockWidget('Sidebar', self)
+        self.sidebarDockWidget.setFeatures(self.sidebarDockWidget.features() & ~QtGui.QDockWidget.DockWidgetClosable)
+        self.sidebarDockWidget.setWidget(self.sidebarTabWidget)
+        self.sidebarDockWidget.setFloating(True)
+        self.sidebarDockWidget.setMinimumHeight(520)
         
         self.layoutBody = QtGui.QHBoxLayout()
         self.layoutBody.setContentsMargins(0, 0, 0, 0)
         self.layoutBody.setAlignment(QtCore.Qt.AlignLeft)
-        ##self.layoutBody.addWidget(self.scrollSidebar)
-        ##self.layoutBody.addWidget(self.layerListView)
-        ##self.layoutBody.addWidget(self.sidebarTabWidget)
-        self.layoutBody.addWidget(self.splitterBody)
         
+        # Vertical layout for widgets
         self.layoutMain = QtGui.QVBoxLayout()
-        self.layoutMain.setContentsMargins(11, 11, 11, 0) # Reduce gap with statusbar
-        self.layoutMain.addLayout(self.layoutActiveProject)
-        ###self.layoutMain.addLayout(self.layoutBody)
+        # Reduce gap with statusbar
+        self.layoutMain.setContentsMargins(11, 11, 11, 0)
+        
         self.contentBody = QtGui.QWidget()
         self.contentBody.setLayout(self.layoutBody)
         
-        # A splitter between content body and the collapsible log box
         self.log_box = QPlainTextEditLogger(self)
-        self.splitterMain = QtGui.QSplitter(self)
-        self.splitterMain.setOrientation(QtCore.Qt.Vertical)
-        ###self.layoutMain.addWidget(self.log_box.widget)
-        self.splitterMain.addWidget(self.contentBody)
-        self.splitterMain.addWidget(self.log_box.widget)
-        
         # Show the logging widget only in debug mode
         if not self.appSettings['debug']:
             self.log_box.widget.setVisible(False)
         
-        self.splitterMain.setStretchFactor(0, 5) # Bigger proportion for contentBody
-        self.splitterMain.setStretchFactor(1, 1) # Smaller proportion for log box
-        self.splitterMain.setCollapsible(0, False) # Don't collapse contentBody
+        self.splitterMain = QtGui.QSplitter(self)
+        self.splitterMain.setOrientation(QtCore.Qt.Vertical)
+        self.splitterMain.addWidget(self.contentBody)
+        self.splitterMain.addWidget(self.log_box.widget)
+        # Don't collapse contentBody (mapCanvas)
+        self.splitterMain.setCollapsible(0, False)
+        self.splitterMain.setSizes([550, 50])
+        
         self.layoutMain.addWidget(self.splitterMain)
+        self.layoutMain.addLayout(self.layoutActiveProject)
         
         self.centralWidget.setLayout(self.layoutMain)
         
@@ -1597,8 +1582,6 @@ class MainWindow(QtGui.QMainWindow):
         self.mapCanvas.mapRenderer().setLabelingEngine(labelingEngine)
         self.mapCanvas.setCanvasColor(QtCore.Qt.white)
         self.mapCanvas.enableAntiAliasing(True)
-        ##self.mapCanvas.refresh()
-        ##self.mapCanvas.show()
         
         # Initialize the map tools and assign to the related action
         self.panTool = PanTool(self.mapCanvas)
@@ -1610,7 +1593,28 @@ class MainWindow(QtGui.QMainWindow):
         self.infoTool = InfoTool(self)
         self.infoTool.setAction(self.actionInfo)
         
-        self.resize(self.sizeHint())
+        # Causes mainwindow size to fill screen ignoring setMinimumSize()
+        ##self.resize(self.sizeHint())
+    
+    
+    def resizeEvent(self, event):
+        """Overload method that is called when the window is resized.
+        
+        Places floating widgets relative to the parent window.
+        """
+        parentPosition = self.mapToGlobal(QtCore.QPoint(0, 0))
+        
+        self.toolBar.setWindowFlags(QtCore.Qt.Tool|QtCore.Qt.FramelessWindowHint|QtCore.Qt.X11BypassWindowManagerHint)
+        
+        # Near top left
+        self.toolBar.move(parentPosition.x() + 20, parentPosition.y() + 40)
+        self.toolBar.adjustSize()
+        self.toolBar.show()
+        
+        # Near top right
+        self.sidebarDockWidget.move(parentPosition.x() + self.width() - self.sidebarDockWidget.width() - 35, parentPosition.y() + 40)
+        
+        super(MainWindow, self).resizeEvent(event)
     
     
     def eventFilter(self, source, event):
@@ -2169,21 +2173,15 @@ class MainWindow(QtGui.QMainWindow):
         """Replaces loadMap(), load the display default basemap layer on the map canvas.
         """
         self.addLayer(self.appSettings['defaultBasemapFilePath'])
-        ##self.addLayer(self.appSettings['defaultVectorFilePath'])
         self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
-        ###self.mapCanvas.refresh()
-        ##self.layoutBody.addWidget(self.mapCanvas)
-        self.splitterBody.addWidget(self.mapCanvas)
-        self.splitterBody.setCollapsible(1, False)
+        self.layoutBody.addWidget(self.mapCanvas)
     
     
     def loadMapCanvas(self):
         """Method for adding the map canvas widget to main window's body content.
         """
         self.mapCanvas.setExtent(self.appSettings['defaultExtent'])
-        ##self.layoutBody.addWidget(self.mapCanvas)
-        self.splitterBody.addWidget(self.mapCanvas)
-        self.splitterBody.setCollapsible(1, False)
+        self.layoutBody.addWidget(self.mapCanvas)
     
     
     def loadMap(self):
@@ -2207,9 +2205,7 @@ class MainWindow(QtGui.QMainWindow):
         
         self.mapCanvas.setLayerSet(layers)
         
-        ##self.layoutBody.addWidget(self.mapCanvas)
-        self.splitterBody.addWidget(self.mapCanvas)
-        self.splitterBody.setCollapsible(1, False)
+        self.layoutBody.addWidget(self.mapCanvas)
     
     
     def addLayer(self, layerFile):
@@ -2928,9 +2924,9 @@ class MainWindow(QtGui.QMainWindow):
         """Slot method for toggling the sidebar visibility.
         """
         if not self.actionToggleSidebar.isChecked():
-            self.sidebarTabWidget.setVisible(False)
+            self.sidebarDockWidget.setVisible(False)
         else:
-            self.sidebarTabWidget.setVisible(True)
+            self.sidebarDockWidget.setVisible(True)
     
     
     def handlerToggleToolbar(self):
@@ -3362,7 +3358,7 @@ def main():
     """
     
     window = MainWindow()
-    window.show()
+    window.showMaximized()
     splashScreen.finish(window)
     window.raise_()
     
