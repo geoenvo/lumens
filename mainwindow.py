@@ -508,6 +508,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionQuit.triggered.connect(self.close)
         self.actionToggleSidebar.triggered.connect(self.handlerToggleSidebar)
         self.actionToggleToolbar.triggered.connect(self.handlerToggleToolbar)
+        self.actionToggleDialogToolbar.triggered.connect(self.handlerToggleDialogToolbar)
         self.actionZoomIn.triggered.connect(self.handlerZoomIn)
         self.actionZoomOut.triggered.connect(self.handlerZoomOut)
         self.actionZoomFull.triggered.connect(self.handlerZoomFull)
@@ -610,7 +611,7 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu = self.menubar.addMenu('&File')
         self.viewMenu = self.menubar.addMenu('&View')
         self.modeMenu = self.menubar.addMenu('&Mode')
-        self.databaseMenu = self.menubar.addMenu('&Database')
+        self.databaseMenu = self.menubar.addMenu('&DATABASE')
         self.purMenu = self.menubar.addMenu('&PUR')
         self.quesMenu = self.menubar.addMenu('&QUES')
         self.taMenu = self.menubar.addMenu('&TA')
@@ -624,6 +625,12 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.setAllowedAreas(QtCore.Qt.NoToolBarArea)
         self.toolBar.setFixedWidth(40)
         self.toolBar.setFixedHeight(550)
+        
+        self.dialogToolBar = QtGui.QToolBar(self)
+        self.dialogToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
+        self.dialogToolBar.setIconSize(QtCore.QSize(32, 32))
+        self.dialogToolBar.setMovable(False)
+        self.addToolBar(QtCore.Qt.TopToolBarArea, self.dialogToolBar)
         
         self.statusBar = QtGui.QStatusBar(self)
         self.statusBar.setSizeGripEnabled(False)
@@ -643,7 +650,11 @@ class MainWindow(QtGui.QMainWindow):
         self.actionToggleSidebar.setCheckable(True)
         self.actionToggleSidebar.setChecked(True)
         
-        self.actionToggleToolbar = QtGui.QAction('Toolbar', self)
+        self.actionToggleDialogToolbar = QtGui.QAction('Top Toolbar', self)
+        self.actionToggleDialogToolbar.setCheckable(True)
+        self.actionToggleDialogToolbar.setChecked(True)
+        
+        self.actionToggleToolbar = QtGui.QAction('Map Toolbar', self)
         self.actionToggleToolbar.setCheckable(True)
         self.actionToggleToolbar.setChecked(True)
         
@@ -727,6 +738,7 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu.addAction(self.actionQuit)
         
         self.viewMenu.addAction(self.actionToggleSidebar)
+        self.viewMenu.addAction(self.actionToggleDialogToolbar)
         self.viewMenu.addAction(self.actionToggleToolbar)
         self.viewMenu.addSeparator()
         self.viewMenu.addAction(self.actionZoomIn)
@@ -782,24 +794,32 @@ class MainWindow(QtGui.QMainWindow):
         self.databaseMenu.addAction(self.actionDialogLumensImportDatabase)
         
         # PUR menu
-        self.actionDialogLumensPUR = QtGui.QAction('Planning Unit Reconciliation', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensPUR.png')
+        self.actionDialogLumensPUR = QtGui.QAction(icon, 'Planning Unit Reconciliation', self)
+        self.actionDialogLumensPUR.setIconText('PUR')
         
         self.purMenu.addAction(self.actionDialogLumensPUR)
         
         # QUES menu
-        self.actionDialogLumensQUES = QtGui.QAction('Quantification Environmental Services', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensDefault.png')
+        self.actionDialogLumensQUES = QtGui.QAction(icon, 'Quantification Environmental Services', self)
+        self.actionDialogLumensQUES.setIconText('QUES')
         
         self.quesMenu.addAction(self.actionDialogLumensQUES)
         
         # TA menu
-        self.actionDialogLumensTAOpportunityCost = QtGui.QAction('Trade-off Analysis [Opportunity Cost]', self)
-        self.actionDialogLumensTARegionalEconomy = QtGui.QAction('Trade-off Analysis [Regional Economy]', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensDefault.png')
+        self.actionDialogLumensTAOpportunityCost = QtGui.QAction(icon, 'Trade-off Analysis [Opportunity Cost]', self)
+        self.actionDialogLumensTARegionalEconomy = QtGui.QAction(icon, 'Trade-off Analysis [Regional Economy]', self)
+        self.actionDialogLumensTAOpportunityCost.setIconText('TA')
         
         self.taMenu.addAction(self.actionDialogLumensTAOpportunityCost)
         self.taMenu.addAction(self.actionDialogLumensTARegionalEconomy)
         
         # SCIENDO menu
-        self.actionDialogLumensSCIENDO = QtGui.QAction('SCIENDO', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensDefault.png')
+        self.actionDialogLumensSCIENDO = QtGui.QAction(icon, 'SCIENDO', self)
+        self.actionDialogLumensSCIENDO.setIconText('SCIENDO')
         
         self.sciendoMenu.addAction(self.actionDialogLumensSCIENDO)
         
@@ -813,6 +833,13 @@ class MainWindow(QtGui.QMainWindow):
         self.aboutMenu.addAction(self.actionDialogLumensHelp)
         self.aboutMenu.addSeparator()
         self.aboutMenu.addAction(self.actionDialogLumensAbout)
+        
+        # Dialog toolbar
+        self.dialogToolBar.addAction(self.actionDialogLumensPUR)
+        self.dialogToolBar.addAction(self.actionDialogLumensQUES)
+        self.dialogToolBar.addAction(self.actionDialogLumensTAOpportunityCost)
+        self.dialogToolBar.addAction(self.actionDialogLumensSCIENDO)
+        self.dialogToolBar.addSeparator()
         
         # Create the app window layouts
         self.layoutActiveProject = QtGui.QHBoxLayout()
@@ -1601,18 +1628,23 @@ class MainWindow(QtGui.QMainWindow):
         """Overload method that is called when the window is resized.
         
         Places floating widgets relative to the parent window.
+        
+        Args:
+            event (QEvent): the resize event that is triggered.
         """
         parentPosition = self.mapToGlobal(QtCore.QPoint(0, 0))
         
         self.toolBar.setWindowFlags(QtCore.Qt.Tool|QtCore.Qt.FramelessWindowHint|QtCore.Qt.X11BypassWindowManagerHint)
         
+        yMargin = 100
+        
         # Near top left
-        self.toolBar.move(parentPosition.x() + 20, parentPosition.y() + 40)
+        self.toolBar.move(parentPosition.x() + 20, parentPosition.y() + yMargin)
         self.toolBar.adjustSize()
         self.toolBar.show()
         
         # Near top right
-        self.sidebarDockWidget.move(parentPosition.x() + self.width() - self.sidebarDockWidget.width() - 35, parentPosition.y() + 40)
+        self.sidebarDockWidget.move(parentPosition.x() + self.width() - self.sidebarDockWidget.width() - 35, parentPosition.y() + yMargin)
         
         super(MainWindow, self).resizeEvent(event)
     
@@ -2936,6 +2968,15 @@ class MainWindow(QtGui.QMainWindow):
             self.toolBar.setVisible(False)
         else:
             self.toolBar.setVisible(True)
+    
+    
+    def handlerToggleDialogToolbar(self):
+        """Slot method for toggling the top dialog toolbar visibility.
+        """
+        if not self.actionToggleDialogToolbar.isChecked():
+            self.dialogToolBar.setVisible(False)
+        else:
+            self.dialogToolBar.setVisible(True)
     
     
     def handlerZoomIn(self):

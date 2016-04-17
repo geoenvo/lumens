@@ -20,5 +20,7 @@
         <file>ui/icons/iconActionFeatureSelectExpression.png</file>
         <file>ui/icons/iconActionToggleEdit.png</file>
         <file>ui/icons/iconActionClear.png</file>
+        <file>ui/icons/iconActionDialogLumensPUR.png</file>
+        <file>ui/icons/iconActionDialogLumensDefault.png</file>
     </qresource>
 </RCC>
