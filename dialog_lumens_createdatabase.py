@@ -458,7 +458,7 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
             
             self.buttonProcessCreateDatabase.setDisabled(True)
             
-            algName = 'modeler:lumens_create_database'
+            algName = 'r:lumenscreatedatabase'
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)

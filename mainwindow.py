@@ -203,7 +203,11 @@ class MainWindow(QtGui.QMainWindow):
                 'nodata': '',
             },
             'DialogLumensQUESCCarbonAccounting': {
-                'csvfile': '',
+                'landUse1': '',
+                'landUse2': '',
+                'planningUnit': '',
+                'landUseTable': '',
+                'analysisOption': '',
                 'nodata': '',
             },
             'DialogLumensQUESCPeatlandCarbonAccounting': {
