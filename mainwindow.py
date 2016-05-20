@@ -646,7 +646,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionQuit = QtGui.QAction('Quit', self)
         self.actionQuit.setShortcut(QtGui.QKeySequence.Quit)
         
-        self.actionToggleSidebar = QtGui.QAction('Sidebar', self)
+        self.actionToggleSidebar = QtGui.QAction('Dashboard', self) # Formerly 'Sidebar'
         self.actionToggleSidebar.setCheckable(True)
         self.actionToggleSidebar.setChecked(True)
         
@@ -777,12 +777,18 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addAction(self.actionInfo)
         
         # Database menu
-        self.actionDialogLumensCreateDatabase = QtGui.QAction('Create LUMENS database', self)
-        self.actionLumensOpenDatabase = QtGui.QAction('Open LUMENS database', self)
-        self.actionLumensCloseDatabase = QtGui.QAction('Close LUMENS database', self)
-        self.actionLumensDatabaseStatus = QtGui.QAction('LUMENS database status', self)
-        self.actionDialogLumensAddData = QtGui.QAction('Add data to LUMENS database', self)
-        self.actionLumensDeleteData = QtGui.QAction('Delete LUMENS data', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogCreateLumensDatabase.png')
+        self.actionDialogLumensCreateDatabase = QtGui.QAction(icon, 'Create LUMENS database', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionLumensOpenDatabase.png')
+        self.actionLumensOpenDatabase = QtGui.QAction(icon, 'Open LUMENS database', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionLumensCloseDatabase.png')
+        self.actionLumensCloseDatabase = QtGui.QAction(icon, 'Close LUMENS database', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionLumensDatabaseStatus.png')
+        self.actionLumensDatabaseStatus = QtGui.QAction(icon, 'LUMENS database status', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensAddData.png')
+        self.actionDialogLumensAddData = QtGui.QAction(icon, 'Add data to LUMENS database', self)
+        icon = QtGui.QIcon(':/ui/icons/iconActionLumensDeleteData.png')
+        self.actionLumensDeleteData = QtGui.QAction(icon, 'Delete LUMENS data', self)
         self.actionDialogLumensImportDatabase = QtGui.QAction('Import LUMENS database', self)
         
         self.databaseMenu.addAction(self.actionDialogLumensCreateDatabase)
@@ -880,23 +886,32 @@ class MainWindow(QtGui.QMainWindow):
         self.dashboardTabWidget = QtGui.QTabWidget()
         
         self.tabLayers = QtGui.QWidget()
+        self.tabDatabase = QtGui.QWidget()
         self.tabDashboard = QtGui.QWidget()
-        self.tabProject = QtGui.QWidget()
+        #self.tabProject = QtGui.QWidget()
+        self.tabHelp = QtGui.QWidget()
         
         self.layoutTabLayers = QtGui.QVBoxLayout()
+        self.layoutTabDatabase = QtGui.QVBoxLayout()
+        self.layoutTabDatabase.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.layoutTabDashboard = QtGui.QVBoxLayout()
-        self.layoutTabProject = QtGui.QVBoxLayout()
+        #self.layoutTabProject = QtGui.QVBoxLayout()
+        self.layoutTabHelp = QtGui.QVBoxLayout()
         
         self.tabLayers.setLayout(self.layoutTabLayers)
+        self.tabDatabase.setLayout(self.layoutTabDatabase)
         self.tabDashboard.setLayout(self.layoutTabDashboard)
-        self.tabProject.setLayout(self.layoutTabProject)
+        #self.tabProject.setLayout(self.layoutTabProject)
+        self.tabHelp.setLayout(self.layoutTabHelp)
         
-        self.sidebarTabWidget.addTab(self.tabLayers, 'Layers')
-        self.sidebarTabWidget.addTab(self.tabDashboard, 'Dashboard')
-        self.sidebarTabWidget.addTab(self.tabProject, 'Project')
+        self.sidebarTabWidget.addTab(self.tabLayers, 'Project') # Formerly 'Layers'
+        self.sidebarTabWidget.addTab(self.tabDatabase, 'Database')
+        self.sidebarTabWidget.addTab(self.tabDashboard, 'Templates') # Formerly 'Dashboard'
+        #self.sidebarTabWidget.addTab(self.tabProject, 'Project')
+        self.sidebarTabWidget.addTab(self.tabHelp, 'Help')
         
         #***********************************************************
-        # Setup 'Dashboard' tab
+        # Setup 'Dashboard' tab => 'Templates' tab
         #***********************************************************
         self.tabDashboardPUR = QtGui.QWidget()
         self.tabDashboardQUES = QtGui.QWidget()
@@ -1557,14 +1572,55 @@ class MainWindow(QtGui.QMainWindow):
         # End 'Dashboard' tab setup
         #***********************************************************
         
-        self.layoutTabLayers.addWidget(self.layerListView)
+        self.groupBoxProjectLayers = QtGui.QGroupBox('Layers')
+        self.layoutGroupBoxProjectLayers = QtGui.QHBoxLayout()
+        self.groupBoxProjectLayers.setLayout(self.layoutGroupBoxProjectLayers)
+        
+        self.groupBoxProjectExplore = QtGui.QGroupBox('Explore')
+        self.layoutGroupBoxProjectExplore = QtGui.QVBoxLayout()
+        self.groupBoxProjectExplore.setLayout(self.layoutGroupBoxProjectExplore)
+        
+        #self.layoutTabLayers.addWidget(self.layerListView)
+        #self.layoutTabLayers.addWidget(self.projectTreeView)
+        self.layoutGroupBoxProjectLayers.addWidget(self.layerListView)
+        self.layoutGroupBoxProjectExplore.addWidget(self.projectTreeView)
+        self.layoutTabLayers.addWidget(self.groupBoxProjectLayers)
+        self.layoutTabLayers.addWidget(self.groupBoxProjectExplore)
         self.layoutTabDashboard.addWidget(self.dashboardTabWidget)
-        self.layoutTabProject.addWidget(self.projectTreeView)
+        #self.layoutTabProject.addWidget(self.projectTreeView)
+        
+        self.layersToolBar = QtGui.QToolBar(self)
+        self.layersToolBar.setOrientation(QtCore.Qt.Vertical)
+        self.layersToolBar.addAction(self.actionAddLayer)
+        self.layersToolBar.addAction(self.actionLayerAttributeTable)
+        self.layersToolBar.addAction(self.actionLayerProperties)
+        self.layersToolBar.addAction(self.actionDeleteLayer)
+        self.layoutGroupBoxProjectLayers.addWidget(self.layersToolBar)
+        
+        self.databaseToolBar = QtGui.QToolBar(self)
+        self.databaseToolBar.setIconSize(QtCore.QSize(32, 32))
+        self.databaseToolBar.addAction(self.actionDialogLumensCreateDatabase)
+        self.databaseToolBar.addAction(self.actionLumensOpenDatabase)
+        self.databaseToolBar.addAction(self.actionLumensCloseDatabase)
+        self.databaseToolBar.addAction(self.actionDialogLumensAddData)
+        self.databaseToolBar.addAction(self.actionLumensDeleteData)
+        self.databaseToolBar.addAction(self.actionLumensDatabaseStatus)
+        self.layoutTabDatabase.addWidget(self.databaseToolBar)
+        
+        self.plainTextEditDatabaseStatus = QtGui.QPlainTextEdit(self)
+        self.plainTextEditDatabaseStatus.setReadOnly(True)
+        
+        self.groupBoxDatabaseStatus = QtGui.QGroupBox('Database status')
+        self.layoutGroupBoxDatabaseStatus = QtGui.QVBoxLayout()
+        self.groupBoxDatabaseStatus.setLayout(self.layoutGroupBoxDatabaseStatus)
+        self.layoutTabDatabase.addWidget(self.groupBoxDatabaseStatus)
+        self.layoutGroupBoxDatabaseStatus.addWidget(self.plainTextEditDatabaseStatus)
         
         # Floating sidebar
-        self.sidebarDockWidget = QtGui.QDockWidget('Sidebar', self)
+        self.sidebarDockWidget = QtGui.QDockWidget('Dashboard', self) # Formerly 'Sidebar'
         self.sidebarDockWidget.setFeatures(self.sidebarDockWidget.features() & ~QtGui.QDockWidget.DockWidgetClosable)
         self.sidebarDockWidget.setWidget(self.sidebarTabWidget)
+        self.sidebarDockWidget.setStyleSheet('QToolBar { border: none; }') # Remove border for all child QToolBar in sidebar
         self.sidebarDockWidget.setFloating(True)
         self.sidebarDockWidget.setMinimumHeight(520)
         
