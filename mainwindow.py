@@ -2860,17 +2860,22 @@ class MainWindow(QtGui.QMainWindow):
                 importedLumensDatabaseName, importedLumensDatabaseExt = os.path.splitext(importedLumenDatabaseProject)
                 
                 if importedLumensDatabaseExt == self.appSettings['selectProjectfileExt']:
-                
+                    
                     workingDir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
-                    logging.getLogger(type(self).__name__).info('select new working directory: %s', workingDir)
                     
-                    self.lumensImportDatabase(workingDir, lumensDatabase)
-                    
-                    lumensDatabase = os.path.join(workingDir, importedLumensDatabaseName, importedLumenDatabaseProject).replace(os.path.sep, '/')
+                    if workingDir:
+                        logging.getLogger(type(self).__name__).info('select new working directory: %s', workingDir)
+                        
+                        self.lumensImportDatabase(workingDir, lumensDatabase)
+                        
+                        lumensDatabase = os.path.join(workingDir, importedLumensDatabaseName, importedLumenDatabaseProject).replace(os.path.sep, '/')
+                    else:
+                        print 'ERROR: Invalid working directory!'
+                        return
                 else:
-                    print 'ERROR: Invalid LUMENS database project file!'
+                    print 'ERROR: Invalid archived LUMENS file!'
                     return
-                
+              
             self.lumensOpenDatabase(lumensDatabase)
             
             
