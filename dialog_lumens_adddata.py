@@ -406,6 +406,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
             
             algName = None
             outputs = None
+            activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)
@@ -421,6 +422,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                     
                     outputs = general.runalg(
                         algName,
+                        activeProject,
                         tableRowData['dataType'],
                         tableRowData['dataFile'].replace(os.path.sep, '/'),
                         tableRowData['dataPeriod'],
@@ -433,6 +435,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                     
                     outputs = general.runalg(
                         algName,
+                        activeProject,
                         tableRowData['dataType'],
                         tableRowData['dataDissolvedShapefile'].replace(os.path.sep, '/'),
                         tableRowData['dataFieldAttribute'],
@@ -446,6 +449,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
                     
                     outputs = general.runalg(
                         algName,
+                        activeProject,
                         tableRowData['dataDescription'],
                         tableRowData['dataFile'].replace(os.path.sep, '/'),
                         None,
