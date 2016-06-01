@@ -207,8 +207,7 @@ class MainWindow(QtGui.QMainWindow):
                 'landUse1': '',
                 'landUse2': '',
                 'planningUnit': '',
-                'landUseTable': '',
-                'analysisOption': '',
+                'carbonTable': '',
                 'nodata': '',
             },
             'DialogLumensQUESCPeatlandCarbonAccounting': {
