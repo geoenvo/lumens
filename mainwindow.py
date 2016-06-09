@@ -574,14 +574,23 @@ class MainWindow(QtGui.QMainWindow):
         
         # Dashboard tab QPushButtons
         self.buttonProcessPURTemplate.clicked.connect(self.handlerProcessPURTemplate)
+        self.buttonConfigurePUR.clicked.connect(self.handlerDialogLumensPUR)
         self.buttonProcessPreQUESTemplate.clicked.connect(self.handlerProcessPreQUESTemplate)
+        self.buttonConfigurePreQUES.clicked.connect(lambda:self.handlerDialogLumensQUES('Pre-QUES'))
         self.buttonProcessQUESCTemplate.clicked.connect(self.handlerProcessQUESCTemplate)
+        self.buttonConfigureQUESC.clicked.connect(lambda:self.handlerDialogLumensQUES('QUES-C'))
         self.buttonProcessQUESBTemplate.clicked.connect(self.handlerProcessQUESBTemplate)
+        self.buttonConfigureQUESB.clicked.connect(lambda:self.handlerDialogLumensQUES('QUES-B'))
         self.buttonProcessQUESHTemplate.clicked.connect(self.handlerProcessQUESHTemplate)
+        self.buttonConfigureQUESH.clicked.connect(lambda:self.handlerDialogLumensQUES('QUES-H'))
         self.buttonProcessTAOpportunityCostTemplate.clicked.connect(self.handlerProcessTAOpportunityCostTemplate)
+        self.buttonConfigureTAOpportunityCost.clicked.connect(self.handlerDialogLumensTAOpportunityCost)
         self.buttonProcessTARegionalEconomyTemplate.clicked.connect(self.handlerProcessTARegionalEconomyTemplate)
+        self.buttonConfigureTARegionalEconomy.clicked.connect(self.handlerDialogLumensTARegionalEconomy)
         self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.clicked.connect(self.handlerProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate)
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis.clicked.connect(lambda:self.handlerDialogLumensSCIENDO('Low Emission Development Analysis'))
         self.buttonProcessSCIENDOLandUseChangeModelingTemplate.clicked.connect(self.handlerProcessSCIENDOLandUseChangeModelingTemplate)
+        self.buttonConfigureSCIENDOLandUseChangeModeling.clicked.connect(lambda:self.handlerDialogLumensSCIENDO('Land Use Change Modeling'))
         
         # About menu
         #self.actionDialogLumensGuide.triggered.connect(self.handlerDialogLumensGuide)
@@ -604,7 +613,8 @@ class MainWindow(QtGui.QMainWindow):
         9. QgsMapCanvas instance
         10. Map tools
         """
-        self.setWindowTitle('LUMENS v {0}'.format(__version__))
+        self.windowTitle = 'LUMENS v {0} {1}'
+        self.setWindowTitle(self.windowTitle.format(__version__, ''))
 
         self.centralWidget = QtGui.QWidget(self)
         self.centralWidget.setMinimumSize(1024, 600)
@@ -621,6 +631,14 @@ class MainWindow(QtGui.QMainWindow):
         self.taMenu = self.menubar.addMenu('&TA')
         self.sciendoMenu = self.menubar.addMenu('&SCIENDO')
         self.aboutMenu = self.menubar.addMenu('&About')
+        
+        # 20160601: the menu bar must be hidden
+        self.actionToggleMenubar = QtGui.QAction('Menu bar', self)
+        self.actionToggleMenubar.setShortcut('f11')
+        self.actionToggleMenubar.setCheckable(True)
+        self.actionToggleMenubar.setChecked(True)
+        self.actionToggleMenubar.triggered.connect(self.handlerToggleMenuBar)
+        self.actionToggleMenubar.trigger()
         
         # Floating toolbar
         self.toolBar = QtGui.QToolBar(self)
@@ -741,6 +759,8 @@ class MainWindow(QtGui.QMainWindow):
         
         self.fileMenu.addAction(self.actionQuit)
         
+        self.addAction(self.actionToggleMenubar)
+        self.viewMenu.addAction(self.actionToggleMenubar)
         self.viewMenu.addAction(self.actionToggleSidebar)
         self.viewMenu.addAction(self.actionToggleDialogToolbar)
         self.viewMenu.addAction(self.actionToggleToolbar)
@@ -908,12 +928,6 @@ class MainWindow(QtGui.QMainWindow):
         #self.tabProject.setLayout(self.layoutTabProject)
         self.tabHelp.setLayout(self.layoutTabHelp)
         
-        self.sidebarTabWidget.addTab(self.tabLayers, 'Project') # Formerly 'Layers'
-        self.sidebarTabWidget.addTab(self.tabDatabase, 'Database')
-        self.sidebarTabWidget.addTab(self.tabDashboard, 'Templates') # Formerly 'Dashboard'
-        #self.sidebarTabWidget.addTab(self.tabProject, 'Project')
-        self.sidebarTabWidget.addTab(self.tabHelp, 'Help')
-        
         #***********************************************************
         # Setup 'Dashboard' tab => 'Templates' tab
         #***********************************************************
@@ -937,10 +951,20 @@ class MainWindow(QtGui.QMainWindow):
         self.tabDashboardTA.setLayout(self.layoutDashboardTA)
         self.tabDashboardSCIENDO.setLayout(self.layoutDashboardSCIENDO)
         
-        self.dashboardTabWidget.addTab(self.tabDashboardPUR, 'PUR')
-        self.dashboardTabWidget.addTab(self.tabDashboardQUES, 'QUES')
-        self.dashboardTabWidget.addTab(self.tabDashboardTA, 'TA')
-        self.dashboardTabWidget.addTab(self.tabDashboardSCIENDO, 'SCIENDO')
+        # 20160601: move module tab to top level
+        #self.dashboardTabWidget.addTab(self.tabDashboardPUR, 'PUR')
+        #self.dashboardTabWidget.addTab(self.tabDashboardQUES, 'QUES')
+        #self.dashboardTabWidget.addTab(self.tabDashboardTA, 'TA')
+        #self.dashboardTabWidget.addTab(self.tabDashboardSCIENDO, 'SCIENDO')
+        self.sidebarTabWidget.addTab(self.tabLayers, 'Project') # Formerly 'Layers'
+        self.sidebarTabWidget.addTab(self.tabDatabase, 'Database')
+        self.sidebarTabWidget.addTab(self.tabDashboardPUR, 'PUR')
+        self.sidebarTabWidget.addTab(self.tabDashboardQUES, 'QUES')
+        self.sidebarTabWidget.addTab(self.tabDashboardTA, 'TA')
+        self.sidebarTabWidget.addTab(self.tabDashboardSCIENDO, 'SCIENDO')
+        #self.sidebarTabWidget.addTab(self.tabDashboard, 'Templates') # Formerly 'Dashboard'
+        #self.sidebarTabWidget.addTab(self.tabProject, 'Project')
+        self.sidebarTabWidget.addTab(self.tabHelp, 'Help')
         
         # QUES sub tabs
         self.QUESTabWidget = QtGui.QTabWidget()
@@ -1039,8 +1063,15 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessPURTemplate.setText('Process')
         self.buttonProcessPURTemplate.setDisabled(True)
         
+        self.buttonConfigurePUR = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigurePUR.setIcon(icon)
+        self.buttonConfigurePUR.setText('Configure')
+        self.buttonConfigurePUR.setDisabled(True)
+        
         self.layoutDashboardPUR.addWidget(self.groupBoxPURTemplate)
         self.layoutDashboardPUR.addWidget(self.buttonProcessPURTemplate)
+        self.layoutDashboardPUR.addWidget(self.buttonConfigurePUR)
         
         #####################################################################
         
@@ -1068,8 +1099,15 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessPreQUESTemplate.setText('Process')
         self.buttonProcessPreQUESTemplate.setDisabled(True)
         
+        self.buttonConfigurePreQUES = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigurePreQUES.setIcon(icon)
+        self.buttonConfigurePreQUES.setText('Configure')
+        self.buttonConfigurePreQUES.setDisabled(True)
+        
         self.layoutSubtabPreQUES.addWidget(self.groupBoxPreQUESTemplate)
         self.layoutSubtabPreQUES.addWidget(self.buttonProcessPreQUESTemplate)
+        self.layoutSubtabPreQUES.addWidget(self.buttonConfigurePreQUES)
         
         #####################################################################
         
@@ -1113,9 +1151,16 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessQUESCTemplate.setText('Process')
         self.buttonProcessQUESCTemplate.setDisabled(True)
         
+        self.buttonConfigureQUESC = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureQUESC.setIcon(icon)
+        self.buttonConfigureQUESC.setText('Configure')
+        self.buttonConfigureQUESC.setDisabled(True)
+        
         self.layoutSubtabQUESC.addWidget(self.groupBoxQUESCFeatures)
         self.layoutSubtabQUESC.addWidget(self.groupBoxQUESCTemplate)
         self.layoutSubtabQUESC.addWidget(self.buttonProcessQUESCTemplate)
+        self.layoutSubtabQUESC.addWidget(self.buttonConfigureQUESC)
         
         #####################################################################
         
@@ -1143,8 +1188,15 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessQUESBTemplate.setText('Process')
         self.buttonProcessQUESBTemplate.setDisabled(True)
         
+        self.buttonConfigureQUESB = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureQUESB.setIcon(icon)
+        self.buttonConfigureQUESB.setText('Configure')
+        self.buttonConfigureQUESB.setDisabled(True)
+        
         self.layoutSubtabQUESB.addWidget(self.groupBoxQUESBTemplate)
         self.layoutSubtabQUESB.addWidget(self.buttonProcessQUESBTemplate)
+        self.layoutSubtabQUESB.addWidget(self.buttonConfigureQUESB)
         
         #####################################################################
         
@@ -1247,10 +1299,17 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessQUESHTemplate.setText('Process')
         self.buttonProcessQUESHTemplate.setDisabled(True)
         
+        self.buttonConfigureQUESH = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureQUESH.setIcon(icon)
+        self.buttonConfigureQUESH.setText('Configure')
+        self.buttonConfigureQUESH.setDisabled(True)
+        
         self.layoutSubtabQUESH.addWidget(self.groupBoxQUESHFeatures)
         self.layoutSubtabQUESH.addWidget(self.groupBoxHRUDefinitionFunction)
         self.layoutSubtabQUESH.addWidget(self.groupBoxQUESHTemplate)
         self.layoutSubtabQUESH.addWidget(self.buttonProcessQUESHTemplate)
+        self.layoutSubtabQUESH.addWidget(self.buttonConfigureQUESH)
         
         #####################################################################
         
@@ -1333,9 +1392,16 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessTAOpportunityCostTemplate.setText('Process')
         self.buttonProcessTAOpportunityCostTemplate.setDisabled(True)
         
+        self.buttonConfigureTAOpportunityCost = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureTAOpportunityCost.setIcon(icon)
+        self.buttonConfigureTAOpportunityCost.setText('Configure')
+        self.buttonConfigureTAOpportunityCost.setDisabled(True)
+        
         self.layoutSubtabTAOpportunityCost.addWidget(self.groupBoxTAOpportunityCostFeatures)
         self.layoutSubtabTAOpportunityCost.addWidget(self.groupBoxTAOpportunityCostTemplate)
         self.layoutSubtabTAOpportunityCost.addWidget(self.buttonProcessTAOpportunityCostTemplate)
+        self.layoutSubtabTAOpportunityCost.addWidget(self.buttonConfigureTAOpportunityCost)
         
         #####################################################################
         
@@ -1468,11 +1534,18 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessTARegionalEconomyTemplate.setText('Process')
         self.buttonProcessTARegionalEconomyTemplate.setDisabled(True)
         
+        self.buttonConfigureTARegionalEconomy = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureTARegionalEconomy.setIcon(icon)
+        self.buttonConfigureTARegionalEconomy.setText('Configure')
+        self.buttonConfigureTARegionalEconomy.setDisabled(True)
+        
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyFeatures)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxDescriptiveAnalysisPeriod)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxRegionalEconomicScenarioImpactType)
         self.layoutSubtabTARegionalEconomy.addWidget(self.groupBoxTARegionalEconomyTemplate)
         self.layoutSubtabTARegionalEconomy.addWidget(self.buttonProcessTARegionalEconomyTemplate)
+        self.layoutSubtabTARegionalEconomy.addWidget(self.buttonConfigureTARegionalEconomy)
         
         #####################################################################
         
@@ -1518,9 +1591,16 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setText('Process')
         self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
         
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis.setIcon(icon)
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis.setText('Configure')
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis.setDisabled(True)
+        
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisFeatures)
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.groupBoxSCIENDOLowEmissionDevelopmentAnalysisTemplate)
         self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate)
+        self.layoutSubtabSCIENDOLowEmissionDevelopmentAnalysis.addWidget(self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis)
         
         #####################################################################
         
@@ -1568,9 +1648,16 @@ class MainWindow(QtGui.QMainWindow):
         self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setText('Process')
         self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setDisabled(True)
         
+        self.buttonConfigureSCIENDOLandUseChangeModeling = QtGui.QPushButton()
+        icon = QtGui.QIcon(':/ui/icons/iconActionConfigure.png')
+        self.buttonConfigureSCIENDOLandUseChangeModeling.setIcon(icon)
+        self.buttonConfigureSCIENDOLandUseChangeModeling.setText('Configure')
+        self.buttonConfigureSCIENDOLandUseChangeModeling.setDisabled(True)
+        
         self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.groupBoxSCIENDOLandUseChangeModelingFeatures)
         self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.groupBoxSCIENDOLandUseChangeModelingTemplate)
         self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.buttonProcessSCIENDOLandUseChangeModelingTemplate)
+        self.layoutSubtabSCIENDOLandUseChangeModeling.addWidget(self.buttonConfigureSCIENDOLandUseChangeModeling)
         
         #***********************************************************
         # End 'Dashboard' tab setup
@@ -1805,7 +1892,7 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu.addAction(self.actionQuit)
     
     
-    def openDialog(self, DialogClass, showDialog=True):
+    def openDialog(self, DialogClass, tabName='', showDialog=True):
         """Method for opening and keeping track of opened module dialogs instances.
         
         Open and keep track of already opened dialog instances instead of creating new ones.
@@ -1827,6 +1914,33 @@ class MainWindow(QtGui.QMainWindow):
             self.openDialogs.append(dialog)
         
         if showDialog:
+            if tabName:
+                if tabName == 'Pre-QUES':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabPreQUES)
+                elif tabName == 'QUES-C':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabQUESC)
+                elif tabName == 'QUES-B':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabQUESB)
+                elif tabName == 'QUES-H':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabQUESH)
+                elif tabName == 'Abacus Opportunity Cost':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabAbacusOpportunityCost)
+                elif tabName == 'Opportunity Cost Curve':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabOpportunityCostCurve)
+                elif tabName == 'Opportunity Cost Map':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabOpportunityCostMap)
+                elif tabName == 'Descriptive Analysis of Regional Economy':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabDescriptiveAnalysis)
+                elif tabName == 'Regional Economic Scenario Impact':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabRegionalEconomicScenarioImpact)
+                elif tabName == 'Land Requirement Analysis':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabLandRequirementAnalysis)
+                elif tabName == 'Land Use Change Impact':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabLandUseChangeImpact)
+                elif tabName == 'Low Emission Development Analysis':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabLowEmissionDevelopmentAnalysis)
+                elif tabName == 'Land Use Change Modeling':
+                    dialog.tabWidget.setCurrentWidget(dialog.tabLandUseChangeModeling)
             dialog.exec_()
         else:
             return dialog
@@ -1855,16 +1969,25 @@ class MainWindow(QtGui.QMainWindow):
         
         # PUR menu
         self.actionDialogLumensPUR.setEnabled(True)
+        self.buttonConfigurePUR.setEnabled(True)
         
         # QUES menu
         self.actionDialogLumensQUES.setEnabled(True)
+        self.buttonConfigurePreQUES.setEnabled(True)
+        self.buttonConfigureQUESC.setEnabled(True)
+        self.buttonConfigureQUESB.setEnabled(True)
+        self.buttonConfigureQUESH.setEnabled(True)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost.setEnabled(True)
         self.actionDialogLumensTARegionalEconomy.setEnabled(True)
+        self.buttonConfigureTAOpportunityCost.setEnabled(True)
+        self.buttonConfigureTARegionalEconomy.setEnabled(True)
         
         # SCIENDO menu
         self.actionDialogLumensSCIENDO.setEnabled(True)
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis.setEnabled(True)
+        self.buttonConfigureSCIENDOLandUseChangeModeling.setEnabled(True)
     
     
     def lumensDisableMenus(self):
@@ -1877,16 +2000,24 @@ class MainWindow(QtGui.QMainWindow):
         
         # PUR menu
         self.actionDialogLumensPUR.setDisabled(True)
+        self.buttonConfigurePUR.setDisabled(True)
         
         # QUES menu
         self.actionDialogLumensQUES.setDisabled(True)
+        self.buttonConfigureQUESC.setDisabled(True)
+        self.buttonConfigureQUESB.setDisabled(True)
+        self.buttonConfigureQUESH.setDisabled(True)
         
         # TA menu
         self.actionDialogLumensTAOpportunityCost.setDisabled(True)
         self.actionDialogLumensTARegionalEconomy.setDisabled(True)
+        self.buttonConfigureTAOpportunityCost.setDisabled(True)
+        self.buttonConfigureTARegionalEconomy.setDisabled(True)
         
         # SCIENDO menu
         self.actionDialogLumensSCIENDO.setDisabled(True)
+        self.buttonConfigureSCIENDOLowEmissionDevelopmentAnalysis.setDisabled(True)
+        self.buttonConfigureSCIENDOLandUseChangeModeling.setDisabled(True)
     
     
     def loadModuleTemplates(self):
@@ -1896,11 +2027,11 @@ class MainWindow(QtGui.QMainWindow):
         This is called when a LUMENS project is opened so that the module
         templates are listed on the main window's dashboard tab.
         """
-        dialogLumensPUR = self.openDialog(DialogLumensPUR, False)
-        dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
-        dialogLumensTAOpportunityCost = self.openDialog(DialogLumensTAOpportunityCost, False)
-        dialogLumensTARegionalEconomy = self.openDialog(DialogLumensTARegionalEconomy, False)
-        dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, False)
+        dialogLumensPUR = self.openDialog(DialogLumensPUR, showDialog=False)
+        dialogLumensQUES = self.openDialog(DialogLumensQUES, showDialog=False)
+        dialogLumensTAOpportunityCost = self.openDialog(DialogLumensTAOpportunityCost, showDialog=False)
+        dialogLumensTARegionalEconomy = self.openDialog(DialogLumensTARegionalEconomy, showDialog=False)
+        dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, showDialog=False)
         
         dialogLumensPUR.loadTemplateFiles()
         dialogLumensQUES.loadTemplateFiles()
@@ -2447,7 +2578,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessPURTemplate.setDisabled(True)
             
-            dialogLumensPUR = self.openDialog(DialogLumensPUR, False)
+            dialogLumensPUR = self.openDialog(DialogLumensPUR, showDialog=False)
             dialogLumensPUR.loadTemplate('Setup', templateFile)
             dialogLumensPUR.handlerProcessSetup()
             
@@ -2470,7 +2601,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessPreQUESTemplate.setDisabled(True)
             
-            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, showDialog=False)
             dialogLumensQUES.loadTemplate('Pre-QUES', templateFile)
             dialogLumensQUES.handlerProcessPreQUES()
             
@@ -2493,7 +2624,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessQUESCTemplate.setDisabled(True)
             
-            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, showDialog=False)
             dialogLumensQUES.loadTemplate('QUES-C', templateFile)
             
             # Update the checkbox status in the dialog too
@@ -2527,7 +2658,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessQUESBTemplate.setDisabled(True)
             
-            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, showDialog=False)
             dialogLumensQUES.loadTemplate('QUES-B', templateFile)
             dialogLumensQUES.handlerProcessQUESB()
             
@@ -2565,7 +2696,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessQUESHTemplate.setDisabled(True)
             
-            dialogLumensQUES = self.openDialog(DialogLumensQUES, False)
+            dialogLumensQUES = self.openDialog(DialogLumensQUES, showDialog=False)
             dialogLumensQUES.loadTemplate(tabName, templateFile)
             
             if QUESHHRUDefinition:
@@ -2595,15 +2726,15 @@ class MainWindow(QtGui.QMainWindow):
         tabName = None
         TAAbacusOpportunityCost = TAOpportunityCostCurve = TAOpportunityCostMap = False
         
-        if radioTAOpportunityCostAbacus.isChecked():
+        if self.radioTAOpportunityCostAbacus.isChecked():
             TAAbacusOpportunityCost = True
             tabName = 'Abacus Opportunity Cost'
             templateFile = self.comboBoxAbacusOpportunityCostTemplate.currentText()
-        elif radioTAOpportunityCostCurve.isChecked():
+        elif self.radioTAOpportunityCostCurve.isChecked():
             TAOpportunityCostCurve = True
             tabName = 'Opportunity Cost Curve'
             templateFile = self.comboBoxOpportunityCostCurveTemplate.currentText()
-        elif radioTAOpportunityCostMap.isChecked():
+        elif self.radioTAOpportunityCostMap.isChecked():
             TAOpportunityCostMap = True
             tabName = 'Opportunity Cost Map'
             templateFile = self.comboBoxOpportunityCostMapTemplate.currentText()
@@ -2619,7 +2750,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessTAOpportunityCostTemplate.setDisabled(True)
             
-            dialogLumensTA = self.openDialog(DialogLumensTAOpportunityCost, False)
+            dialogLumensTA = self.openDialog(DialogLumensTAOpportunityCost, showDialog=False)
             dialogLumensTA.loadTemplate(tabName, templateFile)
             
             if TAAbacusOpportunityCost:
@@ -2639,19 +2770,19 @@ class MainWindow(QtGui.QMainWindow):
         tabName = None
         TADescriptiveAnalysis = TARegionalEconomicScenarioImpact = TALandRequirementAnalysis = TALandUseChangeImpact = False
         
-        if radioTARegionalEconomyDescriptiveAnalysis.isChecked():
+        if self.radioTARegionalEconomyDescriptiveAnalysis.isChecked():
             TADescriptiveAnalysis = True
             tabName = 'Descriptive Analysis of Regional Economy'
             templateFile = self.comboBoxDescriptiveAnalysisTemplate.currentText()
-        elif radioTARegionalEconomyRegionalEconomicScenarioImpact.isChecked():
+        elif self.radioTARegionalEconomyRegionalEconomicScenarioImpact.isChecked():
             TARegionalEconomicScenarioImpact = True
             tabName = 'Regional Economic Scenario Impact'
             templateFile = self.comboBoxRegionalEconomicScenarioImpactTemplate.currentText()
-        elif radioTARegionalEconomyLandRequirementAnalysis.isChecked():
+        elif self.radioTARegionalEconomyLandRequirementAnalysis.isChecked():
             TALandRequirementAnalysis = True
             tabName = 'Land Requirement Analysis'
             templateFile = self.comboBoxLandRequirementAnalysisTemplate.currentText()
-        elif radioTARegionalEconomyLandUseChangeImpact.isChecked():
+        elif self.radioTARegionalEconomyLandUseChangeImpact.isChecked():
             TALandUseChangeImpact = True
             tabName = 'Land Use Change Impact'
             templateFile = self.comboBoxLandUseChangeImpactTemplate.currentText()
@@ -2667,7 +2798,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessTARegionalEconomyTemplate.setDisabled(True)
             
-            dialogLumensTA = self.openDialog(DialogLumensTARegionalEconomy, False)
+            dialogLumensTA = self.openDialog(DialogLumensTARegionalEconomy, showDialog=False)
             dialogLumensTA.loadTemplate(tabName, templateFile)
             
             if TADescriptiveAnalysis:
@@ -2709,7 +2840,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessSCIENDOLowEmissionDevelopmentAnalysisTemplate.setDisabled(True)
             
-            dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, False)
+            dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, showDialog=False)
             DialogLumensSCIENDO.loadTemplate('Low Emission Development Analysis', templateFile)
             
             # Update the checkbox status in the dialog too
@@ -2746,7 +2877,7 @@ class MainWindow(QtGui.QMainWindow):
         if reply == QtGui.QMessageBox.Yes:
             self.buttonProcessSCIENDOLandUseChangeModelingTemplate.setDisabled(True)
             
-            dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, False)
+            dialogLumensSCIENDO = self.openDialog(DialogLumensSCIENDO, showDialog=False)
             DialogLumensSCIENDO.loadTemplate('Land Use Change Modeling', templateFile)
             
             # Update the checkbox status in the dialog too
@@ -2949,28 +3080,44 @@ class MainWindow(QtGui.QMainWindow):
         self.openDialog(DialogLumensPUR)
     
     
-    def handlerDialogLumensQUES(self):
+    def handlerDialogLumensQUES(self, tabName=''):
         """Slot method for opening a dialog window.
         """
-        self.openDialog(DialogLumensQUES)
+        self.openDialog(DialogLumensQUES, tabName=tabName)
     
     
     def handlerDialogLumensTAOpportunityCost(self):
         """Slot method for opening a dialog window.
         """
-        self.openDialog(DialogLumensTAOpportunityCost)
+        tabName = ''
+        if self.radioTAOpportunityCostAbacus.isChecked():
+            tabName = 'Abacus Opportunity Cost'
+        elif self.radioTAOpportunityCostCurve.isChecked():
+            tabName = 'Opportunity Cost Curve'
+        elif self.radioTAOpportunityCostMap.isChecked():
+            tabName = 'Opportunity Cost Map'
+        self.openDialog(DialogLumensTAOpportunityCost, tabName=tabName)
     
     
     def handlerDialogLumensTARegionalEconomy(self):
         """Slot method for opening a dialog window.
         """
-        self.openDialog(DialogLumensTARegionalEconomy)
+        tabName = ''
+        if self.radioTARegionalEconomyDescriptiveAnalysis.isChecked():
+            tabName = 'Descriptive Analysis of Regional Economy'
+        elif self.radioTARegionalEconomyRegionalEconomicScenarioImpact.isChecked():
+            tabName = 'Regional Economic Scenario Impact'
+        elif self.radioTARegionalEconomyLandRequirementAnalysis.isChecked():
+            tabName = 'Land Requirement Analysis'
+        elif self.radioTARegionalEconomyLandUseChangeImpact.isChecked():
+            tabName = 'Land Use Change Impact'
+        self.openDialog(DialogLumensTARegionalEconomy, tabName=tabName)
     
     
-    def handlerDialogLumensSCIENDO(self):
+    def handlerDialogLumensSCIENDO(self, tabName=''):
         """Slot method for opening a dialog window.
         """
-        self.openDialog(DialogLumensSCIENDO)
+        self.openDialog(DialogLumensSCIENDO, tabName=tabName)
     
     
     def handlerDialogLumensHelp(self):
@@ -3019,6 +3166,17 @@ class MainWindow(QtGui.QMainWindow):
             self.sidebarDockWidget.setVisible(False)
         else:
             self.sidebarDockWidget.setVisible(True)
+    
+    
+    def handlerToggleMenuBar(self):
+      """Slot method for toggling the menu bar visibility.
+      """
+      if not self.actionToggleMenubar.isChecked():
+          self.menubar.setVisible(False)
+          self.setWindowTitle(self.windowTitle.format(__version__, '- press F11 to show menu bar'))
+      else:
+          self.menubar.setVisible(True)
+          self.setWindowTitle(self.windowTitle.format(__version__, ''))
     
     
     def handlerToggleToolbar(self):

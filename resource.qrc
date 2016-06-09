@@ -28,5 +28,6 @@
         <file>ui/icons/iconActionLumensDatabaseStatus.png</file>
         <file>ui/icons/iconActionDialogLumensAddData.png</file>
         <file>ui/icons/iconActionLumensDeleteData.png</file>
+        <file>ui/icons/iconActionConfigure.png</file>
     </qresource>
 </RCC>
