@@ -534,6 +534,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionFeatureSelectExpression.triggered.connect(self.handlerFeatureSelectExpression)
         self.actionLayerProperties.triggered.connect(self.handlerLayerProperties)
         self.layerListView.customContextMenuRequested.connect(self.handlerLayerItemContextMenu)
+        self.customContextMenuRequested.connect(self.handlerMainWindowContextMenu)
         
         # Dashboard tab
         self.radioQUESHHRUDefinition.toggled.connect(lambda:self.handlerToggleQUESH(self.radioQUESHHRUDefinition))
@@ -619,6 +620,9 @@ class MainWindow(QtGui.QMainWindow):
         self.centralWidget = QtGui.QWidget(self)
         self.centralWidget.setMinimumSize(1024, 600)
         self.setCentralWidget(self.centralWidget)
+        
+        # Custom context menu when clicking on main window
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         
         # Create the default menus
         self.menubar = self.menuBar()
@@ -1715,11 +1719,12 @@ class MainWindow(QtGui.QMainWindow):
         self.sidebarDockWidget.setFloating(True)
         self.sidebarDockWidget.setMinimumHeight(520)
         
+        # LayoutBody holds the map canvas widget
         self.layoutBody = QtGui.QHBoxLayout()
         self.layoutBody.setContentsMargins(0, 0, 0, 0)
         self.layoutBody.setAlignment(QtCore.Qt.AlignLeft)
         
-        # Vertical layout for widgets
+        # Vertical layout for widgets: splitterMain (map canvas widget, log widget), then active project
         self.layoutMain = QtGui.QVBoxLayout()
         # Reduce gap with statusbar
         self.layoutMain.setContentsMargins(11, 11, 11, 0)
@@ -1732,6 +1737,7 @@ class MainWindow(QtGui.QMainWindow):
         if not self.appSettings['debug']:
             self.log_box.widget.setVisible(False)
         
+        # splitterMain vertically (top down, not left right) splits the map canvas widget and log widget
         self.splitterMain = QtGui.QSplitter(self)
         self.splitterMain.setOrientation(QtCore.Qt.Vertical)
         self.splitterMain.addWidget(self.contentBody)
@@ -2558,6 +2564,23 @@ class MainWindow(QtGui.QMainWindow):
         self.contextMenu.addAction(self.actionLayerProperties)
         
         parentPosition = self.layerListView.mapToGlobal(QtCore.QPoint(0, 0))
+        self.contextMenu.move(parentPosition + pos)
+        self.contextMenu.show()
+    
+    
+    def handlerMainWindowContextMenu(self, pos):
+        """Method for constructing the custom context menu when clicking on the main window.
+        
+        Args:
+            pos (QPoint): the coordinate of the click.
+        """
+        self.contextMenu = QtGui.QMenu()
+        self.contextMenu.addAction(self.actionToggleMenubar)
+        self.contextMenu.addAction(self.actionToggleSidebar)
+        self.contextMenu.addAction(self.actionToggleDialogToolbar)
+        self.contextMenu.addAction(self.actionToggleToolbar)
+        
+        parentPosition = self.mapToGlobal(QtCore.QPoint(0, 0))
         self.contextMenu.move(parentPosition + pos)
         self.contextMenu.show()
     
