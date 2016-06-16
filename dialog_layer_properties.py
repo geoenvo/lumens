@@ -329,7 +329,7 @@ class DialogLayerProperties(QtGui.QDialog):
             sender = self.sender()
             if sender.objectName() == 'buttonLayerSymbolFillColor':
                 self.layerSymbolFillColor = selectedColor
-            elif sender.objectName == 'buttonStyleCategorizedFillColor':
+            elif sender.objectName() == 'buttonStyleCategorizedFillColor':
                 self.styleCategorizedColor = selectedColor
             sender.setStyleSheet('background-color: {0};'.format(selectedColor.name()))
     
@@ -362,11 +362,9 @@ class DialogLayerProperties(QtGui.QDialog):
         """
         value = QtGui.QTableWidgetItem(self.lineEditStyleCategorizedValue.text())
         label = QtGui.QTableWidgetItem(self.lineEditStyleCategorizedLabel.text())
-        if value.text() == '' and label.text() == '':
-            return
         currentRowCount = self.tableStyleCategorized.rowCount()
         color = QtGui.QTableWidgetItem('')
-        color.setBackground(QtGui.QBrush(self.styleCategorizedColor))
+        color.setBackgroundColor(self.styleCategorizedColor)
         color.setFlags(color.flags() & ~QtCore.Qt.ItemIsEditable)
         value.setFlags(value.flags() & ~QtCore.Qt.ItemIsEditable)
         label.setFlags(label.flags() & ~QtCore.Qt.ItemIsEditable)
@@ -411,10 +409,28 @@ class DialogLayerProperties(QtGui.QDialog):
         # Process layer transparency setting
         self.layer.setLayerTransparency(self.sliderLayerTransparency.value())
         
-        # Process layer symbol fill color
-        symbols = self.layer.rendererV2().symbols()
-        symbol = symbols[0]
-        symbol.setColor(self.layerSymbolFillColor)
+        styleType = self.comboBoxStyleType.currentText()
+        
+        if styleType == 'Single':
+            # Process layer symbol fill color
+            symbol = QgsFillSymbolV2.createSimple({})
+            symbol.setColor(self.layerSymbolFillColor)
+            renderer = QgsSingleSymbolRendererV2(symbol)
+            self.layer.setRendererV2(renderer)
+        elif styleType == 'Categorized':
+            # Process categorized symbol for layer
+            categories = []
+            for tableRow in range(0, self.tableStyleCategorized.rowCount()):
+                color = self.tableStyleCategorized.item(tableRow, 0).backgroundColor()
+                value = self.tableStyleCategorized.item(tableRow, 1).text()
+                label = self.tableStyleCategorized.item(tableRow, 2).text()
+                symbol = QgsFillSymbolV2.createSimple({})
+                symbol.setColor(color)
+                categories.append(QgsRendererCategoryV2(value, symbol, label))
+            if categories:
+                renderer = QgsCategorizedSymbolRendererV2('', categories)
+                renderer.setClassAttribute(self.comboBoxStyleCategorizedAttribute.currentText())
+                self.layer.setRendererV2(renderer)
         
         # Process layer label settings
         if self.checkBoxLayerLabelEnabled.isChecked():
