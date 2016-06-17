@@ -2,7 +2,9 @@
 #-*- coding:utf-8 -*-
 
 import os, logging
+
 from qgis.core import *
+from qgis.gui import *
 from PyQt4 import QtCore, QtGui
 
 from utils import is_number
@@ -23,7 +25,7 @@ class DialogLayerProperties(QtGui.QDialog):
         self.layer = layer
         self.main = parent
         self.dialogTitle = 'LUMENS Layer Properties - ' + self.layer.name()
-        self.layerSymbolFillColor = self.styleCategorizedColor = self.styleGraduatedColor = self.labelColor = QtGui.QColor(0, 0, 0) # black
+        self.layerSymbolFillColor = self.styleCategorizedColor = self.styleGraduatedColor = self.styleRuleBasedColor = self.labelColor = QtGui.QColor(0, 0, 0) # black
         
         if self.main.appSettings['debug']:
             print 'DEBUG: DialogLayerProperties init'
@@ -45,15 +47,20 @@ class DialogLayerProperties(QtGui.QDialog):
         self.handlerChangeStyleType(0)
         self.buttonAddStyleCategorized.clicked.connect(self.handlerAddStyleCategorized)
         self.buttonAddStyleGraduated.clicked.connect(self.handlerAddStyleGraduated)
+        self.buttonAddStyleRuleBased.clicked.connect(self.handlerAddStyleRuleBased)
         self.buttonDeleteStyleCategorized.clicked.connect(self.handlerDeleteStyleCategorized)
-        self.buttonDeleteAllStyleCategorized.clicked.connect(self.handlerDeleteAllStyleCategorized)
         self.buttonDeleteStyleGraduated.clicked.connect(self.handlerDeleteStyleGraduated)
+        self.buttonDeleteStyleRuleBased.clicked.connect(self.handlerDeleteStyleRuleBased)
+        self.buttonDeleteAllStyleCategorized.clicked.connect(self.handlerDeleteAllStyleCategorized)
         self.buttonDeleteAllStyleGraduated.clicked.connect(self.handlerDeleteAllStyleGraduated)
+        self.buttonDeleteAllStyleRuleBased.clicked.connect(self.handlerDeleteAllStyleRuleBased)
         self.sliderLayerTransparency.sliderMoved.connect(self.handlerSliderLayerTransparencyMoved)
         self.spinBoxLayerTransparency.valueChanged.connect(self.handlerSpinBoxLayerTransparencyValueChanged)
         self.buttonLayerSymbolFillColor.clicked.connect(self.handlerSelectFillColor)
         self.buttonStyleCategorizedFillColor.clicked.connect(self.handlerSelectFillColor)
         self.buttonStyleGraduatedFillColor.clicked.connect(self.handlerSelectFillColor)
+        self.buttonStyleRuleBasedFillColor.clicked.connect(self.handlerSelectFillColor)
+        self.buttonExpressionBuilderDialog.clicked.connect(self.handlerExpressionBuilderDialog)
         self.buttonLabelColor.clicked.connect(self.handlerSelectLabelColor)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -76,7 +83,7 @@ class DialogLayerProperties(QtGui.QDialog):
         self.layoutLayerStyle = QtGui.QVBoxLayout()
         self.layoutGroupBoxLayerStyle.addLayout(self.layoutLayerStyleInfo)
         
-        styleTypes = ['Single', 'Categorized', 'Graduated']
+        styleTypes = ['Single', 'Categorized', 'Graduated', 'Rule-based']
         self.comboBoxStyleType = QtGui.QComboBox()
         self.comboBoxStyleType.addItems(styleTypes)
         
@@ -106,9 +113,15 @@ class DialogLayerProperties(QtGui.QDialog):
         self.layoutGroupBoxStyleGraduated.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
         self.tabStyleGraduated.setLayout(self.layoutGroupBoxStyleGraduated)
         
+        self.tabStyleRuleBased = QtGui.QWidget()
+        self.layoutGroupBoxStyleRuleBased = QtGui.QGridLayout()
+        self.layoutGroupBoxStyleRuleBased.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.tabStyleRuleBased.setLayout(self.layoutGroupBoxStyleRuleBased)
+        
         self.styleTabWidget.addTab(self.tabStyleSingle, 'Single')
         self.styleTabWidget.addTab(self.tabStyleCategorized, 'Categorized')
         self.styleTabWidget.addTab(self.tabStyleGraduated, 'Graduated')
+        self.styleTabWidget.addTab(self.tabStyleRuleBased, 'Rule-based')
         
         self.layoutLayerStyle.addWidget(self.groupBoxLayerTransparency)
         self.layoutLayerStyle.addWidget(self.styleTabWidget)
@@ -271,6 +284,82 @@ class DialogLayerProperties(QtGui.QDialog):
         self.tableStyleGraduated.verticalHeader().setVisible(False)
         self.layoutGroupBoxStyleGraduated.addWidget(self.tableStyleGraduated, 6, 0, 1, 2)
         
+        # Rule-based style groupbox widgets
+        self.labelStyleRuleBasedFillColor = QtGui.QLabel()
+        self.labelStyleRuleBasedFillColor.setText('Fill color:')
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.labelStyleRuleBasedFillColor, 0, 0)
+        
+        self.buttonStyleRuleBasedFillColor = QtGui.QPushButton()
+        self.buttonStyleRuleBasedFillColor.setObjectName('buttonStyleRuleBasedFillColor')
+        self.buttonStyleRuleBasedFillColor.setFixedWidth(50)
+        self.buttonStyleRuleBasedFillColor.setStyleSheet('background-color: {0};'.format(self.styleRuleBasedColor.name()))
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.buttonStyleRuleBasedFillColor, 0, 1)
+        
+        self.labelStyleRuleBasedLabel = QtGui.QLabel()
+        self.labelStyleRuleBasedLabel.setText('Label:')
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.labelStyleRuleBasedLabel, 1, 0)
+        
+        self.lineEditStyleRuleBasedLabel = QtGui.QLineEdit()
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.lineEditStyleRuleBasedLabel, 1, 1)
+        
+        self.labelStyleRuleBasedRule = QtGui.QLabel()
+        self.labelStyleRuleBasedRule.setText('Rule:')
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.labelStyleRuleBasedRule, 2, 0)
+        
+        self.layoutRuleBasedRule = QtGui.QHBoxLayout()
+        self.layoutRuleBasedRule.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.layoutRuleBasedRule.setSpacing(10)
+        
+        self.lineEditStyleRuleBasedRule = QtGui.QLineEdit()
+        self.layoutGroupBoxStyleRuleBased.addLayout(self.layoutRuleBasedRule, 2, 1)
+        self.layoutRuleBasedRule.addWidget(self.lineEditStyleRuleBasedRule)
+        
+        self.buttonExpressionBuilderDialog = QtGui.QPushButton()
+        self.buttonExpressionBuilderDialog.setText('...')
+        self.layoutRuleBasedRule.addWidget(self.buttonExpressionBuilderDialog)
+        
+        self.labelStyleRuleBasedMinScale = QtGui.QLabel()
+        self.labelStyleRuleBasedMinScale.setText('Min scale:')
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.labelStyleRuleBasedMinScale, 3, 0)
+        
+        self.lineEditStyleRuleBasedMinScale = QtGui.QLineEdit()
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.lineEditStyleRuleBasedMinScale, 3, 1)
+        
+        self.labelStyleRuleBasedMaxScale = QtGui.QLabel()
+        self.labelStyleRuleBasedMaxScale.setText('Max scale:')
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.labelStyleRuleBasedMaxScale, 4, 0)
+        
+        self.lineEditStyleRuleBasedMaxScale = QtGui.QLineEdit()
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.lineEditStyleRuleBasedMaxScale, 4, 1)
+        
+        self.layoutButtonStyleRuleBased = QtGui.QHBoxLayout()
+        self.layoutButtonStyleRuleBased.setAlignment(QtCore.Qt.AlignLeft|QtCore.Qt.AlignTop)
+        self.layoutButtonStyleRuleBased.setSpacing(10)
+        
+        self.buttonAddStyleRuleBased = QtGui.QPushButton()
+        self.buttonAddStyleRuleBased.setText('Add')
+        self.buttonAddStyleRuleBased.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.layoutButtonStyleRuleBased.addWidget(self.buttonAddStyleRuleBased)
+        
+        self.buttonDeleteStyleRuleBased = QtGui.QPushButton()
+        self.buttonDeleteStyleRuleBased.setText('Delete')
+        self.buttonDeleteStyleRuleBased.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.layoutButtonStyleRuleBased.addWidget(self.buttonDeleteStyleRuleBased)
+        
+        self.buttonDeleteAllStyleRuleBased = QtGui.QPushButton()
+        self.buttonDeleteAllStyleRuleBased.setText('Delete All')
+        self.buttonDeleteAllStyleRuleBased.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.layoutButtonStyleRuleBased.addWidget(self.buttonDeleteAllStyleRuleBased)
+        
+        self.layoutGroupBoxStyleRuleBased.addLayout(self.layoutButtonStyleRuleBased, 5, 1)
+        
+        self.tableStyleRuleBased = QtGui.QTableWidget()
+        headersTableStyleRuleBased = ['Color', 'Label', 'Rule', 'Min Scale', 'Max Scale']
+        self.tableStyleRuleBased.setColumnCount(len(headersTableStyleRuleBased))
+        self.tableStyleRuleBased.setHorizontalHeaderLabels(headersTableStyleRuleBased)
+        self.tableStyleRuleBased.verticalHeader().setVisible(False)
+        self.layoutGroupBoxStyleRuleBased.addWidget(self.tableStyleRuleBased, 6, 0, 1, 2)
+        
         ######################################################################
         
         self.groupBoxLayerLabel = QtGui.QGroupBox('Label')
@@ -330,8 +419,8 @@ class DialogLayerProperties(QtGui.QDialog):
         
         self.setLayout(self.dialogLayout)
         self.setWindowTitle(self.dialogTitle)
-        self.setMinimumSize(600, 400)
-        self.resize(parent.sizeHint())
+        self.setMinimumSize(600, 700)
+        #self.resize(parent.sizeHint())
     
     
     def loadLayerSettings(self):
@@ -375,10 +464,53 @@ class DialogLayerProperties(QtGui.QDialog):
         
         # Get layer symbol fill color
         symbols = self.layer.rendererV2().symbols()
-        self.layerSymbolFillColor = self.styleCategorizedColor = self.styleGraduatedColor = symbols[0].color()
-        self.buttonLayerSymbolFillColor.setStyleSheet('background-color: {0};'.format(self.layerSymbolFillColor.name()))
-        self.buttonStyleCategorizedFillColor.setStyleSheet('background-color: {0};'.format(self.styleCategorizedColor.name()))
-        self.buttonStyleGraduatedFillColor.setStyleSheet('background-color: {0};'.format(self.styleGraduatedColor.name()))
+        self.layerSymbolFillColor = self.styleCategorizedColor = self.styleGraduatedColor = self.styleRuleBasedColor = symbols[0].color()
+        
+        # Load layer renderer settings
+        renderer = self.layer.rendererV2()
+        
+        if isinstance(renderer, QgsSingleSymbolRendererV2):
+            symbols = renderer.symbols()
+            self.layerSymbolFillColor = symbols[0].color()
+            self.buttonLayerSymbolFillColor.setStyleSheet('background-color: {0};'.format(self.layerSymbolFillColor.name()))
+        elif isinstance(renderer, QgsCategorizedSymbolRendererV2):
+            categories = renderer.categories()
+            for category in categories:
+                color = category.symbol().color()
+                value = str(category.value())
+                label = category.label()
+                self.addStyleCategorized(color, value, label)
+                self.styleCategorizedColor = color
+                self.buttonStyleCategorizedFillColor.setStyleSheet('background-color: {0};'.format(self.styleCategorizedColor.name()))
+            attribute = renderer.classAttribute()
+            self.comboBoxStyleCategorizedAttribute.setCurrentIndex(self.comboBoxStyleCategorizedAttribute.findText(attribute))
+            self.comboBoxStyleType.setCurrentIndex(self.comboBoxStyleType.findText('Categorized'))
+        elif isinstance(renderer, QgsGraduatedSymbolRendererV2):
+            ranges = renderer.ranges()
+            for range in ranges:
+                color = range.symbol().color()
+                lowerValue = range.lowerValue()
+                upperValue = range.upperValue()
+                label = range.label()
+                self.addStyleGraduated(color, lowerValue, upperValue, label)
+                self.styleGraduatedColor = color
+                self.buttonStyleGraduatedFillColor.setStyleSheet('background-color: {0};'.format(self.styleGraduatedColor.name()))
+            attribute = renderer.classAttribute()
+            self.comboBoxStyleGraduatedAttribute.setCurrentIndex(self.comboBoxStyleGraduatedAttribute.findText(attribute))
+            self.comboBoxStyleType.setCurrentIndex(self.comboBoxStyleType.findText('Graduated'))
+        elif isinstance(renderer, QgsRuleBasedRendererV2):
+            rootRule = renderer.rootRule()
+            rules = rootRule.children()
+            for aRule in rules:
+                color = aRule.symbol().color()
+                rule = aRule.filterExpression()
+                label = aRule.label()
+                minScale = aRule.scaleMinDenom()
+                maxScale = aRule.scaleMaxDenom()
+                self.addStyleRuleBased(color, rule, minScale, maxScale, label)
+                self.styleRuleBasedColor = color
+                self.buttonStyleRuleBasedFillColor.setStyleSheet('background-color: {0};'.format(self.styleRuleBasedColor.name()))
+            self.comboBoxStyleType.setCurrentIndex(self.comboBoxStyleType.findText('Rule-based'))
         
         # Get layer label settings
         self.p = QgsPalLayerSettings()
@@ -391,6 +523,69 @@ class DialogLayerProperties(QtGui.QDialog):
             self.labelColor = self.p.textColor
             self.buttonLabelColor.setStyleSheet('background-color: {0};'.format(self.labelColor.name()))
             
+    
+    def addStyleCategorized(self, color, value, label):
+        """Method for adding a categorized style to the table widget.
+        """
+        newValue = QtGui.QTableWidgetItem(value)
+        newLabel = QtGui.QTableWidgetItem(label)
+        newColor = QtGui.QTableWidgetItem('')
+        newColor.setBackgroundColor(color)
+        newColor.setFlags(newColor.flags() & ~QtCore.Qt.ItemIsEditable)
+        newValue.setFlags(newValue.flags() & ~QtCore.Qt.ItemIsEditable)
+        newLabel.setFlags(newLabel.flags() & ~QtCore.Qt.ItemIsEditable)
+        currentRowCount = self.tableStyleCategorized.rowCount()
+        self.tableStyleCategorized.insertRow(currentRowCount)
+        self.tableStyleCategorized.setItem(currentRowCount, 0, newColor)
+        self.tableStyleCategorized.setItem(currentRowCount, 1, newValue)
+        self.tableStyleCategorized.setItem(currentRowCount, 2, newLabel)
+    
+    
+    def addStyleGraduated(self, color, lowerValue, upperValue, label):
+        """Method for adding a graduated style to the table widget.
+        """
+        if not lowerValue or not upperValue:
+            return
+        elif not is_number(lowerValue) or not is_number(upperValue):
+            return
+        elif float(upperValue) - float(lowerValue) < 0:
+            return
+        newValue = QtGui.QTableWidgetItem("{0} - {1}".format(str(lowerValue), str(upperValue)))
+        newLabel = QtGui.QTableWidgetItem(label)
+        newColor = QtGui.QTableWidgetItem('')
+        newColor.setBackgroundColor(color)
+        newColor.setFlags(newColor.flags() & ~QtCore.Qt.ItemIsEditable)
+        newValue.setFlags(newValue.flags() & ~QtCore.Qt.ItemIsEditable)
+        newLabel.setFlags(newLabel.flags() & ~QtCore.Qt.ItemIsEditable)
+        currentRowCount = self.tableStyleGraduated.rowCount()
+        self.tableStyleGraduated.insertRow(currentRowCount)
+        self.tableStyleGraduated.setItem(currentRowCount, 0, newColor)
+        self.tableStyleGraduated.setItem(currentRowCount, 1, newValue)
+        self.tableStyleGraduated.setItem(currentRowCount, 2, newLabel)
+    
+    
+    def addStyleRuleBased(self, color, rule, minScale, maxScale, label):
+        """Method for adding a rule-based style to the table widget.
+        """
+        newLabel = QtGui.QTableWidgetItem(label)
+        newRule = QtGui.QTableWidgetItem(rule)
+        newMinScale = QtGui.QTableWidgetItem(minScale)
+        newMaxScale = QtGui.QTableWidgetItem(maxScale)
+        newColor = QtGui.QTableWidgetItem('')
+        newColor.setBackgroundColor(color)
+        newColor.setFlags(newColor.flags() & ~QtCore.Qt.ItemIsEditable)
+        newLabel.setFlags(newLabel.flags() & ~QtCore.Qt.ItemIsEditable)
+        newRule.setFlags(newRule.flags() & ~QtCore.Qt.ItemIsEditable)
+        newMinScale.setFlags(newMinScale.flags() & ~QtCore.Qt.ItemIsEditable)
+        newMaxScale.setFlags(newMaxScale.flags() & ~QtCore.Qt.ItemIsEditable)
+        currentRowCount = self.tableStyleRuleBased.rowCount()
+        self.tableStyleRuleBased.insertRow(currentRowCount)
+        self.tableStyleRuleBased.setItem(currentRowCount, 0, newColor)
+        self.tableStyleRuleBased.setItem(currentRowCount, 1, newLabel)
+        self.tableStyleRuleBased.setItem(currentRowCount, 2, newRule)
+        self.tableStyleRuleBased.setItem(currentRowCount, 3, newMinScale)
+        self.tableStyleRuleBased.setItem(currentRowCount, 4, newMaxScale)
+    
     
     #***********************************************************
     # 'Layer Properties' QPushButton handlers
@@ -427,7 +622,17 @@ class DialogLayerProperties(QtGui.QDialog):
                 self.styleCategorizedColor = selectedColor
             elif sender.objectName() == 'buttonStyleGraduatedFillColor':
                 self.styleGraduatedColor = selectedColor
+            elif sender.objectName() == 'buttonStyleRuleBasedFillColor':
+                self.styleRuleBasedColor = selectedColor
             sender.setStyleSheet('background-color: {0};'.format(selectedColor.name()))
+    
+    
+    def handlerExpressionBuilderDialog(self):
+        """Slot method for showing the QGIS expression builder dialog.
+        """
+        dialog = QgsExpressionBuilderDialog(self.layer)
+        if dialog.exec_():
+            self.lineEditStyleRuleBasedRule.setText(dialog.expressionText())
     
     
     def handlerSelectLabelColor(self):
@@ -453,6 +658,8 @@ class DialogLayerProperties(QtGui.QDialog):
             self.styleTabWidget.setCurrentWidget(self.tabStyleCategorized)
         elif styleType == 'Graduated':
             self.styleTabWidget.setCurrentWidget(self.tabStyleGraduated)
+        elif styleType == 'Rule-based':
+            self.styleTabWidget.setCurrentWidget(self.tabStyleRuleBased)
     
     
     def handlerAddStyleCategorized(self):
@@ -460,16 +667,8 @@ class DialogLayerProperties(QtGui.QDialog):
         """
         value = QtGui.QTableWidgetItem(self.lineEditStyleCategorizedValue.text())
         label = QtGui.QTableWidgetItem(self.lineEditStyleCategorizedLabel.text())
-        currentRowCount = self.tableStyleCategorized.rowCount()
-        color = QtGui.QTableWidgetItem('')
-        color.setBackgroundColor(self.styleCategorizedColor)
-        color.setFlags(color.flags() & ~QtCore.Qt.ItemIsEditable)
-        value.setFlags(value.flags() & ~QtCore.Qt.ItemIsEditable)
-        label.setFlags(label.flags() & ~QtCore.Qt.ItemIsEditable)
-        self.tableStyleCategorized.insertRow(currentRowCount)
-        self.tableStyleCategorized.setItem(currentRowCount, 0, color)
-        self.tableStyleCategorized.setItem(currentRowCount, 1, value)
-        self.tableStyleCategorized.setItem(currentRowCount, 2, label)
+        color = self.styleCategorizedColor
+        self.addStyleCategorized(color, value, label)
         self.lineEditStyleCategorizedValue.setText('')
         self.lineEditStyleCategorizedLabel.setText('')
     
@@ -479,27 +678,27 @@ class DialogLayerProperties(QtGui.QDialog):
         """
         lowerValue = self.lineEditStyleGraduatedLowerValue.text()
         upperValue = self.lineEditStyleGraduatedUpperValue.text()
-        if not lowerValue or not upperValue:
-            return
-        elif not is_number(lowerValue) or not is_number(upperValue):
-            return
-        elif float(upperValue) - float(lowerValue) < 0:
-            return
-        value = QtGui.QTableWidgetItem("{0} - {1}".format(lowerValue, upperValue))
-        label = QtGui.QTableWidgetItem(self.lineEditStyleGraduatedLabel.text())
-        currentRowCount = self.tableStyleGraduated.rowCount()
-        color = QtGui.QTableWidgetItem('')
-        color.setBackgroundColor(self.styleGraduatedColor)
-        color.setFlags(color.flags() & ~QtCore.Qt.ItemIsEditable)
-        value.setFlags(value.flags() & ~QtCore.Qt.ItemIsEditable)
-        label.setFlags(label.flags() & ~QtCore.Qt.ItemIsEditable)
-        self.tableStyleGraduated.insertRow(currentRowCount)
-        self.tableStyleGraduated.setItem(currentRowCount, 0, color)
-        self.tableStyleGraduated.setItem(currentRowCount, 1, value)
-        self.tableStyleGraduated.setItem(currentRowCount, 2, label)
+        label = self.lineEditStyleGraduatedLabel.text()
+        color = self.styleGraduatedColor
+        self.addStyleGraduated(color, lowerValue, upperValue, label)
         self.lineEditStyleGraduatedLowerValue.setText('')
         self.lineEditStyleGraduatedUpperValue.setText('')
         self.lineEditStyleGraduatedLabel.setText('')
+    
+    
+    def handlerAddStyleRuleBased(self):
+        """Slot method for adding a rule-based style.
+        """
+        label = self.lineEditStyleRuleBasedLabel.text()
+        rule = self.lineEditStyleRuleBasedRule.text()
+        minScale = self.lineEditStyleRuleBasedMinScale.text()
+        maxScale = self.lineEditStyleRuleBasedMaxScale.text()
+        color = self.styleRuleBasedColor
+        self.addStyleRuleBased(color, rule, minScale, maxScale, label)
+        self.lineEditStyleRuleBasedLabel.setText('')
+        self.lineEditStyleRuleBasedRule.setText('')
+        self.lineEditStyleRuleBasedMinScale.setText('')
+        self.lineEditStyleRuleBasedMaxScale.setText('')
     
     
     def handlerDeleteStyleCategorized(self):
@@ -548,7 +747,31 @@ class DialogLayerProperties(QtGui.QDialog):
             self.tableStyleGraduated.setRowCount(0)
         elif reply == QtGui.QMessageBox.Cancel:
             pass
-            
+    
+    
+    def handlerDeleteStyleRuleBased(self):
+        """Slot method for deleting a rule-based style.
+        """
+        currentRow = self.tableStyleRuleBased.currentRow()
+        self.tableStyleRuleBased.removeRow(currentRow)
+    
+    
+    def handlerDeleteAllStyleRuleBased(self):
+        """Slot method for deleting all rule-based styles.
+        """
+        reply = QtGui.QMessageBox.question(
+            self,
+            'Delete All',
+            'Do you want to delete all?',
+            QtGui.QMessageBox.Yes|QtGui.QMessageBox.Cancel,
+            QtGui.QMessageBox.Cancel
+        )
+        
+        if reply == QtGui.QMessageBox.Yes:
+            self.tableStyleRuleBased.setRowCount(0)
+        elif reply == QtGui.QMessageBox.Cancel:
+            pass
+    
     
     #***********************************************************
     # Process dialog
@@ -598,6 +821,32 @@ class DialogLayerProperties(QtGui.QDialog):
                 renderer = QgsGraduatedSymbolRendererV2('', ranges)
                 renderer.setClassAttribute(self.comboBoxStyleGraduatedAttribute.currentText())
                 self.layer.setRendererV2(renderer)
+        elif styleType == 'Rule-based':
+            # Process rule-based symbol for layer
+            defaultSymbol = QgsSymbolV2.defaultSymbol(self.layer.geometryType())
+            renderer = QgsRuleBasedRendererV2(defaultSymbol)
+            rootRule = renderer.rootRule()
+            defaultRule = rootRule.children()[0]
+            for tableRow in range(0, self.tableStyleRuleBased.rowCount()):
+                color = self.tableStyleRuleBased.item(tableRow, 0).backgroundColor()
+                label = self.tableStyleRuleBased.item(tableRow, 1).text()
+                rule = self.tableStyleRuleBased.item(tableRow, 2).text()
+                minScale = self.tableStyleRuleBased.item(tableRow, 3).text()
+                maxScale = self.tableStyleRuleBased.item(tableRow, 4).text()
+                symbol = QgsFillSymbolV2.createSimple({})
+                symbol.setColor(color)
+                newRule = defaultRule.clone()
+                newRule.setSymbol(symbol)
+                newRule.setLabel(label)
+                newRule.setFilterExpression(rule)
+                if is_number(minScale):
+                    newRule.setScaleMinDenom(int(minScale))
+                if is_number(maxScale):
+                    newRule.setScaleMaxDenom(int(maxScale))
+                rootRule.appendChild(newRule)
+            rootRule.removeChildAt(0)
+            self.layer.setRendererV2(renderer)
+                
         
         # Process layer label settings
         if self.checkBoxLayerLabelEnabled.isChecked():
