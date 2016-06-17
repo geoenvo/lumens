@@ -2382,10 +2382,11 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger(type(self).__name__).info('start: lumensdatabasestatus')
         self.actionLumensDatabaseStatus.setDisabled(True)
         
-        outputs = general.runalg('r:lumensdatabasestatus', None)
+        outputs = general.runalg('r:lumensdatabasestatus', self.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/'), None)
         
         if outputs:
-            dialog = DialogLumensViewer(self, 'Database Status', 'csv', outputs['database_status'])
+            #dialog = DialogLumensViewer(self, 'Database Status', 'csv', outputs['database_status'])
+            dialog = DialogLumensViewer(self, 'Database Status', 'html', os.path.join(self.appSettings['DialogLumensOpenDatabase']['projectFolder'], "status_LUMENS_database.html"))
             dialog.exec_()
         
         self.actionLumensDatabaseStatus.setEnabled(True)
