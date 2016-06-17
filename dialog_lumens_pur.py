@@ -1062,8 +1062,8 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         """
         outputs = self.outputsPURSetup
         unresolvedCases = False
-        unresolvedCasesKey = 'database_unresolved_out_ALG0'
-        attributeKey = 'data_attribute_ALG0'
+        unresolvedCasesKey = 'database_unresolved_out'
+        attributeKey = 'data_attribute'
         
         print 'DEBUG'
         print outputs
@@ -1229,7 +1229,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         """Slot method to pass the form values and execute the "PUR" R algorithms.
         
         The "PUR" process calls the following algorithms:
-        1. modeler:lumens_pur
+        1. r:pursetupreferenceplanningunit
         """
         self.setAppSettings()
         
@@ -1238,12 +1238,13 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             logging.getLogger(self.historyLog).info('Processing PUR start: %s' % self.dialogTitle)
             self.buttonProcessSetup.setDisabled(True)
             
-            algName = 'modeler:lumens_pur'
+            algName = 'r:pursetupreferenceandplanningunit'
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
             self.main.setWindowState(QtCore.Qt.WindowMinimized)
             
             # Pass referenceClasses, referenceMapping, planningUnits as temp csv files
+            activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
             referenceClasses = self.main.appSettings[type(self).__name__]['referenceClasses']
             referenceMapping = self.main.appSettings[type(self).__name__]['referenceMapping']
             planningUnits = self.main.appSettings[type(self).__name__]['planningUnits']
@@ -1266,12 +1267,14 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             
             self.outputsPURSetup = general.runalg(
                 algName,
+                activeProject,
                 self.main.appSettings[type(self).__name__]['shapefile'].replace(os.path.sep, '/'),
                 self.main.appSettings[type(self).__name__]['shapefileAttr'],
                 self.main.appSettings[type(self).__name__]['dataTitle'],
                 csvReferenceClasses.replace(os.path.sep, '/'),
                 csvReferenceMapping.replace(os.path.sep, '/'),
                 csvPlanningUnits.replace(os.path.sep, '/'),
+                None,
                 None,
                 None,
                 None,
@@ -1305,13 +1308,14 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         algName = 'r:purfinalizereconciliation'
         
         outputs = self.outputsPURSetup
-        reconKey = 'OUTPUT_ALG1'
+        reconKey = 'PUR_rec1_shp'
         
         if outputs and (reconKey in outputs):
             logging.getLogger(type(self).__name__).info('Reconcile PUR start')
             logging.getLogger(self.historyLog).info('Reconcile PUR start')
             self.buttonProcessReconcile.setDisabled(True)
             
+            activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
             reconcileTableCsv = DialogLumensPUR.writeTableCsv(self.reconcileTable, True)
             
             # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
@@ -1323,6 +1327,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
             
             outputsReconcile = general.runalg(
                 algName,
+                activeProject,
                 outputs[reconKey].replace(os.path.sep, '/'),
                 reconcileTableCsv.replace(os.path.sep, '/'),
                 None,

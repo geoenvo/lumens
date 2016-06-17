@@ -497,11 +497,23 @@ class DialogLumensCreateDatabase(QtGui.QDialog, DialogLumensBase):
             
             self.buttonProcessCreateDatabase.setEnabled(True)
             logging.getLogger(type(self).__name__).info('end: %s' % self.dialogTitle)
+
+            lumensHTMLReport = os.path.join(
+                self.main.appSettings[type(self).__name__]['outputFolder'],
+                self.main.appSettings[type(self).__name__]['projectName'],
+                "DATA",
+                "{0}{1}".format(self.main.appSettings[type(self).__name__]['projectName'], self.main.appSettings['selectHTMLfileExt'])              
+            ).replace(os.path.sep, '/')
             
             # If LUMENS database file exists, open it and close this dialog
             if algSuccess and os.path.exists(lumensDatabase):
                 self.main.lumensOpenDatabase(lumensDatabase)
                 self.close()
+                
+                if os.path.exists(lumensHTMLReport):
+                    dialog = DialogLumensViewer(self, 'LUMENS Create Database Report', 'html', lumensHTMLReport)
+                    dialog.exec_()
             else:
                 logging.getLogger(type(self).__name__).error('modeler:lumens_create_database failed...')
+            
             

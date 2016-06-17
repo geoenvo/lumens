@@ -210,9 +210,8 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             templateSettings['DialogLumensQUESCCarbonAccounting'] = {}
             templateSettings['DialogLumensQUESCCarbonAccounting']['landUse1'] = landUse1 = settings.value('landUse1')
             templateSettings['DialogLumensQUESCCarbonAccounting']['landUse2'] = landUse2 = settings.value('landUse2')
-            templateSettings['DialogLumensQUESCCarbonAccounting']['landUseTable'] = landUseTable = settings.value('landUseTable')
+            templateSettings['DialogLumensQUESCCarbonAccounting']['carbonTable'] = carbonTable = settings.value('carbonTable')
             templateSettings['DialogLumensQUESCCarbonAccounting']['planningUnit'] = planningUnit = settings.value('planningUnit')
-            templateSettings['DialogLumensQUESCCarbonAccounting']['analysisOption'] = analysisOption = settings.value('analysisOption')
             templateSettings['DialogLumensQUESCCarbonAccounting']['nodata'] = nodata = settings.value('nodata')            
             
             if not returnTemplateSettings:
@@ -234,11 +233,11 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
                     if indexLandCoverPlanningUnit != -1:
                         self.comboBoxCALandCoverPlanningUnit.setCurrentIndex(indexLandCoverPlanningUnit)
                 
-                if landUseTable:
-                    indexLandCoverTable = self.comboBoxCALandCoverTable.findText(landUseTable)
+                if carbonTable:
+                    indexCarbonTable = self.comboBoxCACarbonTable.findText(carbonTable)
                     
-                    if indexLandCoverTable != -1:
-                        self.comboBoxCALandCoverTable.setCurrentIndex(indexLandCoverTable)                    
+                    if indexCarbonTable != -1:
+                        self.comboBoxCACarbonTable.setCurrentIndex(indexCarbonTable)                    
                         
                 if nodata:
                     self.spinBoxCANoDataValue.setValue(int(nodata))
@@ -1133,15 +1132,15 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         
         self.handlerPopulateNameFromLookupData(self.main.dataPlanningUnit, self.comboBoxCALandCoverPlanningUnit)        
         
-        self.labelCALandCoverTable = QtGui.QLabel()
-        self.labelCALandCoverTable.setText('Land use/cover lookup table:')
-        self.layoutCarbonAccounting.addWidget(self.labelCALandCoverTable, 3, 0)
+        self.labelCACarbonTable = QtGui.QLabel()
+        self.labelCACarbonTable.setText('Carbon lookup table:')
+        self.layoutCarbonAccounting.addWidget(self.labelCACarbonTable, 3, 0)
         
-        self.comboBoxCALandCoverTable = QtGui.QComboBox()
-        self.comboBoxCALandCoverTable.setDisabled(True)
-        self.layoutCarbonAccounting.addWidget(self.comboBoxCALandCoverTable, 3, 1)
+        self.comboBoxCACarbonTable = QtGui.QComboBox()
+        self.comboBoxCACarbonTable.setDisabled(True)
+        self.layoutCarbonAccounting.addWidget(self.comboBoxCACarbonTable, 3, 1)
         
-        self.handlerPopulateNameFromLookupData(self.main.dataTable, self.comboBoxCALandCoverTable) 
+        self.handlerPopulateNameFromLookupData(self.main.dataTable, self.comboBoxCACarbonTable) 
         
         self.labelCANoDataValue = QtGui.QLabel()
         self.labelCANoDataValue.setText('&No data value:')
@@ -3085,13 +3084,13 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             = self.spinBoxPreQUESNodata.value()
         
         # 'QUES-C' Carbon Accounting groupbox fields
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse1'] \
+        self.main.appSettings['DialogLumensQUESCCarbonAccounting']['landUse1'] \
             = unicode(self.comboBoxCALandCoverLandUse1.currentText())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUse2'] \
+        self.main.appSettings['DialogLumensQUESCCarbonAccounting']['landUse2'] \
             = unicode(self.comboBoxCALandCoverLandUse2.currentText())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['landUseTable'] \
-            = unicode(self.comboBoxCALandCoverTable.currentText())
-        self.main.appSettings['DialogLumensPreQUESLandcoverTrajectoriesAnalysis']['planningUnit'] \
+        self.main.appSettings['DialogLumensQUESCCarbonAccounting']['carbonTable'] \
+            = unicode(self.comboBoxCACarbonTable.currentText())
+        self.main.appSettings['DialogLumensQUESCCarbonAccounting']['planningUnit'] \
             = unicode(self.comboBoxCALandCoverPlanningUnit.currentText())
         self.main.appSettings['DialogLumensQUESCCarbonAccounting']['nodata'] \
             = self.spinBoxCANoDataValue.value()
@@ -3250,13 +3249,13 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         """Slot method to pass the form values and execute the "PreQUES" R algorithms.
         
         The "PreQUES" process calls the following algorithms:
-        1. modeler:pre-ques_trajectory
+        1. r:prequesanalysis
         """
         self.setAppSettings()
         
         formName = 'DialogLumensPreQUESLandcoverTrajectoriesAnalysis'
-        # algName = 'modeler:pre-ques_trajectory'
         algName = 'r:prequesanalysis'
+        activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
         
         if self.validForm(formName):
             logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -3268,6 +3267,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
             
             outputs = general.runalg(
                 algName,
+                activeProject,
                 self.main.appSettings[formName]['landUse1'],
                 self.main.appSettings[formName]['landUse2'],
                 self.main.appSettings[formName]['planningUnit'],
@@ -3298,15 +3298,16 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         """Slot method to pass the form values and execute the "QUES-C" R algorithms.
         
         Depending on the checked groupbox, the "QUES-C" process calls the following algorithms:
-        1. modeler:ques-c
+        1. r:ques-c
         2. modeler:ques-c_peat
         3. r:summarizemultipleperiode
         """
         self.setAppSettings()
+        activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
         
         if self.checkBoxCarbonAccounting.isChecked():
             formName = 'DialogLumensQUESCCarbonAccounting'
-            algName = 'modeler:ques-c'
+            algName = 'r:quesc'
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -3318,8 +3319,13 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['csvfile'],
+                    activeProject,
+                    self.main.appSettings[formName]['landUse1'],
+                    self.main.appSettings[formName]['landUse2'],
+                    self.main.appSettings[formName]['planningUnit'],
+                    self.main.appSettings[formName]['carbonTable'],
                     self.main.appSettings[formName]['nodata'],
+                    None,
                 )
                 
                 # Display ROut file in debug mode

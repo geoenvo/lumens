@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, platform, sys, logging, subprocess, argparse, csv
+import os, platform, sys, logging, subprocess, argparse, csv, zipfile
 
 from qgis.core import *
 from qgis.gui import *
@@ -107,6 +107,7 @@ class MainWindow(QtGui.QMainWindow):
             'selectRasterfileExt': '.tif',
             'selectCsvfileExt': '.csv',
             'selectProjectfileExt': '.lpj',
+            'selectZipfileExt': '.zip',
             'selectDatabasefileExt': '.dbf',
             'selectHTMLfileExt': '.html',
             'selectTextfileExt': '.txt',
@@ -206,8 +207,7 @@ class MainWindow(QtGui.QMainWindow):
                 'landUse1': '',
                 'landUse2': '',
                 'planningUnit': '',
-                'landUseTable': '',
-                'analysisOption': '',
+                'carbonTable': '',
                 'nodata': '',
             },
             'DialogLumensQUESCPeatlandCarbonAccounting': {
@@ -2262,7 +2262,7 @@ class MainWindow(QtGui.QMainWindow):
     def lumensOpenDatabase(self, lumensDatabase=False):
         """Method for opening a LUMENS project database.
         
-        Opens a LUMENS project database file (*.lpj) using "modeler:lumens_open_database" R algorithm.
+        Opens a LUMENS project database file (*.lpj) using "r:lumensopendatabase" R algorithm.
         This is called when opening a recent project from the file menu or the "Open LUMENS database" menu.
         When a LUMENS project is opened, menus that depend on an open project will be enabled and all
         of the project's module templates will be listed on the main window's dashboard tab.
@@ -2285,14 +2285,14 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLumensOpenDatabase.setDisabled(True)
         
         outputs = general.runalg(
-            'modeler:lumens_open_database',
+            'r:lumensopendatabase',
             lumensDatabase.replace(os.path.sep, '/'),
             None
         )
         
         if outputs:
             ##print outputs
-            # outputs['overview_ALG0'] => temporary raster file
+            self.addLayer(outputs['overview'])
             
             self.appSettings['DialogLumensOpenDatabase']['projectFile'] = lumensDatabase
             self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = projectFolder = os.path.dirname(lumensDatabase)
@@ -2319,7 +2319,33 @@ class MainWindow(QtGui.QMainWindow):
         
         self.actionLumensOpenDatabase.setEnabled(True)
         logging.getLogger(type(self).__name__).info('end: LUMENS Open Database')
-    
+
+
+    def lumensImportDatabase(self, workingDir, lumensDatabase):
+        """Method for importing an archived LUMENS project database  
+        
+        Imports an archived LUMENS project using "r:lumensimportdatabase" R algorithm.
+        An archived file can be obtained from export database function. It will be 
+        imported lpj file and the folder DATA which are previously generated from other
+        process to selected new working directory.
+        
+        
+        Args:
+            workingDir: new working directory to be imported
+            lumensDatabase: an archived file (.zip) consists of lpj and DATA folder
+        """
+        logging.getLogger(type(self).__name__).info('start: LUMENS Import Database')
+        self.actionLumensOpenDatabase.setDisabled(True)
+        
+        outputs = general.runalg(
+            'r:lumensimportdatabase',
+            workingDir.replace(os.path.sep, '/'),
+            lumensDatabase.replace(os.path.sep, '/')
+        )
+        
+        self.actionLumensOpenDatabase.setEnabled(True)
+        logging.getLogger(type(self).__name__).info('end: LUMENS Import Database')        
+
     
     def lumensCloseDatabase(self):
         """Method for closing a LUMENS project database.
@@ -2331,8 +2357,6 @@ class MainWindow(QtGui.QMainWindow):
         logging.getLogger(type(self).__name__).info('start: LUMENS Close Database')
         
         self.actionLumensCloseDatabase.setDisabled(True)
-        
-        outputs = general.runalg('modeler:lumens_close_database')
         
         self.appSettings['DialogLumensOpenDatabase']['projectFile'] = ''
         self.appSettings['DialogLumensOpenDatabase']['projectFolder'] = ''
@@ -3059,14 +3083,39 @@ class MainWindow(QtGui.QMainWindow):
         """Slot method for a file select dialog to open a LUMENS .lpj project database file.
         """
         lumensDatabase = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0})'.format(self.appSettings['selectProjectfileExt'])))
+            self, 'Select LUMENS Database', QtCore.QDir.homePath(), 'LUMENS Database (*{0});;LUMENS Archive (*{1})'
+                .format(self.appSettings['selectProjectfileExt'], self.appSettings['selectZipfileExt'])))
+        
+        lumensDatabaseName, lumensDatabaseExt = os.path.splitext(lumensDatabase)
         
         if lumensDatabase:
             logging.getLogger(type(self).__name__).info('select LUMENS database: %s', lumensDatabase)
             
+            if lumensDatabaseExt == self.appSettings['selectZipfileExt'] and zipfile.is_zipfile(lumensDatabase):
+                zFile = zipfile.ZipFile(lumensDatabase, 'r')
+                importedLumenDatabaseProject = zFile.namelist()[0]
+                importedLumensDatabaseName, importedLumensDatabaseExt = os.path.splitext(importedLumenDatabaseProject)
+                
+                if importedLumensDatabaseExt == self.appSettings['selectProjectfileExt']:
+                    
+                    workingDir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
+                    
+                    if workingDir:
+                        logging.getLogger(type(self).__name__).info('select new working directory: %s', workingDir)
+                        
+                        self.lumensImportDatabase(workingDir, lumensDatabase)
+                        
+                        lumensDatabase = os.path.join(workingDir, importedLumensDatabaseName, importedLumenDatabaseProject).replace(os.path.sep, '/')
+                    else:
+                        print 'ERROR: Invalid working directory!'
+                        return
+                else:
+                    print 'ERROR: Invalid archived LUMENS file!'
+                    return
+              
             self.lumensOpenDatabase(lumensDatabase)
-    
-    
+            
+            
     def handlerLumensDeleteData(self):
         """Slot method for triggering the delete data operation.
         """
