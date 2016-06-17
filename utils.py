@@ -5,6 +5,19 @@ import logging
 from PyQt4 import QtGui
 
 
+def is_number(s):
+    try:
+        n=str(float(s))
+        if n == 'nan' or n == 'inf' or n == '-inf':
+            return False
+    except ValueError:
+        try:
+            complex(s)
+        except ValueError:
+            return False
+    return True
+
+
 class QPlainTextEditLogger(logging.Handler):
     """A custom text widget that receives the logging output.
     """

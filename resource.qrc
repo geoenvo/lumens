@@ -20,5 +20,14 @@
         <file>ui/icons/iconActionFeatureSelectExpression.png</file>
         <file>ui/icons/iconActionToggleEdit.png</file>
         <file>ui/icons/iconActionClear.png</file>
+        <file>ui/icons/iconActionDialogLumensPUR.png</file>
+        <file>ui/icons/iconActionDialogLumensDefault.png</file>
+        <file>ui/icons/iconActionDialogCreateLumensDatabase.png</file>
+        <file>ui/icons/iconActionLumensOpenDatabase.png</file>
+        <file>ui/icons/iconActionLumensCloseDatabase.png</file>
+        <file>ui/icons/iconActionLumensDatabaseStatus.png</file>
+        <file>ui/icons/iconActionDialogLumensAddData.png</file>
+        <file>ui/icons/iconActionLumensDeleteData.png</file>
+        <file>ui/icons/iconActionConfigure.png</file>
     </qresource>
 </RCC>
