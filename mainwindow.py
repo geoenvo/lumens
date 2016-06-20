@@ -42,6 +42,7 @@ from utils import QPlainTextEditLogger, DetailedMessageBox
 
 # Import LUMENS dialog classes here
 from dialog_layer_attribute_dualview import DialogLayerAttributeDualView
+from dialog_layer_attribute_table import DialogLayerAttributeTable
 from dialog_layer_properties import DialogLayerProperties
 from dialog_lumens_viewer import DialogLumensViewer
 
@@ -3394,6 +3395,16 @@ class MainWindow(QtGui.QMainWindow):
     
     def handlerLayerAttributeTable(self):
         """Slot method for opening the layer attribute table dialog.
+        """
+        layerItemData = self.getSelectedLayerData()
+        
+        # Try using QGIS's attribute widget
+        dialog = DialogLayerAttributeTable(self.qgsLayerList[layerItemData['layer']], self)
+        dialog.exec_()
+    
+    
+    def handlerLayerAttributeEditor(self):
+        """Slot method for opening the layer attribute editor.
         """
         layerItemData = self.getSelectedLayerData()
         
