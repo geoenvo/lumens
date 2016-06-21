@@ -610,7 +610,7 @@ class MainWindow(QtGui.QMainWindow):
         3. Statusbar
         4. Active project
         5. Sidebar tabs (layer list, dashboard, project tree)
-        6. Body content spiltter (between sidebar and map canvas)
+        6. Body content splitter (between sidebar and map canvas)
         7. Main content splitter (between body content and scrolling log)
         8. Scrolling log (only visible in debug mode)
         9. QgsMapCanvas instance
@@ -620,6 +620,7 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowTitle(self.windowTitle.format(__version__, ''))
 
         self.centralWidget = QtGui.QWidget(self)
+        self.centralWidget.setStyleSheet('QWidget { background-color: #222; }')
         self.centralWidget.setMinimumSize(1024, 600)
         self.setCentralWidget(self.centralWidget)
         
@@ -648,6 +649,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Floating toolbar
         self.toolBar = QtGui.QToolBar(self)
+        self.toolBar.setStyleSheet('QToolBar { background-color: #222; }')
         self.addToolBar(QtCore.Qt.LeftToolBarArea, self.toolBar)
         self.toolBar.setOrientation(QtCore.Qt.Vertical)
         self.toolBar.setAllowedAreas(QtCore.Qt.NoToolBarArea)
@@ -658,13 +660,15 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.dialogToolBar.setIconSize(QtCore.QSize(32, 32))
         self.dialogToolBar.setMovable(False)
+        self.dialogToolBar.setStyleSheet('QToolBar { background: url(./ui/images/logo.png) right no-repeat; background-color: #222; }')
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.dialogToolBar)
         
         self.statusBar = QtGui.QStatusBar(self)
+        self.statusBar.setStyleSheet('QStatusBar { background-color: #222; }')
         self.statusBar.setSizeGripEnabled(False)
         
         self.labelMapCanvasCoordinate = QtGui.QLabel(self)
-        self.labelMapCanvasCoordinate.setStyleSheet('QLabel { margin-right: 7px; }')
+        self.labelMapCanvasCoordinate.setStyleSheet('QLabel { margin-right: 7px; color: #fff; }')
         self.labelMapCanvasCoordinate.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignVCenter)
         
         self.statusBar.addPermanentWidget(self.labelMapCanvasCoordinate)
@@ -881,16 +885,18 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogToolBar.addAction(self.actionDialogLumensQUES)
         self.dialogToolBar.addAction(self.actionDialogLumensTAOpportunityCost)
         self.dialogToolBar.addAction(self.actionDialogLumensSCIENDO)
-        self.dialogToolBar.addSeparator()
+        ##self.dialogToolBar.addSeparator()
         
         # Create the app window layouts
         self.layoutActiveProject = QtGui.QHBoxLayout()
         self.labelActiveProject = QtGui.QLabel(self)
         self.labelActiveProject.setText('Active project:')
+        self.labelActiveProject.setStyleSheet('QLabel { color: #fff; }')
         self.layoutActiveProject.addWidget(self.labelActiveProject)
         
         self.lineEditActiveProject = QtGui.QLineEdit(self)
         self.lineEditActiveProject.setReadOnly(True)
+        self.lineEditActiveProject.setStyleSheet('QLineEdit { background-color: #fff; }')
         self.layoutActiveProject.addWidget(self.lineEditActiveProject)
         
         self.layerListView = QtGui.QListView(self)
@@ -1722,6 +1728,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # Floating sidebar
         self.sidebarDockWidget = QtGui.QDockWidget('Dashboard', self) # Formerly 'Sidebar'
+        self.sidebarDockWidget.setStyleSheet('QDockWidget { background-color: #222; }')
         self.sidebarDockWidget.setFeatures(self.sidebarDockWidget.features() & ~QtGui.QDockWidget.DockWidgetClosable)
         self.sidebarDockWidget.setWidget(self.sidebarTabWidget)
         self.sidebarDockWidget.setStyleSheet('QToolBar { border: none; }') # Remove border for all child QToolBar in sidebar
@@ -1742,6 +1749,7 @@ class MainWindow(QtGui.QMainWindow):
         self.contentBody.setLayout(self.layoutBody)
         
         self.log_box = QPlainTextEditLogger(self)
+        self.log_box.widget.setStyleSheet('QPlainTextEdit { color: #fff; }')
         # Show the logging widget only in debug mode
         if not self.appSettings['debug']:
             self.log_box.widget.setVisible(False)
