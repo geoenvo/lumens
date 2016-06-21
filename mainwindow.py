@@ -532,6 +532,7 @@ class MainWindow(QtGui.QMainWindow):
         self.actionZoomLast.triggered.connect(self.handlerZoomLast)
         self.actionZoomNext.triggered.connect(self.handlerZoomNext)
         self.actionLayerAttributeTable.triggered.connect(self.handlerLayerAttributeTable)
+        self.actionLayerAttributeEditor.triggered.connect(self.handlerLayerAttributeEditor)
         self.actionFeatureSelectExpression.triggered.connect(self.handlerFeatureSelectExpression)
         self.actionLayerProperties.triggered.connect(self.handlerLayerProperties)
         self.layerListView.customContextMenuRequested.connect(self.handlerLayerItemContextMenu)
@@ -651,7 +652,7 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.setOrientation(QtCore.Qt.Vertical)
         self.toolBar.setAllowedAreas(QtCore.Qt.NoToolBarArea)
         self.toolBar.setFixedWidth(40)
-        self.toolBar.setFixedHeight(550)
+        self.toolBar.setFixedHeight(570)
         
         self.dialogToolBar = QtGui.QToolBar(self)
         self.dialogToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -753,6 +754,11 @@ class MainWindow(QtGui.QMainWindow):
         self.actionLayerAttributeTable.setShortcut('Ctrl+T')
         self.actionLayerAttributeTable.setDisabled(True)
         
+        icon = QtGui.QIcon(':/ui/icons/iconActionToggleEdit.png')
+        self.actionLayerAttributeEditor = QtGui.QAction(icon, 'Layer Attribute Editor', self)
+        self.actionLayerAttributeEditor.setShortcut('Ctrl+A')
+        self.actionLayerAttributeEditor.setDisabled(True)
+        
         icon = QtGui.QIcon(':/ui/icons/iconActionFeatureSelectExpression.png')
         self.actionFeatureSelectExpression = QtGui.QAction(icon, 'Select Features By Expression', self)
         self.actionFeatureSelectExpression.setShortcut('Ctrl+E')
@@ -798,6 +804,7 @@ class MainWindow(QtGui.QMainWindow):
         self.toolBar.addAction(self.actionRefresh)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionLayerAttributeTable)
+        self.toolBar.addAction(self.actionLayerAttributeEditor)
         self.toolBar.addAction(self.actionFeatureSelectExpression)
         self.toolBar.addAction(self.actionLayerProperties)
         self.toolBar.addSeparator()
@@ -1689,6 +1696,7 @@ class MainWindow(QtGui.QMainWindow):
         self.layersToolBar.setOrientation(QtCore.Qt.Vertical)
         self.layersToolBar.addAction(self.actionAddLayer)
         self.layersToolBar.addAction(self.actionLayerAttributeTable)
+        self.layersToolBar.addAction(self.actionLayerAttributeEditor)
         self.layersToolBar.addAction(self.actionLayerProperties)
         self.layersToolBar.addAction(self.actionDeleteLayer)
         self.layoutGroupBoxProjectLayers.addWidget(self.layersToolBar)
@@ -2585,6 +2593,7 @@ class MainWindow(QtGui.QMainWindow):
         self.contextMenu.addAction(self.actionZoomLayer)
         self.contextMenu.addAction(self.actionZoomSelected)
         self.contextMenu.addAction(self.actionLayerAttributeTable)
+        self.contextMenu.addAction(self.actionLayerAttributeEditor)
         self.contextMenu.addAction(self.actionFeatureSelectExpression)
         self.contextMenu.addAction(self.actionDeleteLayer)
         self.contextMenu.addAction(self.actionLayerProperties)
@@ -3379,6 +3388,7 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setEnabled(True)
             self.actionZoomSelected.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
+            self.actionLayerAttributeEditor.setEnabled(True)
             self.actionFeatureSelectExpression.setEnabled(True)
             self.actionLayerProperties.setEnabled(True)
         else:
@@ -3386,6 +3396,7 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setDisabled(True)
             self.actionZoomSelected.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
+            self.actionLayerAttributeEditor.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
             self.actionLayerProperties.setDisabled(True)
         
@@ -3519,6 +3530,7 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setDisabled(True)
             self.actionZoomSelected.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
+            self.actionLayerAttributeEditor.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
             self.actionLayerProperties.setDisabled(True)
             return
@@ -3531,6 +3543,7 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setEnabled(True)
             self.actionZoomSelected.setEnabled(True)
             self.actionLayerAttributeTable.setEnabled(True)
+            self.actionLayerAttributeEditor.setEnabled(True)
             self.actionFeatureSelectExpression.setEnabled(True)
             self.actionLayerProperties.setEnabled(True)
         else:
@@ -3538,6 +3551,7 @@ class MainWindow(QtGui.QMainWindow):
             self.actionZoomLayer.setDisabled(True)
             self.actionZoomSelected.setDisabled(True)
             self.actionLayerAttributeTable.setDisabled(True)
+            self.actionLayerAttributeEditor.setDisabled(True)
             self.actionFeatureSelectExpression.setDisabled(True)
             self.actionLayerProperties.setDisabled(True)
     
