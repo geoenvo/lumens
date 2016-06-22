@@ -891,8 +891,24 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         Args:
             parent: the dialog's parent instance.
         """
+        self.setStyleSheet('QDialog { background-color: #222; }')
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
+        tabWidgetStylesheet = """
+        QTabWidget::pane {
+            border: none;
+            background-color: #fff;
+        }
+        QTabBar::tab {
+            background-color: #222;
+            color: #fff;
+        }
+        QTabBar::tab:selected, QTabBar::tab:hover {
+            background-color: #fff;
+            color: #000;
+        }
+        """
+        self.tabWidget.setStyleSheet(tabWidgetStylesheet)
         
         self.tabPreQUES = QtGui.QWidget()
         self.tabQUESC = QtGui.QWidget()

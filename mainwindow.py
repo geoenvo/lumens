@@ -660,7 +660,7 @@ class MainWindow(QtGui.QMainWindow):
         self.dialogToolBar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
         self.dialogToolBar.setIconSize(QtCore.QSize(32, 32))
         self.dialogToolBar.setMovable(False)
-        self.dialogToolBar.setStyleSheet('QToolBar { background: url(./ui/images/logo.png) right no-repeat; background-color: #222; }')
+        self.dialogToolBar.setStyleSheet('QToolBar { background: url(./ui/images/logo.png) right no-repeat; background-color: #222; } QToolButton { color: #fff; }')
         self.addToolBar(QtCore.Qt.TopToolBarArea, self.dialogToolBar)
         
         self.statusBar = QtGui.QStatusBar(self)
@@ -923,6 +923,21 @@ class MainWindow(QtGui.QMainWindow):
         self.projectTreeView.hideColumn(3)
         
         self.sidebarTabWidget = QtGui.QTabWidget()
+        sidebarTabWidgetStylesheet = """
+        QTabWidget::pane {
+            border: none;
+            background-color: #fff;
+        }
+        QTabBar::tab {
+            background-color: #222;
+            color: #fff;
+        }
+        QTabBar::tab:selected, QTabBar::tab:hover {
+            background-color: #fff;
+            color: #000;
+        }
+        """
+        self.sidebarTabWidget.setStyleSheet(sidebarTabWidgetStylesheet)
         self.sidebarTabWidget.setTabPosition(QtGui.QTabWidget.North)
         
         self.dashboardTabWidget = QtGui.QTabWidget()
@@ -1728,10 +1743,10 @@ class MainWindow(QtGui.QMainWindow):
         
         # Floating sidebar
         self.sidebarDockWidget = QtGui.QDockWidget('Dashboard', self) # Formerly 'Sidebar'
-        self.sidebarDockWidget.setStyleSheet('QDockWidget { background-color: #222; }')
+        self.sidebarDockWidget.setContentsMargins(5, 10, 5, 5)
         self.sidebarDockWidget.setFeatures(self.sidebarDockWidget.features() & ~QtGui.QDockWidget.DockWidgetClosable)
         self.sidebarDockWidget.setWidget(self.sidebarTabWidget)
-        self.sidebarDockWidget.setStyleSheet('QToolBar { border: none; }') # Remove border for all child QToolBar in sidebar
+        self.sidebarDockWidget.setStyleSheet('QDockWidget { background-color: #222; } QToolBar { border: none; }') # Remove border for all child QToolBar in sidebar
         self.sidebarDockWidget.setFloating(True)
         self.sidebarDockWidget.setMinimumHeight(520)
         
@@ -1743,7 +1758,7 @@ class MainWindow(QtGui.QMainWindow):
         # Vertical layout for widgets: splitterMain (map canvas widget, log widget), then active project
         self.layoutMain = QtGui.QVBoxLayout()
         # Reduce gap with statusbar
-        self.layoutMain.setContentsMargins(11, 11, 11, 0)
+        self.layoutMain.setContentsMargins(5, 5, 5, 0)
         
         self.contentBody = QtGui.QWidget()
         self.contentBody.setLayout(self.layoutBody)

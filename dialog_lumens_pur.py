@@ -288,8 +288,24 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         Args:
             parent: the dialog's parent instance.
         """
+        self.setStyleSheet('QDialog { background-color: #222; }')
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
+        tabWidgetStylesheet = """
+        QTabWidget::pane {
+            border: none;
+            background-color: #fff;
+        }
+        QTabBar::tab {
+            background-color: #222;
+            color: #fff;
+        }
+        QTabBar::tab:selected, QTabBar::tab:hover {
+            background-color: #fff;
+            color: #000;
+        }
+        """
+        self.tabWidget.setStyleSheet(tabWidgetStylesheet)
         
         self.tabSetup = QtGui.QWidget()
         self.tabReconcile = QtGui.QWidget()
@@ -305,6 +321,7 @@ class DialogLumensPUR(QtGui.QDialog, DialogLumensBase):
         self.layoutTabLog = QtGui.QVBoxLayout()
         
         self.dialogLayout.addWidget(self.tabWidget)
+        #self.setStyleSheet('QWidget { background-color: #ccc; }')
         ##self.dialogLayout.setContentsMargins(10, 10, 10, 10)
         
         #***********************************************************
