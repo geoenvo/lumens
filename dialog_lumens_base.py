@@ -26,7 +26,17 @@ class DialogLumensBase:
                 comboBox.addItem(key, addedData[key])
             
             comboBox.setEnabled(True)
-    
+
+
+    def handlerPopulateNameFromLookupData(self, lookupData, comboBox):
+        """Populate name or description from a spesific lookup table
+        """
+        if len(lookupData):
+            comboBox.clear()
+            for value in lookupData.values():
+                comboBox.addItem(value[list(value)[0]]) # value.values()[0] <-- only support in python 2
+            comboBox.setEnabled(True)
+            
     
     def handlerDialogHelp(self, dialogName):
         """Slot method for opening the dialog html help document.
@@ -118,7 +128,7 @@ class DialogLumensBase:
                   for row in reader: # Just read the first row
                       verb = 'failed'
                       statusCode = row[0]
-                      statusMessage = row[1]
+                      successMessage = errorMessage = statusMessage = row[1] # a bit weird, still need to be simplified
                       if int(statusCode) == 1:
                           success = True
                           verb = 'succeeded'

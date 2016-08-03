@@ -92,29 +92,15 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
             settings.beginGroup('DialogLumensSCIENDOHistoricalBaselineProjection')
             
             templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection'] = {}
-            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['workingDir'] = workingDir = settings.value('workingDir')
             templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['QUESCDatabase'] = QUESCDatabase = settings.value('QUESCDatabase')
-            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t1'] = t1 = settings.value('t1')
-            templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t2'] = t2 = settings.value('t2')
             templateSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['iteration'] = iteration = settings.value('iteration')
             
             if not returnTemplateSettings:
-                if workingDir and os.path.isdir(workingDir):
-                    self.lineEditHistoricalBaselineProjectionWorkingDir.setText(workingDir)
-                else:
-                    self.lineEditHistoricalBaselineProjectionWorkingDir.setText('')
-                if QUESCDatabase and os.path.exists(QUESCDatabase):
-                    self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(QUESCDatabase)
-                else:
-                    self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText('')
-                if t1:
-                    self.spinBoxHistoricalBaselineProjectionT1.setValue(int(t1))
-                else:
-                    self.spinBoxHistoricalBaselineProjectionT1.setValue(td.year)
-                if t2:
-                    self.spinBoxHistoricalBaselineProjectionT2.setValue(int(t2))
-                else:
-                    self.spinBoxHistoricalBaselineProjectionT2.setValue(td.year)
+                if QUESCDatabase:
+                    indexQUESCDatabase = self.comboBoxHistoricalBaselineProjectionQUESCDatabase.findText(QUESCDatabase)
+                    if indexQUESCDatabase != -1:
+                        self.comboBoxHistoricalBaselineProjectionQUESCDatabase.setCurrentIndex(indexQUESCDatabase)
+                        
                 if iteration:
                     self.spinBoxHistoricalBaselineProjectionIteration.setValue(int(iteration))
                 else:
@@ -346,7 +332,6 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
     
     def __init__(self, parent):
         super(DialogLumensSCIENDO, self).__init__(parent)
-        print 'DEBUG: DialogLumensSCIENDO init'
         
         self.main = parent
         self.dialogTitle = 'LUMENS SCIENDO'
@@ -394,8 +379,6 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.checkBoxBuildScenario.toggled.connect(self.toggleBuildScenario)
         
         # 'Low Emission Development Analysis' tab buttons
-        self.buttonSelectHistoricalBaselineProjectionWorkingDir.clicked.connect(self.handlerSelectHistoricalBaselineProjectionWorkingDir)
-        self.buttonSelectHistoricalBaselineProjectionQUESCDatabase.clicked.connect(self.handlerSelectHistoricalBaselineProjectionQUESCDatabase)
         self.buttonSelectDriversAnalysisLandUseCoverChangeDrivers.clicked.connect(self.handlerSelectDriversAnalysisLandUseCoverChangeDrivers)
         self.buttonSelectBuildScenarioHistoricalBaselineCar.clicked.connect(self.handlerSelectBuildScenarioHistoricalBaselineCar)
         self.buttonProcessLowEmissionDevelopmentAnalysis.clicked.connect(self.handlerProcessLowEmissionDevelopmentAnalysis)
@@ -476,6 +459,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.contentOptionsHistoricalBaselineProjection.setDisabled(True)
         self.layoutGroupBoxHistoricalBaselineProjection.addWidget(self.checkBoxHistoricalBaselineProjection)
         self.layoutGroupBoxHistoricalBaselineProjection.addWidget(self.contentOptionsHistoricalBaselineProjection)
+        self.layoutGroupBoxHistoricalBaselineProjection.insertStretch(2, 1)
         self.layoutGroupBoxHistoricalBaselineProjection.setAlignment(self.checkBoxHistoricalBaselineProjection, QtCore.Qt.AlignTop)
         self.layoutHistoricalBaselineProjectionInfo = QtGui.QVBoxLayout()
         self.layoutHistoricalBaselineProjection = QtGui.QGridLayout()
@@ -486,60 +470,24 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.labelHistoricalBaselineProjectionInfo.setText('Lorem ipsum dolor sit amet...\n')
         self.layoutHistoricalBaselineProjectionInfo.addWidget(self.labelHistoricalBaselineProjectionInfo)
         
-        self.labelHistoricalBaselineProjectionWorkingDir = QtGui.QLabel()
-        self.labelHistoricalBaselineProjectionWorkingDir.setText('Working directory:')
-        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionWorkingDir, 0, 0)
-        
-        self.lineEditHistoricalBaselineProjectionWorkingDir = QtGui.QLineEdit()
-        self.lineEditHistoricalBaselineProjectionWorkingDir.setReadOnly(True)
-        self.layoutHistoricalBaselineProjection.addWidget(self.lineEditHistoricalBaselineProjectionWorkingDir, 0, 1)
-        
-        self.buttonSelectHistoricalBaselineProjectionWorkingDir = QtGui.QPushButton()
-        self.buttonSelectHistoricalBaselineProjectionWorkingDir.setText('&Browse')
-        self.layoutHistoricalBaselineProjection.addWidget(self.buttonSelectHistoricalBaselineProjectionWorkingDir, 0, 2)
-        
         self.labelHistoricalBaselineProjectionQUESCDatabase = QtGui.QLabel()
         self.labelHistoricalBaselineProjectionQUESCDatabase.setText('QUES-C Database:')
-        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionQUESCDatabase, 1, 0)
+        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionQUESCDatabase, 0, 0)
         
-        self.lineEditHistoricalBaselineProjectionQUESCDatabase = QtGui.QLineEdit()
-        self.lineEditHistoricalBaselineProjectionQUESCDatabase.setReadOnly(True)
-        self.layoutHistoricalBaselineProjection.addWidget(self.lineEditHistoricalBaselineProjectionQUESCDatabase, 1, 1)
+        self.comboBoxHistoricalBaselineProjectionQUESCDatabase = QtGui.QComboBox()
+        self.comboBoxHistoricalBaselineProjectionQUESCDatabase.setDisabled(True)
+        self.layoutHistoricalBaselineProjection.addWidget(self.comboBoxHistoricalBaselineProjectionQUESCDatabase, 0, 1)
         
-        self.buttonSelectHistoricalBaselineProjectionQUESCDatabase = QtGui.QPushButton()
-        self.buttonSelectHistoricalBaselineProjectionQUESCDatabase.setText('&Browse')
-        self.layoutHistoricalBaselineProjection.addWidget(self.buttonSelectHistoricalBaselineProjectionQUESCDatabase, 1, 2)
-        
-        self.labelHistoricalBaselineProjectionT1 = QtGui.QLabel()
-        self.labelHistoricalBaselineProjectionT1.setText('Base year T&1:')
-        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionT1, 2, 0)
-        
-        self.spinBoxHistoricalBaselineProjectionT1 = QtGui.QSpinBox()
-        self.spinBoxHistoricalBaselineProjectionT1.setRange(1, 9999)
-        td = datetime.date.today()
-        self.spinBoxHistoricalBaselineProjectionT1.setValue(td.year)
-        self.layoutHistoricalBaselineProjection.addWidget(self.spinBoxHistoricalBaselineProjectionT1, 2, 1)
-        
-        self.labelHistoricalBaselineProjectionT1.setBuddy(self.spinBoxHistoricalBaselineProjectionT1)
-        
-        self.labelHistoricalBaselineProjectionT2 = QtGui.QLabel()
-        self.labelHistoricalBaselineProjectionT2.setText('Base year T&2:')
-        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionT2, 3, 0)
-        
-        self.spinBoxHistoricalBaselineProjectionT2 = QtGui.QSpinBox()
-        self.spinBoxHistoricalBaselineProjectionT2.setRange(1, 9999)
-        self.spinBoxHistoricalBaselineProjectionT2.setValue(td.year)
-        self.layoutHistoricalBaselineProjection.addWidget(self.spinBoxHistoricalBaselineProjectionT2, 3, 1)
-        self.labelHistoricalBaselineProjectionT2.setBuddy(self.spinBoxHistoricalBaselineProjectionT2)
+        self.handlerPopulateNameFromLookupData(self.main.dataTable, self.comboBoxHistoricalBaselineProjectionQUESCDatabase)
         
         self.labelHistoricalBaselineProjectionIteration = QtGui.QLabel()
         self.labelHistoricalBaselineProjectionIteration.setText('&Iteration:')
-        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionIteration, 4, 0)
+        self.layoutHistoricalBaselineProjection.addWidget(self.labelHistoricalBaselineProjectionIteration, 1, 0)
         
         self.spinBoxHistoricalBaselineProjectionIteration = QtGui.QSpinBox()
-        self.spinBoxHistoricalBaselineProjectionIteration.setRange(1, 9999)
-        self.spinBoxHistoricalBaselineProjectionIteration.setValue(5)
-        self.layoutHistoricalBaselineProjection.addWidget(self.spinBoxHistoricalBaselineProjectionIteration, 4, 1)
+        self.spinBoxHistoricalBaselineProjectionIteration.setRange(1, 99)
+        self.spinBoxHistoricalBaselineProjectionIteration.setValue(3)
+        self.layoutHistoricalBaselineProjection.addWidget(self.spinBoxHistoricalBaselineProjectionIteration, 1, 1)
         self.labelHistoricalBaselineProjectionIteration.setBuddy(self.spinBoxHistoricalBaselineProjectionIteration) 
         
         # 'Historical baseline annual projection' GroupBox
@@ -799,6 +747,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         
         self.spinBoxLandUseChangeModelingBaseYear = QtGui.QSpinBox()
         self.spinBoxLandUseChangeModelingBaseYear.setRange(1, 9999)
+        td = datetime.date.today()
         self.spinBoxLandUseChangeModelingBaseYear.setValue(td.year)
         self.layoutLandUseChangeModelingParameters.addWidget(self.spinBoxLandUseChangeModelingBaseYear, 2, 1)
         self.labelLandUseChangeModelingBaseYear.setBuddy(self.spinBoxLandUseChangeModelingBaseYear)
@@ -939,7 +888,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
-    
+                        
     
     #***********************************************************
     # 'Low Emission Development Analysis' tab QGroupBox toggle handlers
@@ -1068,27 +1017,6 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
                 self.handlerLoadLowEmissionDevelopmentAnalysisTemplate(fileName)
     
     
-    def handlerSelectHistoricalBaselineProjectionWorkingDir(self):
-        """Slot method for a directory select dialog.
-        """
-        dir = unicode(QtGui.QFileDialog.getExistingDirectory(self, 'Select Working Directory'))
-        
-        if dir:
-            self.lineEditHistoricalBaselineProjectionWorkingDir.setText(dir)
-            logging.getLogger(type(self).__name__).info('select directory: %s', dir)
-    
-    
-    def handlerSelectHistoricalBaselineProjectionQUESCDatabase(self):
-        """Slot method for a file select dialog.
-        """
-        file = unicode(QtGui.QFileDialog.getOpenFileName(
-            self, 'Select QUES-C Database', QtCore.QDir.homePath(), 'QUES-C Database (*{0})'.format(self.main.appSettings['selectDatabasefileExt'])))
-        
-        if file:
-            self.lineEditHistoricalBaselineProjectionQUESCDatabase.setText(file)
-            logging.getLogger(type(self).__name__).info('select file: %s', file)
-    
-    
     def handlerSelectDriversAnalysisLandUseCoverChangeDrivers(self):
         """Slot method for a file select dialog.
         """
@@ -1215,14 +1143,8 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         """Set the required values from the form widgets.
         """
         # 'Historical baseline projection' groupbox fields
-        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['workingDir'] \
-            = unicode(self.lineEditHistoricalBaselineProjectionWorkingDir.text()).replace(os.path.sep, '/')
         self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['QUESCDatabase'] \
-            = unicode(self.lineEditHistoricalBaselineProjectionQUESCDatabase.text())
-        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t1'] \
-            = self.spinBoxHistoricalBaselineProjectionT1.value()
-        self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['t2'] \
-            = self.spinBoxHistoricalBaselineProjectionT2.value()
+            = unicode(self.comboBoxHistoricalBaselineProjectionQUESCDatabase.currentText())
         self.main.appSettings['DialogLumensSCIENDOHistoricalBaselineProjection']['iteration'] \
             = self.spinBoxHistoricalBaselineProjectionIteration.value()
         
@@ -1271,7 +1193,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         """Slot method to pass the form values and execute the "SCIENDO Low Emission Development Analysis" R algorithms.
         
         Depending on the checked groupbox, the "SCIENDO Low Emission Development Analysis" process calls the following algorithms:
-        1. modeler:projection_historical_baseline
+        1. r:projectionhistoricalbaseline
         2. r:historicalbaselineannualprojection
         3. modeler:drivers_analysis
         4. r:abacususingabsolutearea
@@ -1280,7 +1202,8 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         
         if self.checkBoxHistoricalBaselineProjection.isChecked():
             formName = 'DialogLumensSCIENDOHistoricalBaselineProjection'
-            algName = 'modeler:projection_historical_baseline'
+            algName = 'r:projectionhistoricalbaseline'
+            activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -1292,10 +1215,8 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
                 
                 outputs = general.runalg(
                     algName,
-                    self.main.appSettings[formName]['workingDir'],
+                    activeProject,
                     self.main.appSettings[formName]['QUESCDatabase'],
-                    self.main.appSettings[formName]['t1'],
-                    self.main.appSettings[formName]['t2'],
                     self.main.appSettings[formName]['iteration'],
                 )
                 
@@ -1303,8 +1224,6 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
                 if self.main.appSettings['debug']:
                     dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
                     dialog.exec_()
-                
-                ##print outputs
                 
                 # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
                 self.main.setWindowState(QtCore.Qt.WindowActive)

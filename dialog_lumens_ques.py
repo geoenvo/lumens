@@ -891,7 +891,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         Args:
             parent: the dialog's parent instance.
         """
-        self.setStyleSheet('QDialog { background-color: #222; }')
+        self.setStyleSheet('QDialog { background-color: #222; } QMessageBox QLabel { color: #fff; }')
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         tabWidgetStylesheet = """
@@ -1108,6 +1108,7 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         self.contentOptionsCarbonAccounting.setDisabled(True)
         self.layoutGroupBoxCarbonAccounting.addWidget(self.checkBoxCarbonAccounting)
         self.layoutGroupBoxCarbonAccounting.addWidget(self.contentOptionsCarbonAccounting)
+        self.layoutGroupBoxCarbonAccounting.insertStretch(2,1)
         self.layoutGroupBoxCarbonAccounting.setAlignment(self.checkBoxCarbonAccounting, QtCore.Qt.AlignTop)
         self.layoutCarbonAccountingInfo = QtGui.QVBoxLayout()
         self.layoutCarbonAccounting = QtGui.QGridLayout()
@@ -2275,15 +2276,6 @@ class DialogLumensQUES(QtGui.QDialog, DialogLumensBase):
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
-
-    def handlerPopulateNameFromLookupData(self, lookupData, comboBox):
-        """Populate name or description from a spesific lookup table
-        """
-        if len(lookupData):
-            comboBox.clear()
-            for value in lookupData.values():
-                comboBox.addItem(value[list(value)[0]]) # value.values()[0] <-- only support in python 2
-            comboBox.setEnabled(True)
                     
     
     #***********************************************************

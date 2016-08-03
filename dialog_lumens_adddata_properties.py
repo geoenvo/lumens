@@ -51,7 +51,7 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
             3: 'Tanaman pohon monokultur',
             4: 'Tanaman pohon campuran',
             5: 'Tanaman pertanian semusim',
-            6: 'Semak, rumput dan lahan terbuka',
+            6: 'Semak, rumput, dan lahan terbuka',
             7: 'Pemukiman',
             8: 'Lain-lain',
         }
@@ -176,12 +176,14 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         
         if self.dataType == 'Land Use/Cover':
             dataTableColumnSpan = 2
-            if self.isVectorFile:
+            if self.isVectorFile or self.isRasterFile:
                 self.layoutDataProperties.addWidget(self.labelDataMapping, rowCount, 0)
                 self.layoutDataProperties.addWidget(self.lineEditDataMapping, rowCount, 1)
                 self.layoutDataProperties.addWidget(self.buttonSelectDataMapping, rowCount, 2)
                 dataTableColumnSpan = 3
                 rowCount += 1
+            if self.isRasterFile:
+                self.buttonSelectDataMapping.setEnabled(True)
             self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, dataTableColumnSpan)
         elif self.dataType == 'Planning Unit':
             self.layoutDataProperties.addWidget(self.dataTable, rowCount, 0, 1, 2)
@@ -512,7 +514,8 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
         Args:
             dataMappingFile (str): the file path of a data mapping file.
         """
-        dataMapping = {}
+        dataMappingClassified = {}
+        dataMappingLegend = {}
         
         with open(dataMappingFile, 'rb') as f:
             hasHeader = csv.Sniffer().has_header(f.read(1024))
@@ -523,24 +526,41 @@ class DialogLumensAddDataProperties(QtGui.QDialog):
                 next(reader)
             
             for row in reader:
-                dataMapping[str(row[0]).lower()] = str(row[1]).lower()
+                dataMappingLegend[str(row[0]).lower()] = str(row[1])
+                dataMappingClassified[str(row[0]).lower()] = str(row[2]).lower()
             
-            fieldColumn = classifiedColumn = 0
+            fieldColumn = classifiedColumn = legendColumn = 0
             
             for headerColumn in range(self.dataTable.columnCount()):
                 headerItem = self.dataTable.horizontalHeaderItem(headerColumn)
                 headerText = headerItem.text()
-                if headerText == unicode(self.comboBoxDataFieldAttribute.currentText()):
-                    fieldColumn = headerColumn
-                elif headerText == 'Classified':
-                    classifiedColumn = headerColumn
-            
+                if self.isVectorFile:
+                    if headerText == unicode(self.comboBoxDataFieldAttribute.currentText()):
+                        fieldColumn = headerColumn
+                    elif headerText == 'Classified':
+                        classifiedColumn = headerColumn
+                    elif headerText == 'Legend':
+                        legendColumn = headerColumn
+                elif self.isRasterFile:
+                    if headerText == 'ID':
+                        fieldColumn = headerColumn
+                    elif headerText == 'Classified':
+                        classifiedColumn = headerColumn
+                    elif headerText == 'Legend':
+                        legendColumn = headerColumn
+                
             for tableRow in range(self.dataTable.rowCount()):
                 fieldItem = self.dataTable.item(tableRow, fieldColumn)
-                classifiedWidget = self.dataTable.cellWidget(tableRow, classifiedColumn)
                 fieldItemText = fieldItem.text().lower()
-                if fieldItemText in dataMapping:
-                    classification = dataMapping[fieldItemText]
+                classifiedWidget = self.dataTable.cellWidget(tableRow, classifiedColumn)
+                
+                if fieldItemText in dataMappingClassified:
+                    legend = dataMappingLegend[fieldItemText]
+                    newFieldLegend = QtGui.QTableWidgetItem(legend)
+                    self.dataTable.setItem(tableRow, legendColumn, newFieldLegend)
+                    
+                    classification = dataMappingClassified[fieldItemText]
+                    
                     # Perform case insensitive search of the ComboBox
                     classifiedOptionIndex = classifiedWidget.findText(classification, QtCore.Qt.MatchFixedString)
                     # Found a data mapping match!

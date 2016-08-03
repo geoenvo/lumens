@@ -392,10 +392,7 @@ class MainWindow(QtGui.QMainWindow):
                 'period': '',
             },
             'DialogLumensSCIENDOHistoricalBaselineProjection': {
-                'workingDir': '',
                 'QUESCDatabase': '',
-                't1': '',
-                't2': '',
                 'iteration': '',
             },
             'DialogLumensSCIENDOHistoricalBaselineAnnualProjection': {
@@ -2720,7 +2717,7 @@ class MainWindow(QtGui.QMainWindow):
             
             dialogLumensQUES.handlerProcessQUESC()
             
-            self.buttonProcessPreQUESTemplate.setEnabled(True)
+            self.buttonProcessQUESCTemplate.setEnabled(True)
     
     
     def handlerProcessQUESBTemplate(self):
