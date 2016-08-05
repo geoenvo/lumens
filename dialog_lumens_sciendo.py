@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os, logging, datetime, glob
+import os, logging, datetime, glob, tempfile, csv
 from qgis.core import *
 from processing.tools import *
 from PyQt4 import QtCore, QtGui
@@ -335,6 +335,8 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         
         self.main = parent
         self.dialogTitle = 'LUMENS SCIENDO'
+        self.checkBoxQUESCDatabaseCount = 0
+        self.listOfQUESCDatabase = []
         self.settingsPath = os.path.join(self.main.appSettings['DialogLumensOpenDatabase']['projectFolder'], self.main.appSettings['folderSCIENDO'])
         self.currentLowEmissionDevelopmentAnalysisTemplate = None
         self.currentLandUseChangeModelingTemplate = None
@@ -403,7 +405,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         Args:
             parent: the dialog's parent instance.
         """
-        self.setStyleSheet('QDialog { background-color: #222; }')
+        self.setStyleSheet('QDialog { background-color: #222; } QMessageBox QLabel{ color: #fff; }')
         self.dialogLayout = QtGui.QVBoxLayout()
         self.tabWidget = QtGui.QTabWidget()
         tabWidgetStylesheet = """
@@ -525,6 +527,8 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         self.layoutHistoricalBaselineAnnualProjection.addWidget(self.spinBoxHistoricalBaselineAnnualProjectionIteration, 0, 1)
         self.labelHistoricalBaselineAnnualProjectionIteration.setBuddy(self.spinBoxHistoricalBaselineAnnualProjectionIteration)
         
+        self.populateQUESCDatabase()
+
         # 'Drivers analysis' GroupBox
         self.groupBoxDriversAnalysis = QtGui.QGroupBox('Drivers analysis')
         self.layoutGroupBoxDriversAnalysis = QtGui.QHBoxLayout()
@@ -888,6 +892,31 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         """
         if self.tabWidget.widget(index) == self.tabLog:
             self.log_box.widget.verticalScrollBar().triggerAction(QtGui.QAbstractSlider.SliderToMaximum)
+
+
+    def populateQUESCDatabase(self):
+        layoutCheckBoxQUESCDatabase = QtGui.QVBoxLayout()
+        self.checkBoxQUESCDatabaseCount = 0
+        if len(self.main.dataTable):
+            dataTable = self.main.dataTable
+            dataQUESCDatabase = []
+            for value in dataTable.values():
+                dataTableName = value[list(value)[0]]
+                if 'QUESC_database_' in dataTableName:
+                    dataQUESCDatabase.append(dataTableName)
+            for name in dataQUESCDatabase:
+                self.checkBoxQUESCDatabaseCount = self.checkBoxQUESCDatabaseCount + 1
+                checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase = QtGui.QCheckBox()
+                checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase.setObjectName('checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase_{0}'.format(str(self.checkBoxQUESCDatabaseCount)))
+                checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase.setText(name)
+                layoutCheckBoxQUESCDatabase.addWidget(checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase)
+                checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase.toggled.connect(self.toggleHistoricalBaselineAnnualProjectionQUESCDatabase)
+        else:
+            labelQUESCDatabaseHistoricalBaselineAnnualProjection = QtGui.QLabel()
+            labelQUESCDatabaseHistoricalBaselineAnnualProjection.setText('\nNo QUES-C Database found!\n')
+            layoutCheckBoxQUESCDatabase.addWidget(labelQUESCDatabaseHistoricalBaselineAnnualProjection)
+            
+        self.layoutOptionsHistoricalBaselineAnnualProjection.addLayout(layoutCheckBoxQUESCDatabase)
                         
     
     #***********************************************************
@@ -915,6 +944,25 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
             self.contentOptionsHistoricalBaselineAnnualProjection.setEnabled(True)
         else:
             self.contentOptionsHistoricalBaselineAnnualProjection.setDisabled(True)
+
+
+    def toggleHistoricalBaselineAnnualProjectionQUESCDatabase(self, checked):
+        """Slot method for handling checkbox toggling.
+        
+        Args:
+            checked (bool): the checkbox status.
+        """
+        checkBoxSender = self.sender()
+        objectName = checkBoxSender.objectName()
+        checkBoxIndex = objectName.split('_')[1]
+        
+        checkBoxQUESCDatabase = self.contentOptionsHistoricalBaselineAnnualProjection.findChild(QtGui.QCheckBox, 'checkBoxHistoricalBaselineAnnualProjectionQUESCDatabase_' + checkBoxIndex)
+        checkBoxName = checkBoxQUESCDatabase.text()
+        
+        if checked:
+            self.listOfQUESCDatabase.append(checkBoxName)
+        else:
+            self.listOfQUESCDatabase.remove(checkBoxName)
     
     
     def toggleDriversAnalysis(self, checked):
@@ -1015,7 +1063,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
             # Load the newly saved template file
             if fileSaved:
                 self.handlerLoadLowEmissionDevelopmentAnalysisTemplate(fileName)
-    
+          
     
     def handlerSelectDriversAnalysisLandUseCoverChangeDrivers(self):
         """Slot method for a file select dialog.
@@ -1187,6 +1235,27 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
             = self.main.appSettings['DialogLumensSCIENDOSimulateLandUseChange']['location'] \
             = self.main.appSettings['DialogLumensSCIENDOSimulateWithScenario']['location'] \
             = unicode(self.lineEditLandUseChangeModelingLocation.text())
+
+    
+    def writeListCsv(self, listOfData, forwardDirSeparator=False):
+        """Method for writing the dissolved table to a temp csv file. Inspired from DialogLumensViewer.
+        
+        Args:
+            listOfData (list): a list which is contained the list of checked QUES-C database 
+            forwardDirSeparator (bool): return the temp csv file path with forward slash dir separator.
+        """        
+        handle, csvFilePath = tempfile.mkstemp(suffix='.csv')
+        
+        with os.fdopen(handle, 'w') as f:
+            writer = csv.writer(f)
+            
+            for tableRow in listOfData:
+                writer.writerow([tableRow])
+            
+        if forwardDirSeparator:
+            return csvFilePath.replace(os.path.sep, '/')
+            
+        return csvFilePath
     
     
     def handlerProcessLowEmissionDevelopmentAnalysis(self):
@@ -1199,11 +1268,11 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
         4. r:abacususingabsolutearea
         """
         self.setAppSettings()
+        activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
         
         if self.checkBoxHistoricalBaselineProjection.isChecked():
             formName = 'DialogLumensSCIENDOHistoricalBaselineProjection'
             algName = 'r:projectionhistoricalbaseline'
-            activeProject = self.main.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/')
             
             if self.validForm(formName):
                 logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
@@ -1218,6 +1287,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
                     activeProject,
                     self.main.appSettings[formName]['QUESCDatabase'],
                     self.main.appSettings[formName]['iteration'],
+                    None,
                 )
                 
                 # Display ROut file in debug mode
@@ -1235,37 +1305,46 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
                 logging.getLogger(self.historyLog).info('alg end: %s' % formName)
         
         if self.checkBoxHistoricalBaselineAnnualProjection.isChecked():
-            formName = 'DialogLumensSCIENDOHistoricalBaselineAnnualProjection'
-            algName = 'r:historicalbaselineannualprojection'
-            
-            if self.validForm(formName):
-                logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
-                logging.getLogger(self.historyLog).info('alg start: %s' % formName)
-                self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
+            if len(self.listOfQUESCDatabase) > 1:
+                formName = 'DialogLumensSCIENDOHistoricalBaselineAnnualProjection'
+                algName = 'r:historicalbaselineannualprojection'
                 
-                # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
-                self.main.setWindowState(QtCore.Qt.WindowMinimized)
+                QUESCDatabaseCsv = self.writeListCsv(self.listOfQUESCDatabase, True)
                 
-                outputs = general.runalg(
-                    algName,
-                    self.main.appSettings[formName]['iteration'],
-                )
-                
-                # Display ROut file in debug mode
-                if self.main.appSettings['debug']:
-                    dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
-                    dialog.exec_()
-                
-                ##print outputs
-                
-                # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
-                self.main.setWindowState(QtCore.Qt.WindowActive)
-                
-                self.outputsMessageBox(algName, outputs, '', '')
-                
-                self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
-                logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
-                logging.getLogger(self.historyLog).info('alg end: %s' % formName)
+                if self.validForm(formName):
+                    logging.getLogger(type(self).__name__).info('alg start: %s' % formName)
+                    logging.getLogger(self.historyLog).info('alg start: %s' % formName)
+                    self.buttonProcessLowEmissionDevelopmentAnalysis.setDisabled(True)
+                    
+                    # WORKAROUND: minimize LUMENS so MessageBarProgress does not show under LUMENS
+                    self.main.setWindowState(QtCore.Qt.WindowMinimized)
+                    
+                    outputs = general.runalg(
+                        algName,
+                        activeProject,
+                        self.main.appSettings[formName]['iteration'],
+                        QUESCDatabaseCsv,
+                        None,
+                    )
+                    
+                    # Display ROut file in debug mode
+                    if self.main.appSettings['debug']:
+                        dialog = DialogLumensViewer(self, 'DEBUG "{0}" ({1})'.format(algName, 'processing_script.r.Rout'), 'text', self.main.appSettings['ROutFile'])
+                        dialog.exec_()
+                    
+                    ##print outputs
+                    
+                    # WORKAROUND: once MessageBarProgress is done, activate LUMENS window again
+                    self.main.setWindowState(QtCore.Qt.WindowActive)
+                    
+                    self.outputsMessageBox(algName, outputs, '', '')
+                    
+                    self.buttonProcessLowEmissionDevelopmentAnalysis.setEnabled(True)
+                    logging.getLogger(type(self).__name__).info('alg end: %s' % formName)
+                    logging.getLogger(self.historyLog).info('alg end: %s' % formName)
+            else: 
+                QtGui.QMessageBox.information(self, 'Historical Baseline Annual Projection', 'Choose at least two QUES-C database.')
+                return 
         
         
         if self.checkBoxDriversAnalysis.isChecked():
