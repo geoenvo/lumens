@@ -5,7 +5,7 @@ import os, platform, sys, logging, subprocess, argparse, csv, zipfile
 
 from qgis.core import *
 from qgis.gui import *
-from PyQt4 import QtGui, QtCore, QtXml
+from PyQt4 import QtGui, QtCore, QtXml, QtWebKit
 
 import resource
 
@@ -941,9 +941,11 @@ class MainWindow(QtGui.QMainWindow):
         
         self.tabLayers = QtGui.QWidget()
         self.tabDatabase = QtGui.QWidget()
+        self.tabDatabase.setStyleSheet('background-color: rgb(173, 185, 202);')
         self.tabDashboard = QtGui.QWidget()
         #self.tabProject = QtGui.QWidget()
         self.tabHelp = QtGui.QWidget()
+        self.tabHelp.setStyleSheet('background-color: rgb(191, 191, 191);')
         
         self.layoutTabLayers = QtGui.QVBoxLayout()
         self.layoutTabDatabase = QtGui.QVBoxLayout()
@@ -962,9 +964,13 @@ class MainWindow(QtGui.QMainWindow):
         # Setup 'Dashboard' tab => 'Templates' tab
         #***********************************************************
         self.tabDashboardPUR = QtGui.QWidget()
+        self.tabDashboardPUR.setStyleSheet('background-color: rgb(248, 203, 173);')
         self.tabDashboardQUES = QtGui.QWidget()
+        self.tabDashboardQUES.setStyleSheet('background-color: rgb(180, 199, 231);')
         self.tabDashboardTA = QtGui.QWidget()
+        self.tabDashboardTA.setStyleSheet('background-color: rgb(255, 230, 153);')
         self.tabDashboardSCIENDO = QtGui.QWidget()
+        self.tabDashboardSCIENDO.setStyleSheet('background-color: rgb(255, 220, 109);')
         
         self.layoutDashboardPUR = QtGui.QGridLayout()
         self.layoutDashboardQUES = QtGui.QVBoxLayout()
@@ -995,9 +1001,10 @@ class MainWindow(QtGui.QMainWindow):
         #self.sidebarTabWidget.addTab(self.tabDashboard, 'Templates') # Formerly 'Dashboard'
         #self.sidebarTabWidget.addTab(self.tabProject, 'Project')
         self.sidebarTabWidget.addTab(self.tabHelp, 'Help')
-        
+
         # QUES sub tabs
         self.QUESTabWidget = QtGui.QTabWidget()
+        self.QUESTabWidget.setStyleSheet('background-color: rgb(223, 231, 245);')
         self.QUESTabWidget.setTabPosition(QtGui.QTabWidget.East)
         
         self.subtabPreQUES = QtGui.QWidget()
@@ -1029,6 +1036,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # TA sub tabs
         self.TATabWidget = QtGui.QTabWidget()
+        self.TATabWidget.setStyleSheet('background-color: rgb(255, 242, 204);')
         self.TATabWidget.setTabPosition(QtGui.QTabWidget.East)
         
         self.subtabTAOpportunityCost = QtGui.QWidget()
@@ -1050,6 +1058,7 @@ class MainWindow(QtGui.QMainWindow):
         
         # SCIENDO sub tabs
         self.SCIENDOTabWidget = QtGui.QTabWidget()
+        self.SCIENDOTabWidget.setStyleSheet('background-color: rgb(231, 255, 109);')
         self.SCIENDOTabWidget.setTabPosition(QtGui.QTabWidget.East)
         
         self.subtabSCIENDOLowEmissionDevelopmentAnalysis = QtGui.QWidget()
@@ -1727,16 +1736,16 @@ class MainWindow(QtGui.QMainWindow):
         self.databaseToolBar.addAction(self.actionDialogLumensAddData)
         self.databaseToolBar.addAction(self.actionLumensDeleteData)
         self.databaseToolBar.addAction(self.actionLumensDatabaseStatus)
+        self.databaseToolBar.setStyleSheet('QToolBar QToolButton::hover{ background-color: rgb(189, 215, 238); }')
         self.layoutTabDatabase.addWidget(self.databaseToolBar)
         
-        self.plainTextEditDatabaseStatus = QtGui.QPlainTextEdit(self)
-        self.plainTextEditDatabaseStatus.setReadOnly(True)
+        self.webContentDatabaseStatus = QtWebKit.QWebView(self)
         
         self.groupBoxDatabaseStatus = QtGui.QGroupBox('Database status')
         self.layoutGroupBoxDatabaseStatus = QtGui.QVBoxLayout()
         self.groupBoxDatabaseStatus.setLayout(self.layoutGroupBoxDatabaseStatus)
         self.layoutTabDatabase.addWidget(self.groupBoxDatabaseStatus)
-        self.layoutGroupBoxDatabaseStatus.addWidget(self.plainTextEditDatabaseStatus)
+        self.layoutGroupBoxDatabaseStatus.addWidget(self.webContentDatabaseStatus)
         
         # Floating sidebar
         self.sidebarDockWidget = QtGui.QDockWidget('Dashboard', self) # Formerly 'Sidebar'
@@ -2414,9 +2423,10 @@ class MainWindow(QtGui.QMainWindow):
         outputs = general.runalg('r:lumensdatabasestatus', self.appSettings['DialogLumensOpenDatabase']['projectFile'].replace(os.path.sep, '/'), None)
         
         if outputs:
+            self.webContentDatabaseStatus.load(QtCore.QUrl.fromLocalFile(os.path.join(self.appSettings['DialogLumensOpenDatabase']['projectFolder'], "status_LUMENS_database.html")))
             #dialog = DialogLumensViewer(self, 'Database Status', 'csv', outputs['database_status'])
-            dialog = DialogLumensViewer(self, 'Database Status', 'html', os.path.join(self.appSettings['DialogLumensOpenDatabase']['projectFolder'], "status_LUMENS_database.html"))
-            dialog.exec_()
+            #dialog = DialogLumensViewer(self, 'Database Status', 'html', os.path.join(self.appSettings['DialogLumensOpenDatabase']['projectFolder'], "status_LUMENS_database.html"))
+            #dialog.exec_()
         
         self.actionLumensDatabaseStatus.setEnabled(True)
         logging.getLogger(type(self).__name__).info('end: lumensdatabasestatus')

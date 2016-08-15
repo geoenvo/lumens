@@ -47,6 +47,7 @@ class DialogLumensAddData(QtGui.QDialog, DialogLumensBase):
         Args:
             parent: the dialog's parent instance.
         """
+        #self.setStyleSheet('background-color: rgb(173, 185, 202);')
         self.dialogLayout = QtGui.QVBoxLayout()
         
         self.groupBoxAddData = QtGui.QGroupBox('Add data')

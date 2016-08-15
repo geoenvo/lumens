@@ -1309,6 +1309,7 @@ class DialogLumensSCIENDO(QtGui.QDialog, DialogLumensBase):
                 formName = 'DialogLumensSCIENDOHistoricalBaselineAnnualProjection'
                 algName = 'r:historicalbaselineannualprojection'
                 
+                self.listOfQUESCDatabase.sort()
                 QUESCDatabaseCsv = self.writeListCsv(self.listOfQUESCDatabase, True)
                 
                 if self.validForm(formName):
