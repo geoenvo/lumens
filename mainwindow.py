@@ -629,7 +629,7 @@ class MainWindow(QtGui.QMainWindow):
         self.fileMenu = self.menubar.addMenu('&File')
         self.viewMenu = self.menubar.addMenu('&View')
         self.modeMenu = self.menubar.addMenu('&Mode')
-        self.databaseMenu = self.menubar.addMenu('&DATABASE')
+        self.databaseMenu = self.menubar.addMenu('&Database')
         self.purMenu = self.menubar.addMenu('&PUR')
         self.quesMenu = self.menubar.addMenu('&QUES')
         self.taMenu = self.menubar.addMenu('&TA')
@@ -844,14 +844,14 @@ class MainWindow(QtGui.QMainWindow):
         self.purMenu.addAction(self.actionDialogLumensPUR)
         
         # QUES menu
-        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensDefault.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensQUES.png')
         self.actionDialogLumensQUES = QtGui.QAction(icon, 'Quantification Environmental Services', self)
         self.actionDialogLumensQUES.setIconText('QUES')
         
         self.quesMenu.addAction(self.actionDialogLumensQUES)
         
         # TA menu
-        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensDefault.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensTA.png')
         self.actionDialogLumensTAOpportunityCost = QtGui.QAction(icon, 'Trade-off Analysis [Opportunity Cost]', self)
         self.actionDialogLumensTARegionalEconomy = QtGui.QAction(icon, 'Trade-off Analysis [Regional Economy]', self)
         self.actionDialogLumensTAOpportunityCost.setIconText('TA')
@@ -860,7 +860,7 @@ class MainWindow(QtGui.QMainWindow):
         self.taMenu.addAction(self.actionDialogLumensTARegionalEconomy)
         
         # SCIENDO menu
-        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensDefault.png')
+        icon = QtGui.QIcon(':/ui/icons/iconActionDialogLumensSCIENDO.png')
         self.actionDialogLumensSCIENDO = QtGui.QAction(icon, 'SCIENDO', self)
         self.actionDialogLumensSCIENDO.setIconText('SCIENDO')
         
@@ -1004,8 +1004,21 @@ class MainWindow(QtGui.QMainWindow):
 
         # QUES sub tabs
         self.QUESTabWidget = QtGui.QTabWidget()
-        self.QUESTabWidget.setStyleSheet('background-color: rgb(223, 231, 245);')
-        self.QUESTabWidget.setTabPosition(QtGui.QTabWidget.East)
+        QUESTabWidgetStylesheet = """
+        QTabWidget QWidget { 
+            background-color: rgb(223, 231, 245);
+        }
+        QTabBar::tab {
+            background-color: rgb(180, 199, 231);
+            color: #000;
+        }
+        QTabBar::tab:selected, QTabBar::tab:hover {
+            background-color: rgb(223, 231, 245);
+            color: #000;
+        }
+        """
+        self.QUESTabWidget.setStyleSheet(QUESTabWidgetStylesheet)
+        self.QUESTabWidget.setTabPosition(QtGui.QTabWidget.North)
         
         self.subtabPreQUES = QtGui.QWidget()
         self.subtabQUESC = QtGui.QWidget()
@@ -1027,17 +1040,34 @@ class MainWindow(QtGui.QMainWindow):
         self.subtabQUESB.setLayout(self.layoutSubtabQUESB)
         self.subtabQUESH.setLayout(self.layoutSubtabQUESH)
         
-        self.QUESTabWidget.addTab(self.subtabPreQUES, 'Pre-QUES')
-        self.QUESTabWidget.addTab(self.subtabQUESC, 'QUES-C')
-        self.QUESTabWidget.addTab(self.subtabQUESB, 'QUES-B')
-        self.QUESTabWidget.addTab(self.subtabQUESH, 'QUES-H')
+        icon = QtGui.QIcon(':/ui/icons/iconSubtabPreQUES.png')
+        self.QUESTabWidget.addTab(self.subtabPreQUES, icon, ' Pre-QUES')
+        icon = QtGui.QIcon(':/ui/icons/iconSubtabQUESC.png')
+        self.QUESTabWidget.addTab(self.subtabQUESC, icon, 'QUES-C')
+        icon = QtGui.QIcon(':/ui/icons/iconSubtabQUESB.png')
+        self.QUESTabWidget.addTab(self.subtabQUESB, icon, 'QUES-B')
+        icon = QtGui.QIcon(':/ui/icons/iconSubtabQUESH.png')
+        self.QUESTabWidget.addTab(self.subtabQUESH, icon, 'QUES-H')
         
         self.layoutDashboardQUES.addWidget(self.QUESTabWidget)
         
         # TA sub tabs
         self.TATabWidget = QtGui.QTabWidget()
-        self.TATabWidget.setStyleSheet('background-color: rgb(255, 242, 204);')
-        self.TATabWidget.setTabPosition(QtGui.QTabWidget.East)
+        TATabWidgetStylesheet = """
+        QTabWidget QWidget { 
+            background-color: rgb(255, 242, 204);
+        }
+        QTabBar::tab {
+            background-color: rgb(255, 230, 153);
+            color: #000;
+        }
+        QTabBar::tab:selected, QTabBar::tab:hover {
+            background-color: rgb(255, 242, 204);
+            color: #000;
+        }
+        """
+        self.TATabWidget.setStyleSheet(TATabWidgetStylesheet)
+        self.TATabWidget.setTabPosition(QtGui.QTabWidget.North)
         
         self.subtabTAOpportunityCost = QtGui.QWidget()
         self.subtabTARegionalEconomy = QtGui.QWidget()
@@ -1058,8 +1088,21 @@ class MainWindow(QtGui.QMainWindow):
         
         # SCIENDO sub tabs
         self.SCIENDOTabWidget = QtGui.QTabWidget()
-        self.SCIENDOTabWidget.setStyleSheet('background-color: rgb(231, 255, 109);')
-        self.SCIENDOTabWidget.setTabPosition(QtGui.QTabWidget.East)
+        SCIENDOTabWidgetStylesheet = """
+        QTabWidget QWidget { 
+            background-color: rgb(231, 255, 109);
+        }
+        QTabBar::tab {
+            background-color: rgb(255, 220, 109);
+            color: #000;
+        }
+        QTabBar::tab:selected, QTabBar::tab:hover {
+            background-color: rgb(231, 255, 109);
+            color: #000;
+        }
+        """
+        self.SCIENDOTabWidget.setStyleSheet(SCIENDOTabWidgetStylesheet)
+        self.SCIENDOTabWidget.setTabPosition(QtGui.QTabWidget.North)
         
         self.subtabSCIENDOLowEmissionDevelopmentAnalysis = QtGui.QWidget()
         self.subtabSCIENDOLandUseChangeModeling = QtGui.QWidget()
